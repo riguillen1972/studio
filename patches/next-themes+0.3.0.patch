@@ -1,0 +1,104 @@
+diff --git a/node_modules/next-themes/dist/index.js b/node_modules/next-themes/dist/index.js
+index 954625b..7c1e549 100644
+--- a/node_modules/next-themes/dist/index.js
++++ b/node_modules/next-themes/dist/index.js
+@@ -10,7 +10,7 @@
+ 'use client';
+ 
+ var React = require('react');
+-var react = require('react');
++var { useSyncExternalStore } = require('react');
+ 
+ function _interopDefault (e) { return e && e.__esModule ? e : { 'default': e }; }
+ 
+@@ -104,7 +104,7 @@
+     return () => {
+       mql.removeEventListener('change', onchange);
+     };
+-  }, [subscribe]);
++  }, [subscribe, onchange]);
+   return get();
+ };
+ 
+@@ -115,7 +115,7 @@
+   ...props
+ }) => {
+   const context = React.useContext(ThemeContext);
+-  const isServer = useServer();
++  const isServer = typeof window === 'undefined';
+ 
+   // Ignore nested context providers
+   if (context && isServer) return children;
+@@ -165,7 +165,7 @@
+         // Make sure we never render with the provider during hydration
+         // The provider is only generated client-side, to avoid hydration mismatches
+         setMounted(true);
+-      }, [setMounted]);
++      }, [setMounted, isServer]);
+ 
+       if (!mounted) {
+         if (forcedTheme) {
+@@ -201,15 +201,6 @@
+ };
+ 
+ const ThemeProvider = props => {
+-  const isServer = useServer();
+-  if (isServer) {
+-    return /*#__PURE__*/React.createElement(ServerThemeProvider, Object.assign({}, props));
+-  } else {
+-    return /*#__PURE__*/React.createElement(ClientThemeProvider, Object.assign({}, props));
+-  }
+-};
+-
+-const ClientThemeProvider = ({
+-  children,
+-  forcedTheme,
+-  disableTransitionOnChange = false,
+@@ -248,7 +239,7 @@
+   // localStorage event handling
+   React.useEffect(() => {
+     const handleStorage = e => {
+       if (e.key !== storageKey) {
+@@ -342,7 +333,7 @@
+   },
+   // When theme changes, remove the transition override
+   [theme]);
+-  const providerValue = react.useMemo(() => ({
++  const providerValue = React.useMemo(() => ({
+     theme,
+     setTheme,
+     forcedTheme,
+@@ -355,7 +346,7 @@
+     themes
+   }), [theme, setTheme, forcedTheme, resolvedTheme, systemTheme, themes]);
+   return /*#__PURE__*/React.createElement(ThemeContext.Provider, {
+-    value: providerValue,
++    value: providerValue
+   }, children);
+ };
+ const useTheme = () => React.useContext(ThemeContext);
+diff --git a/node_modules/next-themes/dist/types.d.ts b/node_modules/next-themes/dist/types.d.ts
+index c6b0805..7b4b1a4 100644
+--- a/node_modules/next-themes/dist/types.d.ts
++++ b/node_modules/next-themes/dist/types.d.ts
+@@ -1,4 +1,4 @@
+-import type { ReactNode, Dispatch, SetStateAction } from 'react';
++import type { ReactNode, Dispatch, SetStateAction, FC } from 'react';
+ export interface ThemeProviderProps {
+     children?: ReactNode;
+     /** List of all available theme names */
+@@ -23,7 +23,7 @@
+     disableTransitionOnChange?: boolean;
+     /** Nonce string to pass to the inline script for CSP. */
+     nonce?: string;
+-    /** React 18 only, will be required in the future. */
++    /** @deprecated use `enableSystem` instead */
+     enableSystem?: boolean;
+ }
+ export interface UseThemeProps {
+@@ -37,4 +37,4 @@
+     themes: string[];
+ }
+ export declare const useTheme: () => UseThemeProps;
+-export declare const ThemeProvider: (props: ThemeProviderProps) => React.ReactNode;
++export declare const ThemeProvider: FC<ThemeProviderProps>;
