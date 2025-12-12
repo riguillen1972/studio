@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "lib-1",
+      "description": "A deep dive into the world of algebra, from basic equations to complex functions.",
+      "imageUrl": "https://images.unsplash.com/photo-1761546571631-a4d61b55cd2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYXRoJTIwdGV4dGJvb2t8ZW58MHx8fHwxNzY1NTA1MDMwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "math textbook",
+      "title": "Introduction to Algebra",
+      "type": "Article"
+    },
+    {
+      "id": "lib-2",
+      "description": "Explore the building blocks of life in this engaging video about cellular biology.",
+      "imageUrl": "https://images.unsplash.com/photo-1698808342574-2dff997c9995?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzY2llbmNlJTIwbWljcm9zY29wZXxlbnwwfHx8fDE3NjU0NzM3MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "science microscope",
+      "title": "The Magic of Cells",
+      "type": "Video"
+    },
+    {
+      "id": "lib-3",
+      "description": "An interactive simulation to understand the laws of motion.",
+      "imageUrl": "https://images.unsplash.com/photo-1690050070363-29bccbd43cef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwaHlzaWNzJTIwZXhwZXJpbWVudHxlbnwwfHx8fDE3NjU0NzI3MTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "physics experiment",
+      "title": "Physics in Motion",
+      "type": "Simulation"
+    },
+    {
+      "id": "lib-4",
+      "description": "Learn about the major events of World War II and their global impact.",
+      "imageUrl": "https://images.unsplash.com/photo-1530379768560-fac46435511d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoaXN0b3J5JTIwbWFwfGVufDB8fHx8MTc2NTQ0NTAwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "history map",
+      "title": "A History of World War II",
+      "type": "Article"
+    },
+    {
+      "id": "lib-5",
+      "description": "A guide to writing compelling essays and research papers.",
+      "imageUrl": "https://images.unsplash.com/photo-1669139660221-19454e55751e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cml0aW5nJTIwbm90ZWJvb2t8ZW58MHx8fHwxNzY1NDg3NDQ0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "writing notebook",
+      "title": "Mastering Academic Writing",
+      "type": "Article"
+    },
+    {
+      "id": "lib-6",
+      "description": "A video tutorial on the basics of Python programming for beginners.",
+      "imageUrl": "https://images.unsplash.com/photo-1569748130764-3fed0c102c59?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb21wdXRlciUyMGNvZGV8ZW58MHx8fHwxNzY1NDUyMDU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "computer code",
+      "title": "Python for Everyone",
+      "type": "Video"
+    }
+  ]
 }
