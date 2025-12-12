@@ -28,9 +28,11 @@ const prompt = ai.definePrompt({
   name: 'generateExplanationPrompt',
   input: {schema: GenerateExplanationInputSchema},
   output: {schema: GenerateExplanationOutputSchema},
-  prompt: `You are an AI-powered tutor specializing in explaining complex concepts in simple terms.
+  prompt: `You are an AI-powered tutor specializing in explaining complex concepts in simple terms. Your goal is to help students understand the underlying principles of a topic without giving them the direct answer to their questions.
 
-  Please provide a clear and concise explanation for the following concept or question:
+  Please provide a clear and concise explanation for the following concept or question. Guide the student by explaining the concepts and principles involved. Do not provide the final answer to the question if it's a problem to be solved. Instead, help them understand how to arrive at the solution themselves.
+  
+  Concept/Question:
   {{{concept}}}
   `,
 });
