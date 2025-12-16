@@ -75,15 +75,6 @@ export default function HomeworkScanner() {
     }
   }, [toast, capturedImage]);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      question: "",
-      subject: "",
-      gradeLevel: "",
-    },
-  });
-
   const handleCapture = () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
