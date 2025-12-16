@@ -4,6 +4,7 @@ import { z } from "zod";
 import { generateExplanation, GenerateExplanationInput } from "@/ai/flows/generate-explanation";
 import { provideHomeworkHints, ProvideHomeworkHintsInput } from "@/ai/flows/provide-homework-hints";
 import { summarizeText, SummarizeTextInput } from "@/ai/flows/summarize-text";
+import { scanHomework, ScanHomeworkInput } from "@/ai/flows/scan-homework-flow";
 
 // Helper function to handle action execution and error handling
 async function handleAction<T_Input, T_Output>(
@@ -56,4 +57,19 @@ export async function getSummaryAction(input: SummarizeTextInput) {
         return { success: false, error: "Invalid input." };
     }
   return handleAction(parsedInput.data, summarizeText);
+}
+
+// Schema for getHomeworkScanAction
+const HomeworkScanActionInputSchema = z.object({
+    photoDataUri: z.string(),
+    question: z.string(),
+    subject: z.string(),
+    gradeLevel: z.string(),
+});
+export async function getHomeworkScanAction(input: ScanHomeworkInput) {
+    const parsedInput = HomeworkScanActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    return handleAction(parsedInput.data, scanHomework);
 }

@@ -7,6 +7,7 @@ import {
   LineChart,
   NotebookText,
   PanelLeft,
+  ScanLine,
   Settings,
   User,
 } from "lucide-react";
@@ -37,6 +38,11 @@ const menuItems = [
     href: "/homework",
     icon: BookOpen,
     label: "Homework Help",
+  },
+  {
+    href: "/scan",
+    icon: ScanLine,
+    label: "Scan Homework",
   },
   {
     href: "/summarizer",
