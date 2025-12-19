@@ -214,9 +214,9 @@ export default function HomeworkScanner() {
                                 <FormLabel>Grade Level</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                                     <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a grade level" />
-                                    </SelectTrigger>
+                                      <SelectTrigger>
+                                          <SelectValue placeholder="Select a grade level" />
+                                      </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
                                     {gradeLevels.map((gl) => (
@@ -241,7 +241,7 @@ export default function HomeworkScanner() {
         <CardHeader>
           <CardTitle className="font-headline">AI Generated Hints</CardTitle>
           <CardDescription>Guidance based on your scanned problem.</CardDescription>
-        </Header>
+        </CardHeader>
         <CardContent className="h-full">
           {isLoading && (
             <div className="flex items-center justify-center h-full">
