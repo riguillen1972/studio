@@ -153,6 +153,7 @@ export default function HomeworkScanner() {
                 )}
             </div>
             <canvas ref={canvasRef} className="hidden" />
+            
             <div className="flex justify-center mt-4">
                 {capturedImage ? (
                     <Button onClick={handleRetake} variant="outline" disabled={isLoading}><RefreshCw className="mr-2"/> Retake Photo</Button>
@@ -240,7 +241,7 @@ export default function HomeworkScanner() {
         <CardHeader>
           <CardTitle className="font-headline">AI Generated Hints</CardTitle>
           <CardDescription>Guidance based on your scanned problem.</CardDescription>
-        </CardHeader>
+        </Header>
         <CardContent className="h-full">
           {isLoading && (
             <div className="flex items-center justify-center h-full">
