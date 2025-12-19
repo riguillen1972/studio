@@ -127,12 +127,12 @@ export default function HomeworkScanner() {
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">
-      <Card>
+      <Card className="flex flex-col">
         <CardHeader>
           <CardTitle className="font-headline">Scan Your Work</CardTitle>
           <CardDescription>Capture an image of your homework problem.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col flex-grow">
             <div className="relative aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
                 {capturedImage ? (
                     <Image src={capturedImage} alt="Captured homework" layout="fill" objectFit="contain" />
