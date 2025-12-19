@@ -216,7 +216,7 @@ export default function HomeworkScanner() {
                                     <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a grade level" />
-                                    </Trigger>
+                                    </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
                                     {gradeLevels.map((gl) => (
