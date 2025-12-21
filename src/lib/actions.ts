@@ -5,6 +5,8 @@ import { generateExplanation, GenerateExplanationInput } from "@/ai/flows/genera
 import { provideHomeworkHints, ProvideHomeworkHintsInput } from "@/ai/flows/provide-homework-hints";
 import { summarizeText, SummarizeTextInput } from "@/ai/flows/summarize-text";
 import { scanHomework, ScanHomeworkInput } from "@/ai/flows/scan-homework-flow";
+import { generateQuiz, GenerateQuizInput } from "@/ai/flows/generate-quiz";
+
 
 // Helper function to handle action execution and error handling
 async function handleAction<T_Input, T_Output>(
@@ -72,4 +74,19 @@ export async function getHomeworkScanAction(input: ScanHomeworkInput) {
         return { success: false, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, scanHomework);
+}
+
+// Schema for getQuizAction
+const QuizActionInputSchema = z.object({
+    topic: z.string(),
+    subject: z.string(),
+    gradeLevel: z.string(),
+    numQuestions: z.number(),
+});
+export async function getQuizAction(input: GenerateQuizInput) {
+    const parsedInput = QuizActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    return handleAction(parsedInput.data, generateQuiz);
 }

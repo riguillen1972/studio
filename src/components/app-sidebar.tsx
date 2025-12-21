@@ -10,6 +10,7 @@ import {
   ScanLine,
   Settings,
   User,
+  FileQuestion,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,6 +49,11 @@ const menuItems = [
     href: "/summarizer",
     icon: NotebookText,
     label: "Summarizer",
+  },
+  {
+    href: "/quiz",
+    icon: FileQuestion,
+    label: "Quiz Generator",
   },
   {
     href: "/progress",
