@@ -1,0 +1,75 @@
+'use server';
+
+/**
+ * @fileOverview This file defines a Genkit flow for generating a multiple-choice quiz from an image of educational material.
+ *
+ * It takes an image, subject, and grade level, and returns a set of quiz questions based on the content of the image.
+ *
+ * @interface GenerateQuizFromScanInput - The input type for the generateQuizFromScan function.
+ * @interface GenerateQuizFromScanOutput - The output type for the generateQuizFromScan function.
+ * @function generateQuizFromScan - The main function that orchestrates the quiz generation flow from a scan.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+// Re-using the output schema from the original quiz generator for consistency.
+const QuizQuestionSchema = z.object({
+    question: z.string().describe("The quiz question."),
+    options: z.array(z.string()).describe("An array of 4 multiple-choice options."),
+    answer: z.string().describe("The correct answer from the options."),
+});
+
+const GenerateQuizFromScanOutputSchema = z.object({
+  questions: z.array(QuizQuestionSchema).describe('An array of quiz questions.'),
+  topic: z.string().describe('The topic of the generated quiz based on the document.')
+});
+export type GenerateQuizFromScanOutput = z.infer<typeof GenerateQuizFromScanOutputSchema>;
+
+
+const GenerateQuizFromScanInputSchema = z.object({
+  photoDataUri: z
+    .string()
+    .describe(
+      "A photo of the educational material, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
+  subject: z.string().describe('The subject of the quiz.'),
+  gradeLevel: z.string().describe('The grade level of the student.'),
+  numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
+});
+
+export type GenerateQuizFromScanInput = z.infer<typeof GenerateQuizFromScanInputSchema>;
+
+
+export async function generateQuizFromScan(input: GenerateQuizFromScanInput): Promise<GenerateQuizFromScanOutput> {
+  return generateQuizFromScanFlow(input);
+}
+
+const generateQuizFromScanPrompt = ai.definePrompt({
+  name: 'generateQuizFromScanPrompt',
+  input: {schema: GenerateQuizFromScanInputSchema},
+  output: {schema: GenerateQuizFromScanOutputSchema},
+  prompt: `You are an AI that generates educational quizzes for a student in grade {{gradeLevel}}.
+
+The student has provided an image of their study material for the subject of {{subject}}.
+
+Analyze the content of the image and identify the main topic. Then, generate {{numQuestions}} multiple-choice questions based *only* on the information present in the image. Each question should have exactly 4 options. One of the options must be the correct answer.
+
+Here is the image:
+{{media url=photoDataUri}}
+
+Make sure the questions are appropriate for the specified grade level.
+`,
+});
+
+const generateQuizFromScanFlow = ai.defineFlow(
+  {
+    name: 'generateQuizFromScanFlow',
+    inputSchema: GenerateQuizFromScanInputSchema,
+    outputSchema: GenerateQuizFromScanOutputSchema,
+  },
+  async input => {
+    const {output} = await generateQuizFromScanPrompt(input);
+    return output!;
+  }
+);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -38,23 +38,34 @@ interface QuizResult {
 const subjects = ["Math", "Science", "History", "English", "Physics", "Chemistry", "Biology", "Geography", "Art"];
 const gradeLevels = ["Elementary", "Middle School", "High School", "University"];
 
-export default function QuizGenerator() {
-  const [result, setResult] = useState<QuizResult | null>(null);
+export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQuiz?: QuizQuestion[] | null, initialTopic?: string | null }) {
+  const [result, setResult] = useState<QuizResult | null>(initialQuiz ? { questions: initialQuiz } : null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      topic: "",
+      topic: initialTopic || "",
       subject: "",
       gradeLevel: "",
       numQuestions: 5,
     },
   });
+
+   useEffect(() => {
+    if (initialQuiz) {
+      setResult({ questions: initialQuiz });
+      setSubmitted(false); // Don't show results immediately
+    }
+    if(initialTopic) {
+        form.setValue("topic", initialTopic);
+    }
+  }, [initialQuiz, initialTopic, form]);
+
 
   const handleGenerateQuiz: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
@@ -108,6 +119,8 @@ export default function QuizGenerator() {
     setScore(0);
     form.reset();
   }
+
+  const quizTopic = result && form.getValues("topic") ? `on ${form.getValues("topic")}` : "";
 
   return (
     <div className="space-y-8">
@@ -216,7 +229,7 @@ export default function QuizGenerator() {
             <CardHeader>
                 <div className="flex justify-between items-start">
                     <div>
-                        <CardTitle className="font-headline">Your Quiz on {form.getValues("topic")}</CardTitle>
+                        <CardTitle className="font-headline">Your Quiz {quizTopic}</CardTitle>
                         <CardDescription>Select the best answer for each question.</CardDescription>
                     </div>
                     <Button onClick={startNewQuiz} variant="outline" size="sm">Start New Quiz</Button>

@@ -6,3 +6,4 @@ import '@/ai/flows/provide-homework-hints.ts';
 import '@/ai/flows/summarize-text.ts';
 import '@/ai/flows/scan-homework-flow.ts';
 import '@/ai/flows/generate-quiz.ts';
+import '@/ai/flows/generate-quiz-from-scan.ts';
