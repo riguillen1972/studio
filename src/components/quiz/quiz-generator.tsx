@@ -1,10 +1,12 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Sparkles, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, Sparkles, CheckCircle, XCircle, ScanLine } from "lucide-react";
 import Confetti from 'react-dom-confetti';
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getQuizAction } from "@/lib/actions";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+import { Separator } from "../ui/separator";
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Please enter a topic with at least 3 characters." }),
@@ -128,7 +131,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
         <Card>
           <CardHeader>
             <CardTitle className="font-headline">Create Your Quiz</CardTitle>
-            <CardDescription>Fill in the details below to generate a new quiz.</CardDescription>
+            <CardDescription>Fill in the details below or scan a document to generate a new quiz.</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -222,6 +225,15 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                  {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
               </form>
             </Form>
+            <div className="relative my-6">
+                <Separator />
+                <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-sm text-muted-foreground">OR</span>
+            </div>
+            <Button variant="secondary" className="w-full" asChild>
+                <Link href="/scan">
+                    <ScanLine className="mr-2"/> Generate Quiz From Scan
+                </Link>
+            </Button>
           </CardContent>
         </Card>
       ) : (
