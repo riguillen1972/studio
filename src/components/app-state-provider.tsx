@@ -11,21 +11,36 @@ const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [isPremium, setIsPremiumState] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const storedValue = localStorage.getItem('isPremium');
-    if (storedValue) {
-      setIsPremiumState(JSON.parse(storedValue));
+    setIsMounted(true);
+    try {
+        const storedValue = localStorage.getItem('isPremium');
+        if (storedValue) {
+          setIsPremiumState(JSON.parse(storedValue));
+        }
+    } catch (error) {
+        console.error("Could not access local storage:", error);
     }
   }, []);
 
   const setIsPremium = (newValue: boolean) => {
     setIsPremiumState(newValue);
-    localStorage.setItem('isPremium', JSON.stringify(newValue));
+    try {
+        localStorage.setItem('isPremium', JSON.stringify(newValue));
+    } catch (error) {
+        console.error("Could not access local storage:", error);
+    }
+  };
+
+  const value = {
+    isPremium: isMounted ? isPremium : false,
+    setIsPremium,
   };
 
   return (
-    <AppStateContext.Provider value={{ isPremium, setIsPremium }}>
+    <AppStateContext.Provider value={value}>
       {children}
     </AppStateContext.Provider>
   );
