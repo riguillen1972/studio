@@ -8,7 +8,7 @@
  * - SummarizeTextOutput - The return type for the summarizeText function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, getModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SummarizeTextInputSchema = z.object({
@@ -21,16 +21,9 @@ const SummarizeTextOutputSchema = z.object({
 });
 export type SummarizeTextOutput = z.infer<typeof SummarizeTextOutputSchema>;
 
-export async function summarizeText(input: SummarizeTextInput): Promise<SummarizeTextOutput> {
-  return summarizeTextFlow(input);
+export async function summarizeText(input: SummarizeTextInput, isPremium: boolean = false): Promise<SummarizeTextOutput> {
+  return summarizeTextFlow(input, isPremium);
 }
-
-const summarizeTextPrompt = ai.definePrompt({
-  name: 'summarizeTextPrompt',
-  input: {schema: SummarizeTextInputSchema},
-  output: {schema: SummarizeTextOutputSchema},
-  prompt: `Summarize the key concepts in the following text:\n\n{{text}}`,
-});
 
 const summarizeTextFlow = ai.defineFlow(
   {
@@ -38,8 +31,16 @@ const summarizeTextFlow = ai.defineFlow(
     inputSchema: SummarizeTextInputSchema,
     outputSchema: SummarizeTextOutputSchema,
   },
-  async input => {
-    const {output} = await summarizeTextPrompt(input);
-    return output!;
+  async (input, streamingCallback, isPremium) => {
+    const prompt = `Summarize the key concepts in the following text:\n\n${input.text}`;
+    const {output} = await ai.generate({
+        model: getModel(isPremium),
+        prompt,
+        output: {
+            schema: SummarizeTextOutputSchema,
+        }
+    });
+
+    return output;
   }
 );

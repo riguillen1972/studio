@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { getSummaryAction } from "@/lib/actions";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "../ad-placeholder";
 
 const formSchema = z.object({
   text: z.string().min(100, { message: "Please enter at least 100 characters to summarize." }),
@@ -22,6 +24,7 @@ export default function TextSummarizer() {
   const [summary, setSummary] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isPremium } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,7 +38,7 @@ export default function TextSummarizer() {
     setSummary(null);
     setError(null);
 
-    const actionResult = await getSummaryAction(data);
+    const actionResult = await getSummaryAction({ ...data, isPremium });
 
     if (actionResult.success) {
       setSummary(actionResult.data.summary);
@@ -54,6 +57,7 @@ export default function TextSummarizer() {
           <CardDescription>Paste the text you want to understand better.</CardDescription>
         </CardHeader>
         <CardContent>
+          {!isPremium && <AdPlaceholder className="mb-4" />}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

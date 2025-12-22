@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getHomeworkHintsAction } from "@/lib/actions";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Badge } from "../ui/badge";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "../ad-placeholder";
 
 const formSchema = z.object({
   problem: z.string().min(20, { message: "Please describe your problem in at least 20 characters." }),
@@ -36,6 +38,7 @@ export default function HomeworkHelper() {
   const [result, setResult] = useState<HintsResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isPremium } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -51,7 +54,7 @@ export default function HomeworkHelper() {
     setResult(null);
     setError(null);
 
-    const actionResult = await getHomeworkHintsAction(data);
+    const actionResult = await getHomeworkHintsAction({ ...data, isPremium });
 
     if (actionResult.success) {
       setResult(actionResult.data);
@@ -69,6 +72,7 @@ export default function HomeworkHelper() {
           <CardTitle className="font-headline">Describe Your Problem</CardTitle>
         </CardHeader>
         <CardContent>
+          {!isPremium && <AdPlaceholder className="mb-4" />}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

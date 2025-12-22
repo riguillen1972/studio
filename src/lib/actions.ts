@@ -12,10 +12,11 @@ import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/gene
 // Helper function to handle action execution and error handling
 async function handleAction<T_Input, T_Output>(
   input: T_Input,
-  flow: (input: T_Input) => Promise<T_Output>
+  flow: (input: T_Input, isPremium?: boolean) => Promise<T_Output>,
+  isPremium: boolean = false
 ): Promise<{ success: true; data: T_Output } | { success: false; error: string }> {
   try {
-    const result = await flow(input);
+    const result = await flow(input, isPremium);
     return { success: true, data: result };
   } catch (error) {
     console.error("AI action failed:", error);
@@ -27,13 +28,15 @@ async function handleAction<T_Input, T_Output>(
 // Schema for getExplanationAction
 const ExplanationActionInputSchema = z.object({
   concept: z.string(),
+  isPremium: z.boolean().optional(),
 });
-export async function getExplanationAction(input: GenerateExplanationInput) {
+export async function getExplanationAction(input: GenerateExplanationInput & { isPremium?: boolean }) {
   const parsedInput = ExplanationActionInputSchema.safeParse(input);
   if (!parsedInput.success) {
     return { success: false, error: "Invalid input." };
   }
-  return handleAction(parsedInput.data, generateExplanation);
+  const { isPremium, ...flowInput } = parsedInput.data;
+  return handleAction(flowInput, generateExplanation, isPremium);
 }
 
 // Schema for getHomeworkHintsAction
@@ -41,25 +44,29 @@ const HomeworkHintsActionInputSchema = z.object({
   problem: z.string(),
   subject: z.string(),
   gradeLevel: z.string(),
+  isPremium: z.boolean().optional(),
 });
-export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput) {
+export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput & { isPremium?: boolean }) {
     const parsedInput = HomeworkHintsActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
       return { success: false, error: "Invalid input." };
     }
-  return handleAction(parsedInput.data, provideHomeworkHints);
+    const { isPremium, ...flowInput } = parsedInput.data;
+  return handleAction(flowInput, provideHomeworkHints, isPremium);
 }
 
 // Schema for getSummaryAction
 const SummaryActionInputSchema = z.object({
   text: z.string(),
+  isPremium: z.boolean().optional(),
 });
-export async function getSummaryAction(input: SummarizeTextInput) {
+export async function getSummaryAction(input: SummarizeTextInput & { isPremium?: boolean }) {
     const parsedInput = SummaryActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
         return { success: false, error: "Invalid input." };
     }
-  return handleAction(parsedInput.data, summarizeText);
+    const { isPremium, ...flowInput } = parsedInput.data;
+  return handleAction(flowInput, summarizeText, isPremium);
 }
 
 // Schema for getHomeworkScanAction
@@ -68,13 +75,15 @@ const HomeworkScanActionInputSchema = z.object({
     question: z.string(),
     subject: z.string(),
     gradeLevel: z.string(),
+    isPremium: z.boolean().optional(),
 });
-export async function getHomeworkScanAction(input: ScanHomeworkInput) {
+export async function getHomeworkScanAction(input: ScanHomeworkInput & { isPremium?: boolean }) {
     const parsedInput = HomeworkScanActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
         return { success: false, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, scanHomework);
+    const { isPremium, ...flowInput } = parsedInput.data;
+    return handleAction(flowInput, scanHomework, isPremium);
 }
 
 // Schema for getQuizAction
@@ -83,13 +92,15 @@ const QuizActionInputSchema = z.object({
     subject: z.string(),
     gradeLevel: z.string(),
     numQuestions: z.number(),
+    isPremium: z.boolean().optional(),
 });
-export async function getQuizAction(input: GenerateQuizInput) {
+export async function getQuizAction(input: GenerateQuizInput & { isPremium?: boolean }) {
     const parsedInput = QuizActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
         return { success: false, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateQuiz);
+    const { isPremium, ...flowInput } = parsedInput.data;
+    return handleAction(flowInput, generateQuiz, isPremium);
 }
 
 // Schema for getQuizFromScanAction
@@ -98,11 +109,13 @@ const QuizFromScanActionInputSchema = z.object({
     subject: z.string(),
     gradeLevel: z.string(),
     numQuestions: z.number(),
+    isPremium: z.boolean().optional(),
 });
-export async function getQuizFromScanAction(input: GenerateQuizFromScanInput) {
+export async function getQuizFromScanAction(input: GenerateQuizFromScanInput & { isPremium?: boolean }) {
     const parsedInput = QuizFromScanActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
         return { success: false, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateQuizFromScan);
+    const { isPremium, ...flowInput } = parsedInput.data;
+    return handleAction(parsedInput.data, generateQuizFromScan, isPremium);
 }

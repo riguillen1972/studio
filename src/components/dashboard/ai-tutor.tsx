@@ -13,6 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { getExplanationAction } from "@/lib/actions";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "../ad-placeholder";
 
 const formSchema = z.object({
   concept: z.string().min(10, { message: "Please enter a concept or question with at least 10 characters." }),
@@ -28,6 +30,7 @@ interface ConversationTurn {
 export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { isPremium } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -40,7 +43,7 @@ export default function AITutor() {
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
-    const result = await getExplanationAction(data);
+    const result = await getExplanationAction({ ...data, isPremium });
 
     if (result.success) {
       setConversation((prev) => [
@@ -70,6 +73,7 @@ export default function AITutor() {
             </CardDescription>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
+        {!isPremium && <AdPlaceholder />}
         <ScrollArea className="flex-grow pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (

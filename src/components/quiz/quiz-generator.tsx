@@ -18,6 +18,8 @@ import { getQuizAction } from "@/lib/actions";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "../ad-placeholder";
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Please enter a topic with at least 3 characters." }),
@@ -48,6 +50,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
+  const { isPremium } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -78,7 +81,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     setUserAnswers({});
     setScore(0);
 
-    const actionResult = await getQuizAction(data);
+    const actionResult = await getQuizAction({ ...data, isPremium });
 
     if (actionResult.success) {
       setResult(actionResult.data);
@@ -134,6 +137,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
             <CardDescription>Fill in the details below or scan a document to generate a new quiz.</CardDescription>
           </CardHeader>
           <CardContent>
+            {!isPremium && <AdPlaceholder className="mb-4" />}
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleGenerateQuiz)} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">

@@ -18,6 +18,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "../ui/separator";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "../ad-placeholder";
 
 const formSchema = z.object({
   question: z.string().min(10, { message: "Please ask a question with at least 10 characters." }),
@@ -46,6 +48,7 @@ export default function HomeworkScanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { isPremium } = useAppState();
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -127,6 +130,7 @@ export default function HomeworkScanner() {
     const actionResult = await getHomeworkScanAction({
         ...data,
         photoDataUri: capturedImage,
+        isPremium
     });
 
     if (actionResult.success) {
@@ -159,6 +163,7 @@ export default function HomeworkScanner() {
         subject,
         gradeLevel,
         numQuestions: 5,
+        isPremium
     });
 
     if (actionResult.success) {
@@ -182,6 +187,7 @@ export default function HomeworkScanner() {
           <CardDescription>Capture an image of your homework problem.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col flex-grow">
+            {!isPremium && <AdPlaceholder className="mb-4" />}
             <div className="relative aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
                 {capturedImage ? (
                     <Image src={capturedImage} alt="Captured homework" layout="fill" objectFit="contain" />

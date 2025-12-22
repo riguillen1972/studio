@@ -10,7 +10,7 @@
  * @function generateQuiz - The main function that orchestrates the quiz generation flow.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, getModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateQuizInputSchema = z.object({
@@ -34,23 +34,9 @@ const GenerateQuizOutputSchema = z.object({
 
 export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
 
-export async function generateQuiz(input: GenerateQuizInput): Promise<GenerateQuizOutput> {
-  return generateQuizFlow(input);
+export async function generateQuiz(input: GenerateQuizInput, isPremium: boolean = false): Promise<GenerateQuizOutput> {
+  return generateQuizFlow(input, isPremium);
 }
-
-const generateQuizPrompt = ai.definePrompt({
-  name: 'generateQuizPrompt',
-  input: {schema: GenerateQuizInputSchema},
-  output: {schema: GenerateQuizOutputSchema},
-  prompt: `You are an AI that generates educational quizzes for a student in grade {{gradeLevel}}.
-
-The student wants a quiz on the topic of "{{topic}}" in the subject of {{subject}}.
-
-Please generate {{numQuestions}} multiple-choice questions. Each question should have exactly 4 options. One of the options must be the correct answer.
-
-Make sure the questions are appropriate for the specified grade level.
-`,
-});
 
 const generateQuizFlow = ai.defineFlow(
   {
@@ -58,8 +44,22 @@ const generateQuizFlow = ai.defineFlow(
     inputSchema: GenerateQuizInputSchema,
     outputSchema: GenerateQuizOutputSchema,
   },
-  async input => {
-    const {output} = await generateQuizPrompt(input);
-    return output!;
+  async (input, streamingCallback, isPremium) => {
+    const prompt = `You are an AI that generates educational quizzes for a student in grade ${input.gradeLevel}.
+
+    The student wants a quiz on the topic of "${input.topic}" in the subject of ${input.subject}.
+    
+    Please generate ${input.numQuestions} multiple-choice questions. Each question should have exactly 4 options. One of the options must be the correct answer.
+    
+    Make sure the questions are appropriate for the specified grade level.
+    `;
+    const {output} = await ai.generate({
+        model: getModel(isPremium),
+        prompt: prompt,
+        output: {
+            schema: GenerateQuizOutputSchema,
+        },
+    });
+    return output;
   }
 );

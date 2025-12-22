@@ -10,7 +10,7 @@
  * @function provideHomeworkHints - The main function that orchestrates the homework hints flow.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, getModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ProvideHomeworkHintsInputSchema = z.object({
@@ -28,26 +28,9 @@ const ProvideHomeworkHintsOutputSchema = z.object({
 
 export type ProvideHomeworkHintsOutput = z.infer<typeof ProvideHomeworkHintsOutputSchema>;
 
-export async function provideHomeworkHints(input: ProvideHomeworkHintsInput): Promise<ProvideHomeworkHintsOutput> {
-  return provideHomeworkHintsFlow(input);
+export async function provideHomeworkHints(input: ProvideHomeworkHintsInput, isPremium: boolean = false): Promise<ProvideHomeworkHintsOutput> {
+  return provideHomeworkHintsFlow(input, isPremium);
 }
-
-const provideHomeworkHintsPrompt = ai.definePrompt({
-  name: 'provideHomeworkHintsPrompt',
-  input: {schema: ProvideHomeworkHintsInputSchema},
-  output: {schema: ProvideHomeworkHintsOutputSchema},
-  prompt: `You are an AI homework helper for a student in grade {{gradeLevel}}.
-
-The student is working on a problem in {{subject}}:
-
-Problem: {{{problem}}}
-
-Provide a few hints to help the student solve the problem independently. Do not give away the answer.
-Also, provide general guidance and strategies for solving this type of problem.
-
-Format the hints as a numbered list.
-`,
-});
 
 const provideHomeworkHintsFlow = ai.defineFlow(
   {
@@ -55,8 +38,26 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     inputSchema: ProvideHomeworkHintsInputSchema,
     outputSchema: ProvideHomeworkHintsOutputSchema,
   },
-  async input => {
-    const {output} = await provideHomeworkHintsPrompt(input);
-    return output!;
+  async (input, streamingCallback, isPremium) => {
+    const prompt = `You are an AI homework helper for a student in grade ${input.gradeLevel}.
+
+    The student is working on a problem in ${input.subject}:
+    
+    Problem: ${input.problem}
+    
+    Provide a few hints to help the student solve the problem independently. Do not give away the answer.
+    Also, provide general guidance and strategies for solving this type of problem.
+    
+    Format the hints as a numbered list.
+    `;
+    const {output} = await ai.generate({
+        model: getModel(isPremium),
+        prompt: prompt,
+        output: {
+            schema: ProvideHomeworkHintsOutputSchema,
+        },
+    });
+
+    return output;
   }
 );

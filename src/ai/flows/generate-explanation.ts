@@ -7,7 +7,7 @@
  * - GenerateExplanationOutput - The return type for the generateExplanation function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, getModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateExplanationInputSchema = z.object({
@@ -20,22 +20,9 @@ const GenerateExplanationOutputSchema = z.object({
 });
 export type GenerateExplanationOutput = z.infer<typeof GenerateExplanationOutputSchema>;
 
-export async function generateExplanation(input: GenerateExplanationInput): Promise<GenerateExplanationOutput> {
-  return generateExplanationFlow(input);
+export async function generateExplanation(input: GenerateExplanationInput, isPremium: boolean = false): Promise<GenerateExplanationOutput> {
+  return generateExplanationFlow(input, isPremium);
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateExplanationPrompt',
-  input: {schema: GenerateExplanationInputSchema},
-  output: {schema: GenerateExplanationOutputSchema},
-  prompt: `You are an AI-powered tutor specializing in explaining complex concepts in simple terms. Your goal is to help students understand the underlying principles of a topic without giving them the direct answer to their questions.
-
-  Please provide a clear and concise explanation for the following concept or question. Guide the student by explaining the concepts and principles involved. Do not provide the final answer to the question if it's a problem to be solved. Instead, help them understand how to arrive at the solution themselves.
-  
-  Concept/Question:
-  {{{concept}}}
-  `,
-});
 
 const generateExplanationFlow = ai.defineFlow(
   {
@@ -43,8 +30,23 @@ const generateExplanationFlow = ai.defineFlow(
     inputSchema: GenerateExplanationInputSchema,
     outputSchema: GenerateExplanationOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input, streamingCallback, isPremium) => {
+    const prompt = `You are an AI-powered tutor specializing in explaining complex concepts in simple terms. Your goal is to help students understand the underlying principles of a topic without giving them the direct answer to their questions.
+
+    Please provide a clear and concise explanation for the following concept or question. Guide the student by explaining the concepts and principles involved. Do not provide the final answer to the question if it's a problem to be solved. Instead, help them understand how to arrive at the solution themselves.
+    
+    Concept/Question:
+    ${input.concept}
+    `;
+
+    const {output} = await ai.generate({
+        model: getModel(isPremium),
+        prompt: prompt,
+        output: {
+            schema: GenerateExplanationOutputSchema
+        }
+    });
+
+    return output;
   }
 );

@@ -10,7 +10,7 @@
  * @function generateQuizFromScan - The main function that orchestrates the quiz generation flow from a scan.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, getModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 // Re-using the output schema from the original quiz generator for consistency.
@@ -41,26 +41,9 @@ const GenerateQuizFromScanInputSchema = z.object({
 export type GenerateQuizFromScanInput = z.infer<typeof GenerateQuizFromScanInputSchema>;
 
 
-export async function generateQuizFromScan(input: GenerateQuizFromScanInput): Promise<GenerateQuizFromScanOutput> {
-  return generateQuizFromScanFlow(input);
+export async function generateQuizFromScan(input: GenerateQuizFromScanInput, isPremium: boolean = false): Promise<GenerateQuizFromScanOutput> {
+  return generateQuizFromScanFlow(input, isPremium);
 }
-
-const generateQuizFromScanPrompt = ai.definePrompt({
-  name: 'generateQuizFromScanPrompt',
-  input: {schema: GenerateQuizFromScanInputSchema},
-  output: {schema: GenerateQuizFromScanOutputSchema},
-  prompt: `You are an AI that generates educational quizzes for a student in grade {{gradeLevel}}.
-
-The student has provided an image of their study material for the subject of {{subject}}.
-
-Analyze the content of the image and identify the main topic. Then, generate {{numQuestions}} multiple-choice questions based *only* on the information present in the image. Each question should have exactly 4 options. One of the options must be the correct answer.
-
-Here is the image:
-{{media url=photoDataUri}}
-
-Make sure the questions are appropriate for the specified grade level.
-`,
-});
 
 const generateQuizFromScanFlow = ai.defineFlow(
   {
@@ -68,8 +51,26 @@ const generateQuizFromScanFlow = ai.defineFlow(
     inputSchema: GenerateQuizFromScanInputSchema,
     outputSchema: GenerateQuizFromScanOutputSchema,
   },
-  async input => {
-    const {output} = await generateQuizFromScanPrompt(input);
-    return output!;
+  async (input, streamingCallback, isPremium) => {
+    const prompt = `You are an AI that generates educational quizzes for a student in grade ${input.gradeLevel}.
+
+    The student has provided an image of their study material for the subject of ${input.subject}.
+    
+    Analyze the content of the image and identify the main topic. Then, generate ${input.numQuestions} multiple-choice questions based *only* on the information present in the image. Each question should have exactly 4 options. One of the options must be the correct answer.
+    
+    Here is the image:
+    {{media url=${input.photoDataUri}}}
+    
+    Make sure the questions are appropriate for the specified grade level.
+    `;
+
+    const {output} = await ai.generate({
+        model: getModel(isPremium),
+        prompt: prompt,
+        output: {
+            schema: GenerateQuizFromScanOutputSchema
+        }
+    });
+    return output;
   }
 );

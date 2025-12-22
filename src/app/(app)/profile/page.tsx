@@ -1,10 +1,14 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, CheckCircle, Target } from "lucide-react";
+import { User, CheckCircle, Target, Gem } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAppState } from "@/components/app-state-provider";
+import { Switch } from "@/components/ui/switch";
 
 const user = {
     name: "Alex Doe",
@@ -20,6 +24,8 @@ const user = {
 }
 
 export default function ProfilePage() {
+  const { isPremium, setIsPremium } = useAppState();
+
   return (
     <div className="flex flex-col gap-8">
       <header>
@@ -80,6 +86,35 @@ export default function ProfilePage() {
                     <p className="text-muted-foreground text-sm">{user.email}</p>
                 </CardContent>
              </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline flex items-center gap-2">
+                        <Gem className="text-primary"/>
+                        Subscription
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                            <Label htmlFor="premium-toggle">
+                                {isPremium ? "Premium Active" : "Free Tier"}
+                            </Label>
+                             <CardDescription>
+                                {isPremium ? "Enjoy an ad-free experience!" : "Upgrade to unlock premium features."}
+                            </CardDescription>
+                        </div>
+                        <Switch
+                            id="premium-toggle"
+                            checked={isPremium}
+                            onCheckedChange={setIsPremium}
+                        />
+                    </div>
+                     {!isPremium && <Button className="w-full" onClick={() => setIsPremium(true)}>Upgrade for $10</Button>}
+                </CardContent>
+            </Card>
+
+
              <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Account Settings</CardTitle>
