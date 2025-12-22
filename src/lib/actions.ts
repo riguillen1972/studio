@@ -7,6 +7,7 @@ import { summarizeText, SummarizeTextInput } from "@/ai/flows/summarize-text";
 import { scanHomework, ScanHomeworkInput } from "@/ai/flows/scan-homework-flow";
 import { generateQuiz, GenerateQuizInput } from "@/ai/flows/generate-quiz";
 import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/generate-quiz-from-scan";
+import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
 
 
 // Helper function to handle action execution and error handling
@@ -118,4 +119,19 @@ export async function getQuizFromScanAction(input: GenerateQuizFromScanInput & {
     }
     const { isPremium, ...flowInput } = parsedInput.data;
     return handleAction(parsedInput.data, generateQuizFromScan, isPremium);
+}
+
+
+// Schema for getBibleVerseAction
+const BibleVerseActionInputSchema = z.object({
+    topic: z.string().optional(),
+    isPremium: z.boolean().optional(),
+});
+export async function getBibleVerseAction(input: GetBibleVerseInput & { isPremium?: boolean }) {
+    const parsedInput = BibleVerseActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    const { isPremium, ...flowInput } = parsedInput.data;
+    return handleAction(flowInput, getBibleVerse, isPremium);
 }

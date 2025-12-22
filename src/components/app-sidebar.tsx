@@ -11,6 +11,7 @@ import {
   Settings,
   User,
   FileQuestion,
+  BookMarked,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -64,6 +65,11 @@ const menuItems = [
     href: "/library",
     icon: Library,
     label: "Content Library",
+  },
+    {
+    href: "/bible-verse",
+    icon: BookMarked,
+    label: "Bible Verse",
   },
 ];
 
