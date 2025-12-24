@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, CheckCircle, Target, Gem, Sigma } from "lucide-react";
@@ -10,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAppState } from "@/components/app-state-provider";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
+import { UpgradeDialog } from "@/components/upgrade-dialog";
 
 
 const user = {
@@ -28,8 +31,11 @@ const user = {
 export default function ProfilePage() {
   const { isPremium, setIsPremium, requestsRemaining, requestLimit } = useAppState();
   const requestPercentage = (requestsRemaining / requestLimit) * 100;
+  const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
 
   return (
+    <>
+    <UpgradeDialog open={isUpgradeDialogOpen} onOpenChange={setIsUpgradeDialogOpen} onUpgrade={() => setIsPremium(true)} />
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold font-headline tracking-tight">
@@ -113,7 +119,7 @@ export default function ProfilePage() {
                             onCheckedChange={setIsPremium}
                         />
                     </div>
-                     {!isPremium && <Button className="w-full" onClick={() => setIsPremium(true)}>Upgrade for $10</Button>}
+                     {!isPremium && <Button className="w-full" onClick={() => setIsUpgradeDialogOpen(true)}>Upgrade for $10</Button>}
                 </CardContent>
             </Card>
 
@@ -148,5 +154,6 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
