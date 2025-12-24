@@ -24,11 +24,16 @@ export default function BibleVersePage() {
     const [verseInfo, setVerseInfo] = useState<BibleVerse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { isPremium } = useAppState();
+    const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
 
     const fetchVerse = async () => {
+        if (!canMakeRequest()) {
+            setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+            return;
+        }
         setIsLoading(true);
         setError(null);
+        incrementRequestCount();
         const result = await getBibleVerseAction({ isPremium });
 
         if (result.success) {
@@ -42,6 +47,8 @@ export default function BibleVersePage() {
     useEffect(() => {
         fetchVerse();
     }, [isPremium]);
+    
+    const isButtonDisabled = isLoading || !canMakeRequest();
 
     return (
         <div className="flex flex-col gap-8">
@@ -83,7 +90,7 @@ export default function BibleVersePage() {
                             <cite className="block font-semibold text-primary not-italic">{verseInfo.reference}</cite>
                         </div>
                     ) : null}
-                     <Button onClick={fetchVerse} disabled={isLoading} className="w-full">
+                     <Button onClick={fetchVerse} disabled={isButtonDisabled} className="w-full">
                         {isLoading ? <Loader2 className="animate-spin" /> : "Get New Verse"}
                     </Button>
                 </CardContent>

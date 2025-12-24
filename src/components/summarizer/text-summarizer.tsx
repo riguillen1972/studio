@@ -24,7 +24,7 @@ export default function TextSummarizer() {
   const [summary, setSummary] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPremium } = useAppState();
+  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -34,10 +34,15 @@ export default function TextSummarizer() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!canMakeRequest()) {
+        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+        return;
+    }
     setIsLoading(true);
     setSummary(null);
     setError(null);
-
+    
+    incrementRequestCount();
     const actionResult = await getSummaryAction({ ...data, isPremium });
 
     if (actionResult.success) {
@@ -48,6 +53,8 @@ export default function TextSummarizer() {
 
     setIsLoading(false);
   };
+
+  const isButtonDisabled = isLoading || !canMakeRequest();
 
   return (
     <div className="grid md:grid-cols-2 gap-8">
@@ -77,7 +84,7 @@ export default function TextSummarizer() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isButtonDisabled}>
                 {isLoading ? <Loader2 className="animate-spin" /> : "Summarize"}
               </Button>
             </form>

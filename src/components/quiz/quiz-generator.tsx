@@ -50,7 +50,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
-  const { isPremium } = useAppState();
+  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -74,6 +74,10 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
 
 
   const handleGenerateQuiz: SubmitHandler<FormValues> = async (data) => {
+    if (!canMakeRequest()) {
+        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+        return;
+    }
     setIsLoading(true);
     setResult(null);
     setError(null);
@@ -81,6 +85,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     setUserAnswers({});
     setScore(0);
 
+    incrementRequestCount();
     const actionResult = await getQuizAction({ ...data, isPremium });
 
     if (actionResult.success) {
@@ -127,6 +132,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   }
 
   const quizTopic = result && form.getValues("topic") ? `on ${form.getValues("topic")}` : "";
+  const isButtonDisabled = isLoading || !canMakeRequest();
 
   return (
     <div className="space-y-8">
@@ -223,7 +229,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                     )}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isButtonDisabled}>
                   {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2"/>Generate Quiz</>}
                 </Button>
                  {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}

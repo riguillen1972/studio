@@ -2,13 +2,15 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, CheckCircle, Target, Gem } from "lucide-react";
+import { User, CheckCircle, Target, Gem, Sigma } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAppState } from "@/components/app-state-provider";
 import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
+
 
 const user = {
     name: "Alex Doe",
@@ -24,7 +26,8 @@ const user = {
 }
 
 export default function ProfilePage() {
-  const { isPremium, setIsPremium } = useAppState();
+  const { isPremium, setIsPremium, requestsRemaining, requestLimit } = useAppState();
+  const requestPercentage = (requestsRemaining / requestLimit) * 100;
 
   return (
     <div className="flex flex-col gap-8">
@@ -111,6 +114,23 @@ export default function ProfilePage() {
                         />
                     </div>
                      {!isPremium && <Button className="w-full" onClick={() => setIsPremium(true)}>Upgrade for $10</Button>}
+                </CardContent>
+            </Card>
+
+             <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline flex items-center gap-2">
+                        <Sigma className="text-primary"/>
+                        Daily Usage
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                        <span>Requests remaining</span>
+                        <span>{requestsRemaining} / {requestLimit}</span>
+                    </div>
+                     <Progress value={requestPercentage} />
+                     <p className="text-xs text-center text-muted-foreground pt-1">Your request count resets daily.</p>
                 </CardContent>
             </Card>
 

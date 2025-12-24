@@ -48,7 +48,7 @@ export default function HomeworkScanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const router = useRouter();
-  const { isPremium } = useAppState();
+  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -119,6 +119,10 @@ export default function HomeworkScanner() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!canMakeRequest()) {
+        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+        return;
+    }
     if (!capturedImage) {
         setError("Please capture an image first.");
         return;
@@ -127,6 +131,7 @@ export default function HomeworkScanner() {
     setResult(null);
     setError(null);
 
+    incrementRequestCount();
     const actionResult = await getHomeworkScanAction({
         ...data,
         photoDataUri: capturedImage,
@@ -143,6 +148,10 @@ export default function HomeworkScanner() {
   };
   
   const handleGenerateQuiz = async () => {
+    if (!canMakeRequest()) {
+        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+        return;
+    }
     if (!capturedImage) {
         setError("Please capture an image first.");
         return;
@@ -158,6 +167,7 @@ export default function HomeworkScanner() {
     setIsGeneratingQuiz(true);
     setError(null);
 
+    incrementRequestCount();
     const actionResult = await getQuizFromScanAction({
         photoDataUri: capturedImage,
         subject,
@@ -177,7 +187,8 @@ export default function HomeworkScanner() {
     setIsGeneratingQuiz(false);
   }
 
-  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage;
+  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !canMakeRequest();
+  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !canMakeRequest();
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">
@@ -213,7 +224,7 @@ export default function HomeworkScanner() {
                 {capturedImage ? (
                     <Button onClick={handleRetake} variant="outline" disabled={isLoading || isGeneratingQuiz}><RefreshCw className="mr-2"/> Retake Photo</Button>
                 ) : (
-                    <Button onClick={handleCapture} disabled={hasCameraPermission !== true || isLoading}><Camera className="mr-2"/> Capture</Button>
+                    <Button onClick={handleCapture} disabled={isCaptureDisabled}><Camera className="mr-2"/> Capture</Button>
                 )}
             </div>
 

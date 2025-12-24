@@ -38,7 +38,7 @@ export default function HomeworkHelper() {
   const [result, setResult] = useState<HintsResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPremium } = useAppState();
+  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -50,10 +50,15 @@ export default function HomeworkHelper() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!canMakeRequest()) {
+        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+        return;
+    }
     setIsLoading(true);
     setResult(null);
     setError(null);
 
+    incrementRequestCount();
     const actionResult = await getHomeworkHintsAction({ ...data, isPremium });
 
     if (actionResult.success) {
@@ -64,6 +69,8 @@ export default function HomeworkHelper() {
 
     setIsLoading(false);
   };
+
+  const isButtonDisabled = isLoading || !canMakeRequest();
 
   return (
     <div className="grid md:grid-cols-2 gap-8">
@@ -139,7 +146,7 @@ export default function HomeworkHelper() {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isButtonDisabled}>
                 {isLoading ? <Loader2 className="animate-spin" /> : "Get Hints"}
               </Button>
             </form>

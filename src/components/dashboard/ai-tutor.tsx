@@ -30,7 +30,7 @@ interface ConversationTurn {
 export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { isPremium } = useAppState();
+  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -40,9 +40,14 @@ export default function AITutor() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!canMakeRequest()) {
+        setConversation((prev) => [...prev, { role: "ai", content: "You have reached your daily request limit. Please upgrade or try again tomorrow." }]);
+        return;
+    }
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
+    incrementRequestCount();
     const result = await getExplanationAction({ ...data, isPremium });
 
     if (result.success) {
@@ -137,14 +142,14 @@ export default function AITutor() {
                       {...field}
                       rows={1}
                       className="min-h-[40px]"
-                      disabled={isLoading}
+                      disabled={isLoading || !canMakeRequest()}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading || !canMakeRequest()}>
               {isLoading ? <Loader2 className="animate-spin" /> : "Ask"}
             </Button>
           </form>
