@@ -8,7 +8,7 @@
  * - SummarizeTextOutput - The return type for the summarizeText function.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, safetySettings} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SummarizeTextInputSchema = z.object({
@@ -38,6 +38,9 @@ const summarizeTextFlow = ai.defineFlow(
         prompt,
         output: {
             schema: SummarizeTextOutputSchema,
+        },
+        config: {
+            safetySettings,
         }
     });
 

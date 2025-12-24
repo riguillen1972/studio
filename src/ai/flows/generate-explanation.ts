@@ -7,7 +7,7 @@
  * - GenerateExplanationOutput - The return type for the generateExplanation function.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, safetySettings} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateExplanationInputSchema = z.object({
@@ -44,6 +44,9 @@ const generateExplanationFlow = ai.defineFlow(
         prompt: prompt,
         output: {
             schema: GenerateExplanationOutputSchema
+        },
+        config: {
+            safetySettings,
         }
     });
 

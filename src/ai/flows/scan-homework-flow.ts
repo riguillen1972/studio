@@ -10,7 +10,7 @@
  * @function scanHomework - The main function that orchestrates the homework scanning flow.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, safetySettings} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ScanHomeworkInputSchema = z.object({
@@ -64,6 +64,9 @@ const scanHomeworkFlow = ai.defineFlow(
         output: {
             schema: ScanHomeworkOutputSchema,
         },
+        config: {
+            safetySettings,
+        }
     });
     return output;
   }

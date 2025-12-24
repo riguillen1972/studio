@@ -7,7 +7,7 @@
  * - GetBibleVerseOutput - The return type for the getBibleVerse function.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, safetySettings} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GetBibleVerseInputSchema = z.object({
@@ -44,6 +44,9 @@ const getBibleVerseFlow = ai.defineFlow(
             output: {
                 schema: GetBibleVerseOutputSchema,
             },
+            config: {
+                safetySettings,
+            }
         });
 
         return output;

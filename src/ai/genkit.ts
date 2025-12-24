@@ -12,6 +12,17 @@ const models: {[key: string]: StudyBuddyModel} = {
     premium: geminiPro
 }
 
+export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
+    {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        threshold: 'BLOCK_ONLY_HIGH',
+    },
+    {
+        category: 'HARM_CATEGORY_HARASSMENT',
+        threshold: 'BLOCK_ONLY_HIGH',
+    }
+];
+
 export function getModel(isPremium: boolean = false) {
     return models[isPremium ? 'premium' : 'free'];
 }

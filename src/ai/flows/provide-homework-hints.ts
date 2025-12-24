@@ -10,7 +10,7 @@
  * @function provideHomeworkHints - The main function that orchestrates the homework hints flow.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, safetySettings} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ProvideHomeworkHintsInputSchema = z.object({
@@ -56,6 +56,9 @@ const provideHomeworkHintsFlow = ai.defineFlow(
         output: {
             schema: ProvideHomeworkHintsOutputSchema,
         },
+        config: {
+            safetySettings,
+        }
     });
 
     return output;

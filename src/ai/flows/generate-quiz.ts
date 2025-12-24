@@ -10,7 +10,7 @@
  * @function generateQuiz - The main function that orchestrates the quiz generation flow.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, safetySettings} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateQuizInputSchema = z.object({
@@ -59,6 +59,9 @@ const generateQuizFlow = ai.defineFlow(
         output: {
             schema: GenerateQuizOutputSchema,
         },
+        config: {
+            safetySettings,
+        }
     });
     return output;
   }
