@@ -1,5 +1,4 @@
 import AITutor from "@/components/dashboard/ai-tutor";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export default function DashboardPage() {
   return (
