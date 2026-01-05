@@ -13,6 +13,7 @@ import {
   FileQuestion,
   BookMarked,
   Layers,
+  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,58 +31,65 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
-
-const menuItems = [
-  {
-    href: "/dashboard",
-    icon: Bot,
-    label: "AI Tutor",
-  },
-  {
-    href: "/homework",
-    icon: BookOpen,
-    label: "Homework Help",
-  },
-  {
-    href: "/scan",
-    icon: ScanLine,
-    label: "Scan Homework",
-  },
-  {
-    href: "/summarizer",
-    icon: NotebookText,
-    label: "Summarizer",
-  },
-  {
-    href: "/quiz",
-    icon: FileQuestion,
-    label: "Quiz Generator",
-  },
-  {
-    href: "/flashcards",
-    icon: Layers,
-    label: "Flashcards",
-  },
-  {
-    href: "/progress",
-    icon: LineChart,
-    label: "Progress",
-  },
-  {
-    href: "/library",
-    icon: Library,
-    label: "Content Library",
-  },
-    {
-    href: "/bible-verse",
-    icon: BookMarked,
-    label: "Bible Verse",
-  },
-];
+import { useAppState } from "./app-state-provider";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { isPremium } = useAppState();
   const isActive = (href: string) => pathname === href;
+
+  const menuItems = [
+    {
+      href: "/dashboard",
+      icon: Bot,
+      label: "AI Tutor",
+    },
+    {
+      href: "/homework",
+      icon: BookOpen,
+      label: "Homework Help",
+    },
+    {
+      href: "/scan",
+      icon: ScanLine,
+      label: "Scan Homework",
+    },
+    {
+      href: "/summarizer",
+      icon: NotebookText,
+      label: "Summarizer",
+    },
+    {
+      href: "/quiz",
+      icon: FileQuestion,
+      label: "Quiz Generator",
+    },
+    {
+      href: "/flashcards",
+      icon: Layers,
+      label: "Flashcards",
+    },
+    ...(isPremium ? [{
+      href: "/video-generator",
+      icon: Video,
+      label: "Video Generator",
+    }] : []),
+    {
+      href: "/progress",
+      icon: LineChart,
+      label: "Progress",
+    },
+    {
+      href: "/library",
+      icon: Library,
+      label: "Content Library",
+    },
+      {
+      href: "/bible-verse",
+      icon: BookMarked,
+      label: "Bible Verse",
+    },
+  ];
 
   return (
     <Sidebar

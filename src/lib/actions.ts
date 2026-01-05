@@ -9,6 +9,7 @@ import { generateQuiz, GenerateQuizInput } from "@/ai/flows/generate-quiz";
 import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/generate-quiz-from-scan";
 import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
 import { generateFlashcards, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards";
+import { generateVideo, GenerateVideoInput } from "@/ai/flows/generate-video-flow";
 
 // This is a server-side check placeholder. In a real app, you would validate
 // the user's request count against a database record.
@@ -162,4 +163,17 @@ export async function getFlashcardsAction(input: GenerateFlashcardsInput & { isP
     }
     const { isPremium, ...flowInput } = parsedInput.data;
     return handleAction(flowInput, generateFlashcards, isPremium);
+}
+
+// Schema for getVideoAction
+const VideoActionInputSchema = z.object({
+    topic: z.string(),
+});
+export async function getVideoAction(input: GenerateVideoInput) {
+    const parsedInput = VideoActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    // Video generation is always a "premium" action
+    return handleAction(parsedInput.data, generateVideo, true);
 }

@@ -10,3 +10,4 @@ import '@/ai/flows/generate-quiz.ts';
 import '@/ai/flows/generate-quiz-from-scan.ts';
 import '@/ai/flows/get-bible-verse.ts';
 import '@/ai/flows/generate-flashcards.ts';
+import '@/ai/flows/generate-video-flow.ts';
