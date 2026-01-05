@@ -12,6 +12,7 @@ import {
   User,
   FileQuestion,
   BookMarked,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -55,6 +56,11 @@ const menuItems = [
     href: "/quiz",
     icon: FileQuestion,
     label: "Quiz Generator",
+  },
+  {
+    href: "/flashcards",
+    icon: Layers,
+    label: "Flashcards",
   },
   {
     href: "/progress",

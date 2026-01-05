@@ -6,8 +6,10 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, Sparkles, CheckCircle, XCircle, ScanLine } from "lucide-react";
+import { Loader2, Sparkles, CheckCircle, XCircle, ScanLine, Layers } from "lucide-react";
 import Confetti from 'react-dom-confetti';
+import { useRouter } from "next/navigation";
+
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -51,6 +53,8 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
   const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const router = useRouter();
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -131,6 +135,22 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     form.reset();
   }
 
+  const handleGenerateFlashcards = () => {
+    const { topic, subject, gradeLevel } = form.getValues();
+    if (!topic || !subject || !gradeLevel) {
+        form.trigger();
+        return;
+    }
+    const query = new URLSearchParams({
+        topic,
+        subject,
+        gradeLevel,
+        numFlashcards: "10",
+    }).toString();
+    router.push(`/flashcards?${query}`);
+  }
+
+
   const quizTopic = result && form.getValues("topic") ? `on ${form.getValues("topic")}` : "";
   const isButtonDisabled = isLoading || !canMakeRequest();
 
@@ -140,7 +160,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
         <Card>
           <CardHeader>
             <CardTitle className="font-headline">Create Your Quiz</CardTitle>
-            <CardDescription>Fill in the details below or scan a document to generate a new quiz.</CardDescription>
+            <CardDescription>Fill in the details below to generate a new quiz or flashcards.</CardDescription>
           </CardHeader>
           <CardContent>
             {!isPremium && <AdPlaceholder className="mb-4" />}
@@ -229,9 +249,14 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                     )}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isButtonDisabled}>
-                  {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2"/>Generate Quiz</>}
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+                    {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2"/>Generate Quiz</>}
+                    </Button>
+                    <Button type="button" variant="secondary" onClick={handleGenerateFlashcards} className="w-full" disabled={isButtonDisabled}>
+                        <Layers className="mr-2"/> Generate Flashcards
+                    </Button>
+                </div>
                  {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
               </form>
             </Form>
@@ -239,7 +264,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                 <Separator />
                 <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-sm text-muted-foreground">OR</span>
             </div>
-            <Button variant="secondary" className="w-full" asChild>
+            <Button variant="outline" className="w-full" asChild>
                 <Link href="/scan">
                     <ScanLine className="mr-2"/> Generate Quiz From Scan
                 </Link>

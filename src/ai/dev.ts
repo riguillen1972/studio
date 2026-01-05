@@ -1,3 +1,4 @@
+'use server';
 import { config } from 'dotenv';
 config();
 
@@ -8,3 +9,4 @@ import '@/ai/flows/scan-homework-flow.ts';
 import '@/ai/flows/generate-quiz.ts';
 import '@/ai/flows/generate-quiz-from-scan.ts';
 import '@/ai/flows/get-bible-verse.ts';
+import '@/ai/flows/generate-flashcards.ts';

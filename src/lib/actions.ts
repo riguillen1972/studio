@@ -8,6 +8,7 @@ import { scanHomework, ScanHomeworkInput } from "@/ai/flows/scan-homework-flow";
 import { generateQuiz, GenerateQuizInput } from "@/ai/flows/generate-quiz";
 import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/generate-quiz-from-scan";
 import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
+import { generateFlashcards, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards";
 
 // This is a server-side check placeholder. In a real app, you would validate
 // the user's request count against a database record.
@@ -143,4 +144,22 @@ export async function getBibleVerseAction(input: GetBibleVerseInput & { isPremiu
     }
     const { isPremium, ...flowInput } = parsedInput.data;
     return handleAction(flowInput, getBibleVerse, isPremium);
+}
+
+
+// Schema for getFlashcardsAction
+const FlashcardsActionInputSchema = z.object({
+    topic: z.string(),
+    subject: z.string(),
+    gradeLevel: z.string(),
+    numFlashcards: z.number(),
+    isPremium: z.boolean().optional(),
+});
+export async function getFlashcardsAction(input: GenerateFlashcardsInput & { isPremium?: boolean }) {
+    const parsedInput = FlashcardsActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    const { isPremium, ...flowInput } = parsedInput.data;
+    return handleAction(flowInput, generateFlashcards, isPremium);
 }
