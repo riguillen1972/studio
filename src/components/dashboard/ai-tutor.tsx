@@ -129,31 +129,33 @@ export default function AITutor() {
             )}
             </div>
         </ScrollArea>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2 pt-4 border-t">
-            <FormField
-              control={form.control}
-              name="concept"
-              render={({ field }) => (
-                <FormItem className="flex-grow">
-                  <FormControl>
-                    <Textarea
-                      placeholder="e.g., Explain the theory of relativity"
-                      {...field}
-                      rows={1}
-                      className="min-h-[40px]"
-                      disabled={isLoading || !canMakeRequest()}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" disabled={isLoading || !canMakeRequest()}>
-              {isLoading ? <Loader2 className="animate-spin" /> : "Ask"}
-            </Button>
-          </form>
-        </Form>
+        <div className="pt-4 border-t">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2">
+              <FormField
+                control={form.control}
+                name="concept"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g., Explain the theory of relativity"
+                        {...field}
+                        rows={1}
+                        className="min-h-[40px]"
+                        disabled={isLoading || !canMakeRequest()}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={isLoading || !canMakeRequest()}>
+                {isLoading ? <Loader2 className="animate-spin" /> : "Ask"}
+              </Button>
+            </form>
+          </Form>
+        </div>
       </CardContent>
     </Card>
   );
