@@ -28,8 +28,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarProvider,
-  SidebarTrigger,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -100,7 +98,6 @@ export function AppSidebar() {
   ];
 
   return (
-    <SidebarProvider>
       <Sidebar
         variant="sidebar"
         collapsible="icon"
@@ -161,6 +158,5 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-    </SidebarProvider>
   );
 }
