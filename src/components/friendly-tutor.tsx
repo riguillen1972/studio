@@ -74,16 +74,16 @@ export default function FriendlyTutor() {
         <PopoverTrigger asChild>
             <Button
                 className="fixed bottom-6 right-6 h-20 w-20 blob-shape shadow-lg z-50 flex items-center justify-center
-                           bg-gradient-to-br from-yellow-200 via-amber-300 to-orange-400
-                           hover:from-yellow-300 hover:via-amber-400 hover:to-orange-500
+                           bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600
+                           hover:from-sky-500 hover:via-blue-600 hover:to-indigo-700
                            border-2 border-white/30
-                           text-slate-800
+                           text-white
                            transition-all duration-500"
             >
                 <div className={cn("relative h-10 w-10 transition-all duration-300", isOpen && "rotate-90 scale-0")}>
                     {/* Eyes */}
-                    <div className="absolute top-[30%] left-[20%] w-2 h-2.5 rounded-full bg-current transform -rotate-12"></div>
-                    <div className="absolute top-[30%] right-[20%] w-2 h-2.5 rounded-full bg-current transform rotate-12"></div>
+                    <div className={cn("absolute top-[30%] left-[20%] w-2 h-2.5 rounded-full bg-current", isLoading ? "animate-thinking-left" : "transform -rotate-12")}></div>
+                    <div className={cn("absolute top-[30%] right-[20%] w-2 h-2.5 rounded-full bg-current", isLoading ? "animate-thinking-right" : "transform rotate-12")}></div>
                     {/* Smile */}
                     <div className="absolute bottom-[30%] left-[50%] -translate-x-1/2 w-5 h-2.5 border-b-2 border-current rounded-b-full"></div>
                 </div>
