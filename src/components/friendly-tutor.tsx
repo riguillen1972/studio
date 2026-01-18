@@ -73,11 +73,21 @@ export default function FriendlyTutor() {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
             <Button
-                className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-50 flex items-center justify-center"
-                size="icon"
+                className="fixed bottom-6 right-6 h-20 w-20 blob-shape shadow-lg z-50 flex items-center justify-center
+                           bg-gradient-to-br from-yellow-200 via-amber-300 to-orange-400
+                           hover:from-yellow-300 hover:via-amber-400 hover:to-orange-500
+                           border-2 border-white/30
+                           text-slate-800
+                           transition-all duration-500"
             >
-                <Sparkles className={cn("h-8 w-8 transition-transform duration-300", isOpen && "rotate-180 scale-0")} />
-                <X className={cn("h-8 w-8 absolute transition-transform duration-300", !isOpen && "rotate-180 scale-0")} />
+                <div className={cn("relative h-10 w-10 transition-all duration-300", isOpen && "rotate-90 scale-0")}>
+                    {/* Eyes */}
+                    <div className="absolute top-[30%] left-[20%] w-2 h-2.5 rounded-full bg-current transform -rotate-12"></div>
+                    <div className="absolute top-[30%] right-[20%] w-2 h-2.5 rounded-full bg-current transform rotate-12"></div>
+                    {/* Smile */}
+                    <div className="absolute bottom-[30%] left-[50%] -translate-x-1/2 w-5 h-2.5 border-b-2 border-current rounded-b-full"></div>
+                </div>
+                <X className={cn("h-10 w-10 absolute transition-all duration-300", !isOpen && "-rotate-90 scale-0")} />
                 <span className="sr-only">Toggle Study Buddy</span>
             </Button>
         </PopoverTrigger>
