@@ -10,6 +10,7 @@ import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/gene
 import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
 import { generateFlashcards, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards";
 import { generateVideo, GenerateVideoInput } from "@/ai/flows/generate-video-flow";
+import { getFriendlyAdvice, GetFriendlyAdviceInput } from "@/ai/flows/get-friendly-advice";
 
 // This is a server-side check placeholder. In a real app, you would validate
 // the user's request count against a database record.
@@ -176,4 +177,18 @@ export async function getVideoAction(input: GenerateVideoInput) {
     }
     // Video generation is always a "premium" action
     return handleAction(parsedInput.data, generateVideo, true);
+}
+
+// Schema for getFriendlyAdviceAction
+const FriendlyAdviceActionInputSchema = z.object({
+    question: z.string(),
+    isPremium: z.boolean().optional(),
+});
+export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput & { isPremium?: boolean }) {
+    const parsedInput = FriendlyAdviceActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    const { isPremium, ...flowInput } = parsedInput.data;
+    return handleAction(flowInput, getFriendlyAdvice, isPremium);
 }
