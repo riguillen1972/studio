@@ -3,6 +3,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppStateProvider } from "@/components/app-state-provider";
 import FriendlyTutor from "@/components/friendly-tutor";
+import { FirebaseClientProvider } from "@/firebase";
 
 export default function AppLayout({
   children,
@@ -11,15 +12,17 @@ export default function AppLayout({
 }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <AppStateProvider>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <main className="min-h-svh p-4 sm:p-6 lg:p-8">{children}</main>
-            <FriendlyTutor />
-          </SidebarInset>
-        </SidebarProvider>
-      </AppStateProvider>
+       <FirebaseClientProvider>
+        <AppStateProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <main className="min-h-svh p-4 sm:p-6 lg:p-8">{children}</main>
+              <FriendlyTutor />
+            </SidebarInset>
+          </SidebarProvider>
+        </AppStateProvider>
+      </FirebaseClientProvider>
     </ThemeProvider>
   );
 }
