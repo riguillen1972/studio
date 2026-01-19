@@ -1,0 +1,129 @@
+/**
+ * This ruleset enforces a strict user-ownership model for the Study Buddy AI application.
+ *
+ * Core Philosophy:
+ * The security model is centered around user privacy and data segregation. Each user has exclusive control
+ * over their own data tree, which includes their profile and academic progress. Publicly accessible data,
+ * like learning materials, is stored in a separate top-level collection with read-only access for clients.
+ * System-level data, intended for backend or administrative use, is completely locked down from client access.
+ *
+ * Data Structure:
+ * - /userProfiles/{userId}: Stores a user's private profile information.
+ * - /userProfiles/{userId}/progress/{progressId}: A subcollection containing the user's progress on learning content.
+ * - /learningContent/{contentId}: A public, top-level collection of all educational materials.
+ * - /buddyverseConsoleData/{dataId}: A locked-down, top-level collection for system data from an external console.
+ *
+ * Key Security Decisions:
+ * - User Isolation: A user can only access data located under their own user ID path (/userProfiles/{userId}/...).
+ * - No User Enumeration: The top-level /userProfiles collection cannot be listed, protecting user privacy.
+ * - Public Content is Read-Only: The /learningContent collection is readable by anyone but cannot be modified by clients. Content management is assumed to be handled by a trusted backend service.
+ * - System Data is Inaccessible: The /buddyverseConsoleData collection is completely inaccessible to clients, as it's intended for system-to-system communication.
+ *
+ * Denormalization for Authorization:
+ * To ensure fast and secure authorization, rules enforce relational integrity. For example, when a new 'progress'
+ * document is created, its internal `userProfileId` field must match the user ID from the document path. This
+ * prevents a user from creating progress records on behalf of someone else.
+ *
+ * Structural Segregation:
+ * The ruleset leverages separate collections for data with different access patterns. Private user data
+ * (/userProfiles) is structurally segregated from public data (/learningContent) and system data (/buddyverseConsoleData).
+ * This separation simplifies rules and enhances security and query performance.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for concise and readable rules.
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the authenticated user's UID matches the provided userId.
+     * This is the primary function for verifying document ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks for ownership on an existing document. Used for update and delete
+     * operations to prevent acting on non-existent data.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Ensures the ownership link on a progress document cannot be changed.
+     */
+    function isProgressOwnerLinkImmutable() {
+      return request.resource.data.userProfileId == resource.data.userProfileId;
+    }
+
+    /**
+     * @description Rules for user profiles. A user can create their own profile and has full control over it post-creation. User profiles cannot be listed by others.
+     * @path /userProfiles/{userProfileId}
+     * @allow (create) A new user (auth.uid: 'user_abc') creating their own profile document at /userProfiles/user_abc.
+     * @deny (list) Any user attempting to list all documents in the /userProfiles collection.
+     * @principle Enforces Self-Creation and strict Ownership. Validates relational integrity by ensuring the document's internal 'id' matches the user's UID on creation.
+     */
+    match /userProfiles/{userProfileId} {
+      allow get: if isOwner(userProfileId);
+      allow list: if false;
+      allow create: if isOwner(userProfileId) && request.resource.data.id == userProfileId;
+      allow update: if isExistingOwner(userProfileId);
+      allow delete: if isExistingOwner(userProfileId);
+    }
+
+    /**
+     * @description Rules for the public library of learning content. All users, including unauthenticated ones, can read this content. Writes are disabled for clients.
+     * @path /learningContent/{learningContentId}
+     * @allow (get) Any user, signed in or not, fetching a document from /learningContent/math_101.
+     * @deny (create) Any authenticated user trying to add a new document to the collection.
+     * @principle Implements Public Read with Admin-Only Writes. Client writes are disabled because the data model lacks an 'ownerId' field, making secure client-side writes impossible. Content must be managed by a trusted backend.
+     */
+    match /learningContent/{learningContentId} {
+      allow get: if true;
+      allow list: if true;
+      // CRITICAL: Cannot implement owner-only writes. The 'LearningContent' entity is missing an 'ownerId' or 'authorId' field.
+      allow create: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Rules for a user's academic progress records. Access is restricted to the owner of the parent user profile.
+     * @path /userProfiles/{userProfileId}/progress/{progressId}
+     * @allow (create) An authenticated user ('user_abc') creating a new progress document at /userProfiles/user_abc/progress/new_progress.
+     * @deny (get) An authenticated user ('user_xyz') trying to read a document from /userProfiles/user_abc/progress/some_progress.
+     * @principle Enforces Inherited Ownership from the parent document path. Validates relational integrity to ensure progress is always linked to the correct user.
+     */
+    match /userProfiles/{userProfileId}/progress/{progressId} {
+      allow get: if isOwner(userProfileId);
+      allow list: if isOwner(userProfileId);
+      allow create: if isOwner(userProfileId) && request.resource.data.userProfileId == userProfileId;
+      allow update: if isExistingOwner(userProfileId) && isProgressOwnerLinkImmutable();
+      allow delete: if isExistingOwner(userProfileId);
+    }
+
+    /**
+     * @description Rules for system-level data from the Buddyverse Console. This collection is completely locked down from client access.
+     * @path /buddyverseConsoleData/{buddyverseConsoleDataId}
+     * @allow (none) No client operation is permitted.
+     * @deny (create) Any user attempting to create a document in this collection.
+     * @principle Implements a secure airlock for system-to-system data. All operations must be performed by a trusted backend service using Admin SDKs, which bypass these rules.
+     */
+    match /buddyverseConsoleData/{buddyverseConsoleDataId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}

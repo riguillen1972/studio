@@ -1,0 +1,213 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a student's profile within Study Buddy AI.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The student's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The student's email address.",
+          "format": "email"
+        },
+        "learningGoals": {
+          "type": "string",
+          "description": "The student's self defined goals."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "learningGoals"
+      ]
+    },
+    "LearningContent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LearningContent",
+      "type": "object",
+      "description": "Represents a piece of educational content available in the library.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the LearningContent entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the learning content."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of learning content (e.g., article, video, simulation)."
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL where the learning content can be accessed.",
+          "format": "uri"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject that the learning content falls under."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "type",
+        "url",
+        "subject"
+      ]
+    },
+    "Progress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Progress",
+      "type": "object",
+      "description": "Represents a student's progress on a specific topic or learning content.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Progress entity."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Progress)"
+        },
+        "learningContentId": {
+          "type": "string",
+          "description": "Reference to LearningContent. (Relationship: LearningContent 1:N Progress)"
+        },
+        "completionDate": {
+          "type": "string",
+          "description": "The date and time when the student completed the content.",
+          "format": "date-time"
+        },
+        "score": {
+          "type": "number",
+          "description": "The student's score on the content, if applicable."
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "learningContentId",
+        "completionDate"
+      ]
+    },
+    "BuddyverseConsoleData": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "BuddyverseConsoleData",
+      "type": "object",
+      "description": "Represents the data coming from the Buddyverse Console to update Study Buddy AI.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the BuddyverseConsoleData entity."
+        },
+        "updateDate": {
+          "type": "string",
+          "description": "Date and time of the update from Buddyverse Console.",
+          "format": "date-time"
+        },
+        "learningContentUpdates": {
+          "type": "array",
+          "description": "Array of LearningContent IDs that have been updated.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "updateDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/userProfiles/{userProfileId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile information. The userProfileId is the same as the user's UID. Includes denormalized user ID for authorization independence.",
+          "params": [
+            {
+              "name": "userProfileId",
+              "description": "The unique identifier for the user profile, which matches the user's Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learningContent/{learningContentId}",
+        "definition": {
+          "entityName": "LearningContent",
+          "schema": {
+            "$ref": "#/backend/entities/LearningContent"
+          },
+          "description": "Stores the content of each learning material. Open read access.",
+          "params": [
+            {
+              "name": "learningContentId",
+              "description": "The unique identifier for each learning content."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userProfiles/{userProfileId}/progress/{progressId}",
+        "definition": {
+          "entityName": "Progress",
+          "schema": {
+            "$ref": "#/backend/entities/Progress"
+          },
+          "description": "Stores progress of individual student to learning content.",
+          "params": [
+            {
+              "name": "userProfileId",
+              "description": "The unique identifier for the user profile, which matches the user's Firebase Authentication UID."
+            },
+            {
+              "name": "progressId",
+              "description": "The unique identifier for a record of progress of a learning content."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/buddyverseConsoleData/{buddyverseConsoleDataId}",
+        "definition": {
+          "entityName": "BuddyverseConsoleData",
+          "schema": {
+            "$ref": "#/backend/entities/BuddyverseConsoleData"
+          },
+          "description": "Stores the updates from buddyverse console.",
+          "params": [
+            {
+              "name": "buddyverseConsoleDataId",
+              "description": "The unique identifier for the data."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the Study Buddy AI application. User profiles are stored in a dedicated collection (`/userProfiles`) for easy management and clear ownership.  Learning content is stored in the `/learningContent` collection. User-specific progress is located under the `/userProfiles/{userProfileId}/progress/{progressId}` path. The `buddyverseConsoleData` is stored in a separate `/buddyverseConsoleData` collection to decouple it from user data, with updates triggered when data is added to this collection. This structure uses path-based ownership for user data and segregates data with different access requirements into distinct collections, simplifying security rules and ensuring efficient queries. This design supports QAPs by allowing secure listing of learning content and progress within a user's scope."
+  }
+}
