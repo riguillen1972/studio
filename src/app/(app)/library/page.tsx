@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -9,7 +10,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useCollection, useFirebase, useFirestore } from "@/firebase";
+import { useCollection, useFirebase, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
 import { useEffect } from "react";
 import { initiateAnonymousSignIn } from "@/firebase/non-blocking-login";
@@ -27,11 +28,17 @@ type LibraryItem = {
 export default function LibraryPage() {
   const { auth } = useFirebase();
   const firestore = useFirestore();
+
+  const libraryItemsQuery = useMemoFirebase(
+    () => collection(firestore, "learningContent"),
+    [firestore]
+  );
+
   const {
     data: libraryItems,
     isLoading,
     error,
-  } = useCollection<LibraryItem>(collection(firestore, "learningContent"));
+  } = useCollection<LibraryItem>(libraryItemsQuery);
 
   useEffect(() => {
     initiateAnonymousSignIn(auth);
