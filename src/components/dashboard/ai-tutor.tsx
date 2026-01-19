@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -31,6 +32,11 @@ export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -78,7 +84,7 @@ export default function AITutor() {
             </CardDescription>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
-        {!isPremium && <AdPlaceholder />}
+        {isClient && !isPremium && <AdPlaceholder />}
         <ScrollArea className="flex-grow pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (
