@@ -14,7 +14,6 @@ import {
   FileQuestion,
   BookMarked,
   Layers,
-  Video,
   WandSparkles,
 } from "lucide-react";
 import Link from "next/link";
@@ -75,11 +74,6 @@ export function AppSidebar() {
       icon: Layers,
       label: "Flashcards",
     },
-    ...(isPremium ? [{
-      href: "/video-generator",
-      icon: Video,
-      label: "Video Generator",
-    }] : []),
     {
       href: "/progress",
       icon: LineChart,
