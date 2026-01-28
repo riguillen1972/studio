@@ -2,12 +2,11 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 
-const FREE_REQUEST_LIMIT = 70;
-const PREMIUM_REQUEST_LIMIT = 160;
+const MONTHLY_REQUEST_LIMIT = 1000000;
 
 interface RequestInfo {
   count: number;
-  date: string; // YYYY-MM-DD
+  date: string; // YYYY-MM
 }
 
 interface AppState {
@@ -27,7 +26,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [requestInfo, setRequestInfo] = useState<RequestInfo>({ count: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
-  const getToday = () => new Date().toISOString().split('T')[0];
+  const getCurrentMonth = () => new Date().toISOString().slice(0, 7); // YYYY-MM
 
   useEffect(() => {
     setIsMounted(true);
@@ -37,18 +36,18 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           setIsPremiumState(JSON.parse(storedPremium));
         }
 
-        const today = getToday();
+        const currentMonth = getCurrentMonth();
 
         const storedRequestInfo = localStorage.getItem('requestInfo');
         if (storedRequestInfo) {
             const parsed: RequestInfo = JSON.parse(storedRequestInfo);
-            if (parsed.date === today) {
+            if (parsed.date === currentMonth) {
                 setRequestInfo(parsed);
             } else {
-                setRequestInfo({ count: 0, date: today });
+                setRequestInfo({ count: 0, date: currentMonth });
             }
         } else {
-            setRequestInfo({ count: 0, date: today });
+            setRequestInfo({ count: 0, date: currentMonth });
         }
 
     } catch (error) {
@@ -65,12 +64,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const requestLimit = isPremium ? PREMIUM_REQUEST_LIMIT : FREE_REQUEST_LIMIT;
+  const requestLimit = MONTHLY_REQUEST_LIMIT;
 
   const canMakeRequest = useCallback(() => {
     if (!isMounted) return false;
-    const today = getToday();
-    if (requestInfo.date !== today) {
+    const currentMonth = getCurrentMonth();
+    if (requestInfo.date !== currentMonth) {
       return true; // Will be reset on next action
     }
     return requestInfo.count < requestLimit;
@@ -78,10 +77,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   
   const incrementRequestCount = useCallback(() => {
     if (!isMounted) return;
-    const today = getToday();
+    const currentMonth = getCurrentMonth();
     setRequestInfo(prev => {
-        const newCount = prev.date === today ? prev.count + 1 : 1;
-        const newInfo = { count: newCount, date: today };
+        const newCount = prev.date === currentMonth ? prev.count + 1 : 1;
+        const newInfo = { count: newCount, date: currentMonth };
         try {
             localStorage.setItem('requestInfo', JSON.stringify(newInfo));
         } catch (error) {

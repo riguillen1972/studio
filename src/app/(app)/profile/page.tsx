@@ -127,16 +127,16 @@ export default function ProfilePage() {
                 <CardHeader>
                     <CardTitle className="font-headline flex items-center gap-2">
                         <Sigma className="text-primary"/>
-                        Daily Usage
+                        Monthly Usage
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                     <div className="flex justify-between text-sm text-muted-foreground mb-1">
                         <span>Requests remaining</span>
-                        <span>{requestsRemaining} / {requestLimit}</span>
+                        <span>{new Intl.NumberFormat().format(requestsRemaining)} / {new Intl.NumberFormat().format(requestLimit)}</span>
                     </div>
                      <Progress value={requestPercentage} />
-                     <p className="text-xs text-center text-muted-foreground pt-1">Your request count resets daily.</p>
+                     <p className="text-xs text-center text-muted-foreground pt-1">Your request count resets monthly.</p>
                 </CardContent>
             </Card>
 
