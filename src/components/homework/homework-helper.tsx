@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -38,7 +39,7 @@ export default function HomeworkHelper() {
   const [result, setResult] = useState<HintsResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -50,18 +51,18 @@ export default function HomeworkHelper() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!canMakeRequest()) {
-        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+    if (!hasTokens()) {
+        setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
     setIsLoading(true);
     setResult(null);
     setError(null);
 
-    incrementRequestCount();
     const actionResult = await getHomeworkHintsAction({ ...data, isPremium });
 
     if (actionResult.success) {
+      consumeTokens(actionResult.data.totalTokens);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -70,7 +71,7 @@ export default function HomeworkHelper() {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || !canMakeRequest();
+  const isButtonDisabled = isLoading || !hasTokens();
 
   return (
     <div className="grid md:grid-cols-2 gap-8">

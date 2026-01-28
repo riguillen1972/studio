@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI-powered Bible verse generation.
@@ -15,9 +16,15 @@ const GetBibleVerseInputSchema = z.object({
 });
 export type GetBibleVerseInput = z.infer<typeof GetBibleVerseInputSchema>;
 
-const GetBibleVerseOutputSchema = z.object({
+const VerseSchema = z.object({
     verse: z.string().describe('The Bible verse text.'),
     reference: z.string().describe('The reference for the Bible verse (e.g., "John 3:16").'),
+});
+
+const GetBibleVerseOutputSchema = z.object({
+    verse: z.string(),
+    reference: z.string(),
+    totalTokens: z.number(),
 });
 export type GetBibleVerseOutput = z.infer<typeof GetBibleVerseOutputSchema>;
 
@@ -38,17 +45,20 @@ const getBibleVerseFlow = ai.defineFlow(
         
         Return the verse and its reference.`;
 
-        const {output} = await ai.generate({
+        const response = await ai.generate({
             model: getModel(isPremium),
             prompt,
             output: {
-                schema: GetBibleVerseOutputSchema,
+                schema: VerseSchema,
             },
             config: {
                 safetySettings,
             }
         });
 
-        return output;
+        return {
+          ...response.output!,
+          totalTokens: response.usage.totalTokens,
+        };
     }
 );

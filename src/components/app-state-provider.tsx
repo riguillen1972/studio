@@ -1,29 +1,30 @@
+
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 
-const MONTHLY_REQUEST_LIMIT = 1000000;
+const MONTHLY_TOKEN_LIMIT = 1000000;
 
-interface RequestInfo {
-  count: number;
+interface TokenInfo {
+  usedTokens: number;
   date: string; // YYYY-MM
 }
 
 interface AppState {
   isPremium: boolean;
   setIsPremium: (isPremium: boolean) => void;
-  requestCount: number;
-  requestLimit: number;
-  canMakeRequest: () => boolean;
-  incrementRequestCount: () => void;
-  requestsRemaining: number;
+  tokensUsed: number;
+  tokenLimit: number;
+  hasTokens: () => boolean;
+  consumeTokens: (amount: number) => void;
+  tokensRemaining: number;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [isPremium, setIsPremiumState] = useState(false);
-  const [requestInfo, setRequestInfo] = useState<RequestInfo>({ count: 0, date: '' });
+  const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ usedTokens: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
   const getCurrentMonth = () => new Date().toISOString().slice(0, 7); // YYYY-MM
@@ -38,16 +39,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
         const currentMonth = getCurrentMonth();
 
-        const storedRequestInfo = localStorage.getItem('requestInfo');
-        if (storedRequestInfo) {
-            const parsed: RequestInfo = JSON.parse(storedRequestInfo);
+        const storedTokenInfo = localStorage.getItem('tokenInfo');
+        if (storedTokenInfo) {
+            const parsed: TokenInfo = JSON.parse(storedTokenInfo);
             if (parsed.date === currentMonth) {
-                setRequestInfo(parsed);
+                setTokenInfo(parsed);
             } else {
-                setRequestInfo({ count: 0, date: currentMonth });
+                setTokenInfo({ usedTokens: 0, date: currentMonth });
             }
         } else {
-            setRequestInfo({ count: 0, date: currentMonth });
+            setTokenInfo({ usedTokens: 0, date: currentMonth });
         }
 
     } catch (error) {
@@ -64,25 +65,25 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const requestLimit = MONTHLY_REQUEST_LIMIT;
+  const tokenLimit = MONTHLY_TOKEN_LIMIT;
 
-  const canMakeRequest = useCallback(() => {
+  const hasTokens = useCallback(() => {
     if (!isMounted) return false;
     const currentMonth = getCurrentMonth();
-    if (requestInfo.date !== currentMonth) {
+    if (tokenInfo.date !== currentMonth) {
       return true; // Will be reset on next action
     }
-    return requestInfo.count < requestLimit;
-  }, [isMounted, requestInfo, requestLimit]);
+    return tokenInfo.usedTokens < tokenLimit;
+  }, [isMounted, tokenInfo, tokenLimit]);
   
-  const incrementRequestCount = useCallback(() => {
+  const consumeTokens = useCallback((amount: number) => {
     if (!isMounted) return;
     const currentMonth = getCurrentMonth();
-    setRequestInfo(prev => {
-        const newCount = prev.date === currentMonth ? prev.count + 1 : 1;
-        const newInfo = { count: newCount, date: currentMonth };
+    setTokenInfo(prev => {
+        const newUsed = prev.date === currentMonth ? prev.usedTokens + amount : amount;
+        const newInfo = { usedTokens: newUsed, date: currentMonth };
         try {
-            localStorage.setItem('requestInfo', JSON.stringify(newInfo));
+            localStorage.setItem('tokenInfo', JSON.stringify(newInfo));
         } catch (error) {
             console.error("Could not access local storage:", error);
         }
@@ -90,16 +91,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     });
   }, [isMounted]);
   
-  const requestsRemaining = isMounted ? Math.max(0, requestLimit - requestInfo.count) : requestLimit;
+  const tokensRemaining = isMounted ? Math.max(0, tokenLimit - tokenInfo.usedTokens) : tokenLimit;
 
   const value = {
     isPremium: isMounted ? isPremium : false,
     setIsPremium,
-    requestCount: requestInfo.count,
-    requestLimit,
-    canMakeRequest,
-    incrementRequestCount,
-    requestsRemaining,
+    tokensUsed: tokenInfo.usedTokens,
+    tokenLimit,
+    hasTokens,
+    consumeTokens,
+    tokensRemaining,
   };
 
   return (

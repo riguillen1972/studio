@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -16,8 +17,13 @@ const SummarizeTextInputSchema = z.object({
 });
 export type SummarizeTextInput = z.infer<typeof SummarizeTextInputSchema>;
 
-const SummarizeTextOutputSchema = z.object({
+const SummarySchema = z.object({
   summary: z.string().describe('A summary of the key concepts in the text.'),
+});
+
+const SummarizeTextOutputSchema = z.object({
+  summary: z.string(),
+  totalTokens: z.number(),
 });
 export type SummarizeTextOutput = z.infer<typeof SummarizeTextOutputSchema>;
 
@@ -33,17 +39,20 @@ const summarizeTextFlow = ai.defineFlow(
   },
   async (input, streamingCallback, isPremium) => {
     const prompt = `Summarize the key concepts in the following text:\n\n${input.text}`;
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt,
         output: {
-            schema: SummarizeTextOutputSchema,
+            schema: SummarySchema,
         },
         config: {
             safetySettings,
         }
     });
 
-    return output;
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );

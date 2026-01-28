@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A friendly AI companion that provides guidance without giving direct answers.
@@ -15,9 +16,15 @@ const GetFriendlyAdviceInputSchema = z.object({
 });
 export type GetFriendlyAdviceInput = z.infer<typeof GetFriendlyAdviceInputSchema>;
 
-const GetFriendlyAdviceOutputSchema = z.object({
+const AdviceSchema = z.object({
   advice: z.string().describe('The friendly, guiding response from the AI.'),
 });
+
+const GetFriendlyAdviceOutputSchema = z.object({
+  advice: z.string(),
+  totalTokens: z.number(),
+});
+
 export type GetFriendlyAdviceOutput = z.infer<typeof GetFriendlyAdviceOutputSchema>;
 
 export async function getFriendlyAdvice(input: GetFriendlyAdviceInput, isPremium: boolean = false): Promise<GetFriendlyAdviceOutput> {
@@ -46,17 +53,20 @@ const getFriendlyAdviceFlow = ai.defineFlow(
     ${input.question}
     `;
 
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: GetFriendlyAdviceOutputSchema
+            schema: AdviceSchema
         },
         config: {
             safetySettings,
         }
     });
 
-    return output;
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );

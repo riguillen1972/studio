@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -32,7 +33,7 @@ export default function FriendlyTutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -42,18 +43,18 @@ export default function FriendlyTutor() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!canMakeRequest()) {
-        setConversation((prev) => [...prev, { role: "ai", content: "Oh no! It looks like you've reached your daily request limit. We can chat again tomorrow! ✨" }]);
+    if (!hasTokens()) {
+        setConversation((prev) => [...prev, { role: "ai", content: "Oh no! It looks like you've reached your monthly token limit. We can chat again next month! ✨" }]);
         return;
     }
     if (!data.question.trim()) return;
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.question }]);
 
-    incrementRequestCount();
     const result = await getFriendlyAdviceAction({ question: data.question, isPremium });
 
     if (result.success) {
+      consumeTokens(result.data.totalTokens);
       setConversation((prev) => [
         ...prev,
         { role: "ai", content: result.data.advice },
@@ -68,6 +69,8 @@ export default function FriendlyTutor() {
 
     setIsLoading(false);
   };
+  
+  const isButtonDisabled = isLoading || !hasTokens();
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -167,7 +170,7 @@ export default function FriendlyTutor() {
                                 {...field}
                                 rows={1}
                                 className="min-h-[40px]"
-                                disabled={isLoading || !canMakeRequest()}
+                                disabled={isButtonDisabled}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && !e.shiftKey) {
                                         e.preventDefault();
@@ -180,7 +183,7 @@ export default function FriendlyTutor() {
                           </FormItem>
                         )}
                       />
-                      <Button type="submit" size="icon" disabled={isLoading || !canMakeRequest() || !form.formState.isValid}>
+                      <Button type="submit" size="icon" disabled={isButtonDisabled || !form.formState.isValid}>
                         <Send />
                       </Button>
                     </form>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -74,7 +75,7 @@ export default function FlashcardGenerator() {
   const [result, setResult] = useState<FlashcardResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
   const searchParams = useSearchParams();
 
   const form = useForm<FormValues>({
@@ -111,9 +112,9 @@ export default function FlashcardGenerator() {
   }, [searchParams, form]);
   
   const handleGenerateFlashcards: SubmitHandler<FormValues> = async (data) => {
-    if (!canMakeRequest()) {
+    if (!hasTokens()) {
       setError(
-        'You have reached your daily request limit. Please upgrade or try again tomorrow.'
+        'You have reached your monthly token limit. Please try again next month.'
       );
       return;
     }
@@ -121,10 +122,10 @@ export default function FlashcardGenerator() {
     setResult(null);
     setError(null);
 
-    incrementRequestCount();
     const actionResult = await getFlashcardsAction({ ...data, isPremium });
 
     if (actionResult.success) {
+      consumeTokens(actionResult.data.totalTokens);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -138,7 +139,7 @@ export default function FlashcardGenerator() {
     form.reset();
   };
 
-  const isButtonDisabled = isLoading || !canMakeRequest();
+  const isButtonDisabled = isLoading || !hasTokens();
 
   return (
     <div className="space-y-8">

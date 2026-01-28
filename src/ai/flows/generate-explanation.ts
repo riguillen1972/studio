@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI-powered explanation generation for educational concepts.
@@ -15,8 +16,13 @@ const GenerateExplanationInputSchema = z.object({
 });
 export type GenerateExplanationInput = z.infer<typeof GenerateExplanationInputSchema>;
 
-const GenerateExplanationOutputSchema = z.object({
+const ExplanationSchema = z.object({
   explanation: z.string().describe('The AI-generated explanation of the concept or question.'),
+});
+
+const GenerateExplanationOutputSchema = z.object({
+  explanation: z.string(),
+  totalTokens: z.number(),
 });
 export type GenerateExplanationOutput = z.infer<typeof GenerateExplanationOutputSchema>;
 
@@ -39,17 +45,20 @@ const generateExplanationFlow = ai.defineFlow(
     ${input.concept}
     `;
 
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: GenerateExplanationOutputSchema
+            schema: ExplanationSchema
         },
         config: {
             safetySettings,
         }
     });
 
-    return output;
+    return {
+      explanation: response.output!.explanation,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );

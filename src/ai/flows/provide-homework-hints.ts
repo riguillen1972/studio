@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -21,9 +22,15 @@ const ProvideHomeworkHintsInputSchema = z.object({
 
 export type ProvideHomeworkHintsInput = z.infer<typeof ProvideHomeworkHintsInputSchema>;
 
-const ProvideHomeworkHintsOutputSchema = z.object({
+const HintsSchema = z.object({
   hints: z.array(z.string()).describe('An array of hints to help the student solve the problem.'),
   guidance: z.string().describe('General guidance and strategies for solving this type of problem.'),
+});
+
+const ProvideHomeworkHintsOutputSchema = z.object({
+  hints: z.array(z.string()),
+  guidance: z.string(),
+  totalTokens: z.number(),
 });
 
 export type ProvideHomeworkHintsOutput = z.infer<typeof ProvideHomeworkHintsOutputSchema>;
@@ -50,17 +57,20 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     
     Format the hints as a numbered list.
     `;
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: ProvideHomeworkHintsOutputSchema,
+            schema: HintsSchema,
         },
         config: {
             safetySettings,
         }
     });
 
-    return output;
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    }
   }
 );

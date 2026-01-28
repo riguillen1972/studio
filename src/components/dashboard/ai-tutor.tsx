@@ -31,7 +31,7 @@ interface ConversationTurn {
 export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -46,17 +46,17 @@ export default function AITutor() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!canMakeRequest()) {
-        setConversation((prev) => [...prev, { role: "ai", content: "You have reached your daily request limit. Please upgrade or try again tomorrow." }]);
+    if (!hasTokens()) {
+        setConversation((prev) => [...prev, { role: "ai", content: "You have reached your monthly token limit. Please try again next month." }]);
         return;
     }
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
-    incrementRequestCount();
     const result = await getExplanationAction({ ...data, isPremium });
 
     if (result.success) {
+      consumeTokens(result.data.totalTokens);
       setConversation((prev) => [
         ...prev,
         { role: "ai", content: result.data.explanation },
@@ -71,6 +71,8 @@ export default function AITutor() {
 
     setIsLoading(false);
   };
+
+  const isButtonDisabled = isLoading || (isClient && !hasTokens());
 
   return (
     <Card className="h-full flex flex-col max-h-[75vh]">
@@ -153,14 +155,14 @@ export default function AITutor() {
                       {...field}
                       rows={1}
                       className="min-h-[40px]"
-                      disabled={isLoading || !canMakeRequest()}
+                      disabled={isButtonDisabled}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading || !canMakeRequest()}>
+            <Button type="submit" disabled={isButtonDisabled}>
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -24,19 +25,19 @@ export default function BibleVersePage() {
     const [verseInfo, setVerseInfo] = useState<BibleVerse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+    const { isPremium, hasTokens, consumeTokens } = useAppState();
 
     const fetchVerse = async () => {
-        if (!canMakeRequest()) {
-            setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+        if (!hasTokens()) {
+            setError("You have reached your monthly token limit. Please try again next month.");
             return;
         }
         setIsLoading(true);
         setError(null);
-        incrementRequestCount();
         const result = await getBibleVerseAction({ isPremium });
 
         if (result.success) {
+            consumeTokens(result.data.totalTokens);
             setVerseInfo(result.data);
         } else {
             setError(result.error);
@@ -48,7 +49,7 @@ export default function BibleVersePage() {
         fetchVerse();
     }, [isPremium]);
     
-    const isButtonDisabled = isLoading || !canMakeRequest();
+    const isButtonDisabled = isLoading || !hasTokens();
 
     return (
         <div className="flex flex-col gap-8">

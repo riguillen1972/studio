@@ -52,7 +52,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
-  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
   const router = useRouter();
 
 
@@ -78,8 +78,8 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
 
 
   const handleGenerateQuiz: SubmitHandler<FormValues> = async (data) => {
-    if (!canMakeRequest()) {
-        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+    if (!hasTokens()) {
+        setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
     setIsLoading(true);
@@ -89,10 +89,10 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     setUserAnswers({});
     setScore(0);
 
-    incrementRequestCount();
     const actionResult = await getQuizAction({ ...data, isPremium });
 
     if (actionResult.success) {
+      consumeTokens(actionResult.data.totalTokens);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -152,7 +152,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
 
 
   const quizTopic = result && form.getValues("topic") ? `on ${form.getValues("topic")}` : "";
-  const isButtonDisabled = isLoading || !canMakeRequest();
+  const isButtonDisabled = isLoading || !hasTokens();
 
   return (
     <div className="space-y-8">

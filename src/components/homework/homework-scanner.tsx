@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -48,7 +49,7 @@ export default function HomeworkScanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const router = useRouter();
-  const { isPremium, canMakeRequest, incrementRequestCount } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -119,8 +120,8 @@ export default function HomeworkScanner() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!canMakeRequest()) {
-        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+    if (!hasTokens()) {
+        setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
     if (!capturedImage) {
@@ -131,7 +132,6 @@ export default function HomeworkScanner() {
     setResult(null);
     setError(null);
 
-    incrementRequestCount();
     const actionResult = await getHomeworkScanAction({
         ...data,
         photoDataUri: capturedImage,
@@ -139,6 +139,7 @@ export default function HomeworkScanner() {
     });
 
     if (actionResult.success) {
+      consumeTokens(actionResult.data.totalTokens);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -148,8 +149,8 @@ export default function HomeworkScanner() {
   };
   
   const handleGenerateQuiz = async () => {
-    if (!canMakeRequest()) {
-        setError("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+    if (!hasTokens()) {
+        setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
     if (!capturedImage) {
@@ -167,7 +168,6 @@ export default function HomeworkScanner() {
     setIsGeneratingQuiz(true);
     setError(null);
 
-    incrementRequestCount();
     const actionResult = await getQuizFromScanAction({
         photoDataUri: capturedImage,
         subject,
@@ -177,6 +177,7 @@ export default function HomeworkScanner() {
     });
 
     if (actionResult.success) {
+        consumeTokens(actionResult.data.totalTokens);
         const quizData = JSON.stringify(actionResult.data.questions);
         const topic = actionResult.data.topic;
         router.push(`/quiz?quizData=${encodeURIComponent(quizData)}&topic=${encodeURIComponent(topic)}`);
@@ -187,8 +188,8 @@ export default function HomeworkScanner() {
     setIsGeneratingQuiz(false);
   }
 
-  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !canMakeRequest();
-  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !canMakeRequest();
+  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !hasTokens();
+  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !hasTokens();
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">

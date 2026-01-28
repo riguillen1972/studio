@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -26,9 +27,15 @@ const ScanHomeworkInputSchema = z.object({
 
 export type ScanHomeworkInput = z.infer<typeof ScanHomeworkInputSchema>;
 
-const ScanHomeworkOutputSchema = z.object({
+const HintsSchema = z.object({
   hints: z.array(z.string()).describe('An array of hints to help the student solve the problem.'),
   guidance: z.string().describe('General guidance and strategies for solving this type of problem.'),
+});
+
+const ScanHomeworkOutputSchema = z.object({
+  hints: z.array(z.string()),
+  guidance: z.string(),
+  totalTokens: z.number(),
 });
 
 export type ScanHomeworkOutput = z.infer<typeof ScanHomeworkOutputSchema>;
@@ -58,16 +65,20 @@ const scanHomeworkFlow = ai.defineFlow(
     
     Format the hints as a numbered list.
     `;
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: ScanHomeworkOutputSchema,
+            schema: HintsSchema,
         },
         config: {
             safetySettings,
         }
     });
-    return output;
+
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );

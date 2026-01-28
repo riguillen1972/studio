@@ -29,8 +29,8 @@ const user = {
 }
 
 export default function ProfilePage() {
-  const { isPremium, setIsPremium, requestsRemaining, requestLimit } = useAppState();
-  const requestPercentage = (requestsRemaining / requestLimit) * 100;
+  const { isPremium, setIsPremium, tokensRemaining, tokenLimit } = useAppState();
+  const tokenPercentage = (tokensRemaining / tokenLimit) * 100;
   const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
 
   return (
@@ -132,11 +132,11 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                     <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                        <span>Requests remaining</span>
-                        <span>{new Intl.NumberFormat().format(requestsRemaining)} / {new Intl.NumberFormat().format(requestLimit)}</span>
+                        <span>Tokens remaining</span>
+                        <span>{new Intl.NumberFormat().format(tokensRemaining)} / {new Intl.NumberFormat().format(tokenLimit)}</span>
                     </div>
-                     <Progress value={requestPercentage} />
-                     <p className="text-xs text-center text-muted-foreground pt-1">Your request count resets monthly.</p>
+                     <Progress value={tokenPercentage} />
+                     <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
                 </CardContent>
             </Card>
 

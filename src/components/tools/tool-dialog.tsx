@@ -28,18 +28,19 @@ interface ToolDialogProps {
 }
 
 export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
-  const { canMakeRequest, incrementRequestCount } = useAppState();
+  const { hasTokens, consumeTokens } = useAppState();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
 
   const handleGenerate = () => {
-    if (!canMakeRequest()) {
-      setOutput("You have reached your daily request limit. Please upgrade or try again tomorrow.");
+    if (!hasTokens()) {
+      setOutput("You have reached your monthly token limit. Please try again next month.");
       return;
     }
     setIsLoading(true);
-    incrementRequestCount();
+    // Simulate token consumption for this prototype tool
+    consumeTokens(150);
 
     // In a real application, you would call a specific Genkit flow here
     // based on the `tool.name`. For this prototype, we'll just simulate a response.
@@ -76,7 +77,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
                     className="h-full resize-none"
                     disabled={isLoading}
                 />
-                <Button onClick={handleGenerate} disabled={isLoading || !canMakeRequest() || !input}>
+                <Button onClick={handleGenerate} disabled={isLoading || !hasTokens() || !input}>
                     {isLoading ? (
                         <Loader2 className="animate-spin" />
                     ) : (

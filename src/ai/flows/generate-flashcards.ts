@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -27,8 +28,13 @@ const FlashcardSchema = z.object({
     back: z.string().describe("The back of the flashcard (definition or answer)."),
 });
 
-const GenerateFlashcardsOutputSchema = z.object({
+const FlashcardsSchema = z.object({
   flashcards: z.array(FlashcardSchema).describe('An array of flashcards.'),
+});
+
+const GenerateFlashcardsOutputSchema = z.object({
+  flashcards: z.array(FlashcardSchema),
+  totalTokens: z.number(),
 });
 
 export type GenerateFlashcardsOutput = z.infer<typeof GenerateFlashcardsOutputSchema>;
@@ -52,16 +58,20 @@ const generateFlashcardsFlow = ai.defineFlow(
     
     Make sure the content is appropriate for the specified grade level.
     `;
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: GenerateFlashcardsOutputSchema,
+            schema: FlashcardsSchema,
         },
         config: {
             safetySettings,
         }
     });
-    return output;
+
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );

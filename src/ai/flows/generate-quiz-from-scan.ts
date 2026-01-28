@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -13,16 +14,21 @@
 import {ai, getModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Re-using the output schema from the original quiz generator for consistency.
 const QuizQuestionSchema = z.object({
     question: z.string().describe("The quiz question."),
     options: z.array(z.string()).describe("An array of 4 multiple-choice options."),
     answer: z.string().describe("The correct answer from the options."),
 });
 
-const GenerateQuizFromScanOutputSchema = z.object({
+const QuizFromScanSchema = z.object({
   questions: z.array(QuizQuestionSchema).describe('An array of quiz questions.'),
   topic: z.string().describe('The topic of the generated quiz based on the document.')
+});
+
+const GenerateQuizFromScanOutputSchema = z.object({
+  questions: z.array(QuizQuestionSchema),
+  topic: z.string(),
+  totalTokens: z.number(),
 });
 export type GenerateQuizFromScanOutput = z.infer<typeof GenerateQuizFromScanOutputSchema>;
 
@@ -64,13 +70,17 @@ const generateQuizFromScanFlow = ai.defineFlow(
     Make sure the questions are appropriate for the specified grade level.
     `;
 
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: GenerateQuizFromScanOutputSchema
+            schema: QuizFromScanSchema
         }
     });
-    return output;
+
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );

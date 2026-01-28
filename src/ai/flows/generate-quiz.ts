@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -28,8 +29,13 @@ const QuizQuestionSchema = z.object({
     answer: z.string().describe("The correct answer from the options."),
 });
 
-const GenerateQuizOutputSchema = z.object({
+const QuizSchema = z.object({
   questions: z.array(QuizQuestionSchema).describe('An array of quiz questions.'),
+});
+
+const GenerateQuizOutputSchema = z.object({
+  questions: z.array(QuizQuestionSchema),
+  totalTokens: z.number(),
 });
 
 export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
@@ -53,16 +59,20 @@ const generateQuizFlow = ai.defineFlow(
     
     Make sure the questions are appropriate for the specified grade level.
     `;
-    const {output} = await ai.generate({
+    const response = await ai.generate({
         model: getModel(isPremium),
         prompt: prompt,
         output: {
-            schema: GenerateQuizOutputSchema,
+            schema: QuizSchema,
         },
         config: {
             safetySettings,
         }
     });
-    return output;
+    
+    return {
+      ...response.output!,
+      totalTokens: response.usage.totalTokens,
+    };
   }
 );
