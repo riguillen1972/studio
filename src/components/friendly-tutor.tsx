@@ -1,7 +1,6 @@
+'use client';
 
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +16,7 @@ import { useAppState } from "./app-state-provider";
 import { getFriendlyAdviceAction } from "@/lib/actions";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 const formSchema = z.object({
   question: z.string().min(1, { message: "Please ask a question." }),
@@ -35,6 +35,11 @@ export default function FriendlyTutor() {
   const [isOpen, setIsOpen] = useState(false);
   const { isPremium, hasTokens, consumeTokens } = useAppState();
   const modelToUse = isPremium ? 'pro' : 'flash';
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -71,7 +76,7 @@ export default function FriendlyTutor() {
     setIsLoading(false);
   };
   
-  const isButtonDisabled = isLoading || !hasTokens(modelToUse);
+  const isButtonDisabled = isLoading || (isClient && !hasTokens(modelToUse));
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -158,37 +163,44 @@ export default function FriendlyTutor() {
                     </div>
                 </ScrollArea>
                 <div className="pt-4 border-t">
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2">
-                      <FormField
-                        control={form.control}
-                        name="question"
-                        render={({ field }) => (
-                          <FormItem className="flex-grow">
-                            <FormControl>
-                              <Textarea
-                                placeholder="Ask your study buddy..."
-                                {...field}
-                                rows={1}
-                                className="min-h-[40px]"
-                                disabled={isButtonDisabled}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        form.handleSubmit(onSubmit)();
-                                    }
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit" size="icon" disabled={isButtonDisabled || !form.formState.isValid}>
-                        <Send />
-                      </Button>
-                    </form>
-                  </Form>
+                  {isClient ? (
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2">
+                        <FormField
+                          control={form.control}
+                          name="question"
+                          render={({ field }) => (
+                            <FormItem className="flex-grow">
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Ask your study buddy..."
+                                  {...field}
+                                  rows={1}
+                                  className="min-h-[40px]"
+                                  disabled={isButtonDisabled}
+                                  onKeyDown={(e) => {
+                                      if (e.key === 'Enter' && !e.shiftKey) {
+                                          e.preventDefault();
+                                          form.handleSubmit(onSubmit)();
+                                      }
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="submit" size="icon" disabled={isButtonDisabled || !form.formState.isValid}>
+                          <Send />
+                        </Button>
+                      </form>
+                    </Form>
+                  ) : (
+                    <div className="flex items-start gap-2">
+                        <Skeleton className="h-10 flex-grow" />
+                        <Skeleton className="h-10 w-10" />
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
