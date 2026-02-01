@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const GetBibleVerseInputSchema = z.object({
   topic: z.string().optional().describe('An optional topic for the Bible verse (e.g., "hope", "faith").'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 export type GetBibleVerseInput = z.infer<typeof GetBibleVerseInputSchema>;
 
@@ -28,8 +29,8 @@ const GetBibleVerseOutputSchema = z.object({
 });
 export type GetBibleVerseOutput = z.infer<typeof GetBibleVerseOutputSchema>;
 
-export async function getBibleVerse(input: GetBibleVerseInput, isPremium: boolean = false): Promise<GetBibleVerseOutput> {
-    return getBibleVerseFlow(input, isPremium);
+export async function getBibleVerse(input: GetBibleVerseInput): Promise<GetBibleVerseOutput> {
+    return getBibleVerseFlow(input);
 }
 
 const getBibleVerseFlow = ai.defineFlow(
@@ -38,7 +39,7 @@ const getBibleVerseFlow = ai.defineFlow(
         inputSchema: GetBibleVerseInputSchema,
         outputSchema: GetBibleVerseOutputSchema,
     },
-    async (input, streamingCallback, isPremium) => {
+    async (input) => {
         const prompt = `You are an AI assistant that provides Bible verses. 
         
         Please provide a random Bible verse. ${input.topic ? `The verse should be related to the topic of: ${input.topic}.` : ''}
@@ -46,7 +47,7 @@ const getBibleVerseFlow = ai.defineFlow(
         Return the verse and its reference.`;
 
         const response = await ai.generate({
-            model: getModel(isPremium),
+            model: getModel(input.model),
             prompt,
             output: {
                 schema: VerseSchema,

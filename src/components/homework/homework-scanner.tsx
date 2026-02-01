@@ -50,7 +50,7 @@ export default function HomeworkScanner() {
   const { toast } = useToast();
   const router = useRouter();
   const { isPremium, hasTokens, consumeTokens } = useAppState();
-  const model = isPremium ? 'pro' : 'flash';
+  const modelToUse = isPremium ? 'pro' : 'flash';
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -121,7 +121,7 @@ export default function HomeworkScanner() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens(model)) {
+    if (!hasTokens(modelToUse)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -136,11 +136,11 @@ export default function HomeworkScanner() {
     const actionResult = await getHomeworkScanAction({
         ...data,
         photoDataUri: capturedImage,
-        isPremium
+        model: modelToUse,
     });
 
     if (actionResult.success) {
-      consumeTokens(actionResult.data.totalTokens, model);
+      consumeTokens(actionResult.data.totalTokens, modelToUse);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -150,7 +150,7 @@ export default function HomeworkScanner() {
   };
   
   const handleGenerateQuiz = async () => {
-    if (!hasTokens(model)) {
+    if (!hasTokens(modelToUse)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -174,11 +174,11 @@ export default function HomeworkScanner() {
         subject,
         gradeLevel,
         numQuestions: 5,
-        isPremium
+        model: modelToUse
     });
 
     if (actionResult.success) {
-        consumeTokens(actionResult.data.totalTokens, model);
+        consumeTokens(actionResult.data.totalTokens, modelToUse);
         const quizData = JSON.stringify(actionResult.data.questions);
         const topic = actionResult.data.topic;
         router.push(`/quiz?quizData=${encodeURIComponent(quizData)}&topic=${encodeURIComponent(topic)}`);
@@ -189,8 +189,8 @@ export default function HomeworkScanner() {
     setIsGeneratingQuiz(false);
   }
 
-  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !hasTokens(model);
-  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !hasTokens(model);
+  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !hasTokens(modelToUse);
+  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !hasTokens(modelToUse);
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">

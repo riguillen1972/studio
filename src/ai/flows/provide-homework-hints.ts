@@ -18,6 +18,7 @@ const ProvideHomeworkHintsInputSchema = z.object({
   problem: z.string().describe('The homework problem to get hints for.'),
   subject: z.string().describe('The subject of the homework problem.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 
 export type ProvideHomeworkHintsInput = z.infer<typeof ProvideHomeworkHintsInputSchema>;
@@ -35,8 +36,8 @@ const ProvideHomeworkHintsOutputSchema = z.object({
 
 export type ProvideHomeworkHintsOutput = z.infer<typeof ProvideHomeworkHintsOutputSchema>;
 
-export async function provideHomeworkHints(input: ProvideHomeworkHintsInput, isPremium: boolean = false): Promise<ProvideHomeworkHintsOutput> {
-  return provideHomeworkHintsFlow(input, isPremium);
+export async function provideHomeworkHints(input: ProvideHomeworkHintsInput): Promise<ProvideHomeworkHintsOutput> {
+  return provideHomeworkHintsFlow(input);
 }
 
 const provideHomeworkHintsFlow = ai.defineFlow(
@@ -45,7 +46,7 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     inputSchema: ProvideHomeworkHintsInputSchema,
     outputSchema: ProvideHomeworkHintsOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `You are an AI homework helper for a student in grade ${input.gradeLevel}.
 
     The student is working on a problem in ${input.subject}:
@@ -58,7 +59,7 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     Format the hints as a numbered list.
     `;
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt: prompt,
         output: {
             schema: HintsSchema,

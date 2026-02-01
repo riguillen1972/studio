@@ -42,13 +42,14 @@ const GenerateQuizFromScanInputSchema = z.object({
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 
 export type GenerateQuizFromScanInput = z.infer<typeof GenerateQuizFromScanInputSchema>;
 
 
-export async function generateQuizFromScan(input: GenerateQuizFromScanInput, isPremium: boolean = false): Promise<GenerateQuizFromScanOutput> {
-  return generateQuizFromScanFlow(input, isPremium);
+export async function generateQuizFromScan(input: GenerateQuizFromScanInput): Promise<GenerateQuizFromScanOutput> {
+  return generateQuizFromScanFlow(input);
 }
 
 const generateQuizFromScanFlow = ai.defineFlow(
@@ -57,7 +58,7 @@ const generateQuizFromScanFlow = ai.defineFlow(
     inputSchema: GenerateQuizFromScanInputSchema,
     outputSchema: GenerateQuizFromScanOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `You are an AI that generates educational quizzes for a student in grade ${input.gradeLevel}.
 
     The student has provided an image of their study material for the subject of ${input.subject}.
@@ -71,7 +72,7 @@ const generateQuizFromScanFlow = ai.defineFlow(
     `;
 
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt: prompt,
         output: {
             schema: QuizFromScanSchema

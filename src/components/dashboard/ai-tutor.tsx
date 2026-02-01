@@ -17,6 +17,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
 import { Skeleton } from "../ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Label } from "../ui/label";
 
 const formSchema = z.object({
   concept: z.string().min(10, { message: "Please enter a concept or question with at least 10 characters." }),
@@ -33,13 +35,17 @@ export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  
+  const [selectedModel, setSelectedModel] = useState<'flash' | 'pro'>('flash');
   const { isPremium, hasTokens, consumeTokens } = useAppState();
-  const model = isPremium ? 'pro' : 'flash';
 
+  const modelToUse = isPremium ? selectedModel : 'flash';
+  
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    if (!isPremium) {
+        setSelectedModel('flash');
+    }
+  }, [isPremium]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -49,17 +55,17 @@ export default function AITutor() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens(model)) {
-        setConversation((prev) => [...prev, { role: "ai", content: "You have reached your monthly token limit. Please try again next month." }]);
+    if (!hasTokens(modelToUse)) {
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
-    const result = await getExplanationAction({ ...data, isPremium });
+    const result = await getExplanationAction({ concept: data.concept, model: modelToUse });
 
     if (result.success) {
-      consumeTokens(result.data.totalTokens, model);
+      consumeTokens(result.data.totalTokens, modelToUse);
       setConversation((prev) => [
         ...prev,
         { role: "ai", content: result.data.explanation },
@@ -75,7 +81,7 @@ export default function AITutor() {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || (isClient && !hasTokens(model));
+  const isButtonDisabled = isLoading || (isClient && !hasTokens(modelToUse));
 
   if (!isClient) {
     return (
@@ -166,7 +172,24 @@ export default function AITutor() {
             </div>
         </ScrollArea>
       </CardContent>
-       <CardFooter className="pt-4 border-t">
+       <CardFooter className="pt-4 border-t flex-col items-start">
+        {isPremium && (
+            <div className="mb-4 w-full">
+                <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
+                <Select value={selectedModel} onValueChange={(value: 'flash' | 'pro') => setSelectedModel(value)}>
+                    <SelectTrigger id="model-select">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
+                        <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>
+                    </SelectContent>
+                </Select>
+                 <p className="text-xs text-muted-foreground mt-1">
+                    Pro offers higher quality responses and consumes from your Pro token balance.
+                </p>
+            </div>
+        )}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

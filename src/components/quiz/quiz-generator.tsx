@@ -54,7 +54,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [score, setScore] = useState(0);
   const { isPremium, hasTokens, consumeTokens } = useAppState();
   const router = useRouter();
-  const model = isPremium ? 'pro' : 'flash';
+  const modelToUse = isPremium ? 'pro' : 'flash';
 
 
   const form = useForm<FormValues>({
@@ -79,7 +79,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
 
 
   const handleGenerateQuiz: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens(model)) {
+    if (!hasTokens(modelToUse)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -90,10 +90,10 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     setUserAnswers({});
     setScore(0);
 
-    const actionResult = await getQuizAction({ ...data, isPremium });
+    const actionResult = await getQuizAction({ ...data, model: modelToUse });
 
     if (actionResult.success) {
-      consumeTokens(actionResult.data.totalTokens, model);
+      consumeTokens(actionResult.data.totalTokens, modelToUse);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -153,7 +153,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
 
 
   const quizTopic = result && form.getValues("topic") ? `on ${form.getValues("topic")}` : "";
-  const isButtonDisabled = isLoading || !hasTokens(model);
+  const isButtonDisabled = isLoading || !hasTokens(modelToUse);
 
   return (
     <div className="space-y-8">

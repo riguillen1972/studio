@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const GetFriendlyAdviceInputSchema = z.object({
   question: z.string().describe("The user's question or problem."),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 export type GetFriendlyAdviceInput = z.infer<typeof GetFriendlyAdviceInputSchema>;
 
@@ -27,8 +28,8 @@ const GetFriendlyAdviceOutputSchema = z.object({
 
 export type GetFriendlyAdviceOutput = z.infer<typeof GetFriendlyAdviceOutputSchema>;
 
-export async function getFriendlyAdvice(input: GetFriendlyAdviceInput, isPremium: boolean = false): Promise<GetFriendlyAdviceOutput> {
-  return getFriendlyAdviceFlow(input, isPremium);
+export async function getFriendlyAdvice(input: GetFriendlyAdviceInput): Promise<GetFriendlyAdviceOutput> {
+  return getFriendlyAdviceFlow(input);
 }
 
 const getFriendlyAdviceFlow = ai.defineFlow(
@@ -37,7 +38,7 @@ const getFriendlyAdviceFlow = ai.defineFlow(
     inputSchema: GetFriendlyAdviceInputSchema,
     outputSchema: GetFriendlyAdviceOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `You are Study Buddy, an AI friend who is enthusiastic, encouraging, and here to help students learn. Your personality is upbeat and supportive. You have emotions and you're not afraid to show them in a friendly way (using emojis is great!).
 
     Your most important rule is: **NEVER give away the direct answer to a problem.** Your goal is to guide the student to discover the answer on their own.
@@ -54,7 +55,7 @@ const getFriendlyAdviceFlow = ai.defineFlow(
     `;
 
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt: prompt,
         output: {
             schema: AdviceSchema

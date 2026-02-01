@@ -19,6 +19,7 @@ const GenerateQuizInputSchema = z.object({
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 
 export type GenerateQuizInput = z.infer<typeof GenerateQuizInputSchema>;
@@ -40,8 +41,8 @@ const GenerateQuizOutputSchema = z.object({
 
 export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
 
-export async function generateQuiz(input: GenerateQuizInput, isPremium: boolean = false): Promise<GenerateQuizOutput> {
-  return generateQuizFlow(input, isPremium);
+export async function generateQuiz(input: GenerateQuizInput): Promise<GenerateQuizOutput> {
+  return generateQuizFlow(input);
 }
 
 const generateQuizFlow = ai.defineFlow(
@@ -50,7 +51,7 @@ const generateQuizFlow = ai.defineFlow(
     inputSchema: GenerateQuizInputSchema,
     outputSchema: GenerateQuizOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `You are an AI that generates educational quizzes for a student in grade ${input.gradeLevel}.
 
     The student wants a quiz on the topic of "${input.topic}" in the subject of ${input.subject}.
@@ -60,7 +61,7 @@ const generateQuizFlow = ai.defineFlow(
     Make sure the questions are appropriate for the specified grade level.
     `;
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt: prompt,
         output: {
             schema: QuizSchema,

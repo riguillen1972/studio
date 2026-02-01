@@ -14,6 +14,7 @@ import {z} from 'genkit';
 
 const SummarizeTextInputSchema = z.object({
   text: z.string().describe('The text content to be summarized.'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 export type SummarizeTextInput = z.infer<typeof SummarizeTextInputSchema>;
 
@@ -27,8 +28,8 @@ const SummarizeTextOutputSchema = z.object({
 });
 export type SummarizeTextOutput = z.infer<typeof SummarizeTextOutputSchema>;
 
-export async function summarizeText(input: SummarizeTextInput, isPremium: boolean = false): Promise<SummarizeTextOutput> {
-  return summarizeTextFlow(input, isPremium);
+export async function summarizeText(input: SummarizeTextInput): Promise<SummarizeTextOutput> {
+  return summarizeTextFlow(input);
 }
 
 const summarizeTextFlow = ai.defineFlow(
@@ -37,10 +38,10 @@ const summarizeTextFlow = ai.defineFlow(
     inputSchema: SummarizeTextInputSchema,
     outputSchema: SummarizeTextOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `Summarize the key concepts in the following text:\n\n${input.text}`;
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt,
         output: {
             schema: SummarySchema,

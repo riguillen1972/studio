@@ -26,19 +26,19 @@ export default function BibleVersePage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { isPremium, hasTokens, consumeTokens } = useAppState();
-    const model = isPremium ? 'pro' : 'flash';
+    const modelToUse = isPremium ? 'pro' : 'flash';
 
     const fetchVerse = async () => {
-        if (!hasTokens(model)) {
+        if (!hasTokens(modelToUse)) {
             setError("You have reached your monthly token limit. Please try again next month.");
             return;
         }
         setIsLoading(true);
         setError(null);
-        const result = await getBibleVerseAction({ isPremium });
+        const result = await getBibleVerseAction({ model: modelToUse });
 
         if (result.success) {
-            consumeTokens(result.data.totalTokens, model);
+            consumeTokens(result.data.totalTokens, modelToUse);
             setVerseInfo(result.data);
         } else {
             setError(result.error);
@@ -50,7 +50,7 @@ export default function BibleVersePage() {
         fetchVerse();
     }, [isPremium]);
     
-    const isButtonDisabled = isLoading || !hasTokens(model);
+    const isButtonDisabled = isLoading || !hasTokens(modelToUse);
 
     return (
         <div className="flex flex-col gap-8">

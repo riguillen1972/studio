@@ -23,6 +23,7 @@ const ScanHomeworkInputSchema = z.object({
   question: z.string().describe('The specific question the student has about the problem.'),
   subject: z.string().describe('The subject of the homework problem.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 
 export type ScanHomeworkInput = z.infer<typeof ScanHomeworkInputSchema>;
@@ -40,8 +41,8 @@ const ScanHomeworkOutputSchema = z.object({
 
 export type ScanHomeworkOutput = z.infer<typeof ScanHomeworkOutputSchema>;
 
-export async function scanHomework(input: ScanHomeworkInput, isPremium: boolean = false): Promise<ScanHomeworkOutput> {
-  return scanHomeworkFlow(input, isPremium);
+export async function scanHomework(input: ScanHomeworkInput): Promise<ScanHomeworkOutput> {
+  return scanHomeworkFlow(input);
 }
 
 const scanHomeworkFlow = ai.defineFlow(
@@ -50,7 +51,7 @@ const scanHomeworkFlow = ai.defineFlow(
     inputSchema: ScanHomeworkInputSchema,
     outputSchema: ScanHomeworkOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `You are an AI homework helper for a student in grade ${input.gradeLevel}.
 
     The student is working on a problem in ${input.subject}. They have provided a photo of their work and have the following question:
@@ -66,7 +67,7 @@ const scanHomeworkFlow = ai.defineFlow(
     Format the hints as a numbered list.
     `;
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt: prompt,
         output: {
             schema: HintsSchema,

@@ -8,8 +8,8 @@ const geminiPro = 'googleai/gemini-2.5-pro';
 type StudyBuddyModel = ModelReference<GoogleAIGenerateRequestConfig>;
 
 const models: {[key: string]: StudyBuddyModel} = {
-    free: geminiFlash,
-    premium: geminiPro
+    flash: geminiFlash,
+    pro: geminiPro
 }
 
 export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
@@ -23,8 +23,8 @@ export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
     }
 ];
 
-export function getModel(isPremium: boolean = false) {
-    return models[isPremium ? 'premium' : 'free'];
+export function getModel(model: 'flash' | 'pro' = 'flash') {
+    return models[model] || models.flash;
 }
 
 export const ai = genkit({

@@ -19,6 +19,7 @@ const GenerateFlashcardsInputSchema = z.object({
   subject: z.string().describe('The subject of the flashcards.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numFlashcards: z.number().int().min(5).max(20).describe('The number of flashcards to generate.'),
+  model: z.enum(['flash', 'pro']).optional(),
 });
 
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;
@@ -39,8 +40,8 @@ const GenerateFlashcardsOutputSchema = z.object({
 
 export type GenerateFlashcardsOutput = z.infer<typeof GenerateFlashcardsOutputSchema>;
 
-export async function generateFlashcards(input: GenerateFlashcardsInput, isPremium: boolean = false): Promise<GenerateFlashcardsOutput> {
-  return generateFlashcardsFlow(input, isPremium);
+export async function generateFlashcards(input: GenerateFlashcardsInput): Promise<GenerateFlashcardsOutput> {
+  return generateFlashcardsFlow(input);
 }
 
 const generateFlashcardsFlow = ai.defineFlow(
@@ -49,7 +50,7 @@ const generateFlashcardsFlow = ai.defineFlow(
     inputSchema: GenerateFlashcardsInputSchema,
     outputSchema: GenerateFlashcardsOutputSchema,
   },
-  async (input, streamingCallback, isPremium) => {
+  async (input) => {
     const prompt = `You are an AI that generates educational flashcards for a student in grade ${input.gradeLevel}.
 
     The student wants flashcards on the topic of "${input.topic}" in the subject of ${input.subject}.
@@ -59,7 +60,7 @@ const generateFlashcardsFlow = ai.defineFlow(
     Make sure the content is appropriate for the specified grade level.
     `;
     const response = await ai.generate({
-        model: getModel(isPremium),
+        model: getModel(input.model),
         prompt: prompt,
         output: {
             schema: FlashcardsSchema,
