@@ -26,6 +26,7 @@ export default function TextSummarizer() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const model = isPremium ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -35,7 +36,7 @@ export default function TextSummarizer() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -46,7 +47,7 @@ export default function TextSummarizer() {
     const actionResult = await getSummaryAction({ ...data, isPremium });
 
     if (actionResult.success) {
-      consumeTokens(actionResult.data.totalTokens);
+      consumeTokens(actionResult.data.totalTokens, model);
       setSummary(actionResult.data.summary);
     } else {
       setError(actionResult.error);
@@ -55,7 +56,7 @@ export default function TextSummarizer() {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || !hasTokens();
+  const isButtonDisabled = isLoading || !hasTokens(model);
 
   return (
     <div className="grid md:grid-cols-2 gap-8">

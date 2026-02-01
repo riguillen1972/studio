@@ -29,8 +29,7 @@ const user = {
 }
 
 export default function ProfilePage() {
-  const { isPremium, setIsPremium, tokensRemaining, tokenLimit } = useAppState();
-  const tokenPercentage = (tokensRemaining / tokenLimit) * 100;
+  const { isPremium, setIsPremium, tokensRemaining, tokenLimit, flashTokensRemaining, flashTokenLimit, proTokensRemaining, proTokenLimit } = useAppState();
   const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
 
   return (
@@ -130,12 +129,36 @@ export default function ProfilePage() {
                         Monthly Usage
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                    <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                        <span>Tokens remaining</span>
-                        <span>{new Intl.NumberFormat().format(tokensRemaining)} / {new Intl.NumberFormat().format(tokenLimit)}</span>
-                    </div>
-                     <Progress value={tokenPercentage} />
+                <CardContent className="space-y-4">
+                      {isPremium ? (
+                        <>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Pro Tokens (Gemini 2.5 Pro)</Label>
+                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                    <span>Remaining</span>
+                                    <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
+                                </div>
+                                <Progress value={(proTokensRemaining / proTokenLimit) * 100} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Flash Tokens (Gemini 2.5 Flash)</Label>
+                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                    <span>Remaining</span>
+                                    <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
+                                </div>
+                                <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="space-y-2">
+                             <Label className="text-sm font-medium">Flash Tokens (Gemini 2.5 Flash)</Label>
+                            <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                <span>Remaining</span>
+                                <span>{new Intl.NumberFormat().format(tokensRemaining)} / {new Intl.NumberFormat().format(tokenLimit)}</span>
+                            </div>
+                            <Progress value={(tokensRemaining / tokenLimit) * 100} />
+                        </div>
+                    )}
                      <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
                 </CardContent>
             </Card>

@@ -35,6 +35,7 @@ export default function AITutor() {
   const [isClient, setIsClient] = useState(false);
   
   const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const model = isPremium ? 'pro' : 'flash';
 
   useEffect(() => {
     setIsClient(true);
@@ -48,7 +49,7 @@ export default function AITutor() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
         setConversation((prev) => [...prev, { role: "ai", content: "You have reached your monthly token limit. Please try again next month." }]);
         return;
     }
@@ -58,7 +59,7 @@ export default function AITutor() {
     const result = await getExplanationAction({ ...data, isPremium });
 
     if (result.success) {
-      consumeTokens(result.data.totalTokens);
+      consumeTokens(result.data.totalTokens, model);
       setConversation((prev) => [
         ...prev,
         { role: "ai", content: result.data.explanation },
@@ -74,7 +75,7 @@ export default function AITutor() {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || !hasTokens();
+  const isButtonDisabled = isLoading || (isClient && !hasTokens(model));
 
   if (!isClient) {
     return (

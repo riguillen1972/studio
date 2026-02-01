@@ -28,19 +28,20 @@ interface ToolDialogProps {
 }
 
 export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
-  const { hasTokens, consumeTokens } = useAppState();
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
+  const model = isPremium ? 'pro' : 'flash';
 
   const handleGenerate = () => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
       setOutput("You have reached your monthly token limit. Please try again next month.");
       return;
     }
     setIsLoading(true);
     // Simulate token consumption for this prototype tool
-    consumeTokens(150);
+    consumeTokens(150, model);
 
     // In a real application, you would call a specific Genkit flow here
     // based on the `tool.name`. For this prototype, we'll just simulate a response.
@@ -77,7 +78,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
                     className="h-full resize-none"
                     disabled={isLoading}
                 />
-                <Button onClick={handleGenerate} disabled={isLoading || !hasTokens() || !input}>
+                <Button onClick={handleGenerate} disabled={isLoading || !hasTokens(model) || !input}>
                     {isLoading ? (
                         <Loader2 className="animate-spin" />
                     ) : (

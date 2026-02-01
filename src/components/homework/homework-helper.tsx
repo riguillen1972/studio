@@ -40,6 +40,7 @@ export default function HomeworkHelper() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const model = isPremium ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -51,7 +52,7 @@ export default function HomeworkHelper() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -62,7 +63,7 @@ export default function HomeworkHelper() {
     const actionResult = await getHomeworkHintsAction({ ...data, isPremium });
 
     if (actionResult.success) {
-      consumeTokens(actionResult.data.totalTokens);
+      consumeTokens(actionResult.data.totalTokens, model);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -71,7 +72,7 @@ export default function HomeworkHelper() {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || !hasTokens();
+  const isButtonDisabled = isLoading || !hasTokens(model);
 
   return (
     <div className="grid md:grid-cols-2 gap-8">

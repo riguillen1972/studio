@@ -50,6 +50,7 @@ export default function HomeworkScanner() {
   const { toast } = useToast();
   const router = useRouter();
   const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const model = isPremium ? 'pro' : 'flash';
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -120,7 +121,7 @@ export default function HomeworkScanner() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -139,7 +140,7 @@ export default function HomeworkScanner() {
     });
 
     if (actionResult.success) {
-      consumeTokens(actionResult.data.totalTokens);
+      consumeTokens(actionResult.data.totalTokens, model);
       setResult(actionResult.data);
     } else {
       setError(actionResult.error);
@@ -149,7 +150,7 @@ export default function HomeworkScanner() {
   };
   
   const handleGenerateQuiz = async () => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
         setError("You have reached your monthly token limit. Please try again next month.");
         return;
     }
@@ -177,7 +178,7 @@ export default function HomeworkScanner() {
     });
 
     if (actionResult.success) {
-        consumeTokens(actionResult.data.totalTokens);
+        consumeTokens(actionResult.data.totalTokens, model);
         const quizData = JSON.stringify(actionResult.data.questions);
         const topic = actionResult.data.topic;
         router.push(`/quiz?quizData=${encodeURIComponent(quizData)}&topic=${encodeURIComponent(topic)}`);
@@ -188,8 +189,8 @@ export default function HomeworkScanner() {
     setIsGeneratingQuiz(false);
   }
 
-  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !hasTokens();
-  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !hasTokens();
+  const isQuizButtonDisabled = isLoading || isGeneratingQuiz || !capturedImage || !hasTokens(model);
+  const isCaptureDisabled = hasCameraPermission !== true || isLoading || !hasTokens(model);
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">

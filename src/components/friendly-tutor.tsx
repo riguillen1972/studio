@@ -34,6 +34,7 @@ export default function FriendlyTutor() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const model = isPremium ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -43,7 +44,7 @@ export default function FriendlyTutor() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!hasTokens()) {
+    if (!hasTokens(model)) {
         setConversation((prev) => [...prev, { role: "ai", content: "Oh no! It looks like you've reached your monthly token limit. We can chat again next month! ✨" }]);
         return;
     }
@@ -54,7 +55,7 @@ export default function FriendlyTutor() {
     const result = await getFriendlyAdviceAction({ question: data.question, isPremium });
 
     if (result.success) {
-      consumeTokens(result.data.totalTokens);
+      consumeTokens(result.data.totalTokens, model);
       setConversation((prev) => [
         ...prev,
         { role: "ai", content: result.data.advice },
@@ -70,7 +71,7 @@ export default function FriendlyTutor() {
     setIsLoading(false);
   };
   
-  const isButtonDisabled = isLoading || !hasTokens();
+  const isButtonDisabled = isLoading || !hasTokens(model);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

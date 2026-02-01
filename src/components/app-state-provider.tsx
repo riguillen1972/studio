@@ -6,25 +6,33 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useCa
 const MONTHLY_TOKEN_LIMIT = 1000000;
 
 interface TokenInfo {
-  usedTokens: number;
+  flashUsedTokens: number;
+  proUsedTokens: number;
   date: string; // YYYY-MM
 }
 
 interface AppState {
   isPremium: boolean;
   setIsPremium: (isPremium: boolean) => void;
-  tokensUsed: number;
-  tokenLimit: number;
-  hasTokens: () => boolean;
-  consumeTokens: (amount: number) => void;
+  
+  flashTokenLimit: number;
+  flashTokensRemaining: number;
+  proTokenLimit: number;
+  proTokensRemaining: number;
+
+  hasTokens: (model: 'flash' | 'pro') => boolean;
+  consumeTokens: (amount: number, model: 'flash' | 'pro') => void;
+  
+  // For backwards compatibility in some UI components
   tokensRemaining: number;
+  tokenLimit: number;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [isPremium, setIsPremiumState] = useState(false);
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ usedTokens: 0, date: '' });
+  const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ flashUsedTokens: 0, proUsedTokens: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
   const getCurrentMonth = () => new Date().toISOString().slice(0, 7); // YYYY-MM
@@ -38,17 +46,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         }
 
         const currentMonth = getCurrentMonth();
-
         const storedTokenInfo = localStorage.getItem('tokenInfo');
         if (storedTokenInfo) {
-            const parsed: TokenInfo = JSON.parse(storedTokenInfo);
+            const parsed: Partial<TokenInfo> = JSON.parse(storedTokenInfo);
             if (parsed.date === currentMonth) {
-                setTokenInfo(parsed);
+                setTokenInfo({
+                    flashUsedTokens: parsed.flashUsedTokens || 0,
+                    proUsedTokens: parsed.proUsedTokens || 0,
+                    date: parsed.date,
+                });
             } else {
-                setTokenInfo({ usedTokens: 0, date: currentMonth });
+                 setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, date: currentMonth });
             }
         } else {
-            setTokenInfo({ usedTokens: 0, date: currentMonth });
+            setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, date: currentMonth });
         }
 
     } catch (error) {
@@ -65,23 +76,37 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const tokenLimit = MONTHLY_TOKEN_LIMIT;
+  const flashTokenLimit = MONTHLY_TOKEN_LIMIT;
+  const proTokenLimit = isPremium ? MONTHLY_TOKEN_LIMIT : 0;
 
-  const hasTokens = useCallback(() => {
+  const hasTokens = useCallback((model: 'flash' | 'pro'): boolean => {
     if (!isMounted) return false;
     const currentMonth = getCurrentMonth();
-    if (tokenInfo.date !== currentMonth) {
-      return true; // Will be reset on next action
+    if (tokenInfo.date !== currentMonth) return true;
+
+    if (model === 'pro') {
+        return isPremium && tokenInfo.proUsedTokens < proTokenLimit;
     }
-    return tokenInfo.usedTokens < tokenLimit;
-  }, [isMounted, tokenInfo, tokenLimit]);
+    // model === 'flash'
+    return tokenInfo.flashUsedTokens < flashTokenLimit;
+  }, [isMounted, isPremium, tokenInfo, flashTokenLimit, proTokenLimit]);
   
-  const consumeTokens = useCallback((amount: number) => {
+  const consumeTokens = useCallback((amount: number, model: 'flash' | 'pro') => {
     if (!isMounted) return;
     const currentMonth = getCurrentMonth();
+    
     setTokenInfo(prev => {
-        const newUsed = prev.date === currentMonth ? prev.usedTokens + amount : amount;
-        const newInfo = { usedTokens: newUsed, date: currentMonth };
+        const isNewMonth = prev.date !== currentMonth;
+        let newFlashUsed = isNewMonth ? 0 : prev.flashUsedTokens;
+        let newProUsed = isNewMonth ? 0 : prev.proUsedTokens;
+        
+        if (model === 'pro' && isPremium) {
+            newProUsed += amount;
+        } else { // model === 'flash'
+            newFlashUsed += amount;
+        }
+        
+        const newInfo: TokenInfo = { flashUsedTokens: newFlashUsed, proUsedTokens: newProUsed, date: currentMonth };
         try {
             localStorage.setItem('tokenInfo', JSON.stringify(newInfo));
         } catch (error) {
@@ -89,18 +114,27 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         }
         return newInfo;
     });
-  }, [isMounted]);
+  }, [isMounted, isPremium]);
   
-  const tokensRemaining = isMounted ? Math.max(0, tokenLimit - tokenInfo.usedTokens) : tokenLimit;
+  const flashTokensRemaining = isMounted ? Math.max(0, flashTokenLimit - tokenInfo.flashUsedTokens) : flashTokenLimit;
+  const proTokensRemaining = isMounted ? Math.max(0, proTokenLimit - tokenInfo.proUsedTokens) : proTokenLimit;
+
+  // Simplified legacy values for simple UI displays.
+  // Free users see flash tokens, premium users see their pro tokens.
+  const tokensRemaining = isPremium ? proTokensRemaining : flashTokensRemaining;
+  const tokenLimit = isPremium ? proTokenLimit : flashTokenLimit;
 
   const value = {
     isPremium: isMounted ? isPremium : false,
     setIsPremium,
-    tokensUsed: tokenInfo.usedTokens,
-    tokenLimit,
+    flashTokenLimit,
+    flashTokensRemaining,
+    proTokenLimit,
+    proTokensRemaining,
     hasTokens,
     consumeTokens,
     tokensRemaining,
+    tokenLimit,
   };
 
   return (
