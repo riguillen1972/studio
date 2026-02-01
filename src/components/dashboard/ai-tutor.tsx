@@ -34,9 +34,7 @@ export default function AITutor() {
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   
-  // useAppState can only be used on the client
-  const appState = isClient ? useAppState() : null;
-  const { isPremium, hasTokens, consumeTokens } = appState || { isPremium: false, hasTokens: () => false, consumeTokens: () => {} };
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
 
   useEffect(() => {
     setIsClient(true);
@@ -115,7 +113,7 @@ export default function AITutor() {
             </CardDescription>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
-        {isClient && !isPremium && <AdPlaceholder />}
+        {!isPremium && <AdPlaceholder />}
         <ScrollArea className="flex-grow pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (
