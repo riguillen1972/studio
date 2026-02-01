@@ -16,6 +16,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
+import { Skeleton } from "../ui/skeleton";
 
 const formSchema = z.object({
   concept: z.string().min(10, { message: "Please enter a concept or question with at least 10 characters." }),
@@ -31,8 +32,11 @@ interface ConversationTurn {
 export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
   const [isClient, setIsClient] = useState(false);
+  
+  // useAppState can only be used on the client
+  const appState = isClient ? useAppState() : null;
+  const { isPremium, hasTokens, consumeTokens } = appState || { isPremium: false, hasTokens: () => false, consumeTokens: () => {} };
 
   useEffect(() => {
     setIsClient(true);
@@ -72,7 +76,32 @@ export default function AITutor() {
     setIsLoading(false);
   };
 
-  const isButtonDisabled = isLoading || (isClient && !hasTokens());
+  const isButtonDisabled = isLoading || !hasTokens();
+
+  if (!isClient) {
+    return (
+        <Card className="h-full flex flex-col max-h-[75vh]">
+            <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-2">
+                    <Sparkles className="text-primary"/>
+                    AI Tutor
+                </CardTitle>
+                <CardDescription>
+                    Ask a question or describe a concept you want to understand better.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
+                <Skeleton className="h-full w-full" />
+            </CardContent>
+            <CardFooter className="pt-4 border-t">
+                <div className="flex w-full items-start gap-2">
+                    <Skeleton className="h-10 flex-grow" />
+                    <Skeleton className="h-10 w-16" />
+                </div>
+            </CardFooter>
+        </Card>
+    );
+  }
 
   return (
     <Card className="h-full flex flex-col max-h-[75vh]">
