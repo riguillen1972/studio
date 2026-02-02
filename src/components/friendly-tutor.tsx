@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from "react";
@@ -33,13 +34,14 @@ export default function FriendlyTutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = isPremium ? 'pro' : 'flash';
   const [isClient, setIsClient] = useState(false);
-
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const modelToUse = isPremium ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -76,7 +78,11 @@ export default function FriendlyTutor() {
     setIsLoading(false);
   };
   
-  const isButtonDisabled = isLoading || (isClient && !hasTokens(modelToUse));
+  const isButtonDisabled = isLoading || !hasTokens(modelToUse);
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -163,7 +169,6 @@ export default function FriendlyTutor() {
                     </div>
                 </ScrollArea>
                 <div className="pt-4 border-t">
-                  {isClient ? (
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2">
                         <FormField
@@ -195,12 +200,6 @@ export default function FriendlyTutor() {
                         </Button>
                       </form>
                     </Form>
-                  ) : (
-                    <div className="flex items-start gap-2">
-                        <Skeleton className="h-10 flex-grow" />
-                        <Skeleton className="h-10 w-10" />
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
