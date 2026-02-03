@@ -25,8 +25,8 @@ export default function BibleVersePage() {
     const [verseInfo, setVerseInfo] = useState<BibleVerse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { isPremium, hasTokens, consumeTokens } = useAppState();
-    const modelToUse = isPremium ? 'pro' : 'flash';
+    const { tier, hasTokens, consumeTokens } = useAppState();
+    const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
     const fetchVerse = async () => {
         if (!hasTokens(modelToUse)) {
@@ -48,7 +48,7 @@ export default function BibleVersePage() {
 
     useEffect(() => {
         fetchVerse();
-    }, [isPremium]);
+    }, [tier]);
     
     const isButtonDisabled = isLoading || !hasTokens(modelToUse);
 
@@ -71,7 +71,7 @@ export default function BibleVersePage() {
                     <CardDescription>A moment of reflection and inspiration.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                     {!isPremium && <AdPlaceholder />}
+                     {tier === 'free' && <AdPlaceholder />}
                     {isLoading ? (
                         <div className="space-y-4">
                             <Skeleton className="h-24 w-full" />

@@ -9,11 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useAppState } from "@/components/app-state-provider";
-import { Switch } from "@/components/ui/switch";
+import { useAppState, SubscriptionTier } from "@/components/app-state-provider";
 import { Progress } from "@/components/ui/progress";
 import { UpgradeDialog } from "@/components/upgrade-dialog";
-
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
 
 const user = {
     name: "Alex Doe",
@@ -28,13 +28,30 @@ const user = {
     ]
 }
 
+const tiers = {
+    free: { name: "Free", price: 0, flash: "1,000,000", pro: "0" },
+    pro: { name: "Pro", price: 15, flash: "1,000,000", pro: "1,000,000" },
+    max: { name: "Max", price: 30, flash: "2,000,000", pro: "2,000,000" },
+}
+
 export default function ProfilePage() {
-  const { isPremium, setIsPremium, tokensRemaining, tokenLimit, flashTokensRemaining, flashTokenLimit, proTokensRemaining, proTokenLimit } = useAppState();
-  const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
+  const { tier, setTier, flashTokensRemaining, flashTokenLimit, proTokensRemaining, proTokenLimit } = useAppState();
+  const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
+
+  const handleUpgrade = (newTier: SubscriptionTier) => {
+    if (newTier !== 'free') {
+      setTier(newTier);
+    }
+  }
 
   return (
     <>
-    <UpgradeDialog open={isUpgradeDialogOpen} onOpenChange={setIsUpgradeDialogOpen} onUpgrade={() => setIsPremium(true)} />
+    <UpgradeDialog 
+      open={!!upgradeTarget} 
+      onOpenChange={(isOpen) => !isOpen && setUpgradeTarget(null)}
+      upgradeInfo={upgradeTarget}
+      onUpgrade={handleUpgrade}
+    />
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold font-headline tracking-tight">
@@ -99,26 +116,36 @@ export default function ProfilePage() {
                 <CardHeader>
                     <CardTitle className="font-headline flex items-center gap-2">
                         <Gem className="text-primary"/>
-                        Subscription
+                        Subscription Plan
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="premium-toggle">
-                                {isPremium ? "Premium Active" : "Free Tier"}
+                    <RadioGroup value={tier} onValueChange={(value: SubscriptionTier) => {
+                        if (value === 'free') {
+                            setTier('free');
+                        } else {
+                            setUpgradeTarget({ tier: value, price: tiers[value].price });
+                        }
+                    }}>
+                        {(['free', 'pro', 'max'] as SubscriptionTier[]).map((plan) => (
+                            <Label 
+                                key={plan}
+                                htmlFor={plan}
+                                className={cn(
+                                    "flex items-center justify-between rounded-lg border p-4 cursor-pointer transition-colors",
+                                    tier === plan ? "border-primary bg-primary/10" : "hover:bg-muted/50"
+                                )}
+                            >
+                                <div className="space-y-0.5">
+                                    <div className="font-semibold">{tiers[plan].name}</div>
+                                    <CardDescription>
+                                        ${tiers[plan].price}/month
+                                    </CardDescription>
+                                </div>
+                                <RadioGroupItem value={plan} id={plan} />
                             </Label>
-                             <CardDescription>
-                                {isPremium ? "Enjoy an ad-free experience!" : "Upgrade to unlock premium features."}
-                            </CardDescription>
-                        </div>
-                        <Switch
-                            id="premium-toggle"
-                            checked={isPremium}
-                            onCheckedChange={setIsPremium}
-                        />
-                    </div>
-                     {!isPremium && <Button className="w-full" onClick={() => setIsUpgradeDialogOpen(true)}>Upgrade for $10</Button>}
+                        ))}
+                    </RadioGroup>
                 </CardContent>
             </Card>
 
@@ -130,39 +157,27 @@ export default function ProfilePage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                      {isPremium ? (
-                        <>
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">Pro Tokens (Gemini 2.5 Pro)</Label>
-                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                    <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
-                                </div>
-                                <Progress value={(proTokensRemaining / proTokenLimit) * 100} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">Flash Tokens (Gemini 2.5 Flash)</Label>
-                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                    <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
-                                </div>
-                                <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
-                            </div>
-                        </>
-                    ) : (
+                    <div className="space-y-2">
+                        <Label className="text-sm font-medium">Flash Tokens (Gemini 2.5 Flash)</Label>
+                        <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                            <span>Remaining</span>
+                            <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
+                        </div>
+                        <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
+                    </div>
+                    { (tier === 'pro' || tier === 'max') && (
                         <div className="space-y-2">
-                             <Label className="text-sm font-medium">Flash Tokens (Gemini 2.5 Flash)</Label>
+                            <Label className="text-sm font-medium">Pro Tokens (Gemini 2.5 Pro)</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
-                                <span>{new Intl.NumberFormat().format(tokensRemaining)} / {new Intl.NumberFormat().format(tokenLimit)}</span>
+                                <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
                             </div>
-                            <Progress value={(tokensRemaining / tokenLimit) * 100} />
+                            <Progress value={(proTokensRemaining / proTokenLimit) * 100} />
                         </div>
                     )}
                      <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
                 </CardContent>
             </Card>
-
 
              <Card>
                 <CardHeader>

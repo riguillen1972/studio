@@ -52,9 +52,9 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const { tier, hasTokens, consumeTokens } = useAppState();
   const router = useRouter();
-  const modelToUse = isPremium ? 'pro' : 'flash';
+  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
 
   const form = useForm<FormValues>({
@@ -164,7 +164,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
             <CardDescription>Fill in the details below to generate a new quiz or flashcards.</CardDescription>
           </CardHeader>
           <CardContent>
-            {!isPremium && <AdPlaceholder className="mb-4" />}
+            {tier === 'free' && <AdPlaceholder className="mb-4" />}
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleGenerateQuiz)} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">

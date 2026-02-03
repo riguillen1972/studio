@@ -34,25 +34,28 @@ interface ConversationTurn {
 export default function AITutor() {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const [selectedModel, setSelectedModel] = useState<'flash' | 'pro'>('flash');
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const [isClient, setIsClient] = useState(false);
+  const { tier, hasTokens, consumeTokens } = useAppState();
 
-  const modelToUse = isPremium ? selectedModel : 'flash';
-  
   useEffect(() => {
     setIsClient(true);
-    if (!isPremium) {
-        setSelectedModel('flash');
-    }
-  }, [isPremium]);
-
+  }, []);
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       concept: "",
     },
   });
+  
+  useEffect(() => {
+    if (tier === 'free') {
+        setSelectedModel('flash');
+    }
+  }, [tier]);
+  
+  const modelToUse = tier !== 'free' ? selectedModel : 'flash';
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
@@ -120,7 +123,7 @@ export default function AITutor() {
             </CardDescription>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
-        {!isPremium && <AdPlaceholder />}
+        {tier === 'free' && <AdPlaceholder />}
         <ScrollArea className="flex-grow pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (
@@ -173,7 +176,7 @@ export default function AITutor() {
         </ScrollArea>
       </CardContent>
        <CardFooter className="pt-4 border-t flex-col items-start">
-        {isPremium && (
+        {tier !== 'free' && (
             <div className="mb-4 w-full">
                 <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
                 <Select value={selectedModel} onValueChange={(value: 'flash' | 'pro') => setSelectedModel(value)}>

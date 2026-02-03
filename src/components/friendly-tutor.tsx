@@ -40,8 +40,8 @@ export default function FriendlyTutor() {
     setIsClient(true);
   }, []);
 
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = isPremium ? 'pro' : 'flash';
+  const { tier, hasTokens, consumeTokens } = useAppState();
+  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -78,7 +78,7 @@ export default function FriendlyTutor() {
     setIsLoading(false);
   };
   
-  const isButtonDisabled = isLoading || !hasTokens(modelToUse);
+  const isButtonDisabled = isLoading || (isClient && !hasTokens(modelToUse));
 
   if (!isClient) {
     return null;

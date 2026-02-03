@@ -25,8 +25,8 @@ export default function TextSummarizer() {
   const [summary, setSummary] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = isPremium ? 'pro' : 'flash';
+  const { tier, hasTokens, consumeTokens } = useAppState();
+  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -66,7 +66,7 @@ export default function TextSummarizer() {
           <CardDescription>Paste the text you want to understand better.</CardDescription>
         </CardHeader>
         <CardContent>
-          {!isPremium && <AdPlaceholder className="mb-4" />}
+          {tier === 'free' && <AdPlaceholder className="mb-4" />}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

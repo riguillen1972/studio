@@ -28,11 +28,11 @@ interface ToolDialogProps {
 }
 
 export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const { tier, hasTokens, consumeTokens } = useAppState();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
-  const model = isPremium ? 'pro' : 'flash';
+  const model = tier !== 'free' ? 'pro' : 'flash';
 
   const handleGenerate = () => {
     if (!hasTokens(model)) {

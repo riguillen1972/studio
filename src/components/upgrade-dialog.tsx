@@ -15,41 +15,47 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreditCard, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { SubscriptionTier } from "./app-state-provider";
 
 interface UpgradeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpgrade: () => void;
+  onUpgrade: (tier: SubscriptionTier) => void;
+  upgradeInfo: { tier: 'pro' | 'max', price: number } | null;
 }
 
-export function UpgradeDialog({ open, onOpenChange, onUpgrade }: UpgradeDialogProps) {
+export function UpgradeDialog({ open, onOpenChange, onUpgrade, upgradeInfo }: UpgradeDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!upgradeInfo) return;
+
     setIsLoading(true);
 
     // Simulate payment processing
     setTimeout(() => {
       setIsLoading(false);
-      onUpgrade();
+      onUpgrade(upgradeInfo.tier);
       onOpenChange(false);
       toast({
         title: "Upgrade Successful!",
-        description: "Welcome to Study Buddy Premium. Enjoy your new features!",
+        description: `Welcome to Study Buddy ${upgradeInfo.tier.charAt(0).toUpperCase() + upgradeInfo.tier.slice(1)}. Enjoy your new features!`,
       });
     }, 1500);
   };
+
+  if (!upgradeInfo) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handlePayment}>
             <DialogHeader>
-            <DialogTitle className="font-headline">Upgrade to Premium</DialogTitle>
+            <DialogTitle className="font-headline">Upgrade to {upgradeInfo.tier.charAt(0).toUpperCase() + upgradeInfo.tier.slice(1)}</DialogTitle>
             <DialogDescription>
-                Unlock all features and get an ad-free experience for just $10/month.
+                Unlock all features and get an ad-free experience for just ${upgradeInfo.price}/month.
             </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -77,7 +83,7 @@ export function UpgradeDialog({ open, onOpenChange, onUpgrade }: UpgradeDialogPr
             </div>
             <DialogFooter>
             <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? <Loader2 className="animate-spin" /> : "Pay $10 and Upgrade"}
+                {isLoading ? <Loader2 className="animate-spin" /> : `Pay $${upgradeInfo.price} and Upgrade`}
             </Button>
             </DialogFooter>
         </form>

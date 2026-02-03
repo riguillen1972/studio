@@ -36,7 +36,7 @@ type ToolDialogState = {
 };
 
 export default function ToolsPage() {
-  const { isPremium } = useAppState();
+  const { tier } = useAppState();
   const [dialogState, setDialogState] = useState<ToolDialogState>({ isOpen: false, tool: null });
 
   const handleToolClick = (tool: Tool) => {
@@ -44,7 +44,7 @@ export default function ToolsPage() {
   };
 
   const getVisibleTools = (tools: Tool[]): Tool[] => {
-    if (isPremium) {
+    if (tier !== 'free') {
       return tools;
     }
     return tools.slice(0, Math.ceil(tools.length / 2));
@@ -99,11 +99,11 @@ export default function ToolsPage() {
                       </CardFooter>
                     </Card>
                   ))}
-                  {!isPremium && hiddenCount > 0 && (
+                  {tier === 'free' && hiddenCount > 0 && (
                     <Card className="flex flex-col items-center justify-center text-center p-6 border-dashed border-primary">
                        <LucideIcons.Gem className="h-10 w-10 text-primary mb-4" />
                        <CardTitle className="mb-2 font-headline">Unlock {hiddenCount} More Tools</CardTitle>
-                       <CardDescription className="mb-4">Upgrade to Premium to get access to all {category.tools.length} {category.name} tools.</CardDescription>
+                       <CardDescription className="mb-4">Upgrade to Pro or Max to get access to all {category.tools.length} {category.name} tools.</CardDescription>
                        <Button asChild>
                            <Link href="/profile">Upgrade Now</Link>
                        </Button>

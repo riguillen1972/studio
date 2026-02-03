@@ -61,6 +61,7 @@ interface FlashcardResult {
 const subjects = [
   'Math',
   'Science',
+
   'History',
   'English',
   'Physics',
@@ -75,9 +76,9 @@ export default function FlashcardGenerator() {
   const [result, setResult] = useState<FlashcardResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const { tier, hasTokens, consumeTokens } = useAppState();
   const searchParams = useSearchParams();
-  const modelToUse = isPremium ? 'pro' : 'flash';
+  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -153,7 +154,7 @@ export default function FlashcardGenerator() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {!isPremium && <AdPlaceholder className="mb-4" />}
+            {tier === 'free' && <AdPlaceholder className="mb-4" />}
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleGenerateFlashcards)}

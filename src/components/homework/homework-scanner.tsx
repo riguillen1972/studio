@@ -49,8 +49,8 @@ export default function HomeworkScanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const router = useRouter();
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = isPremium ? 'pro' : 'flash';
+  const { tier, hasTokens, consumeTokens } = useAppState();
+  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -200,7 +200,7 @@ export default function HomeworkScanner() {
           <CardDescription>Capture an image of your homework problem.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col flex-grow">
-            {!isPremium && <AdPlaceholder className="mb-4" />}
+            {tier === 'free' && <AdPlaceholder className="mb-4" />}
             <div className="relative aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
                 {capturedImage ? (
                     <Image src={capturedImage} alt="Captured homework" layout="fill" objectFit="contain" />
