@@ -11,7 +11,7 @@
  * @function generateFlashcards - The main function that orchestrates the flashcard generation flow.
  */
 
-import {ai, getModel, safetySettings} from '@/ai/genkit';
+import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateFlashcardsInputSchema = z.object({
@@ -19,7 +19,7 @@ const GenerateFlashcardsInputSchema = z.object({
   subject: z.string().describe('The subject of the flashcards.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numFlashcards: z.number().int().min(5).max(20).describe('The number of flashcards to generate.'),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;

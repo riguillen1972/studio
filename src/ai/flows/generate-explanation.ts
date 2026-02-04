@@ -8,12 +8,12 @@
  * - GenerateExplanationOutput - The return type for the generateExplanation function.
  */
 
-import {ai, getModel, safetySettings} from '@/ai/genkit';
+import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateExplanationInputSchema = z.object({
   concept: z.string().describe('The concept or question for which an explanation is needed.'),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type GenerateExplanationInput = z.infer<typeof GenerateExplanationInputSchema>;
 

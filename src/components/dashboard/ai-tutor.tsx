@@ -19,6 +19,7 @@ import AdPlaceholder from "../ad-placeholder";
 import { Skeleton } from "../ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Label } from "../ui/label";
+import { SupportedModel } from "@/ai/genkit";
 
 const formSchema = z.object({
   concept: z.string().min(10, { message: "Please enter a concept or question with at least 10 characters." }),
@@ -32,11 +33,11 @@ interface ConversationTurn {
 }
 
 export default function AITutor() {
+  const [isClient, setIsClient] = useState(false);
+  const { isPremium, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<'flash' | 'pro'>('flash');
-  const [isClient, setIsClient] = useState(false);
-  const { tier, hasTokens, consumeTokens } = useAppState();
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash');
 
   useEffect(() => {
     setIsClient(true);
@@ -49,13 +50,7 @@ export default function AITutor() {
     },
   });
   
-  useEffect(() => {
-    if (tier === 'free') {
-        setSelectedModel('flash');
-    }
-  }, [tier]);
-  
-  const modelToUse = tier !== 'free' ? selectedModel : 'flash';
+  const modelToUse = isPremium ? selectedModel : 'flash';
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
@@ -123,7 +118,7 @@ export default function AITutor() {
             </CardDescription>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
-        {tier === 'free' && <AdPlaceholder />}
+        {!isPremium && <AdPlaceholder />}
         <ScrollArea className="flex-grow pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (
@@ -176,10 +171,10 @@ export default function AITutor() {
         </ScrollArea>
       </CardContent>
        <CardFooter className="pt-4 border-t flex-col items-start">
-        {tier !== 'free' && (
+        {isPremium && (
             <div className="mb-4 w-full">
                 <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
-                <Select value={selectedModel} onValueChange={(value: 'flash' | 'pro') => setSelectedModel(value)}>
+                <Select value={selectedModel} onValueChange={(value: SupportedModel) => setSelectedModel(value)}>
                     <SelectTrigger id="model-select">
                         <SelectValue />
                     </SelectTrigger>
@@ -189,7 +184,7 @@ export default function AITutor() {
                     </SelectContent>
                 </Select>
                  <p className="text-xs text-muted-foreground mt-1">
-                    Pro offers higher quality responses and consumes from your Pro token balance.
+                    Pro model offers higher quality responses and consumes from your Pro token balance.
                 </p>
             </div>
         )}

@@ -21,7 +21,7 @@ interface UpgradeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpgrade: (tier: SubscriptionTier) => void;
-  upgradeInfo: { tier: 'pro' | 'max', price: number } | null;
+  upgradeInfo: { tier: 'pro', price: number } | null;
 }
 
 export function UpgradeDialog({ open, onOpenChange, onUpgrade, upgradeInfo }: UpgradeDialogProps) {

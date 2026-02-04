@@ -11,7 +11,7 @@
  * @function generateQuizFromScan - The main function that orchestrates the quiz generation flow from a scan.
  */
 
-import {ai, getModel} from '@/ai/genkit';
+import {ai, getModel, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const QuizQuestionSchema = z.object({
@@ -42,7 +42,7 @@ const GenerateQuizFromScanInputSchema = z.object({
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type GenerateQuizFromScanInput = z.infer<typeof GenerateQuizFromScanInputSchema>;

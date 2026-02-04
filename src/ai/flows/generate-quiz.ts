@@ -11,7 +11,7 @@
  * @function generateQuiz - The main function that orchestrates the quiz generation flow.
  */
 
-import {ai, getModel, safetySettings} from '@/ai/genkit';
+import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateQuizInputSchema = z.object({
@@ -19,7 +19,7 @@ const GenerateQuizInputSchema = z.object({
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type GenerateQuizInput = z.infer<typeof GenerateQuizInputSchema>;

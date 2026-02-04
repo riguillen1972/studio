@@ -2,14 +2,14 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import { SupportedModel } from '@/ai/genkit';
 
 const FREE_FLASH_TOKEN_LIMIT = 1000000;
+
 const PRO_FLASH_TOKEN_LIMIT = 1000000;
 const PRO_PRO_TOKEN_LIMIT = 1000000;
-const MAX_FLASH_TOKEN_LIMIT = 2000000;
-const MAX_PRO_TOKEN_LIMIT = 2000000;
 
-export type SubscriptionTier = 'free' | 'pro' | 'max';
+export type SubscriptionTier = 'free' | 'pro';
 
 interface TokenInfo {
   flashUsedTokens: number;
@@ -20,14 +20,15 @@ interface TokenInfo {
 interface AppState {
   tier: SubscriptionTier;
   setTier: (tier: SubscriptionTier) => void;
+  isPremium: boolean;
   
   flashTokenLimit: number;
   flashTokensRemaining: number;
   proTokenLimit: number;
   proTokensRemaining: number;
 
-  hasTokens: (model: 'flash' | 'pro') => boolean;
-  consumeTokens: (amount: number, model: 'flash' | 'pro') => void;
+  hasTokens: (model: SupportedModel) => boolean;
+  consumeTokens: (amount: number, model: SupportedModel) => void;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -43,8 +44,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setIsMounted(true);
     try {
         const storedTier = localStorage.getItem('subscriptionTier');
-        if (storedTier && (storedTier === 'free' || storedTier === 'pro' || storedTier === 'max')) {
-          setTierState(storedTier);
+        if (storedTier && (storedTier === 'free' || storedTier === 'pro')) {
+          setTierState(storedTier as SubscriptionTier);
         }
 
         const currentMonth = getCurrentMonth();
@@ -78,22 +79,24 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const flashTokenLimit = tier === 'max' ? MAX_FLASH_TOKEN_LIMIT : tier === 'pro' ? PRO_FLASH_TOKEN_LIMIT : FREE_FLASH_TOKEN_LIMIT;
-  const proTokenLimit = tier === 'max' ? MAX_PRO_TOKEN_LIMIT : tier === 'pro' ? PRO_PRO_TOKEN_LIMIT : 0;
+  const isPremium = tier === 'pro';
 
-  const hasTokens = useCallback((model: 'flash' | 'pro'): boolean => {
+  const flashTokenLimit = isPremium ? PRO_FLASH_TOKEN_LIMIT : FREE_FLASH_TOKEN_LIMIT;
+  const proTokenLimit = isPremium ? PRO_PRO_TOKEN_LIMIT : 0;
+
+  const hasTokens = useCallback((model: SupportedModel): boolean => {
     if (!isMounted) return false;
     const currentMonth = getCurrentMonth();
     if (tokenInfo.date !== currentMonth) return true;
 
     if (model === 'pro') {
-        return (tier === 'pro' || tier === 'max') && tokenInfo.proUsedTokens < proTokenLimit;
+        return isPremium && tokenInfo.proUsedTokens < proTokenLimit;
     }
     // model === 'flash'
     return tokenInfo.flashUsedTokens < flashTokenLimit;
-  }, [isMounted, tier, tokenInfo, flashTokenLimit, proTokenLimit]);
+  }, [isMounted, isPremium, tokenInfo, flashTokenLimit, proTokenLimit]);
   
-  const consumeTokens = useCallback((amount: number, model: 'flash' | 'pro') => {
+  const consumeTokens = useCallback((amount: number, model: SupportedModel) => {
     if (!isMounted) return;
     const currentMonth = getCurrentMonth();
     
@@ -102,7 +105,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         let newFlashUsed = isNewMonth ? 0 : prev.flashUsedTokens;
         let newProUsed = isNewMonth ? 0 : prev.proUsedTokens;
         
-        if (model === 'pro' && (tier === 'pro' || tier === 'max')) {
+        if (model === 'pro' && isPremium) {
             newProUsed += amount;
         } else { // model === 'flash'
             newFlashUsed += amount;
@@ -116,7 +119,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         }
         return newInfo;
     });
-  }, [isMounted, tier]);
+  }, [isMounted, isPremium]);
   
   const flashTokensRemaining = isMounted ? Math.max(0, flashTokenLimit - tokenInfo.flashUsedTokens) : flashTokenLimit;
   const proTokensRemaining = isMounted ? Math.max(0, proTokenLimit - tokenInfo.proUsedTokens) : proTokenLimit;
@@ -124,6 +127,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value = {
     tier: isMounted ? tier : 'free',
     setTier,
+    isPremium: isMounted ? isPremium : false,
     flashTokenLimit,
     flashTokensRemaining,
     proTokenLimit,

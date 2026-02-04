@@ -31,12 +31,19 @@ const user = {
 const tiers = {
     free: { name: "Free", price: 0, flash: "1,000,000", pro: "0" },
     pro: { name: "Pro", price: 15, flash: "1,000,000", pro: "1,000,000" },
-    max: { name: "Max", price: 30, flash: "2,000,000", pro: "2,000,000" },
 }
 
 export default function ProfilePage() {
-  const { tier, setTier, flashTokensRemaining, flashTokenLimit, proTokensRemaining, proTokenLimit } = useAppState();
-  const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
+  const { 
+    tier, 
+    setTier, 
+    flashTokensRemaining, 
+    flashTokenLimit, 
+    proTokensRemaining, 
+    proTokenLimit,
+    isPremium
+  } = useAppState();
+  const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro'; price: number } | null>(null);
 
   const handleUpgrade = (newTier: SubscriptionTier) => {
     if (newTier !== 'free') {
@@ -120,14 +127,14 @@ export default function ProfilePage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <RadioGroup value={tier} onValueChange={(value: SubscriptionTier) => {
+                    <RadioGroup value={tier} onValueChange={(value) => {
                         if (value === 'free') {
                             setTier('free');
-                        } else {
+                        } else if (value === 'pro') {
                             setUpgradeTarget({ tier: value, price: tiers[value].price });
                         }
                     }}>
-                        {(['free', 'pro', 'max'] as SubscriptionTier[]).map((plan) => (
+                        {(['free', 'pro'] as SubscriptionTier[]).map((plan) => (
                             <Label 
                                 key={plan}
                                 htmlFor={plan}
@@ -165,7 +172,7 @@ export default function ProfilePage() {
                         </div>
                         <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
                     </div>
-                    { (tier === 'pro' || tier === 'max') && (
+                    { isPremium && (
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">Pro Tokens (Gemini 2.5 Pro)</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">

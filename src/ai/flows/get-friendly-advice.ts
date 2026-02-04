@@ -8,12 +8,12 @@
  * - GetFriendlyAdviceOutput - The return type for the getFriendlyAdvice function.
  */
 
-import {ai, getModel, safetySettings} from '@/ai/genkit';
+import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GetFriendlyAdviceInputSchema = z.object({
   question: z.string().describe("The user's question or problem."),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type GetFriendlyAdviceInput = z.infer<typeof GetFriendlyAdviceInputSchema>;
 

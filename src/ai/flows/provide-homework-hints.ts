@@ -11,14 +11,14 @@
  * @function provideHomeworkHints - The main function that orchestrates the homework hints flow.
  */
 
-import {ai, getModel, safetySettings} from '@/ai/genkit';
+import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ProvideHomeworkHintsInputSchema = z.object({
   problem: z.string().describe('The homework problem to get hints for.'),
   subject: z.string().describe('The subject of the homework problem.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type ProvideHomeworkHintsInput = z.infer<typeof ProvideHomeworkHintsInputSchema>;

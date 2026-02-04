@@ -8,12 +8,12 @@
  * - GetBibleVerseOutput - The return type for the getBibleVerse function.
  */
 
-import {ai, getModel, safetySettings} from '@/ai/genkit';
+import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GetBibleVerseInputSchema = z.object({
   topic: z.string().optional().describe('An optional topic for the Bible verse (e.g., "hope", "faith").'),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type GetBibleVerseInput = z.infer<typeof GetBibleVerseInputSchema>;
 

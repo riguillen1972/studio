@@ -10,6 +10,7 @@ import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/gene
 import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
 import { generateFlashcards, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards";
 import { getFriendlyAdvice, GetFriendlyAdviceInput } from "@/ai/flows/get-friendly-advice";
+import { SupportedModel } from "@/ai/genkit";
 
 // Helper function to handle action execution and error handling
 async function handleAction<T_Input, T_Output>(
@@ -27,10 +28,12 @@ async function handleAction<T_Input, T_Output>(
   }
 }
 
+const modelSchema = z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional();
+
 // Schema for getExplanationAction
 const ExplanationActionInputSchema = z.object({
   concept: z.string(),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: modelSchema,
 });
 export async function getExplanationAction(input: GenerateExplanationInput) {
   const parsedInput = ExplanationActionInputSchema.safeParse(input);
@@ -45,7 +48,7 @@ const HomeworkHintsActionInputSchema = z.object({
   problem: z.string(),
   subject: z.string(),
   gradeLevel: z.string(),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: modelSchema,
 });
 export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput) {
     const parsedInput = HomeworkHintsActionInputSchema.safeParse(input);
@@ -58,7 +61,7 @@ export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput) {
 // Schema for getSummaryAction
 const SummaryActionInputSchema = z.object({
   text: z.string(),
-  model: z.enum(['flash', 'pro']).optional(),
+  model: modelSchema,
 });
 export async function getSummaryAction(input: SummarizeTextInput) {
     const parsedInput = SummaryActionInputSchema.safeParse(input);
@@ -74,7 +77,7 @@ const HomeworkScanActionInputSchema = z.object({
     question: z.string(),
     subject: z.string(),
     gradeLevel: z.string(),
-    model: z.enum(['flash', 'pro']).optional(),
+    model: modelSchema,
 });
 export async function getHomeworkScanAction(input: ScanHomeworkInput) {
     const parsedInput = HomeworkScanActionInputSchema.safeParse(input);
@@ -90,7 +93,7 @@ const QuizActionInputSchema = z.object({
     subject: z.string(),
     gradeLevel: z.string(),
     numQuestions: z.number(),
-    model: z.enum(['flash', 'pro']).optional(),
+    model: modelSchema,
 });
 export async function getQuizAction(input: GenerateQuizInput) {
     const parsedInput = QuizActionInputSchema.safeParse(input);
@@ -106,7 +109,7 @@ const QuizFromScanActionInputSchema = z.object({
     subject: z.string(),
     gradeLevel: z.string(),
     numQuestions: z.number(),
-    model: z.enum(['flash', 'pro']).optional(),
+    model: modelSchema,
 });
 export async function getQuizFromScanAction(input: GenerateQuizFromScanInput) {
     const parsedInput = QuizFromScanActionInputSchema.safeParse(input);
@@ -120,7 +123,7 @@ export async function getQuizFromScanAction(input: GenerateQuizFromScanInput) {
 // Schema for getBibleVerseAction
 const BibleVerseActionInputSchema = z.object({
     topic: z.string().optional(),
-    model: z.enum(['flash', 'pro']).optional(),
+    model: modelSchema,
 });
 export async function getBibleVerseAction(input: GetBibleVerseInput) {
     const parsedInput = BibleVerseActionInputSchema.safeParse(input);
@@ -137,7 +140,7 @@ const FlashcardsActionInputSchema = z.object({
     subject: z.string(),
     gradeLevel: z.string(),
     numFlashcards: z.number(),
-    model: z.enum(['flash', 'pro']).optional(),
+    model: modelSchema,
 });
 export async function getFlashcardsAction(input: GenerateFlashcardsInput) {
     const parsedInput = FlashcardsActionInputSchema.safeParse(input);
@@ -150,7 +153,7 @@ export async function getFlashcardsAction(input: GenerateFlashcardsInput) {
 // Schema for getFriendlyAdviceAction
 const FriendlyAdviceActionInputSchema = z.object({
     question: z.string(),
-    model: z.enum(['flash', 'pro']).optional(),
+    model: modelSchema,
 });
 export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
     const parsedInput = FriendlyAdviceActionInputSchema.safeParse(input);

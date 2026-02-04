@@ -5,11 +5,12 @@ const geminiFlash = 'googleai/gemini-2.5-flash';
 const geminiPro = 'googleai/gemini-2.5-pro';
 
 
-type StudyBuddyModel = ModelReference<GoogleAIGenerateRequestConfig>;
+type StudyBuddyModel = ModelReference;
+export type SupportedModel = 'flash' | 'pro';
 
-const models: {[key: string]: StudyBuddyModel} = {
+const models: {[key in SupportedModel]: StudyBuddyModel} = {
     flash: geminiFlash,
-    pro: geminiPro
+    pro: geminiPro,
 }
 
 export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
@@ -23,11 +24,13 @@ export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
     }
 ];
 
-export function getModel(model: 'flash' | 'pro' = 'flash') {
+export function getModel(model: SupportedModel = 'flash') {
     return models[model] || models.flash;
 }
 
+const plugins = [googleAI()];
+
 export const ai = genkit({
-  plugins: [googleAI()],
+  plugins,
   model: geminiFlash,
 });
