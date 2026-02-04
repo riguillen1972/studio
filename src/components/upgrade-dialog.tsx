@@ -17,11 +17,13 @@ import { CreditCard, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SubscriptionTier } from "./app-state-provider";
 
+type UpgradeableTiers = 'pro' | 'max';
+
 interface UpgradeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpgrade: (tier: SubscriptionTier) => void;
-  upgradeInfo: { tier: 'pro', price: number } | null;
+  onUpgrade: (tier: UpgradeableTiers) => void;
+  upgradeInfo: { tier: UpgradeableTiers, price: number } | null;
 }
 
 export function UpgradeDialog({ open, onOpenChange, onUpgrade, upgradeInfo }: UpgradeDialogProps) {

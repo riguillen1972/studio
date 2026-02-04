@@ -9,7 +9,11 @@ const FREE_FLASH_TOKEN_LIMIT = 1000000;
 const PRO_FLASH_TOKEN_LIMIT = 1000000;
 const PRO_PRO_TOKEN_LIMIT = 1000000;
 
-export type SubscriptionTier = 'free' | 'pro';
+const MAX_FLASH_TOKEN_LIMIT = 2000000;
+const MAX_PRO_TOKEN_LIMIT = 2000000;
+
+
+export type SubscriptionTier = 'free' | 'pro' | 'max';
 
 interface TokenInfo {
   flashUsedTokens: number;
@@ -44,7 +48,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setIsMounted(true);
     try {
         const storedTier = localStorage.getItem('subscriptionTier');
-        if (storedTier && (storedTier === 'free' || storedTier === 'pro')) {
+        if (storedTier && (storedTier === 'free' || storedTier === 'pro' || storedTier === 'max')) {
           setTierState(storedTier as SubscriptionTier);
         }
 
@@ -79,10 +83,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const isPremium = tier === 'pro';
+  const isPremium = tier === 'pro' || tier === 'max';
 
-  const flashTokenLimit = isPremium ? PRO_FLASH_TOKEN_LIMIT : FREE_FLASH_TOKEN_LIMIT;
-  const proTokenLimit = isPremium ? PRO_PRO_TOKEN_LIMIT : 0;
+  const getFlashTokenLimit = () => {
+    switch (tier) {
+        case 'max': return MAX_FLASH_TOKEN_LIMIT;
+        case 'pro': return PRO_FLASH_TOKEN_LIMIT;
+        default: return FREE_FLASH_TOKEN_LIMIT;
+    }
+  }
+
+  const getProTokenLimit = () => {
+    switch (tier) {
+        case 'max': return MAX_PRO_TOKEN_LIMIT;
+        case 'pro': return PRO_PRO_TOKEN_LIMIT;
+        default: return 0;
+    }
+  }
+
+  const flashTokenLimit = getFlashTokenLimit();
+  const proTokenLimit = getProTokenLimit();
 
   const hasTokens = useCallback((model: SupportedModel): boolean => {
     if (!isMounted) return false;
