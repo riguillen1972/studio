@@ -15,6 +15,7 @@ import {
   BookMarked,
   Layers,
   WandSparkles,
+  Shapes,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
 import { useAppState } from "./app-state-provider";
+import { Badge } from "@/components/ui/badge";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -48,6 +50,12 @@ export function AppSidebar() {
       href: "/tools",
       icon: WandSparkles,
       label: "AI Tools",
+    },
+    {
+      href: "/mini-app-generator",
+      icon: Shapes,
+      label: "App Generator",
+      tier: "max",
     },
     {
       href: "/homework",
@@ -126,6 +134,11 @@ export function AppSidebar() {
                   <Link href={item.href}>
                     <item.icon />
                     <span>{item.label}</span>
+                     {item.tier === 'max' && (
+                        <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-purple-500/50 text-purple-500 bg-purple-500/10 group-data-[collapsible=icon]:hidden">
+                            MAX
+                        </Badge>
+                     )}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

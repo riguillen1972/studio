@@ -1,3 +1,4 @@
+
 "use server";
 
 import { z } from "zod";
@@ -10,6 +11,7 @@ import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/gene
 import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
 import { generateFlashcards, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards";
 import { getFriendlyAdvice, GetFriendlyAdviceInput } from "@/ai/flows/get-friendly-advice";
+import { generateMiniApp, GenerateMiniAppInput } from "@/ai/flows/generate-mini-app";
 import { SupportedModel } from "@/ai/genkit";
 
 // Helper function to handle action execution and error handling
@@ -28,7 +30,7 @@ async function handleAction<T_Input, T_Output>(
   }
 }
 
-const modelSchema = z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional();
+const modelSchema = z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional();
 
 // Schema for getExplanationAction
 const ExplanationActionInputSchema = z.object({
@@ -161,4 +163,17 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
         return { success: false, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, getFriendlyAdvice);
+}
+
+// Schema for generateMiniAppAction
+const MiniAppActionInputSchema = z.object({
+    description: z.string(),
+    model: modelSchema,
+});
+export async function generateMiniAppAction(input: GenerateMiniAppInput) {
+    const parsedInput = MiniAppActionInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+        return { success: false, error: "Invalid input." };
+    }
+    return handleAction(parsedInput.data, generateMiniApp);
 }
