@@ -1,3 +1,4 @@
+
 'use server';
 import { config } from 'dotenv';
 config();
@@ -12,3 +13,4 @@ import '@/ai/flows/get-bible-verse.ts';
 import '@/ai/flows/generate-flashcards.ts';
 import '@/ai/flows/get-friendly-advice.ts';
 import '@/ai/flows/generate-mini-app.ts';
+import '@/ai/flows/interact-with-mini-app.ts';
