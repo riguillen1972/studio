@@ -31,6 +31,7 @@ const user = {
 const tiers = {
     free: { name: "Free", price: 0, flash: "1,000,000", pro: "0" },
     pro: { name: "Pro", price: 15, flash: "1,000,000", pro: "1,000,000" },
+    max: { name: "Max", price: 30, flash: "2,000,000", pro: "2,000,000" },
 }
 
 export default function ProfilePage() {
@@ -43,12 +44,10 @@ export default function ProfilePage() {
     proTokenLimit,
     isPremium
   } = useAppState();
-  const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro'; price: number } | null>(null);
+  const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
 
-  const handleUpgrade = (newTier: SubscriptionTier) => {
-    if (newTier !== 'free') {
-      setTier(newTier);
-    }
+  const handleUpgrade = (newTier: 'pro' | 'max') => {
+    setTier(newTier);
   }
 
   return (
@@ -128,13 +127,14 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <RadioGroup value={tier} onValueChange={(value) => {
-                        if (value === 'free') {
+                        const newTier = value as SubscriptionTier;
+                        if (newTier === 'free') {
                             setTier('free');
-                        } else if (value === 'pro') {
-                            setUpgradeTarget({ tier: value, price: tiers[value].price });
+                        } else {
+                            setUpgradeTarget({ tier: newTier, price: tiers[newTier].price });
                         }
                     }}>
-                        {(['free', 'pro'] as SubscriptionTier[]).map((plan) => (
+                        {(['free', 'pro', 'max'] as SubscriptionTier[]).map((plan) => (
                             <Label 
                                 key={plan}
                                 htmlFor={plan}
