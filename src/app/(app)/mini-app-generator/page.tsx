@@ -24,6 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -31,9 +32,11 @@ import { generateMiniAppAction, interactWithMiniAppAction } from '@/lib/actions'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const generationFormSchema = z.object({
   description: z.string().min(20, { message: 'Please describe the app you want in at least 20 characters.' }),
+  withStudyBuddy: z.boolean().default(false),
 });
 type GenerationFormValues = z.infer<typeof generationFormSchema>;
 
@@ -66,6 +69,7 @@ function UpgradePrompt() {
 
 export default function MiniAppGeneratorPage() {
   const [appDescription, setAppDescription] = useState<string | null>(null);
+  const [withStudyBuddy, setWithStudyBuddy] = useState(false);
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isResponding, setIsResponding] = useState(false);
@@ -78,6 +82,7 @@ export default function MiniAppGeneratorPage() {
     resolver: zodResolver(generationFormSchema),
     defaultValues: {
       description: '',
+      withStudyBuddy: false,
     },
   });
 
@@ -105,6 +110,7 @@ export default function MiniAppGeneratorPage() {
     setConversation([]);
     setError(null);
     setAppDescription(data.description);
+    setWithStudyBuddy(data.withStudyBuddy);
 
     const actionResult = await generateMiniAppAction({ ...data, model: modelToUse });
 
@@ -132,6 +138,7 @@ export default function MiniAppGeneratorPage() {
           appDescription,
           conversationHistory: newConversationHistory,
           userInput: data.userInput,
+          withStudyBuddy,
           model: modelToUse
       });
 
@@ -148,6 +155,7 @@ export default function MiniAppGeneratorPage() {
     setAppDescription(null);
     setConversation([]);
     setError(null);
+    setWithStudyBuddy(false);
     generationForm.reset();
   }
 
@@ -206,6 +214,29 @@ export default function MiniAppGeneratorPage() {
                             </FormControl>
                             <FormMessage />
                         </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={generationForm.control}
+                        name="withStudyBuddy"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled={isGenerationDisabled}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                Use Study Buddy AI Personality
+                                </FormLabel>
+                                <FormDescription>
+                                Give your mini-app the enthusiastic and encouraging personality of your Study Buddy.
+                                </FormDescription>
+                            </div>
+                            </FormItem>
                         )}
                     />
                     <Button type="submit" className="w-full" disabled={isGenerationDisabled}>

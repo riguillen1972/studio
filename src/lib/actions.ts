@@ -11,8 +11,8 @@ import { generateQuizFromScan, GenerateQuizFromScanInput } from "@/ai/flows/gene
 import { getBibleVerse, GetBibleVerseInput } from "@/ai/flows/get-bible-verse";
 import { generateFlashcards, GenerateFlashcardsInput } from "@/ai/flows/generate-flashcards";
 import { getFriendlyAdvice, GetFriendlyAdviceInput } from "@/ai/flows/get-friendly-advice";
-import { generateMiniApp } from "@/ai/flows/generate-mini-app";
-import { interactWithMiniApp } from "@/ai/flows/interact-with-mini-app";
+import { generateMiniApp, GenerateMiniAppInput } from "@/ai/flows/generate-mini-app";
+import { interactWithMiniApp, InteractWithMiniAppInput } from "@/ai/flows/interact-with-mini-app";
 import { SupportedModel } from "@/ai/genkit";
 
 // Helper function to handle action execution and error handling
@@ -169,9 +169,10 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
 // Schema for generateMiniAppAction
 const MiniAppActionInputSchema = z.object({
     description: z.string(),
+    withStudyBuddy: z.boolean().optional(),
     model: modelSchema,
 });
-export async function generateMiniAppAction(input: { description: string, model?: SupportedModel }) {
+export async function generateMiniAppAction(input: GenerateMiniAppInput) {
     const parsedInput = MiniAppActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
         return { success: false, error: "Invalid input." };
@@ -188,9 +189,10 @@ const InteractActionInputSchema = z.object({
     appDescription: z.string(),
     conversationHistory: z.array(ConversationTurnSchema),
     userInput: z.string(),
+    withStudyBuddy: z.boolean().optional(),
     model: modelSchema,
 });
-export async function interactWithMiniAppAction(input: { appDescription: string, conversationHistory: {role: 'user' | 'app', content: string}[], userInput: string, model?: SupportedModel}) {
+export async function interactWithMiniAppAction(input: InteractWithMiniAppInput) {
     const parsedInput = InteractActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
         return { success: false, error: "Invalid input." };

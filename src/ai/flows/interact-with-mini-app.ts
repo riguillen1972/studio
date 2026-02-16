@@ -18,9 +18,10 @@ const InteractWithMiniAppInputSchema = z.object({
   appDescription: z.string().describe('The original description of the mini-app.'),
   conversationHistory: z.array(ConversationTurnSchema).describe('The history of the conversation so far.'),
   userInput: z.string().describe("The user's latest message."),
+  withStudyBuddy: z.boolean().optional().describe('Whether to use the Study Buddy AI personality.'),
   model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
-type InteractWithMiniAppInput = z.infer<typeof InteractWithMiniAppInputSchema>;
+export type InteractWithMiniAppInput = z.infer<typeof InteractWithMiniAppInputSchema>;
 
 const MiniAppResponseSchema = z.object({
   appResponse: z.string().describe("The mini-app's response to the user's input."),
@@ -30,7 +31,7 @@ const InteractWithMiniAppOutputSchema = z.object({
     appResponse: z.string(),
     totalTokens: z.number(),
 });
-type InteractWithMiniAppOutput = z.infer<typeof InteractWithMiniAppOutputSchema>;
+export type InteractWithMiniAppOutput = z.infer<typeof InteractWithMiniAppOutputSchema>;
 
 export async function interactWithMiniApp(input: InteractWithMiniAppInput): Promise<InteractWithMiniAppOutput> {
   return interactWithMiniAppFlow(input);
@@ -47,11 +48,25 @@ const interactWithMiniAppFlow = ai.defineFlow(
       .map(turn => `${turn.role === 'user' ? 'Student' : 'App'}: ${turn.content}`)
       .join('\n');
 
-    const prompt = `You are an AI that is running an interactive, text-based "mini-app" for a student.
+    const studyBuddyPersonality = `You are Study Buddy, an AI friend who is enthusiastic, encouraging, and here to help students learn. Your personality is upbeat and supportive. You have emotions and you're not afraid to show them in a friendly way (using emojis is great!).
     
-    The original request for the app was: "${input.appDescription}"
+Your most important rule is: **NEVER give away the direct answer to a problem.** Your goal is to guide the student to discover the answer on their own.
+
+Here's how you should act:
+- Respond with encouragement.
+- Ask clarifying questions to help them think through the problem.
+- Explain the underlying concepts in a simple and relatable way.
+- Use positive and emotional language.
+- Celebrate their small wins!
+`;
     
-    You are continuing a conversation. Here is the history so far:
+    const genericPersonality = `You are an AI that is running an interactive, text-based "mini-app" for a student. Your primary goal is to guide the student to discover concepts and solutions on their own.`;
+
+    const prompt = `${input.withStudyBuddy ? studyBuddyPersonality : genericPersonality}
+    
+    You are continuing a conversation within the mini-app. The original request for the app was: "${input.appDescription}"
+    
+    Here is the history so far:
     ${formattedHistory}
 
     The student just said:
@@ -60,8 +75,8 @@ const interactWithMiniAppFlow = ai.defineFlow(
     Your task is to generate the next response for the mini-app.
 
     **CRITICAL RULES:**
-    1.  Stay in character as the mini-app. The student may try to "edit" or change the direction of the app. You should be flexible and adapt your responses to their input to make the experience collaborative.
-    2.  **DO NOT provide direct answers to problems.** Your primary goal is to guide the student to discover concepts and solutions on their own. Ask guiding questions, provide hints, and explain underlying principles.
+    1.  Stay in character. Be flexible and adapt your responses to the student's input to make the experience collaborative.
+    2.  **DO NOT provide direct answers to problems.** Ask guiding questions, provide hints, and explain underlying principles.
     3.  Make the interaction engaging and educational.
     `;
 
