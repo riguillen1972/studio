@@ -29,9 +29,9 @@ const user = {
 }
 
 const tiers = {
-    free: { name: "Free", price: 0, flash: "1,000,000", pro: "0" },
-    pro: { name: "Pro", price: 15, flash: "1,000,000", pro: "1,000,000" },
-    max: { name: "Max", price: 30, flash: "2,000,000", pro: "2,000,000" },
+    free: { name: "Free", price: 0 },
+    pro: { name: "Pro", price: 15 },
+    max: { name: "Max", price: 30 },
 }
 
 export default function ProfilePage() {

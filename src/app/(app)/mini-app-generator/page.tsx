@@ -8,7 +8,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { Loader2, Sparkles, Gem, Shapes, Bot, User, Send, RefreshCw, Archive, Trash2 } from 'lucide-react';
 import { useAppState } from '@/components/app-state-provider';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -45,6 +45,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -323,7 +324,7 @@ export default function MiniAppGeneratorPage() {
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          Pro model offers higher quality responses for more complex apps.
+                          More advanced models offer higher quality responses for more complex apps.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -504,5 +505,3 @@ export default function MiniAppGeneratorPage() {
     </div>
   );
 }
-
-    

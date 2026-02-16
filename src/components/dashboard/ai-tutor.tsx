@@ -34,7 +34,7 @@ interface ConversationTurn {
 
 export default function AITutor() {
   const [isClient, setIsClient] = useState(false);
-  const { isPremium, hasTokens, consumeTokens } = useAppState();
+  const { tier, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash');
@@ -50,7 +50,7 @@ export default function AITutor() {
     },
   });
   
-  const modelToUse = isPremium ? selectedModel : 'flash';
+  const modelToUse = tier === 'free' ? 'flash' : selectedModel;
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
@@ -118,7 +118,7 @@ export default function AITutor() {
             </CardDescription>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
-        {!isPremium && <AdPlaceholder />}
+        {tier === 'free' && <AdPlaceholder />}
         <ScrollArea className="flex-grow pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (
@@ -171,7 +171,7 @@ export default function AITutor() {
         </ScrollArea>
       </CardContent>
        <CardFooter className="pt-4 border-t flex-col items-start">
-        {isPremium && (
+        {tier !== 'free' && (
             <div className="mb-4 w-full">
                 <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
                 <Select value={selectedModel} onValueChange={(value: SupportedModel) => setSelectedModel(value)}>
@@ -184,7 +184,7 @@ export default function AITutor() {
                     </SelectContent>
                 </Select>
                  <p className="text-xs text-muted-foreground mt-1">
-                    Pro model offers higher quality responses and consumes from your Pro token balance.
+                    More advanced models offer higher quality responses and consume from their respective token balances.
                 </p>
             </div>
         )}

@@ -31,7 +31,7 @@ async function handleAction<T_Input, T_Output>(
   }
 }
 
-const modelSchema = z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional();
+const modelSchema = z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional();
 
 // Schema for getExplanationAction
 const ExplanationActionInputSchema = z.object({
@@ -169,7 +169,7 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
 // Schema for generateMiniAppAction
 const MiniAppActionInputSchema = z.object({
     description: z.string(),
-    model: modelSchema,
+    model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
     allowLLM: z.boolean(),
 });
 export async function generateMiniAppAction(input: GenerateMiniAppInput) {
@@ -189,7 +189,7 @@ const InteractActionInputSchema = z.object({
     appDescription: z.string(),
     conversationHistory: z.array(ConversationTurnSchema),
     userInput: z.string(),
-    model: modelSchema,
+    model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
     allowLLM: z.boolean(),
 });
 export async function interactWithMiniAppAction(input: InteractWithMiniAppInput) {

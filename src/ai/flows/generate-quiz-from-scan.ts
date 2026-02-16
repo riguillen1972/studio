@@ -7,7 +7,7 @@
  * It takes an image, subject, and grade level, and returns a set of quiz questions based on the content of the image.
  *
  * @interface GenerateQuizFromScanInput - The input type for the generateQuizFromScan function.
- * @interface GenerateQuizFromScanOutput - The output type for the generateQuizFromScan function.
+ * @interface GenerateQuizFromScanOutput - The return type for the generateQuizFromScan function.
  * @function generateQuizFromScan - The main function that orchestrates the quiz generation flow from a scan.
  */
 
@@ -42,7 +42,7 @@ const GenerateQuizFromScanInputSchema = z.object({
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type GenerateQuizFromScanInput = z.infer<typeof GenerateQuizFromScanInputSchema>;
