@@ -35,6 +35,7 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SupportedModel } from '@/ai/genkit';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 
 const generationFormSchema = z.object({
