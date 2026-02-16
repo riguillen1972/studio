@@ -32,11 +32,13 @@ import { generateMiniAppAction, interactWithMiniAppAction } from '@/lib/actions'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SupportedModel } from '@/ai/genkit';
+
 
 const generationFormSchema = z.object({
   description: z.string().min(20, { message: 'Please describe the app you want in at least 20 characters.' }),
-  withStudyBuddy: z.boolean().default(false),
+  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).default('pro'),
 });
 type GenerationFormValues = z.infer<typeof generationFormSchema>;
 
@@ -69,20 +71,20 @@ function UpgradePrompt() {
 
 export default function MiniAppGeneratorPage() {
   const [appDescription, setAppDescription] = useState<string | null>(null);
-  const [withStudyBuddy, setWithStudyBuddy] = useState(false);
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isResponding, setIsResponding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('pro');
 
-  const modelToUse = 'pro'; // Max tier can use Pro, let's default to Pro for this.
+  const modelToUse = selectedModel;
 
   const generationForm = useForm<GenerationFormValues>({
     resolver: zodResolver(generationFormSchema),
     defaultValues: {
       description: '',
-      withStudyBuddy: false,
+      model: 'pro',
     },
   });
 
@@ -102,20 +104,21 @@ export default function MiniAppGeneratorPage() {
   }, [conversation]);
 
   const onGenerationSubmit: SubmitHandler<GenerationFormValues> = async (data) => {
-    if (tier !== 'max' || !hasTokens(modelToUse)) {
-      setError(tier !== 'max' ? 'This feature is only available for Max subscribers.' : `You have reached your monthly token limit for the ${modelToUse} model.`);
+    const modelToUseOnSubmit = data.model;
+    if (tier !== 'max' || !hasTokens(modelToUseOnSubmit)) {
+      setError(tier !== 'max' ? 'This feature is only available for Max subscribers.' : `You have reached your monthly token limit for the ${modelToUseOnSubmit} model.`);
       return;
     }
     setIsLoading(true);
     setConversation([]);
     setError(null);
     setAppDescription(data.description);
-    setWithStudyBuddy(data.withStudyBuddy);
+    setSelectedModel(data.model);
 
-    const actionResult = await generateMiniAppAction({ ...data, model: modelToUse });
+    const actionResult = await generateMiniAppAction({ description: data.description, model: data.model });
 
     if (actionResult.success) {
-      consumeTokens(actionResult.data.totalTokens, modelToUse);
+      consumeTokens(actionResult.data.totalTokens, data.model);
       setConversation([{ role: 'app', content: actionResult.data.appResponse }]);
     } else {
       setError(actionResult.error);
@@ -138,7 +141,6 @@ export default function MiniAppGeneratorPage() {
           appDescription,
           conversationHistory: newConversationHistory,
           userInput: data.userInput,
-          withStudyBuddy,
           model: modelToUse
       });
 
@@ -155,7 +157,6 @@ export default function MiniAppGeneratorPage() {
     setAppDescription(null);
     setConversation([]);
     setError(null);
-    setWithStudyBuddy(false);
     generationForm.reset();
   }
 
@@ -171,7 +172,7 @@ export default function MiniAppGeneratorPage() {
       );
   }
   
-  const isGenerationDisabled = isLoading || (tier === 'max' && !hasTokens(modelToUse));
+  const isGenerationDisabled = isLoading || (tier === 'max' && !hasTokens(generationForm.watch('model')));
   const isChatDisabled = isResponding || (tier === 'max' && !hasTokens(modelToUse));
 
   return (
@@ -209,7 +210,7 @@ export default function MiniAppGeneratorPage() {
                                 placeholder="e.g., An app that helps me practice Spanish vocabulary for ordering food at a restaurant."
                                 rows={8}
                                 {...field}
-                                disabled={isGenerationDisabled}
+                                disabled={isLoading}
                             />
                             </FormControl>
                             <FormMessage />
@@ -218,24 +219,25 @@ export default function MiniAppGeneratorPage() {
                     />
                     <FormField
                         control={generationForm.control}
-                        name="withStudyBuddy"
+                        name="model"
                         render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                            <FormControl>
-                                <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                disabled={isGenerationDisabled}
-                                />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                                <FormLabel>
-                                Use Study Buddy AI Personality
-                                </FormLabel>
+                            <FormItem>
+                                <FormLabel>AI Model</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a model" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
+                                        <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormDescription>
-                                Give your mini-app the enthusiastic and encouraging personality of your Study Buddy.
+                                    Pro model offers higher quality responses for more complex apps.
                                 </FormDescription>
-                            </div>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
