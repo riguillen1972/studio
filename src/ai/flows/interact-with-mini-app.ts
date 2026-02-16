@@ -8,6 +8,21 @@
 
 import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
+import { summarizeText } from './summarize-text';
+
+const summarizeTextTool = ai.defineTool(
+  {
+    name: 'summarizeText',
+    description: 'Summarizes a given piece of text. Use this if the student provides a long text and asks for a summary.',
+    inputSchema: z.object({ text: z.string().describe('The text to summarize.') }),
+    outputSchema: z.string(),
+  },
+  async (input) => {
+    // This tool calls another flow.
+    const result = await summarizeText({ text: input.text, model: 'flash' }); // Use flash to be economical
+    return result.summary;
+  }
+);
 
 const ConversationTurnSchema = z.object({
   role: z.enum(['user', 'app']),
@@ -18,7 +33,8 @@ const InteractWithMiniAppInputSchema = z.object({
   appDescription: z.string().describe('The original description of the mini-app.'),
   conversationHistory: z.array(ConversationTurnSchema).describe('The history of the conversation so far.'),
   userInput: z.string().describe("The user's latest message."),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  allowLLM: z.boolean().describe('Whether the mini-app is allowed to use other AI models as tools.'),
 });
 export type InteractWithMiniAppInput = z.infer<typeof InteractWithMiniAppInputSchema>;
 
@@ -43,33 +59,32 @@ const interactWithMiniAppFlow = ai.defineFlow(
     outputSchema: InteractWithMiniAppOutputSchema,
   },
   async (input) => {
-    const formattedHistory = input.conversationHistory
-      .map(turn => `${turn.role === 'user' ? 'Student' : 'App'}: ${turn.content}`)
-      .join('\n');
-    
     const genericPersonality = `You are an AI that is running an interactive, text-based "mini-app" for a student. Your primary goal is to guide the student to discover concepts and solutions on their own.`;
 
     const prompt = `${genericPersonality}
     
     You are continuing a conversation within the mini-app. The original request for the app was: "${input.appDescription}"
-    
-    Here is the history so far:
-    ${formattedHistory}
+    ${input.allowLLM ? `
+**AI Capabilities Enabled:** You have access to AI tools. If the student's request matches a tool's description (like asking for a summary), you should use the tool to fulfill their request.` : ''}
 
-    The student just said:
-    "${input.userInput}"
-
-    Your task is to generate the next response for the mini-app.
+    Your task is to generate the next response for the mini-app based on the conversation history and the student's latest input.
 
     **CRITICAL RULES:**
     1.  Stay in character. Be flexible and adapt your responses to the student's input to make the experience collaborative.
     2.  **DO NOT provide direct answers to problems.** Ask guiding questions, provide hints, and explain underlying principles.
     3.  Make the interaction engaging and educational.
     `;
+    
+    const historyForGenkit = input.conversationHistory.map(turn => ({
+        role: turn.role === 'user' ? 'user' : 'model',
+        content: [{ text: turn.content }]
+    }));
 
-    const response = await ai.generate({
+    let currentResponse = await ai.generate({
         model: getModel(input.model),
         prompt: prompt,
+        history: historyForGenkit,
+        tools: input.allowLLM ? [summarizeTextTool] : [],
         output: {
             schema: MiniAppResponseSchema,
         },
@@ -78,9 +93,40 @@ const interactWithMiniAppFlow = ai.defineFlow(
         }
     });
 
+    const allHistory = [...historyForGenkit];
+    let totalTokens = currentResponse.usage.totalTokens;
+
+    while(currentResponse.toolRequests.length > 0) {
+        allHistory.push({ role: 'model' as const, content: currentResponse.toolRequests.map(tr => ({ toolRequest: tr })) });
+        
+        const toolResponses = await Promise.all(
+            currentResponse.toolRequests.map(toolRequest => ai.runTool(toolRequest))
+        );
+
+        allHistory.push({ role: 'tool' as const, content: toolResponses.map(tr => ({ toolResponse: tr })) });
+
+        currentResponse = await ai.generate({
+            model: getModel(input.model),
+            prompt: prompt,
+            history: allHistory,
+            tools: input.allowLLM ? [summarizeTextTool] : [],
+            output: {
+                schema: MiniAppResponseSchema,
+            },
+            config: {
+                safetySettings,
+            }
+        });
+        totalTokens += currentResponse.usage.totalTokens;
+    }
+
+    if (!currentResponse.output?.appResponse) {
+        return { appResponse: "I had trouble processing that request. Please try again.", totalTokens: totalTokens };
+    }
+
     return {
-      appResponse: response.output!.appResponse,
-      totalTokens: response.usage.totalTokens,
+      appResponse: currentResponse.output.appResponse,
+      totalTokens: totalTokens,
     };
   }
 );

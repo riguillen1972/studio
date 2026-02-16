@@ -170,6 +170,7 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
 const MiniAppActionInputSchema = z.object({
     description: z.string(),
     model: modelSchema,
+    allowLLM: z.boolean(),
 });
 export async function generateMiniAppAction(input: GenerateMiniAppInput) {
     const parsedInput = MiniAppActionInputSchema.safeParse(input);
@@ -189,6 +190,7 @@ const InteractActionInputSchema = z.object({
     conversationHistory: z.array(ConversationTurnSchema),
     userInput: z.string(),
     model: modelSchema,
+    allowLLM: z.boolean(),
 });
 export async function interactWithMiniAppAction(input: InteractWithMiniAppInput) {
     const parsedInput = InteractActionInputSchema.safeParse(input);

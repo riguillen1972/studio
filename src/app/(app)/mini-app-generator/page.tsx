@@ -34,6 +34,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SupportedModel } from '@/ai/genkit';
+import { Switch } from '@/components/ui/switch';
 
 
 const generationFormSchema = z.object({
@@ -77,6 +78,8 @@ export default function MiniAppGeneratorPage() {
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('pro');
+  const [allowLLM, setAllowLLM] = useState(false);
+  const [allowLLMInConversation, setAllowLLMInConversation] = useState(false);
 
   const modelToUse = selectedModel;
 
@@ -114,8 +117,13 @@ export default function MiniAppGeneratorPage() {
     setError(null);
     setAppDescription(data.description);
     setSelectedModel(data.model);
+    setAllowLLMInConversation(allowLLM);
 
-    const actionResult = await generateMiniAppAction({ description: data.description, model: data.model });
+    const actionResult = await generateMiniAppAction({ 
+      description: data.description, 
+      model: data.model,
+      allowLLM: allowLLM,
+    });
 
     if (actionResult.success) {
       consumeTokens(actionResult.data.totalTokens, data.model);
@@ -141,7 +149,8 @@ export default function MiniAppGeneratorPage() {
           appDescription,
           conversationHistory: newConversationHistory,
           userInput: data.userInput,
-          model: modelToUse
+          model: modelToUse,
+          allowLLM: allowLLMInConversation,
       });
 
       if (actionResult.success) {
@@ -157,6 +166,7 @@ export default function MiniAppGeneratorPage() {
     setAppDescription(null);
     setConversation([]);
     setError(null);
+    setAllowLLM(false);
     generationForm.reset();
   }
 
@@ -241,6 +251,17 @@ export default function MiniAppGeneratorPage() {
                             </FormItem>
                         )}
                     />
+
+                    <div className="space-y-2 rounded-md border p-4">
+                        <div className="flex items-center space-x-3">
+                            <Switch id="allow-llm" checked={allowLLM} onCheckedChange={setAllowLLM} disabled={isLoading} />
+                            <Label htmlFor="allow-llm" className="cursor-pointer">Enable AI Tools in your App</Label>
+                        </div>
+                        <FormDescription className="pl-9">
+                            Allows your app to use other Study Buddy AI models to perform complex tasks like summarizing text.
+                        </FormDescription>
+                    </div>
+
                     <Button type="submit" className="w-full" disabled={isGenerationDisabled}>
                         {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2 h-4 w-4" /> Generate App</>}
                     </Button>

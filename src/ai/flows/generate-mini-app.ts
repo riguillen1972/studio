@@ -13,7 +13,8 @@ import {z} from 'genkit';
 
 const GenerateMiniAppInputSchema = z.object({
   description: z.string().describe('A description of the learning mini-app the user wants to create.'),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  allowLLM: z.boolean().describe('Whether to allow the mini-app to use other AI models as tools.'),
 });
 export type GenerateMiniAppInput = z.infer<typeof GenerateMiniAppInputSchema>;
 
@@ -46,6 +47,8 @@ You are generating the initial starting text for a mini-app based on the user's 
 1.  Welcome the student to the mini-app, giving it a creative name.
 2.  Briefly explain what the app does and what the student will learn.
 3.  Provide the very first question or prompt to get the student started.
+${input.allowLLM ? `
+**This mini-app has AI capabilities!** It can perform tasks like summarizing text. You can let the student know they can ask it to perform these tasks.` : ''}
 
 **CRITICAL RULE: The mini-app must NOT provide direct answers. It must guide the student to discover concepts and solutions on their own.** For example, instead of "The answer is 42," it should say, "Great question! Let's start by looking at the first variable. What do you notice about it?"
 
