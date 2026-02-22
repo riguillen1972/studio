@@ -174,7 +174,7 @@ export default function ProfilePage() {
                     </div>
                     { isPremium && (
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Pro Tokens (claude-haiku-4-5-20251001)</Label>
+                            <Label className="text-sm font-medium">Pro Tokens (claude-haiku-4-5)</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
                                 <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
