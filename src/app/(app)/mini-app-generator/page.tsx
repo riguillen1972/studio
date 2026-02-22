@@ -320,7 +320,7 @@ export default function MiniAppGeneratorPage() {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
-                            <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>
+                            <SelectItem value="pro">Claude 3.5 Haiku</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>

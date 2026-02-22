@@ -1,20 +1,17 @@
+
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 import { anthropic } from 'genkitx-anthropic'; 
 
 // --- MODEL DEFINITIONS ---
-// I've updated these to the specific strings likely to work with your plugins
 const geminiFlash = 'googleai/gemini-1.5-flash'; 
-const geminiPro = 'googleai/gemini-1.5-pro'; 
-// Note: If '3-5-haiku' fails, try 'claude-3-haiku' as the fallback
 const claudeHaiku = 'anthropic/claude-3-5-haiku'; 
 
-export type SupportedModel = 'flash' | 'pro' | 'haiku';
+export type SupportedModel = 'flash' | 'pro';
 
 const models: Record<SupportedModel, string> = {
     flash: geminiFlash,
-    pro: geminiPro,
-    haiku: claudeHaiku,
+    pro: claudeHaiku, // 'pro' is now the key for Claude Haiku
 };
 
 // --- SAFETY SETTINGS ---
