@@ -4,7 +4,7 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { anthropic } from 'genkitx-anthropic'; 
 
 // --- MODEL DEFINITIONS ---
-const geminiFlash = 'googleai/gemini-1.5-flash-latest'; 
+const geminiFlash = 'googleai/gemini-pro'; 
 const claudeHaiku = 'anthropic/claude-3-5-haiku'; 
 
 export type SupportedModel = 'flash' | 'pro';

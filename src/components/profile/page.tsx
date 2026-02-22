@@ -165,7 +165,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label className="text-sm font-medium">Flash Tokens (Gemini 2.5 Flash)</Label>
+                        <Label className="text-sm font-medium">Flash Tokens (Gemini Pro)</Label>
                         <div className="flex justify-between text-sm text-muted-foreground mb-1">
                             <span>Remaining</span>
                             <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
@@ -174,7 +174,7 @@ export default function ProfilePage() {
                     </div>
                     { isPremium && (
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Pro Tokens (Gemini 2.5 Pro)</Label>
+                            <Label className="text-sm font-medium">Pro Tokens (Claude 3.5 Haiku)</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
                                 <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
