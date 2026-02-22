@@ -1,0 +1,25 @@
+import { NextResponse } from 'next/server';
+import { ai, getModel } from '../../../../ai/genkit'; // This imports the config we made earlier
+
+// This POST function listens for requests from your frontend
+export async function POST(req: Request) {
+  try {
+    // Read what the user typed and which AI they want
+    const { prompt, modelType } = await req.json();
+
+    // Use your helper function to pick 'flash' (Gemini) or 'haiku' (Claude)
+    const selectedModel = getModel(modelType || 'flash');
+
+    // Send the prompt to the AI
+    const response = await ai.generate({
+      model: selectedModel,
+      prompt: prompt,
+    });
+
+    // Send the AI's answer back to the frontend
+    return NextResponse.json({ text: response.text });
+  } catch (error) {
+    console.error('Genkit Error:', error);
+    return NextResponse.json({ error: 'Failed to generate response' }, { status: 500 });
+  }
+}

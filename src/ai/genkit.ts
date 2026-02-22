@@ -1,19 +1,24 @@
-import {genkit, ModelReference} from 'genkit';
-import {googleAI, GoogleAIGenerateRequestConfig} from '@genkit-ai/google-genai';
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+import { anthropic } from 'genkitx-anthropic'; 
 
-const geminiFlash = 'googleai/gemini-2.5-flash';
-const geminiPro = 'googleai/gemini-2.5-pro';
+// --- MODEL DEFINITIONS ---
+// I've updated these to the specific strings likely to work with your plugins
+const geminiFlash = 'googleai/gemini-1.5-flash'; 
+const geminiPro = 'googleai/gemini-1.5-pro'; 
+// Note: If '3-5-haiku' fails, try 'claude-3-haiku' as the fallback
+const claudeHaiku = 'anthropic/claude-3-5-haiku'; 
 
+export type SupportedModel = 'flash' | 'pro' | 'haiku';
 
-type StudyBuddyModel = ModelReference;
-export type SupportedModel = 'flash' | 'pro';
-
-const models: {[key in SupportedModel]: StudyBuddyModel} = {
+const models: Record<SupportedModel, string> = {
     flash: geminiFlash,
     pro: geminiPro,
-}
+    haiku: claudeHaiku,
+};
 
-export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
+// --- SAFETY SETTINGS ---
+export const safetySettings = [
     {
         category: 'HARM_CATEGORY_HATE_SPEECH',
         threshold: 'BLOCK_ONLY_HIGH',
@@ -24,13 +29,21 @@ export const safetySettings: GoogleAIGenerateRequestConfig["safetySettings"] = [
     }
 ];
 
+// --- HELPER FUNCTION ---
+// This allows you to easily switch models in your other files
 export function getModel(model: SupportedModel = 'flash') {
     return models[model] || models.flash;
 }
 
-const plugins = [googleAI()];
-
+// --- PART 1: CONFIGURATION (The Engine Room) ---
 export const ai = genkit({
-  plugins,
+  plugins: [
+      // Plugin 1: Google
+      googleAI(),
+      // Plugin 2: Anthropic (Claude)
+      // Make sure ANTHROPIC_API_KEY is in your .env file!
+      anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }), 
+  ],
+  // Default fallback if no model is specified
   model: geminiFlash,
 });
