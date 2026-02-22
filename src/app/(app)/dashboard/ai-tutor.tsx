@@ -180,7 +180,7 @@ export default function AITutor() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="flash">Gemini Pro</SelectItem>
-                        <SelectItem value="pro">Claude 3.5 Haiku</SelectItem>
+                        <SelectItem value="pro">Claude 3.5 Sonnet</SelectItem>
                     </SelectContent>
                 </Select>
                  <p className="text-xs text-muted-foreground mt-1">
@@ -224,5 +224,3 @@ export default function AITutor() {
     </Card>
   );
 }
-
-    

@@ -4,14 +4,14 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { anthropic } from 'genkitx-anthropic'; 
 
 // --- MODEL DEFINITIONS ---
-const geminiFlash = 'googleai/gemini-pro'; 
-const claudeHaiku = 'anthropic/claude-3-5-haiku'; 
+const geminiPro = 'googleai/gemini-1.5-pro-latest'; 
+const claudeSonnet = 'anthropic/claude-3-5-sonnet-20240620';
 
 export type SupportedModel = 'flash' | 'pro';
 
 const models: Record<SupportedModel, string> = {
-    flash: geminiFlash,
-    pro: claudeHaiku, // 'pro' is now the key for Claude Haiku
+    flash: geminiPro,
+    pro: claudeSonnet, // 'pro' is now the key for Claude 3.5 Sonnet
 };
 
 // --- SAFETY SETTINGS ---
@@ -42,5 +42,5 @@ export const ai = genkit({
       anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }), 
   ],
   // Default fallback if no model is specified
-  model: geminiFlash,
+  model: geminiPro,
 });
