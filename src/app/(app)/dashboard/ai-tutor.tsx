@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,13 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { getExplanationAction } from "@/lib/actions";
-import { ScrollArea } from "../ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAppState } from "@/components/app-state-provider";
-import AdPlaceholder from "../ad-placeholder";
-import { Skeleton } from "../ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Label } from "../ui/label";
+import AdPlaceholder from "@/components/ad-placeholder";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { SupportedModel } from "@/ai/genkit";
 
 const formSchema = z.object({
@@ -179,8 +178,8 @@ export default function AITutor() {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="flash">Gemini Pro</SelectItem>
-                        <SelectItem value="pro">claude-haiku-4-5</SelectItem>
+                        <SelectItem value="flash">Gemini 1.5 Flash</SelectItem>
+                        <SelectItem value="pro">Gemini 1.5 Pro</SelectItem>
                     </SelectContent>
                 </Select>
                  <p className="text-xs text-muted-foreground mt-1">

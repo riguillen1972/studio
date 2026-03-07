@@ -2,7 +2,6 @@ import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
 // --- MODEL DEFINITIONS ---
-// Using specific, stable model identifiers to ensure reliability across all regions.
 const geminiFlash = 'googleai/gemini-1.5-flash';
 const geminiPro = 'googleai/gemini-1.5-pro';
 
