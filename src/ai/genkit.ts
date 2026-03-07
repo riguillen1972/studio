@@ -1,47 +1,40 @@
-
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { anthropic } from 'genkitx-anthropic'; 
 
 // --- MODEL DEFINITIONS ---
-const geminiPro = 'googleai/gemini-pro'; 
-const claudeHaiku = 'anthropic/claude-haiku-4-5';
+// Using specific, stable model identifiers to ensure reliability across all regions.
+const geminiFlash = 'googleai/gemini-1.5-flash';
+const geminiPro = 'googleai/gemini-1.5-pro';
 
 export type SupportedModel = 'flash' | 'pro';
 
-const models: Record<SupportedModel, string> = {
-    flash: geminiPro,
-    pro: claudeHaiku,
-};
-
-// --- SAFETY SETTINGS ---
-export const safetySettings = [
-    {
-        category: 'HARM_CATEGORY_HATE_SPEECH',
-        threshold: 'BLOCK_ONLY_HIGH',
-    },
-    {
-        category: 'HARM_CATEGORY_HARASSMENT',
-        threshold: 'BLOCK_ONLY_HIGH',
-    }
-];
-
-// --- HELPER FUNCTION ---
-// This allows you to easily switch models in your other files
-export function getModel(model: SupportedModel = 'flash') {
-    return models[model] || models.flash;
+/**
+ * Helper function to get the appropriate model string.
+ * This is a client/server shared utility and should not be a Server Action.
+ * @param model The model identifier ('flash' or 'pro').
+ * @returns The full model string for the Genkit API.
+ */
+export function getModel(model: SupportedModel = 'flash'): string {
+  if (model === 'pro') {
+    return geminiPro;
+  }
+  return geminiFlash;
 }
 
-// --- PART 1: CONFIGURATION (The Engine Room) ---
-export const ai = genkit({
-  plugins: [
-      // Plugin 1: Google
-      googleAI(),
-      // Plugin 2: Anthropic (Claude)
-      // Make sure ANTHROPIC_API_KEY is in your .env file!
-      anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }), 
-  ],
-  // Default fallback if no model is specified
-  model: geminiPro,
-});
+// --- SAFETY SETTINGS ---
+export const safetySettings: any = [
+  {
+    category: 'HARM_CATEGORY_HATE_SPEECH',
+    threshold: 'BLOCK_ONLY_HIGH',
+  },
+  {
+    category: 'HARM_CATEGORY_HARASSMENT',
+    threshold: 'BLOCK_ONLY_HIGH',
+  },
+];
 
+// --- CONFIGURATION ---
+export const ai = genkit({
+  plugins: [googleAI()],
+  model: geminiFlash,
+});

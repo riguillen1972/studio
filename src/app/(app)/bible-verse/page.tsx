@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,7 +14,6 @@ import AdPlaceholder from "@/components/ad-placeholder";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-
 interface BibleVerse {
     verse: string;
     reference: string;
@@ -26,6 +24,8 @@ export default function BibleVersePage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { tier, hasTokens, consumeTokens } = useAppState();
+    
+    // Selects Gemini Pro if paid, otherwise Gemini Flash
     const modelToUse = tier !== 'free' ? 'pro' : 'flash';
 
     const fetchVerse = async () => {
@@ -33,16 +33,24 @@ export default function BibleVersePage() {
             setError("You have reached your monthly token limit. Please try again next month.");
             return;
         }
+        
         setIsLoading(true);
         setError(null);
+        
         const result = await getBibleVerseAction({ model: modelToUse });
 
-        if (result.success) {
-            consumeTokens(result.data.totalTokens, modelToUse);
-            setVerseInfo(result.data);
+        // FIX APPLIED HERE: We check if 'data' exists in the result object
+        // This satisfies TypeScript's Discriminated Union requirements.
+        if ('data' in result) {
+            const { totalTokens, verse, reference } = result.data;
+            
+            consumeTokens(totalTokens, modelToUse);
+            setVerseInfo({ verse, reference });
         } else {
+            // Because 'data' isn't in the object, TypeScript knows this is the error branch
             setError(result.error);
         }
+        
         setIsLoading(false);
     };
 

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -179,8 +178,8 @@ export default function AITutor() {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="flash">Gemini Pro</SelectItem>
-                        <SelectItem value="pro">claude-haiku-4-5</SelectItem>
+                        <SelectItem value="flash">Gemini 1.5 Flash</SelectItem>
+                        <SelectItem value="pro">Gemini 1.5 Pro</SelectItem>
                     </SelectContent>
                 </Select>
                  <p className="text-xs text-muted-foreground mt-1">

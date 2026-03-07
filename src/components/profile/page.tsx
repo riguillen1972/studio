@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -165,7 +164,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label className="text-sm font-medium">Flash Tokens (Gemini Pro)</Label>
+                        <Label className="text-sm font-medium">Flash Tokens (Gemini 1.5 Flash)</Label>
                         <div className="flex justify-between text-sm text-muted-foreground mb-1">
                             <span>Remaining</span>
                             <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
@@ -174,7 +173,7 @@ export default function ProfilePage() {
                     </div>
                     { isPremium && (
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Pro Tokens (claude-haiku-4-5)</Label>
+                            <Label className="text-sm font-medium">Pro Tokens (Gemini 1.5 Pro)</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
                                 <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
