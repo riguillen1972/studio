@@ -53,7 +53,7 @@ export default function AITutor() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash' ? 'Gemini 1.5 Flash' : 'Gemini 1.5 Pro'} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);

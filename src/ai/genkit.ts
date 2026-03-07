@@ -2,6 +2,7 @@ import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
 // --- MODEL DEFINITIONS ---
+// Using standard stable identifiers for Genkit 1.x
 const geminiFlash = 'googleai/gemini-1.5-flash';
 const geminiPro = 'googleai/gemini-1.5-pro';
 
@@ -9,7 +10,7 @@ export type SupportedModel = 'flash' | 'pro';
 
 /**
  * Helper function to get the appropriate model string.
- * This is a client/server shared utility and should not be a Server Action.
+ * This is a synchronous utility and should NOT have 'use server'.
  * @param model The model identifier ('flash' or 'pro').
  * @returns The full model string for the Genkit API.
  */
