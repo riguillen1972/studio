@@ -261,7 +261,7 @@ export default function MiniAppGeneratorPage() {
       return (
           <div className="flex flex-col gap-8">
               <header>
-                <h1 className="text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
                 <p className="text-muted-foreground mt-1">Create custom AI-powered apps to help you learn any topic.</p>
               </header>
               <UpgradePrompt />
@@ -276,7 +276,7 @@ export default function MiniAppGeneratorPage() {
     return (
       <div className="flex flex-col gap-8">
         <header>
-          <h1 className="text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
           <p className="text-muted-foreground mt-1">Describe a learning tool, or load a saved session.</p>
         </header>
         <div className="grid md:grid-cols-2 gap-8 items-start">
@@ -409,7 +409,7 @@ export default function MiniAppGeneratorPage() {
     <div className="flex flex-col gap-8">
       <header className="flex justify-between items-start">
         <div>
-            <h1 className="text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
             <p className="text-muted-foreground mt-1">Interact with your custom-built learning app.</p>
         </div>
         <div className="flex gap-2">

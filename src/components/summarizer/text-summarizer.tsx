@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, ScrollText } from "lucide-react";
+import { Loader2, ScrollText, Copy, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +16,7 @@ import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
 import ModelSelector from "@/components/model-selector";
 import { SupportedModel } from "@/ai/genkit";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   text: z.string().min(100, { message: "Please enter at least 100 characters to summarize." }),
@@ -29,7 +30,17 @@ export default function TextSummarizer() {
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
   const modelToUse = selectedModel;
+
+  const handleCopy = async () => {
+    if (!summary) return;
+    await navigator.clipboard.writeText(summary);
+    setCopied(true);
+    toast({ title: "Copied!", description: "Summary copied to clipboard." });
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -100,7 +111,15 @@ export default function TextSummarizer() {
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">Summary</CardTitle>
-           <CardDescription>The key concepts from your text.</CardDescription>
+           <CardDescription className="flex items-center justify-between">
+             <span>The key concepts from your text.</span>
+             {summary && (
+               <Button variant="ghost" size="sm" onClick={handleCopy} className="h-7 gap-1">
+                 {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                 {copied ? 'Copied' : 'Copy'}
+               </Button>
+             )}
+           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading && (

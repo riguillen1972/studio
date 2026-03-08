@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Loader2, Sparkles, User } from "lucide-react";
+import { Bot, Loader2, Sparkles, User, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,7 +59,7 @@ export default function AITutor() {
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
-    const result = await getExplanationAction({ concept: data.concept, model: modelToUse });
+    const result = await getExplanationAction({ concept: data.concept, model: modelToUse, conversationHistory: conversation });
 
     if (result.success) {
       consumeTokens(result.data.totalTokens, modelToUse);
@@ -112,9 +112,16 @@ export default function AITutor() {
                 <Sparkles className="text-primary"/>
                 AI Tutor
             </CardTitle>
-            <CardDescription>
-                Ask a question or describe a concept you want to understand better.
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <CardDescription>
+                  Ask a question or describe a concept you want to understand better.
+              </CardDescription>
+              {conversation.length > 0 && (
+                <Button variant="ghost" size="sm" className="h-7 gap-1 shrink-0" onClick={() => setConversation([])}>
+                  <Trash2 className="h-3 w-3" /> New Chat
+                </Button>
+              )}
+            </div>
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
         {tier === 'free' && <AdPlaceholder />}

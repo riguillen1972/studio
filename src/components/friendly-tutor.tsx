@@ -88,7 +88,7 @@ export default function FriendlyTutor() {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
             <Button
-                className="fixed bottom-6 right-6 h-20 w-20 blob-shape shadow-lg z-50 flex items-center justify-center
+                className="fixed bottom-6 right-6 h-16 w-16 sm:h-20 sm:w-20 blob-shape shadow-lg z-50 flex items-center justify-center
                            bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600
                            hover:from-sky-500 hover:via-blue-600 hover:to-indigo-700
                            border-2 border-white/30
@@ -106,7 +106,7 @@ export default function FriendlyTutor() {
                 <span className="sr-only">Toggle Study Buddy</span>
             </Button>
         </PopoverTrigger>
-        <PopoverContent side="top" align="end" sideOffset={16} className="w-[80vw] max-w-md h-[70vh] p-0 flex flex-col">
+        <PopoverContent side="top" align="end" sideOffset={16} className="w-[90vw] sm:w-[80vw] max-w-md h-[60vh] sm:h-[70vh] p-0 flex flex-col">
             <Card className="h-full flex flex-col border-0">
                 <CardHeader>
                     <CardTitle className="font-headline flex items-center gap-2">

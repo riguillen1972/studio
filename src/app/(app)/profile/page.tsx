@@ -12,7 +12,7 @@ import { useAppState, SubscriptionTier } from "@/components/app-state-provider";
 import { Progress } from "@/components/ui/progress";
 import { UpgradeDialog } from "@/components/upgrade-dialog";
 import { cn } from "@/lib/utils";
-import { useUser } from "@/firebase";
+import { useAuth } from "@/lib/supabase/auth-provider";
 import { Badge } from "@/components/ui/badge";
 
 const user = {
@@ -97,9 +97,9 @@ export default function ProfilePage() {
     haikuTokenLimit,
     isPremium
   } = useAppState();
-  const { user: firebaseUser } = useUser();
-  const displayName = firebaseUser?.displayName || user.name;
-  const displayEmail = firebaseUser?.email || user.email;
+  const { user: supabaseUser } = useAuth();
+  const displayName = supabaseUser?.user_metadata?.display_name || supabaseUser?.email?.split('@')[0] || user.name;
+  const displayEmail = supabaseUser?.email || user.email;
   const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
 
   const handleUpgrade = (newTier: 'pro' | 'max') => {
@@ -124,7 +124,7 @@ export default function ProfilePage() {
     />
     <div className="flex flex-col gap-8">
       <header>
-        <h1 className="text-3xl font-bold font-headline tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">
           User Profile
         </h1>
         <p className="text-muted-foreground mt-1">
@@ -242,7 +242,7 @@ export default function ProfilePage() {
 
       {/* Pricing Plans */}
       <div>
-        <h2 className="text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
+        <h2 className="text-xl sm:text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
             <Gem className="text-primary" /> Subscription Plans
         </h2>
         <p className="text-muted-foreground mb-6">Choose the plan that fits your learning needs.</p>

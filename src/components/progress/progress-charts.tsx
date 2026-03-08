@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 import {
@@ -15,27 +16,26 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-const studyTimeData = [
-  { subject: "Math", hours: 4 },
-  { subject: "Science", hours: 2.5 },
-  { subject: "History", hours: 1.5 },
-  { subject: "English", hours: 2 },
-  { subject: "Physics", hours: 3 },
-];
+interface QuizResult {
+  id: string;
+  topic: string;
+  subject: string;
+  score: number;
+  total: number;
+  created_at: string;
+}
+
+interface ProgressChartsProps {
+  quizResults: QuizResult[];
+}
+
 const chartConfigTime = {
-  hours: {
-    label: "Hours",
+  quizzes: {
+    label: "Quizzes",
     color: "hsl(var(--primary))",
   },
 }
 
-const proficiencyData = [
-  { subject: "Algebra", score: 85, fullMark: 100 },
-  { subject: "Biology", score: 92, fullMark: 100 },
-  { subject: "Literature", score: 78, fullMark: 100 },
-  { subject: "Physics", score: 70, fullMark: 100 },
-  { subject: "History", score: 88, fullMark: 100 },
-];
 const chartConfigProficiency = {
   score: {
     label: "Score",
@@ -43,32 +43,86 @@ const chartConfigProficiency = {
   },
 }
 
-const progressData = [
-    { date: "Jan", score: 65 },
-    { date: "Feb", score: 68 },
-    { date: "Mar", score: 75 },
-    { date: "Apr", score: 80 },
-    { date: "May", score: 82 },
-    { date: "Jun", score: 88 },
-]
 const chartConfigProgress = {
-    score: {
-        label: "Avg. Score",
-        color: "hsl(var(--primary))",
-    },
+  score: {
+    label: "Avg. Score",
+    color: "hsl(var(--primary))",
+  },
 }
 
-export default function ProgressCharts() {
+export default function ProgressCharts({ quizResults }: ProgressChartsProps) {
+  // 1. Quizzes per subject
+  const quizzesPerSubject = useMemo(() => {
+    const counts: Record<string, number> = {};
+    quizResults.forEach(r => {
+      const subject = r.subject || "General";
+      counts[subject] = (counts[subject] || 0) + 1;
+    });
+    return Object.entries(counts).map(([subject, count]) => ({
+      subject,
+      quizzes: count
+    }));
+  }, [quizResults]);
+
+  // 2. Proficiency (avg score per subject)
+  const proficiencyData = useMemo(() => {
+    const sums: Record<string, { score: number; total: number }> = {};
+    quizResults.forEach(r => {
+      const subject = r.subject || "General";
+      if (!sums[subject]) sums[subject] = { score: 0, total: 0 };
+      sums[subject].score += (r.score / r.total) * 100;
+      sums[subject].total += 1;
+    });
+    return Object.entries(sums).map(([subject, data]) => ({
+      subject,
+      score: Math.round(data.score / data.total),
+      fullMark: 100
+    }));
+  }, [quizResults]);
+
+  // 3. Progress over time (avg score by month)
+  const progressData = useMemo(() => {
+    const months: Record<string, { score: number; count: number }> = {};
+    quizResults.forEach(r => {
+      const date = new Date(r.created_at);
+      const monthStr = date.toLocaleString('default', { month: 'short' });
+      if (!months[monthStr]) months[monthStr] = { score: 0, count: 0 };
+      months[monthStr].score += (r.score / r.total) * 100;
+      months[monthStr].count += 1;
+    });
+    
+    // Sort array by actual month order if needed, but for simplicity we rely on chronological DB order
+    const result = [];
+    for (const [date, data] of Object.entries(months)) {
+      result.push({
+        date,
+        score: Math.round(data.score / data.count)
+      });
+    }
+    return result;
+  }, [quizResults]);
+
+  if (quizResults.length === 0) {
+    return (
+      <div className="grid gap-8 md:grid-cols-1">
+        <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground border-dashed">
+            <h3 className="text-lg font-semibold mb-2">No quiz data yet</h3>
+            <p>Take some quizzes with the AI Tutor to see your progress charts!</p>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Time Spent Per Subject</CardTitle>
-          <CardDescription>Hours studied in the last week.</CardDescription>
+          <CardTitle className="font-headline">Engagement Per Subject</CardTitle>
+          <CardDescription>Number of quizzes taken by subject.</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfigTime} className="h-[250px] w-full">
-            <BarChart accessibilityLayer data={studyTimeData}>
+            <BarChart accessibilityLayer data={quizzesPerSubject}>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="subject"
@@ -78,7 +132,7 @@ export default function ProgressCharts() {
               />
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="hours" fill="var(--color-hours)" radius={4} />
+              <Bar dataKey="quizzes" fill="var(--color-quizzes)" radius={4} />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -86,7 +140,7 @@ export default function ProgressCharts() {
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">Subject Proficiency</CardTitle>
-          <CardDescription>Your current scores across different subjects.</CardDescription>
+          <CardDescription>Average scores across different subjects.</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfigProficiency} className="h-[250px] w-full">
@@ -108,7 +162,7 @@ export default function ProgressCharts() {
       <Card className="md:col-span-2">
         <CardHeader>
           <CardTitle className="font-headline">Progress Over Time</CardTitle>
-          <CardDescription>Your average score improvement over the last 6 months.</CardDescription>
+          <CardDescription>Your average score trend based on quiz results.</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfigProgress} className="h-[250px] w-full">

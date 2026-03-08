@@ -16,6 +16,7 @@ import {
   Layers,
   WandSparkles,
   Shapes,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,11 +35,20 @@ import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
 import { useAppState } from "./app-state-provider";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/lib/supabase/auth-provider";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { isPremium } = useAppState();
+  const { signOut } = useAuth();
+  const router = useRouter();
   const isActive = (href: string) => pathname === href;
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/login');
+  };
 
   const menuItems = [
     {
@@ -161,6 +171,15 @@ export function AppSidebar() {
             </SidebarMenuItem>
             <SidebarMenuItem>
                <ThemeSwitcher />
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip={{ children: "Sign Out" }}
+                onClick={handleSignOut}
+              >
+                <LogOut />
+                <span>Sign Out</span>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

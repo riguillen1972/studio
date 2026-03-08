@@ -3,6 +3,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { SupportedModel } from '@/ai/genkit';
+import { useAuth } from '@/lib/supabase/auth-provider';
+import { createClient } from '@/lib/supabase/client';
 
 const FREE_FLASH_TOKEN_LIMIT = 1000000;
 const FREE_HAIKU_TOKEN_LIMIT = 1000000;
@@ -44,49 +46,63 @@ interface AppState {
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const supabase = createClient();
   const [tier, setTierState] = useState<SubscriptionTier>('free');
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
   const getCurrentMonth = () => new Date().toISOString().slice(0, 7); // YYYY-MM
 
+  // Load user profile & token usage from Supabase
   useEffect(() => {
     setIsMounted(true);
-    try {
-        const storedTier = localStorage.getItem('subscriptionTier');
-        if (storedTier && (storedTier === 'free' || storedTier === 'pro' || storedTier === 'max')) {
-          setTierState(storedTier as SubscriptionTier);
-        }
+    if (!user) return;
 
-        const currentMonth = getCurrentMonth();
-        const storedTokenInfo = localStorage.getItem('tokenInfo');
-        if (storedTokenInfo) {
-            const parsed: Partial<TokenInfo> = JSON.parse(storedTokenInfo);
-            if (parsed.date === currentMonth) {
-                setTokenInfo({
-                    flashUsedTokens: parsed.flashUsedTokens || 0,
-                    proUsedTokens: parsed.proUsedTokens || 0,
-                    haikuUsedTokens: parsed.haikuUsedTokens || 0,
-                    date: parsed.date,
-                });
-            } else {
-                 setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: currentMonth });
-            }
-        } else {
-            setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: currentMonth });
-        }
+    const loadProfile = async () => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('tier')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.tier) {
+        setTierState(profile.tier as SubscriptionTier);
+      }
+    };
 
-    } catch (error) {
-        console.error("Could not access local storage:", error);
-    }
-  }, []);
+    const loadTokenUsage = async () => {
+      const currentMonth = getCurrentMonth();
+      const { data: usage } = await supabase
+        .from('token_usage')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('month', currentMonth)
+        .single();
+      
+      if (usage) {
+        setTokenInfo({
+          flashUsedTokens: usage.flash_used || 0,
+          proUsedTokens: usage.pro_used || 0,
+          haikuUsedTokens: usage.haiku_used || 0,
+          date: currentMonth,
+        });
+      } else {
+        setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: currentMonth });
+      }
+    };
 
-  const setTier = (newTier: SubscriptionTier) => {
+    loadProfile();
+    loadTokenUsage();
+  }, [user, supabase]);
+
+  const setTier = async (newTier: SubscriptionTier) => {
     setTierState(newTier);
-     try {
-        localStorage.setItem('subscriptionTier', newTier);
-    } catch (error) {
-        console.error("Could not access local storage:", error);
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ tier: newTier })
+        .eq('id', user.id);
     }
   };
 
@@ -154,14 +170,24 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         }
         
         const newInfo: TokenInfo = { flashUsedTokens: newFlashUsed, proUsedTokens: newProUsed, haikuUsedTokens: newHaikuUsed, date: currentMonth };
-        try {
-            localStorage.setItem('tokenInfo', JSON.stringify(newInfo));
-        } catch (error) {
-            console.error("Could not access local storage:", error);
+        
+        // Save to Supabase in background
+        if (user) {
+          supabase
+            .from('token_usage')
+            .upsert({
+              user_id: user.id,
+              month: currentMonth,
+              flash_used: newFlashUsed,
+              pro_used: newProUsed,
+              haiku_used: newHaikuUsed,
+            }, { onConflict: 'user_id,month' })
+            .then();
         }
+        
         return newInfo;
     });
-  }, [isMounted, isPremium]);
+  }, [isMounted, isPremium, user, supabase]);
   
   const flashTokensRemaining = isMounted ? Math.max(0, flashTokenLimit - tokenInfo.flashUsedTokens) : flashTokenLimit;
   const proTokensRemaining = isMounted ? Math.max(0, proTokenLimit - tokenInfo.proUsedTokens) : proTokenLimit;

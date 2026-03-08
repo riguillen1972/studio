@@ -2,6 +2,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -10,45 +11,45 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useCollection, useFirebase, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
-import { useEffect } from "react";
-import { initiateAnonymousSignIn } from "@/firebase/non-blocking-login";
 import { Skeleton } from "@/components/ui/skeleton";
+import { createClient } from "@/lib/supabase/client";
 
 type LibraryItem = {
   id: string;
   description: string;
-  imageUrl: string;
-  imageHint: string;
+  image_url: string;
+  image_hint: string;
   title: string;
   type: string;
 };
 
 export default function LibraryPage() {
-  const { auth } = useFirebase();
-  const firestore = useFirestore();
-
-  const libraryItemsQuery = useMemoFirebase(
-    () => collection(firestore, "learningContent"),
-    [firestore]
-  );
-
-  const {
-    data: libraryItems,
-    isLoading,
-    error,
-  } = useCollection<LibraryItem>(libraryItemsQuery);
+  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
   useEffect(() => {
-    initiateAnonymousSignIn(auth);
-  }, [auth]);
+    const fetchItems = async () => {
+      const { data, error } = await supabase
+        .from('learning_content')
+        .select('*');
+      
+      if (error) {
+        setError(error.message);
+      } else {
+        setLibraryItems(data || []);
+      }
+      setIsLoading(false);
+    };
+    fetchItems();
+  }, [supabase]);
 
   if (isLoading) {
     return (
       <div className="flex flex-col gap-8">
         <header>
-          <h1 className="text-3xl font-bold font-headline tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">
             Content Library
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -74,13 +75,13 @@ export default function LibraryPage() {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
     <div className="flex flex-col gap-8">
       <header>
-        <h1 className="text-3xl font-bold font-headline tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">
           Content Library
         </h1>
         <p className="text-muted-foreground mt-1">
@@ -89,15 +90,15 @@ export default function LibraryPage() {
         </p>
       </header>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {libraryItems?.map((item) => (
+        {libraryItems.map((item) => (
           <Card key={item.id} className="overflow-hidden flex flex-col">
             <div className="relative h-48 w-full">
               <Image
-                src={item.imageUrl}
+                src={item.image_url}
                 alt={item.title}
                 fill
                 className="object-cover"
-                data-ai-hint={item.imageHint}
+                data-ai-hint={item.image_hint}
               />
             </div>
             <CardHeader>

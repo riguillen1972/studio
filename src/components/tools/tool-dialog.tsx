@@ -12,9 +12,10 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { ScrollArea } from '../ui/scroll-area';
 import { useAppState } from '../app-state-provider';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import ModelSelector from '@/components/model-selector';
 import { SupportedModel } from '@/ai/genkit';
+import { runToolAction } from '@/lib/actions';
 
 type Tool = {
   name: string;
@@ -29,36 +30,43 @@ interface ToolDialogProps {
 }
 
 export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
-  const { tier, hasTokens, consumeTokens } = useAppState();
+  const { hasTokens, consumeTokens } = useAppState();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
-  const model = selectedModel;
 
-  const handleGenerate = () => {
-    if (!hasTokens(model)) {
-      setOutput("You have reached your monthly token limit. Please try again next month.");
-      return;
-    }
+  const handleGenerate = async () => {
+    if (!tool || !input || !hasTokens(selectedModel)) return;
+
     setIsLoading(true);
-    // Simulate token consumption for this prototype tool
-    consumeTokens(150, model);
+    setError(null);
+    setOutput('');
 
-    // In a real application, you would call a specific Genkit flow here
-    // based on the `tool.name`. For this prototype, we'll just simulate a response.
-    setTimeout(() => {
-      setOutput(`This is a simulated AI response for the "${tool?.name}" tool. You entered: "${input}"`);
-      setIsLoading(false);
-    }, 1000);
+    const result = await runToolAction({
+      toolName: tool.name,
+      toolDescription: tool.description,
+      userInput: input,
+      model: selectedModel,
+    });
+
+    if (result.success) {
+      consumeTokens(result.data.totalTokens, selectedModel);
+      setOutput(result.data.response);
+    } else {
+      setError(result.error);
+    }
+
+    setIsLoading(false);
   };
   
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onClose();
-      // Reset state when closing
       setInput('');
       setOutput('');
+      setError(null);
     }
   };
 
@@ -66,7 +74,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
+      <DialogContent className="max-w-2xl h-[80vh] sm:h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="font-headline">{tool.name}</DialogTitle>
           <DialogDescription>{tool.description}</DialogDescription>
@@ -81,7 +89,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
                     disabled={isLoading}
                 />
                 <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} />
-                <Button onClick={handleGenerate} disabled={isLoading || !hasTokens(model) || !input}>
+                <Button onClick={handleGenerate} disabled={isLoading || !hasTokens(selectedModel) || !input}>
                     {isLoading ? (
                         <Loader2 className="animate-spin" />
                     ) : (
@@ -92,7 +100,12 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
                 </Button>
             </div>
              <ScrollArea className="border rounded-md p-4 bg-muted/50">
-                {output ? (
+                {error ? (
+                    <div className="flex items-start gap-2 text-destructive">
+                        <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                        <p className="text-sm">{error}</p>
+                    </div>
+                ) : output ? (
                     <p className="text-sm whitespace-pre-wrap">{output}</p>
                 ) : (
                     <div className="flex items-center justify-center h-full text-muted-foreground">
