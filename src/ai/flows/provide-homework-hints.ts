@@ -18,7 +18,7 @@ const ProvideHomeworkHintsInputSchema = z.object({
   problem: z.string().describe('The homework problem to get hints for.'),
   subject: z.string().describe('The subject of the homework problem.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type ProvideHomeworkHintsInput = z.infer<typeof ProvideHomeworkHintsInputSchema>;
@@ -71,7 +71,7 @@ const provideHomeworkHintsFlow = ai.defineFlow(
 
     return {
       ...response.output!,
-      totalTokens: response.usage.totalTokens,
+      totalTokens: response.usage.totalTokens ?? 0,
     }
   }
 );

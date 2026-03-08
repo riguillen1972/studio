@@ -18,6 +18,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { Badge } from "../ui/badge";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
+import ModelSelector from "@/components/model-selector";
+import { SupportedModel } from "@/ai/genkit";
 
 const formSchema = z.object({
   problem: z.string().min(20, { message: "Please describe your problem in at least 20 characters." }),
@@ -40,7 +42,8 @@ export default function HomeworkHelper() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const modelToUse = selectedModel;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -148,6 +151,7 @@ export default function HomeworkHelper() {
                   )}
                 />
               </div>
+              <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} className="mt-2" />
               <Button type="submit" className="w-full" disabled={isButtonDisabled}>
                 {isLoading ? <Loader2 className="animate-spin" /> : "Get Hints"}
               </Button>

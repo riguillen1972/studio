@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -14,6 +13,8 @@ import { Textarea } from '../ui/textarea';
 import { ScrollArea } from '../ui/scroll-area';
 import { useAppState } from '../app-state-provider';
 import { Loader2, Sparkles } from 'lucide-react';
+import ModelSelector from '@/components/model-selector';
+import { SupportedModel } from '@/ai/genkit';
 
 type Tool = {
   name: string;
@@ -32,7 +33,8 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
-  const model = tier !== 'free' ? 'pro' : 'flash';
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const model = selectedModel;
 
   const handleGenerate = () => {
     if (!hasTokens(model)) {
@@ -78,6 +80,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
                     className="h-full resize-none"
                     disabled={isLoading}
                 />
+                <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} />
                 <Button onClick={handleGenerate} disabled={isLoading || !hasTokens(model) || !input}>
                     {isLoading ? (
                         <Loader2 className="animate-spin" />

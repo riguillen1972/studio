@@ -1,6 +1,7 @@
 import ProgressCharts from "@/components/progress/progress-charts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Target, Clock, BookCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const stats = [
     {
@@ -30,6 +31,7 @@ export default function ProgressPage() {
         <p className="text-muted-foreground mt-1">
           An overview of your learning journey and achievements.
         </p>
+        <Badge variant="outline" className="mt-2">Demo Data</Badge>
       </header>
        <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => (

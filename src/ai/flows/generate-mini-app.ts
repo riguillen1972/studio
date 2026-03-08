@@ -13,7 +13,7 @@ import {z} from 'genkit';
 
 const GenerateMiniAppInputSchema = z.object({
   description: z.string().describe('A description of the learning mini-app the user wants to create.'),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
   allowLLM: z.boolean().describe('Whether to allow the mini-app to use other AI models as tools.'),
 });
 export type GenerateMiniAppInput = z.infer<typeof GenerateMiniAppInputSchema>;
@@ -69,7 +69,7 @@ ${input.allowLLM ? `
 
     return {
       appResponse: response.output!.appResponse,
-      totalTokens: response.usage.totalTokens,
+      totalTokens: response.usage.totalTokens ?? 0,
     };
   }
 );

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, CheckCircle, Target, Gem, Sigma } from "lucide-react";
+import { User, CheckCircle, Target, Gem, Sigma, Sparkles, Crown, Zap, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { useAppState, SubscriptionTier } from "@/components/app-state-provider";
 import { Progress } from "@/components/ui/progress";
 import { UpgradeDialog } from "@/components/upgrade-dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/firebase";
+import { Badge } from "@/components/ui/badge";
 
 const user = {
     name: "Alex Doe",
@@ -27,11 +28,62 @@ const user = {
     ]
 }
 
-const tiers = {
-    free: { name: "Free", price: 0 },
-    pro: { name: "Pro", price: 15 },
-    max: { name: "Max", price: 30 },
+interface TierPlan {
+    name: string;
+    price: number;
+    description: string;
+    icon: React.ElementType;
+    features: string[];
+    highlighted?: boolean;
+    badge?: string;
 }
+
+const tierPlans: Record<SubscriptionTier, TierPlan> = {
+    free: {
+        name: "Free",
+        price: 0,
+        description: "Get started with essential AI study tools.",
+        icon: Zap,
+        features: [
+            "Claude 4.5 Haiku & Gemini 2.5 Flash",
+            "1M tokens/month per model",
+            "AI Tutor, Homework Help, Summarizer",
+            "Quiz & Flashcard Generator",
+            "Bible Verse & Study Buddy",
+            "Half of AI Tools Library",
+            "Ad-supported",
+        ],
+    },
+    pro: {
+        name: "Pro",
+        price: 15,
+        description: "Unlock full potential with premium models & tools.",
+        icon: Sparkles,
+        highlighted: true,
+        badge: "POPULAR",
+        features: [
+            "Everything in Free, plus:",
+            "Gemini 2.0 Pro model unlocked",
+            "1M tokens/month (all 3 models)",
+            "Full AI Tools Library (all tools)",
+            "Ad-free experience",
+            "Priority support",
+        ],
+    },
+    max: {
+        name: "Max",
+        price: 30,
+        description: "Maximum power for serious students.",
+        icon: Crown,
+        features: [
+            "Everything in Pro, plus:",
+            "2M tokens/month (all 3 models)",
+            "AI Mini-App Generator",
+            "Create & save custom learning apps",
+            "Highest priority support",
+        ],
+    },
+};
 
 export default function ProfilePage() {
   const { 
@@ -41,13 +93,26 @@ export default function ProfilePage() {
     flashTokenLimit, 
     proTokensRemaining, 
     proTokenLimit,
+    haikuTokensRemaining,
+    haikuTokenLimit,
     isPremium
   } = useAppState();
+  const { user: firebaseUser } = useUser();
+  const displayName = firebaseUser?.displayName || user.name;
+  const displayEmail = firebaseUser?.email || user.email;
   const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
 
   const handleUpgrade = (newTier: 'pro' | 'max') => {
     setTier(newTier);
   }
+
+  const handlePlanSelect = (plan: SubscriptionTier) => {
+    if (plan === 'free') {
+      setTier('free');
+    } else {
+      setUpgradeTarget({ tier: plan, price: tierPlans[plan].price });
+    }
+  };
 
   return (
     <>
@@ -63,9 +128,11 @@ export default function ProfilePage() {
           User Profile
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your account information and learning goals.
+          Manage your account, subscription, and learning goals.
         </p>
       </header>
+
+      {/* Profile + Info Row */}
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-8">
             <Card>
@@ -75,11 +142,11 @@ export default function ProfilePage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
-                        <Input id="name" defaultValue={user.name} />
+                        <Input id="name" defaultValue={displayName} />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="email">Email Address</Label>
-                        <Input id="email" type="email" defaultValue={user.email} />
+                        <Input id="email" type="email" defaultValue={displayEmail} />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="grade">Grade Level</Label>
@@ -105,6 +172,7 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
         </div>
+
         <div className="space-y-8">
              <Card className="text-center">
                 <CardContent className="p-6">
@@ -112,49 +180,15 @@ export default function ProfilePage() {
                         <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint={user.imageHint} />
                         <AvatarFallback><User className="h-10 w-10"/></AvatarFallback>
                     </Avatar>
-                    <h2 className="text-xl font-semibold font-headline">{user.name}</h2>
-                    <p className="text-muted-foreground text-sm">{user.email}</p>
+                    <h2 className="text-xl font-semibold font-headline">{displayName}</h2>
+                    <p className="text-muted-foreground text-sm">{displayEmail}</p>
+                    <Badge className="mt-2" variant={tier === 'max' ? 'default' : tier === 'pro' ? 'secondary' : 'outline'}>
+                      {tierPlans[tier].name} Plan
+                    </Badge>
                 </CardContent>
              </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline flex items-center gap-2">
-                        <Gem className="text-primary"/>
-                        Subscription Plan
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <RadioGroup value={tier} onValueChange={(value) => {
-                        const newTier = value as SubscriptionTier;
-                        if (newTier === 'free') {
-                            setTier('free');
-                        } else {
-                            setUpgradeTarget({ tier: newTier, price: tiers[newTier].price });
-                        }
-                    }}>
-                        {(['free', 'pro', 'max'] as SubscriptionTier[]).map((plan) => (
-                            <Label 
-                                key={plan}
-                                htmlFor={plan}
-                                className={cn(
-                                    "flex items-center justify-between rounded-lg border p-4 cursor-pointer transition-colors",
-                                    tier === plan ? "border-primary bg-primary/10" : "hover:bg-muted/50"
-                                )}
-                            >
-                                <div className="space-y-0.5">
-                                    <div className="font-semibold">{tiers[plan].name}</div>
-                                    <CardDescription>
-                                        ${tiers[plan].price}/month
-                                    </CardDescription>
-                                </div>
-                                <RadioGroupItem value={plan} id={plan} />
-                            </Label>
-                        ))}
-                    </RadioGroup>
-                </CardContent>
-            </Card>
-
+             {/* Monthly Usage */}
              <Card>
                 <CardHeader>
                     <CardTitle className="font-headline flex items-center gap-2">
@@ -164,7 +198,15 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label className="text-sm font-medium">Standard Model (Gemini 1.5 Flash)</Label>
+                        <Label className="text-sm font-medium">Claude 4.5 Haiku</Label>
+                        <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                            <span>Remaining</span>
+                            <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
+                        </div>
+                        <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
                         <div className="flex justify-between text-sm text-muted-foreground mb-1">
                             <span>Remaining</span>
                             <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
@@ -173,7 +215,7 @@ export default function ProfilePage() {
                     </div>
                     { isPremium && (
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Premium Model (Gemini 1.5 Pro)</Label>
+                            <Label className="text-sm font-medium">Gemini 2.0 Pro</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
                                 <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
@@ -185,7 +227,7 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
 
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Account Settings</CardTitle>
                 </CardHeader>
@@ -195,6 +237,78 @@ export default function ProfilePage() {
                     <Button variant="destructive" className="w-full">Delete Account</Button>
                 </CardContent>
             </Card>
+        </div>
+      </div>
+
+      {/* Pricing Plans */}
+      <div>
+        <h2 className="text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
+            <Gem className="text-primary" /> Subscription Plans
+        </h2>
+        <p className="text-muted-foreground mb-6">Choose the plan that fits your learning needs.</p>
+        <div className="grid gap-6 md:grid-cols-3">
+          {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][]).map(([planKey, plan]) => {
+            const Icon = plan.icon;
+            const isCurrentPlan = tier === planKey;
+            const isDowngrade = (planKey === 'free' && tier !== 'free') || (planKey === 'pro' && tier === 'max');
+
+            return (
+              <Card 
+                key={planKey}
+                className={cn(
+                  "flex flex-col relative transition-all duration-200",
+                  plan.highlighted && "border-primary shadow-lg shadow-primary/10",
+                  isCurrentPlan && "ring-2 ring-primary"
+                )}
+              >
+                {plan.badge && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
+                    {plan.badge}
+                  </Badge>
+                )}
+                <CardHeader className="text-center pb-2">
+                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="font-headline text-xl">{plan.name}</CardTitle>
+                  <div className="mt-2">
+                    <span className="text-4xl font-bold">${plan.price}</span>
+                    <span className="text-muted-foreground">/month</span>
+                  </div>
+                  <CardDescription className="mt-2">{plan.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <div className="p-6 pt-0">
+                  {isCurrentPlan ? (
+                    <Button className="w-full" variant="outline" disabled>
+                      Current Plan
+                    </Button>
+                  ) : isDowngrade ? (
+                    <Button className="w-full" variant="ghost" onClick={() => handlePlanSelect(planKey)}>
+                      Downgrade
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="w-full" 
+                      variant={plan.highlighted ? "default" : "outline"}
+                      onClick={() => handlePlanSelect(planKey)}
+                    >
+                      Upgrade to {plan.name}
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>

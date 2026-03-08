@@ -27,11 +27,11 @@ async function handleAction<T_Input, T_Output>(
   } catch (error) {
     console.error("AI action failed:", error);
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    return { success: false, error: errorMessage };
+    return { success: false as const, error: errorMessage };
   }
 }
 
-const modelSchema = z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional();
+const modelSchema = z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional();
 
 // Schema for getExplanationAction
 const ExplanationActionInputSchema = z.object({
@@ -41,7 +41,7 @@ const ExplanationActionInputSchema = z.object({
 export async function getExplanationAction(input: GenerateExplanationInput) {
   const parsedInput = ExplanationActionInputSchema.safeParse(input);
   if (!parsedInput.success) {
-    return { success: false, error: "Invalid input." };
+    return { success: false as const, error: "Invalid input." };
   }
   return handleAction(parsedInput.data, generateExplanation);
 }
@@ -56,7 +56,7 @@ const HomeworkHintsActionInputSchema = z.object({
 export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput) {
     const parsedInput = HomeworkHintsActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-      return { success: false, error: "Invalid input." };
+      return { success: false as const, error: "Invalid input." };
     }
   return handleAction(parsedInput.data, provideHomeworkHints);
 }
@@ -69,7 +69,7 @@ const SummaryActionInputSchema = z.object({
 export async function getSummaryAction(input: SummarizeTextInput) {
     const parsedInput = SummaryActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
   return handleAction(parsedInput.data, summarizeText);
 }
@@ -85,7 +85,7 @@ const HomeworkScanActionInputSchema = z.object({
 export async function getHomeworkScanAction(input: ScanHomeworkInput) {
     const parsedInput = HomeworkScanActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, scanHomework);
 }
@@ -101,7 +101,7 @@ const QuizActionInputSchema = z.object({
 export async function getQuizAction(input: GenerateQuizInput) {
     const parsedInput = QuizActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, generateQuiz);
 }
@@ -117,7 +117,7 @@ const QuizFromScanActionInputSchema = z.object({
 export async function getQuizFromScanAction(input: GenerateQuizFromScanInput) {
     const parsedInput = QuizFromScanActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, generateQuizFromScan);
 }
@@ -131,7 +131,7 @@ const BibleVerseActionInputSchema = z.object({
 export async function getBibleVerseAction(input: GetBibleVerseInput) {
     const parsedInput = BibleVerseActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, getBibleVerse);
 }
@@ -148,7 +148,7 @@ const FlashcardsActionInputSchema = z.object({
 export async function getFlashcardsAction(input: GenerateFlashcardsInput) {
     const parsedInput = FlashcardsActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, generateFlashcards);
 }
@@ -161,7 +161,7 @@ const FriendlyAdviceActionInputSchema = z.object({
 export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
     const parsedInput = FriendlyAdviceActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, getFriendlyAdvice);
 }
@@ -169,13 +169,13 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
 // Schema for generateMiniAppAction
 const MiniAppActionInputSchema = z.object({
     description: z.string(),
-    model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+    model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
     allowLLM: z.boolean(),
 });
 export async function generateMiniAppAction(input: GenerateMiniAppInput) {
     const parsedInput = MiniAppActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, generateMiniApp);
 }
@@ -189,13 +189,13 @@ const InteractActionInputSchema = z.object({
     appDescription: z.string(),
     conversationHistory: z.array(ConversationTurnSchema),
     userInput: z.string(),
-    model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+    model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
     allowLLM: z.boolean(),
 });
 export async function interactWithMiniAppAction(input: InteractWithMiniAppInput) {
     const parsedInput = InteractActionInputSchema.safeParse(input);
     if (!parsedInput.success) {
-        return { success: false, error: "Invalid input." };
+        return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, interactWithMiniApp);
 }

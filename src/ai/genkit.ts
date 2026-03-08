@@ -1,27 +1,31 @@
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import { anthropic } from 'genkitx-anthropic';
 
 // --- MODEL DEFINITIONS ---
-// Standard stable identifiers for Genkit 1.x
-const geminiFlash = 'googleai/gemini-1.5-flash';
-const geminiPro = 'googleai/gemini-1.5-pro';
+const geminiFlash = 'googleai/gemini-2.5-flash';
+const geminiPro = 'googleai/gemini-2.0-pro';
+const claudeHaiku = 'anthropic/claude-4-5-haiku';
 
-export type SupportedModel = 'flash' | 'pro';
+export type SupportedModel = 'flash' | 'pro' | 'haiku';
 
 /**
  * Helper function to get the appropriate model string.
- * @param model The model identifier ('flash' or 'pro').
+ * @param model The model identifier ('flash', 'pro', or 'haiku').
  * @returns The full model string for the Genkit API.
  */
-export function getModel(model: SupportedModel = 'flash'): string {
+export function getModel(model: SupportedModel = 'haiku'): string {
   if (model === 'pro') {
     return geminiPro;
+  }
+  if (model === 'haiku') {
+    return claudeHaiku;
   }
   return geminiFlash;
 }
 
 // --- SAFETY SETTINGS ---
-export const safetySettings: any = [
+export const safetySettings: Array<{ category: string; threshold: string }> = [
   {
     category: 'HARM_CATEGORY_HATE_SPEECH',
     threshold: 'BLOCK_ONLY_HIGH',
@@ -30,10 +34,18 @@ export const safetySettings: any = [
     category: 'HARM_CATEGORY_HARASSMENT',
     threshold: 'BLOCK_ONLY_HIGH',
   },
+  {
+    category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+    threshold: 'BLOCK_ONLY_HIGH',
+  },
+  {
+    category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+    threshold: 'BLOCK_ONLY_HIGH',
+  },
 ];
 
 // --- CONFIGURATION ---
 export const ai = genkit({
-  plugins: [googleAI()],
+  plugins: [googleAI(), anthropic()],
   model: geminiFlash,
 });

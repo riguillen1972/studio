@@ -25,8 +25,8 @@ export default function BibleVersePage() {
     const [error, setError] = useState<string | null>(null);
     const { tier, hasTokens, consumeTokens } = useAppState();
     
-    // Selects Gemini Pro if paid, otherwise Gemini Flash
-    const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+    // Use Claude Haiku as default model
+    const modelToUse = 'haiku';
 
     const fetchVerse = async () => {
         if (!hasTokens(modelToUse)) {
@@ -56,7 +56,9 @@ export default function BibleVersePage() {
 
     useEffect(() => {
         fetchVerse();
-    }, [tier]);
+        // Only fetch once on mount
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     
     const isButtonDisabled = isLoading || !hasTokens(modelToUse);
 

@@ -33,7 +33,7 @@ const InteractWithMiniAppInputSchema = z.object({
   appDescription: z.string().describe('The original description of the mini-app.'),
   conversationHistory: z.array(ConversationTurnSchema).describe('The history of the conversation so far.'),
   userInput: z.string().describe("The user's latest message."),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
   allowLLM: z.boolean().describe('Whether the mini-app is allowed to use other AI models as tools.'),
 });
 export type InteractWithMiniAppInput = z.infer<typeof InteractWithMiniAppInputSchema>;
@@ -61,6 +61,11 @@ const interactWithMiniAppFlow = ai.defineFlow(
   async (input) => {
     const genericPersonality = `You are an AI that is running an interactive, text-based "mini-app" for a student. Your primary goal is to guide the student to discover concepts and solutions on their own.`;
 
+    // Build the full prompt including conversation history context
+    const historyText = input.conversationHistory
+      .map(turn => `${turn.role === 'user' ? 'Student' : 'App'}: ${turn.content}`)
+      .join('\n');
+
     const prompt = `${genericPersonality}
     
     You are continuing a conversation within the mini-app. The original request for the app was: "${input.appDescription}"
@@ -73,17 +78,17 @@ const interactWithMiniAppFlow = ai.defineFlow(
     1.  Stay in character. Be flexible and adapt your responses to the student's input to make the experience collaborative.
     2.  **DO NOT provide direct answers to problems.** Ask guiding questions, provide hints, and explain underlying principles.
     3.  Make the interaction engaging and educational.
-    `;
-    
-    const historyForGenkit = input.conversationHistory.map(turn => ({
-        role: turn.role === 'user' ? 'user' : 'model',
-        content: [{ text: turn.content }]
-    }));
 
-    let currentResponse = await ai.generate({
+    **Conversation History:**
+    ${historyText}
+
+    **Student's Latest Message:**
+    ${input.userInput}
+    `;
+
+    const response = await ai.generate({
         model: getModel(input.model),
         prompt: prompt,
-        history: historyForGenkit,
         tools: input.allowLLM ? [summarizeTextTool] : [],
         output: {
             schema: MiniAppResponseSchema,
@@ -93,40 +98,13 @@ const interactWithMiniAppFlow = ai.defineFlow(
         }
     });
 
-    const allHistory = [...historyForGenkit];
-    let totalTokens = currentResponse.usage.totalTokens;
-
-    while(currentResponse.toolRequests.length > 0) {
-        allHistory.push({ role: 'model' as const, content: currentResponse.toolRequests.map(tr => ({ toolRequest: tr })) });
-        
-        const toolResponses = await Promise.all(
-            currentResponse.toolRequests.map(toolRequest => ai.runTool(toolRequest))
-        );
-
-        allHistory.push({ role: 'tool' as const, content: toolResponses.map(tr => ({ toolResponse: tr })) });
-
-        currentResponse = await ai.generate({
-            model: getModel(input.model),
-            prompt: prompt,
-            history: allHistory,
-            tools: input.allowLLM ? [summarizeTextTool] : [],
-            output: {
-                schema: MiniAppResponseSchema,
-            },
-            config: {
-                safetySettings,
-            }
-        });
-        totalTokens += currentResponse.usage.totalTokens;
-    }
-
-    if (!currentResponse.output?.appResponse) {
-        return { appResponse: "I had trouble processing that request. Please try again.", totalTokens: totalTokens };
+    if (!response.output?.appResponse) {
+        return { appResponse: "I had trouble processing that request. Please try again.", totalTokens: response.usage.totalTokens ?? 0 };
     }
 
     return {
-      appResponse: currentResponse.output.appResponse,
-      totalTokens: totalTokens,
+      appResponse: response.output.appResponse,
+      totalTokens: response.usage.totalTokens ?? 0,
     };
   }
 );

@@ -41,7 +41,7 @@ export default function FriendlyTutor() {
   }, []);
 
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+  const modelToUse = 'haiku';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

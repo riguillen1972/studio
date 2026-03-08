@@ -22,6 +22,8 @@ import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
+import ModelSelector from "@/components/model-selector";
+import { SupportedModel } from "@/ai/genkit";
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Please enter a topic with at least 3 characters." }),
@@ -54,7 +56,8 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [score, setScore] = useState(0);
   const { tier, hasTokens, consumeTokens } = useAppState();
   const router = useRouter();
-  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const modelToUse = selectedModel;
 
 
   const form = useForm<FormValues>({
@@ -250,6 +253,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                     )}
                   />
                 </div>
+                <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} />
                 <div className="flex flex-col sm:flex-row gap-4">
                     <Button type="submit" className="w-full" disabled={isButtonDisabled}>
                     {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2"/>Generate Quiz</>}

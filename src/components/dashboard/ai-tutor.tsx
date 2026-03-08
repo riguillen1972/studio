@@ -36,8 +36,8 @@ export default function AITutor() {
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash');
-
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -49,11 +49,11 @@ export default function AITutor() {
     },
   });
   
-  const modelToUse = tier === 'free' ? 'flash' : selectedModel;
+  const modelToUse = selectedModel;
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash' ? 'Gemini 1.5 Flash' : 'Gemini 1.5 Pro'} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.0 Pro' : 'Claude 4.5 Haiku'} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);
@@ -170,23 +170,22 @@ export default function AITutor() {
         </ScrollArea>
       </CardContent>
        <CardFooter className="pt-4 border-t flex-col items-start">
-        {tier !== 'free' && (
-            <div className="mb-4 w-full">
-                <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
-                <Select value={selectedModel} onValueChange={(value: SupportedModel) => setSelectedModel(value)}>
-                    <SelectTrigger id="model-select">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="flash">Gemini 1.5 Flash</SelectItem>
-                        <SelectItem value="pro">Gemini 1.5 Pro</SelectItem>
-                    </SelectContent>
-                </Select>
-                 <p className="text-xs text-muted-foreground mt-1">
-                    More advanced models offer higher quality responses and consume from their respective token balances.
-                </p>
-            </div>
-        )}
+        <div className="mb-4 w-full">
+            <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
+            <Select value={selectedModel} onValueChange={(value: SupportedModel) => setSelectedModel(value)}>
+                <SelectTrigger id="model-select">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="haiku">Claude 4.5 Haiku</SelectItem>
+                    <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
+                    <SelectItem value="pro">Gemini 2.0 Pro</SelectItem>
+                </SelectContent>
+            </Select>
+             <p className="text-xs text-muted-foreground mt-1">
+                Select the AI model to use for your questions.
+            </p>
+        </div>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

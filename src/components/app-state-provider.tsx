@@ -5,12 +5,15 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useCa
 import { SupportedModel } from '@/ai/genkit';
 
 const FREE_FLASH_TOKEN_LIMIT = 1000000;
+const FREE_HAIKU_TOKEN_LIMIT = 1000000;
 
 const PRO_FLASH_TOKEN_LIMIT = 1000000;
 const PRO_PRO_TOKEN_LIMIT = 1000000;
+const PRO_HAIKU_TOKEN_LIMIT = 1000000;
 
 const MAX_FLASH_TOKEN_LIMIT = 2000000;
 const MAX_PRO_TOKEN_LIMIT = 2000000;
+const MAX_HAIKU_TOKEN_LIMIT = 2000000;
 
 
 export type SubscriptionTier = 'free' | 'pro' | 'max';
@@ -18,6 +21,7 @@ export type SubscriptionTier = 'free' | 'pro' | 'max';
 interface TokenInfo {
   flashUsedTokens: number;
   proUsedTokens: number;
+  haikuUsedTokens: number;
   date: string; // YYYY-MM
 }
 
@@ -30,6 +34,8 @@ interface AppState {
   flashTokensRemaining: number;
   proTokenLimit: number;
   proTokensRemaining: number;
+  haikuTokenLimit: number;
+  haikuTokensRemaining: number;
 
   hasTokens: (model: SupportedModel) => boolean;
   consumeTokens: (amount: number, model: SupportedModel) => void;
@@ -39,7 +45,7 @@ const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [tier, setTierState] = useState<SubscriptionTier>('free');
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ flashUsedTokens: 0, proUsedTokens: 0, date: '' });
+  const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
   const getCurrentMonth = () => new Date().toISOString().slice(0, 7); // YYYY-MM
@@ -60,13 +66,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 setTokenInfo({
                     flashUsedTokens: parsed.flashUsedTokens || 0,
                     proUsedTokens: parsed.proUsedTokens || 0,
+                    haikuUsedTokens: parsed.haikuUsedTokens || 0,
                     date: parsed.date,
                 });
             } else {
-                 setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, date: currentMonth });
+                 setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: currentMonth });
             }
         } else {
-            setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, date: currentMonth });
+            setTokenInfo({ flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: currentMonth });
         }
 
     } catch (error) {
@@ -101,8 +108,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const getHaikuTokenLimit = () => {
+    switch (tier) {
+        case 'max': return MAX_HAIKU_TOKEN_LIMIT;
+        case 'pro': return PRO_HAIKU_TOKEN_LIMIT;
+        default: return FREE_HAIKU_TOKEN_LIMIT;
+    }
+  }
+
   const flashTokenLimit = getFlashTokenLimit();
   const proTokenLimit = getProTokenLimit();
+  const haikuTokenLimit = getHaikuTokenLimit();
 
   const hasTokens = useCallback((model: SupportedModel): boolean => {
     if (!isMounted) return false;
@@ -112,9 +128,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     if (model === 'pro') {
         return isPremium && tokenInfo.proUsedTokens < proTokenLimit;
     }
+    if (model === 'haiku') {
+        return tokenInfo.haikuUsedTokens < haikuTokenLimit;
+    }
     // model === 'flash'
     return tokenInfo.flashUsedTokens < flashTokenLimit;
-  }, [isMounted, isPremium, tokenInfo, flashTokenLimit, proTokenLimit]);
+  }, [isMounted, isPremium, tokenInfo, flashTokenLimit, proTokenLimit, haikuTokenLimit]);
   
   const consumeTokens = useCallback((amount: number, model: SupportedModel) => {
     if (!isMounted) return;
@@ -124,14 +143,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         const isNewMonth = prev.date !== currentMonth;
         let newFlashUsed = isNewMonth ? 0 : prev.flashUsedTokens;
         let newProUsed = isNewMonth ? 0 : prev.proUsedTokens;
+        let newHaikuUsed = isNewMonth ? 0 : prev.haikuUsedTokens;
         
         if (model === 'pro' && isPremium) {
             newProUsed += amount;
+        } else if (model === 'haiku') {
+            newHaikuUsed += amount;
         } else { // model === 'flash'
             newFlashUsed += amount;
         }
         
-        const newInfo: TokenInfo = { flashUsedTokens: newFlashUsed, proUsedTokens: newProUsed, date: currentMonth };
+        const newInfo: TokenInfo = { flashUsedTokens: newFlashUsed, proUsedTokens: newProUsed, haikuUsedTokens: newHaikuUsed, date: currentMonth };
         try {
             localStorage.setItem('tokenInfo', JSON.stringify(newInfo));
         } catch (error) {
@@ -143,6 +165,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   
   const flashTokensRemaining = isMounted ? Math.max(0, flashTokenLimit - tokenInfo.flashUsedTokens) : flashTokenLimit;
   const proTokensRemaining = isMounted ? Math.max(0, proTokenLimit - tokenInfo.proUsedTokens) : proTokenLimit;
+  const haikuTokensRemaining = isMounted ? Math.max(0, haikuTokenLimit - tokenInfo.haikuUsedTokens) : haikuTokenLimit;
 
   const value = {
     tier: isMounted ? tier : 'free',
@@ -152,6 +175,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     flashTokensRemaining,
     proTokenLimit,
     proTokensRemaining,
+    haikuTokenLimit,
+    haikuTokensRemaining,
     hasTokens,
     consumeTokens,
   };

@@ -37,6 +37,8 @@ import AdPlaceholder from '../ad-placeholder';
 import { getFlashcardsAction } from '@/lib/actions';
 import { useSearchParams } from 'next/navigation';
 import FlashcardViewer from './flashcard-viewer';
+import ModelSelector from '@/components/model-selector';
+import { SupportedModel } from '@/ai/genkit';
 
 const formSchema = z.object({
   topic: z
@@ -78,7 +80,8 @@ export default function FlashcardGenerator() {
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
   const searchParams = useSearchParams();
-  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const modelToUse = selectedModel;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -265,6 +268,7 @@ export default function FlashcardGenerator() {
                     )}
                   />
                 </div>
+                <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} />
                 <Button
                   type="submit"
                   className="w-full"

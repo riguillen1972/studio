@@ -23,7 +23,7 @@ const ScanHomeworkInputSchema = z.object({
   question: z.string().describe('The specific question the student has about the problem.'),
   subject: z.string().describe('The subject of the homework problem.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type ScanHomeworkInput = z.infer<typeof ScanHomeworkInputSchema>;
@@ -79,7 +79,7 @@ const scanHomeworkFlow = ai.defineFlow(
 
     return {
       ...response.output!,
-      totalTokens: response.usage.totalTokens,
+      totalTokens: response.usage.totalTokens ?? 0,
     };
   }
 );

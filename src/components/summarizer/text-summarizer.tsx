@@ -14,6 +14,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { getSummaryAction } from "@/lib/actions";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
+import ModelSelector from "@/components/model-selector";
+import { SupportedModel } from "@/ai/genkit";
 
 const formSchema = z.object({
   text: z.string().min(100, { message: "Please enter at least 100 characters to summarize." }),
@@ -26,7 +28,8 @@ export default function TextSummarizer() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const modelToUse = selectedModel;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -86,6 +89,7 @@ export default function TextSummarizer() {
                   </FormItem>
                 )}
               />
+              <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} className="mt-2" />
               <Button type="submit" className="w-full" disabled={isButtonDisabled}>
                 {isLoading ? <Loader2 className="animate-spin" /> : "Summarize"}
               </Button>

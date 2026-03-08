@@ -52,7 +52,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const generationFormSchema = z.object({
   description: z.string().min(20, { message: 'Please describe the app you want in at least 20 characters.' }),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).default('pro'),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).default('pro'),
 });
 type GenerationFormValues = z.infer<typeof generationFormSchema>;
 
@@ -100,7 +100,7 @@ export default function MiniAppGeneratorPage() {
   const [isResponding, setIsResponding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const [selectedModel, setSelectedModel] = useState<SupportedModel>('pro');
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
   const [allowLLM, setAllowLLM] = useState(false);
   const [allowLLMInConversation, setAllowLLMInConversation] = useState(false);
   
@@ -318,8 +318,9 @@ export default function MiniAppGeneratorPage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="flash">Gemini 1.5 Flash</SelectItem>
-                            <SelectItem value="pro">Gemini 1.5 Pro</SelectItem>
+                            <SelectItem value="haiku">Claude 4.5 Haiku</SelectItem>
+                            <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
+                            <SelectItem value="pro">Gemini 2.0 Pro</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>

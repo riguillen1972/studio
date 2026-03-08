@@ -21,6 +21,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Separator } from "../ui/separator";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "../ad-placeholder";
+import ModelSelector from "@/components/model-selector";
+import { SupportedModel } from "@/ai/genkit";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   question: z.string().min(10, { message: "Please ask a question with at least 10 characters." }),
@@ -50,7 +53,8 @@ export default function HomeworkScanner() {
   const { toast } = useToast();
   const router = useRouter();
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = tier !== 'free' ? 'pro' : 'flash';
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const modelToUse = selectedModel;
 
   useEffect(() => {
     async function getCameraPermission() {
@@ -279,6 +283,8 @@ export default function HomeworkScanner() {
                             )}
                             />
                         </div>
+
+                        <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading || isGeneratingQuiz} />
 
                         <Separator />
 

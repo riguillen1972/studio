@@ -42,7 +42,7 @@ const GenerateQuizFromScanInputSchema = z.object({
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type GenerateQuizFromScanInput = z.infer<typeof GenerateQuizFromScanInputSchema>;
@@ -81,7 +81,7 @@ const generateQuizFromScanFlow = ai.defineFlow(
 
     return {
       ...response.output!,
-      totalTokens: response.usage.totalTokens,
+      totalTokens: response.usage.totalTokens ?? 0,
     };
   }
 );

@@ -14,7 +14,7 @@ import {z} from 'genkit';
 
 const SummarizeTextInputSchema = z.object({
   text: z.string().describe('The text content to be summarized.'),
-  model: z.enum(['flash', 'pro'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type SummarizeTextInput = z.infer<typeof SummarizeTextInputSchema>;
 
@@ -53,7 +53,7 @@ const summarizeTextFlow = ai.defineFlow(
 
     return {
       ...response.output!,
-      totalTokens: response.usage.totalTokens,
+      totalTokens: response.usage.totalTokens ?? 0,
     };
   }
 );
