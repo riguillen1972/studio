@@ -1,7 +1,5 @@
 "use server";
 
-export const maxDuration = 60; // Extend Vercel function timeout to 60 seconds for AI tasks
-
 
 import { z } from "zod";
 import { generateExplanation, GenerateExplanationInput } from "@/ai/flows/generate-explanation";

@@ -5,6 +5,8 @@ import FriendlyTutor from "@/components/friendly-tutor";
 import { Separator } from "@/components/ui/separator";
 import { Bot } from "lucide-react";
 
+export const maxDuration = 60; // Extend Vercel function timeout to 60 seconds for AI tasks
+
 export default function AppLayout({
   children,
 }: {

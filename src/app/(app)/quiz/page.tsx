@@ -1,12 +1,13 @@
 import QuizGenerator from "@/components/quiz/quiz-generator";
 
-export default function QuizPage({
+export default async function QuizPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const quizData = searchParams?.quizData;
-  const topic = searchParams?.topic;
+  const resolvedParams = await searchParams;
+  const quizData = resolvedParams?.quizData;
+  const topic = resolvedParams?.topic;
 
   let initialQuiz = null;
   if (typeof quizData === 'string') {
