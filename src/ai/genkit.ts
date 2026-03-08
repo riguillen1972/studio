@@ -4,8 +4,8 @@ import { anthropic } from 'genkitx-anthropic';
 
 // --- MODEL DEFINITIONS ---
 const geminiFlash = 'googleai/gemini-2.5-flash';
-const geminiPro = 'googleai/gemini-2.0-pro';
-const claudeHaiku = 'anthropic/claude-4-5-haiku';
+const geminiPro = 'googleai/gemini-2.5-pro';
+const claudeHaiku = 'anthropic/claude-3-haiku';
 
 export type SupportedModel = 'flash' | 'pro' | 'haiku';
 
@@ -14,7 +14,7 @@ export type SupportedModel = 'flash' | 'pro' | 'haiku';
  * @param model The model identifier ('flash', 'pro', or 'haiku').
  * @returns The full model string for the Genkit API.
  */
-export function getModel(model: SupportedModel = 'haiku'): string {
+export function getModel(model: SupportedModel = 'flash'): string {
   if (model === 'pro') {
     return geminiPro;
   }

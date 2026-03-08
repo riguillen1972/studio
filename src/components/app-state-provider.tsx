@@ -6,15 +6,19 @@ import { SupportedModel } from '@/ai/genkit';
 import { useAuth } from '@/lib/supabase/auth-provider';
 import { createClient } from '@/lib/supabase/client';
 
+// Free tier: Gemini 2.5 Flash only
 const FREE_FLASH_TOKEN_LIMIT = 1000000;
-const FREE_HAIKU_TOKEN_LIMIT = 1000000;
+const FREE_PRO_TOKEN_LIMIT = 0;      // No access
+const FREE_HAIKU_TOKEN_LIMIT = 0;    // No access
 
+// Pro tier: Gemini 2.5 Flash + Gemini 2.5 Pro
 const PRO_FLASH_TOKEN_LIMIT = 1000000;
 const PRO_PRO_TOKEN_LIMIT = 1000000;
-const PRO_HAIKU_TOKEN_LIMIT = 1000000;
+const PRO_HAIKU_TOKEN_LIMIT = 0;     // No access
 
+// Max tier: Gemini 2.5 Flash + Claude 3 Haiku
 const MAX_FLASH_TOKEN_LIMIT = 2000000;
-const MAX_PRO_TOKEN_LIMIT = 2000000;
+const MAX_PRO_TOKEN_LIMIT = 0;       // No access
 const MAX_HAIKU_TOKEN_LIMIT = 2000000;
 
 
@@ -118,9 +122,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const getProTokenLimit = () => {
     switch (tier) {
-        case 'max': return MAX_PRO_TOKEN_LIMIT;
         case 'pro': return PRO_PRO_TOKEN_LIMIT;
-        default: return 0;
+        case 'max': return MAX_PRO_TOKEN_LIMIT;
+        default: return FREE_PRO_TOKEN_LIMIT;
     }
   }
 
@@ -142,14 +146,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     if (tokenInfo.date !== currentMonth) return true;
 
     if (model === 'pro') {
-        return isPremium && tokenInfo.proUsedTokens < proTokenLimit;
+        // Only Pro tier has access to Gemini 2.5 Pro
+        return tier === 'pro' && tokenInfo.proUsedTokens < proTokenLimit;
     }
     if (model === 'haiku') {
-        return tokenInfo.haikuUsedTokens < haikuTokenLimit;
+        // Only Max tier has access to Claude 3 Haiku
+        return tier === 'max' && tokenInfo.haikuUsedTokens < haikuTokenLimit;
     }
-    // model === 'flash'
+    // model === 'flash' — available to all tiers
     return tokenInfo.flashUsedTokens < flashTokenLimit;
-  }, [isMounted, isPremium, tokenInfo, flashTokenLimit, proTokenLimit, haikuTokenLimit]);
+  }, [isMounted, tier, tokenInfo, flashTokenLimit, proTokenLimit, haikuTokenLimit]);
   
   const consumeTokens = useCallback((amount: number, model: SupportedModel) => {
     if (!isMounted) return;
