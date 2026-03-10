@@ -201,14 +201,16 @@ export default function ProfilePage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label className="text-sm font-medium">Claude 3.5 Haiku</Label>
-                            <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                <span>Remaining</span>
-                                <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
+                        { tier === 'max' && (
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Claude 3.5 Haiku</Label>
+                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                    <span>Remaining</span>
+                                    <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
+                                </div>
+                                <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
                             </div>
-                            <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
-                        </div>
+                        )}
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
