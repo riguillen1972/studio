@@ -35,9 +35,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface QuizQuestion {
-    question: string;
-    options: string[];
-    answer: string;
+  question: string;
+  options: string[];
+  answer: string;
 }
 
 interface QuizResult {
@@ -70,21 +70,21 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     },
   });
 
-   useEffect(() => {
+  useEffect(() => {
     if (initialQuiz) {
       setResult({ questions: initialQuiz });
       setSubmitted(false); // Don't show results immediately
     }
-    if(initialTopic) {
-        form.setValue("topic", initialTopic);
+    if (initialTopic) {
+      form.setValue("topic", initialTopic);
     }
   }, [initialQuiz, initialTopic, form]);
 
 
   const handleGenerateQuiz: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setError("You have reached your monthly token limit. Please try again next month.");
-        return;
+      setError("You have reached your monthly token limit. Please try again next month.");
+      return;
     }
     setIsLoading(true);
     setResult(null);
@@ -104,25 +104,25 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
 
     setIsLoading(false);
   };
-  
+
   const handleAnswerChange = (questionIndex: number, answer: string) => {
-    setUserAnswers(prev => ({...prev, [questionIndex]: answer}));
+    setUserAnswers(prev => ({ ...prev, [questionIndex]: answer }));
   };
 
   const handleSubmitQuiz = () => {
     if (!result) return;
     let newScore = 0;
     result.questions.forEach((q, index) => {
-        if(userAnswers[index] === q.answer) {
-            newScore++;
-        }
+      if (userAnswers[index] === q.answer) {
+        newScore++;
+      }
     });
     setScore(newScore);
     setSubmitted(true);
   }
 
   const getOptionState = (question: QuizQuestion, option: string, questionIndex: number): "correct" | "incorrect" | "default" => {
-    if(!submitted) return "default";
+    if (!submitted) return "default";
     const isCorrect = option === question.answer;
     const isUserChoice = userAnswers[questionIndex] === option;
 
@@ -142,14 +142,14 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const handleGenerateFlashcards = () => {
     const { topic, subject, gradeLevel } = form.getValues();
     if (!topic || !subject || !gradeLevel) {
-        form.trigger();
-        return;
+      form.trigger();
+      return;
     }
     const query = new URLSearchParams({
-        topic,
-        subject,
-        gradeLevel,
-        numFlashcards: "10",
+      topic,
+      subject,
+      gradeLevel,
+      numFlashcards: "10",
     }).toString();
     router.push(`/flashcards?${query}`);
   }
@@ -184,30 +184,30 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                       </FormItem>
                     )}
                   />
-                   <FormField
+                  <FormField
                     control={form.control}
                     name="numQuestions"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Number of Questions</FormLabel>
-                         <Select onValueChange={(val) => field.onChange(Number(val))} defaultValue={String(field.value)} disabled={isLoading}>
-                            <FormControl>
+                        <Select onValueChange={(val) => field.onChange(Number(val))} defaultValue={String(field.value)} disabled={isLoading}>
+                          <FormControl>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select number of questions" />
+                              <SelectValue placeholder="Select number of questions" />
                             </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                {[3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                                    <SelectItem key={n} value={String(n)}>{n} Questions</SelectItem>
-                                ))}
-                            </SelectContent>
+                          </FormControl>
+                          <SelectContent>
+                            {[3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                              <SelectItem key={n} value={String(n)}>{n} Questions</SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                 <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="subject"
@@ -255,94 +255,92 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                 </div>
                 <ModelSelector value={selectedModel} onChange={setSelectedModel} disabled={isLoading} />
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <Button type="submit" className="w-full" disabled={isButtonDisabled}>
-                    {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2"/>Generate Quiz</>}
-                    </Button>
-                    <Button type="button" variant="secondary" onClick={handleGenerateFlashcards} className="w-full" disabled={isButtonDisabled}>
-                        <Layers className="mr-2"/> Generate Flashcards
-                    </Button>
+                  <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+                    {isLoading ? <Loader2 className="animate-spin" /> : <><Sparkles className="mr-2" />Generate Quiz</>}
+                  </Button>
+                  <Button type="button" variant="secondary" onClick={handleGenerateFlashcards} className="w-full" disabled={isButtonDisabled}>
+                    <Layers className="mr-2" /> Generate Flashcards
+                  </Button>
                 </div>
-                 {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
+                {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
               </form>
             </Form>
             <div className="relative my-6">
-                <Separator />
-                <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-sm text-muted-foreground">OR</span>
+              <Separator />
+              <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-sm text-muted-foreground">OR</span>
             </div>
             <Button variant="outline" className="w-full" asChild>
-                <Link href="/scan">
-                    <ScanLine className="mr-2"/> Generate Quiz From Scan
-                </Link>
+              <Link href="/scan">
+                <ScanLine className="mr-2" /> Generate Quiz From Scan
+              </Link>
             </Button>
           </CardContent>
         </Card>
       ) : (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between items-start">
-                    <div>
-                        <CardTitle className="font-headline">Your Quiz {quizTopic}</CardTitle>
-                        <CardDescription>Select the best answer for each question.</CardDescription>
-                    </div>
-                    <Button onClick={startNewQuiz} variant="outline" size="sm">Start New Quiz</Button>
-                </div>
-            </CardHeader>
-            <CardContent>
-                {submitted && (
-                     <Alert className="mb-6 relative overflow-hidden">
-                        <Confetti active={submitted && score / result.questions.length >= 0.8} config={{
-                            angle: 90,
-                            spread: 180,
-                            startVelocity: 40,
-                            elementCount: 70,
-                            dragFriction: 0.12,
-                            duration: 3000,
-                            stagger: 3,
-                            width: "10px",
-                            height: "10px",
-                            perspective: "500px",
-                            colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
-                        }}/>
-                        <AlertTitle className="font-headline">Quiz Complete!</AlertTitle>
-                        <AlertDescription>You scored {score} out of {result.questions.length}.</AlertDescription>
-                    </Alert>
-                )}
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="font-headline">Your Quiz {quizTopic}</CardTitle>
+                <CardDescription>Select the best answer for each question.</CardDescription>
+              </div>
+              <Button onClick={startNewQuiz} variant="outline" size="sm">Start New Quiz</Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {submitted && (
+              <Alert className="mb-6 relative overflow-hidden">
+                <Confetti active={submitted && score / result.questions.length >= 0.8} config={{
+                  angle: 90,
+                  spread: 180,
+                  startVelocity: 40,
+                  elementCount: 70,
+                  dragFriction: 0.12,
+                  duration: 3000,
+                  stagger: 3,
+                  width: "10px",
+                  height: "10px",
+                  colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
+                }} />
+                <AlertTitle className="font-headline">Quiz Complete!</AlertTitle>
+                <AlertDescription>You scored {score} out of {result.questions.length}.</AlertDescription>
+              </Alert>
+            )}
 
-                <div className="space-y-8">
-                    {result.questions.map((q, i) => (
-                        <div key={i}>
-                            <p className="font-semibold mb-4">{i + 1}. {q.question}</p>
-                            <RadioGroup onValueChange={(val) => handleAnswerChange(i, val)} disabled={submitted}>
-                                {q.options.map((option, j) => {
-                                    const state = getOptionState(q, option, i);
-                                    return (
-                                        <div key={j} className={`flex items-center space-x-3 p-3 rounded-md transition-colors ${
-                                            state === 'correct' ? 'bg-green-100 dark:bg-green-900/50 border-green-500 border' : 
-                                            state === 'incorrect' ? 'bg-red-100 dark:bg-red-900/50 border-red-500 border' : 
-                                            'bg-secondary/50'
-                                        }`}>
-                                            <RadioGroupItem value={option} id={`q${i}-o${j}`}/>
-                                            <label htmlFor={`q${i}-o${j}`} className="flex-1 cursor-pointer">{option}</label>
-                                            {state === 'correct' && <CheckCircle className="text-green-600 dark:text-green-400"/>}
-                                            {state === 'incorrect' && <XCircle className="text-red-600 dark:text-red-400"/>}
-                                        </div>
-                                    )
-                                })}
-                            </RadioGroup>
+            <div className="space-y-8">
+              {result.questions.map((q, i) => (
+                <div key={i}>
+                  <p className="font-semibold mb-4">{i + 1}. {q.question}</p>
+                  <RadioGroup onValueChange={(val) => handleAnswerChange(i, val)} disabled={submitted}>
+                    {q.options.map((option, j) => {
+                      const state = getOptionState(q, option, i);
+                      return (
+                        <div key={j} className={`flex items-center space-x-3 p-3 rounded-md transition-colors ${state === 'correct' ? 'bg-green-100 dark:bg-green-900/50 border-green-500 border' :
+                            state === 'incorrect' ? 'bg-red-100 dark:bg-red-900/50 border-red-500 border' :
+                              'bg-secondary/50'
+                          }`}>
+                          <RadioGroupItem value={option} id={`q${i}-o${j}`} />
+                          <label htmlFor={`q${i}-o${j}`} className="flex-1 cursor-pointer">{option}</label>
+                          {state === 'correct' && <CheckCircle className="text-green-600 dark:text-green-400" />}
+                          {state === 'incorrect' && <XCircle className="text-red-600 dark:text-red-400" />}
                         </div>
-                    ))}
+                      )
+                    })}
+                  </RadioGroup>
                 </div>
-                
-                {!submitted ? (
-                    <Button onClick={handleSubmitQuiz} className="w-full mt-8" disabled={Object.keys(userAnswers).length !== result.questions.length}>
-                        Submit Quiz
-                    </Button>
-                ) : (
-                    <Button onClick={startNewQuiz} className="w-full mt-8" variant="secondary">
-                        Try Another Quiz
-                    </Button>
-                )}
-            </CardContent>
+              ))}
+            </div>
+
+            {!submitted ? (
+              <Button onClick={handleSubmitQuiz} className="w-full mt-8" disabled={Object.keys(userAnswers).length !== result.questions.length}>
+                Submit Quiz
+              </Button>
+            ) : (
+              <Button onClick={startNewQuiz} className="w-full mt-8" variant="secondary">
+                Try Another Quiz
+              </Button>
+            )}
+          </CardContent>
         </Card>
       )}
     </div>

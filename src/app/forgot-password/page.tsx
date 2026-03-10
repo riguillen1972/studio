@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, GraduationCap, ArrowLeft, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { PageTransition } from '@/components/page-transition';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -37,7 +38,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative">
+    <PageTransition className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4 relative">
       <ThemeToggle />
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
@@ -115,6 +116,6 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }

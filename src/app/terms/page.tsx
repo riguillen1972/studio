@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { PageTransition } from "@/components/page-transition";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/5 relative">
+    <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/5 relative">
       <ThemeToggle />
       <div className="w-full max-w-3xl space-y-6">
         <Link href="/login" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
@@ -45,6 +46,6 @@ export default function TermsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageTransition>
   );
 }

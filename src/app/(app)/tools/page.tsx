@@ -64,7 +64,7 @@ export default function ToolsPage() {
 
         <div className="space-y-12">
           {(toolData.categories as ToolCategory[]).map((category) => {
-            const Icon = LucideIcons[category.icon] || LucideIcons.WandSparkles;
+            const Icon = (LucideIcons[category.icon as keyof typeof LucideIcons] || LucideIcons.WandSparkles) as React.ElementType;
             const visibleTools = getVisibleTools(category.tools);
             const hiddenCount = category.tools.length - visibleTools.length;
 
@@ -101,12 +101,12 @@ export default function ToolsPage() {
                   ))}
                   {tier === 'free' && hiddenCount > 0 && (
                     <Card className="flex flex-col items-center justify-center text-center p-6 border-dashed border-primary">
-                       <LucideIcons.Gem className="h-10 w-10 text-primary mb-4" />
-                       <CardTitle className="mb-2 font-headline">Unlock {hiddenCount} More Tools</CardTitle>
-                       <CardDescription className="mb-4">Upgrade to Pro or Max to get access to all {category.tools.length} {category.name} tools.</CardDescription>
-                       <Button asChild>
-                           <Link href="/profile">Upgrade Now</Link>
-                       </Button>
+                      <LucideIcons.Gem className="h-10 w-10 text-primary mb-4" />
+                      <CardTitle className="mb-2 font-headline">Unlock {hiddenCount} More Tools</CardTitle>
+                      <CardDescription className="mb-4">Upgrade to Pro or Max to get access to all {category.tools.length} {category.name} tools.</CardDescription>
+                      <Button asChild>
+                        <Link href="/profile">Upgrade Now</Link>
+                      </Button>
                     </Card>
                   )}
                 </div>
@@ -115,8 +115,8 @@ export default function ToolsPage() {
           })}
         </div>
       </div>
-      
-      <ToolDialog 
+
+      <ToolDialog
         isOpen={dialogState.isOpen}
         tool={dialogState.tool}
         onClose={() => setDialogState({ isOpen: false, tool: null })}
