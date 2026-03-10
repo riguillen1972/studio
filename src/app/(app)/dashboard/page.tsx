@@ -35,6 +35,7 @@ function getRoleGreeting(user: any): { title: string; subtitle: string; role: st
 export default function DashboardPage() {
   const { user } = useAuth();
   const { title, subtitle, role } = getRoleGreeting(user);
+  const careerField = user?.user_metadata?.career_field;
 
   return (
     <div className="flex flex-col gap-8 h-full">
@@ -51,7 +52,7 @@ export default function DashboardPage() {
         <TeacherDashboard user={user} />
       ) : (
         <ErrorBoundary fallbackTitle="AI Tutor encountered an error">
-          <AITutor />
+          <AITutor careerField={careerField} />
         </ErrorBoundary>
       )}
     </div>

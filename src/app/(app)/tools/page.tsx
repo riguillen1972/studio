@@ -17,6 +17,18 @@ import * as LucideIcons from 'lucide-react';
 import { ToolDialog } from '@/components/tools/tool-dialog';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { useAuth } from '@/lib/supabase/auth-provider';
+
+const careerCategoryMap: Record<string, string[]> = {
+  "Engineering & Tech": ["Math", "Science", "General Learning"],
+  "Healthcare & Medicine": ["Science", "Math", "General Learning"],
+  "Business & Finance": ["Math", "Reading & Writing", "General Learning"],
+  "Arts & Humanities": ["Grammar & Language Arts", "Reading & Writing", "General Learning"],
+  "Education": ["Grammar & Language Arts", "Reading & Writing", "Math", "Science", "General Learning"],
+  "Science & Research": ["Science", "Math", "Reading & Writing", "General Learning"],
+  "Law & Public Policy": ["Reading & Writing", "Grammar & Language Arts", "General Learning"],
+  "Other": ["Math", "Science", "Grammar & Language Arts", "Reading & Writing", "General Learning"]
+};
 
 type Tool = {
   name: string;
@@ -37,7 +49,11 @@ type ToolDialogState = {
 
 export default function ToolsPage() {
   const { tier } = useAppState();
+  const { user } = useAuth();
   const [dialogState, setDialogState] = useState<ToolDialogState>({ isOpen: false, tool: null });
+
+  const role = user?.user_metadata?.role || 'student';
+  const careerField = user?.user_metadata?.career_field;
 
   const handleToolClick = (tool: Tool) => {
     setDialogState({ isOpen: true, tool });
@@ -63,7 +79,14 @@ export default function ToolsPage() {
         </header>
 
         <div className="space-y-12">
-          {(toolData.categories as ToolCategory[]).map((category) => {
+          {(toolData.categories as ToolCategory[])
+            .filter((category) => {
+              if (role === 'college' && careerField && careerCategoryMap[careerField]) {
+                return careerCategoryMap[careerField].includes(category.name);
+              }
+              return true; // Show all for other roles
+            })
+            .map((category) => {
             const Icon = (LucideIcons[category.icon as keyof typeof LucideIcons] || LucideIcons.WandSparkles) as React.ElementType;
             const visibleTools = getVisibleTools(category.tools);
             const hiddenCount = category.tools.length - visibleTools.length;

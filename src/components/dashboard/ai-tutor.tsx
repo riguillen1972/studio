@@ -31,7 +31,7 @@ interface ConversationTurn {
   content: string;
 }
 
-export default function AITutor() {
+export default function AITutor({ careerField }: { careerField?: string }) {
   const [isClient, setIsClient] = useState(false);
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
@@ -59,7 +59,7 @@ export default function AITutor() {
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
-    const result = await getExplanationAction({ concept: data.concept, model: modelToUse, conversationHistory: conversation });
+    const result = await getExplanationAction({ concept: data.concept, model: modelToUse, careerField, conversationHistory: conversation });
 
     if (result.success) {
       consumeTokens(result.data.totalTokens, modelToUse);

@@ -66,6 +66,7 @@ const modelSchema = z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...Supp
 const ExplanationActionInputSchema = z.object({
   concept: z.string(),
   model: modelSchema,
+  careerField: z.string().optional(),
   conversationHistory: z.array(z.object({ role: z.enum(['user', 'ai']), content: z.string() })).optional(),
 });
 export async function getExplanationAction(input: GenerateExplanationInput) {
