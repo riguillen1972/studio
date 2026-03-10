@@ -318,9 +318,9 @@ export default function MiniAppGeneratorPage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="haiku">Claude 4.5 Haiku</SelectItem>
+                            <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>
                             <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
-                            <SelectItem value="pro">Gemini 2.0 Pro</SelectItem>
+                            <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>

@@ -36,11 +36,17 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash');
   
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    // Ensure the selected model is allowed on load
+    if (tier === 'free' && selectedModel !== 'flash') {
+      setSelectedModel('flash');
+    } else if (tier === 'pro' && selectedModel === 'haiku') {
+      setSelectedModel('flash'); // Pro doesn't have haiku
+    }
+  }, [tier, selectedModel]);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -53,7 +59,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.0 Pro' : 'Claude 4.5 Haiku'} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude 3.5 Haiku'} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);
@@ -184,9 +190,9 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="haiku">Claude 4.5 Haiku</SelectItem>
+                    {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
                     <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
-                    <SelectItem value="pro">Gemini 2.0 Pro</SelectItem>
+                    {(tier === 'pro' || tier === 'max') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
                 </SelectContent>
             </Select>
              <p className="text-xs text-muted-foreground mt-1">

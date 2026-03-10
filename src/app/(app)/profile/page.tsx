@@ -45,8 +45,8 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         description: "Get started with essential AI study tools.",
         icon: Zap,
         features: [
-            "Claude 4.5 Haiku & Gemini 2.5 Flash",
-            "1M tokens/month per model",
+            "Gemini 2.5 Flash exclusively",
+            "1M tokens/month",
             "AI Tutor, Homework Help, Summarizer",
             "Quiz & Flashcard Generator",
             "Bible Verse & Study Buddy",
@@ -63,8 +63,8 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         badge: "POPULAR",
         features: [
             "Everything in Free, plus:",
-            "Gemini 2.0 Pro model unlocked",
-            "1M tokens/month (all 3 models)",
+            "Gemini 2.5 Pro model unlocked",
+            "1M tokens/month (both models)",
             "Full AI Tools Library (all tools)",
             "Ad-free experience",
             "Priority support",
@@ -77,6 +77,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         icon: Crown,
         features: [
             "Everything in Pro, plus:",
+            "Claude 3.5 Haiku model unlocked",
             "2M tokens/month (all 3 models)",
             "AI Mini-App Generator",
             "Create & save custom learning apps",
@@ -201,7 +202,7 @@ export default function ProfilePage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Claude 4.5 Haiku</Label>
+                            <Label className="text-sm font-medium">Claude 3.5 Haiku</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
                                 <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
@@ -218,7 +219,7 @@ export default function ProfilePage() {
                         </div>
                         { isPremium && (
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Gemini 2.0 Pro</Label>
+                                <Label className="text-sm font-medium">Gemini 2.5 Pro</Label>
                                 <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                     <span>Remaining</span>
                                     <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
