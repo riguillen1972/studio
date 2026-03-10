@@ -128,7 +128,7 @@ export default function LoginPage() {
       };
       if (selectedRole === 'k12' && gradeLevel) metadata.grade_level = gradeLevel;
       if (selectedRole === 'college' && careerField) metadata.career_field = careerField;
-      if (selectedRole === 'teacher' && classCode) metadata.class_code = classCode;
+      if (classCode) metadata.class_code = classCode;
 
       const { error } = await signUp(email, password, displayName, metadata);
       if (error) {
@@ -387,6 +387,22 @@ export default function LoginPage() {
                           </Select>
                           <p className="text-xs text-muted-foreground">
                             The AI will optimize recommendations for your career path
+                          </p>
+                        </div>
+                      )}
+
+                      {!isLogin && (selectedRole === 'k12' || selectedRole === 'college') && (
+                        <div className="space-y-2">
+                          <Label htmlFor="studentClassCode">Teacher&apos;s Class Password (Optional)</Label>
+                          <Input
+                            id="studentClassCode"
+                            placeholder="Enter the code provided by your teacher"
+                            value={classCode}
+                            onChange={(e) => setClassCode(e.target.value)}
+                            disabled={isLoading}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            Link your account to your teacher&apos;s class to get personalized AI assistance.
                           </p>
                         </div>
                       )}
