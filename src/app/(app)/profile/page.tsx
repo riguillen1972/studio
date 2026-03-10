@@ -100,6 +100,8 @@ export default function ProfilePage() {
   const { user: supabaseUser } = useAuth();
   const displayName = supabaseUser?.user_metadata?.display_name || supabaseUser?.email?.split('@')[0] || user.name;
   const displayEmail = supabaseUser?.email || user.email;
+  const role = supabaseUser?.user_metadata?.role || 'student';
+  const isTeacher = role === 'teacher';
   const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
 
   const handleUpgrade = (newTier: 'pro' | 'max') => {
@@ -122,15 +124,15 @@ export default function ProfilePage() {
       upgradeInfo={upgradeTarget}
       onUpgrade={handleUpgrade}
     />
-    <div className="flex flex-col gap-8">
-      <header>
-        <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">
+    <div className="container max-w-6xl py-8 space-y-8 animate-in fade-in duration-500 pb-24 lg:pb-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight font-headline flex items-center gap-3">
           User Profile
         </h1>
         <p className="text-muted-foreground mt-1">
           Manage your account, subscription, and learning goals.
         </p>
-      </header>
+      </div>
 
       {/* Profile + Info Row */}
       <div className="grid gap-8 md:grid-cols-3">
@@ -241,13 +243,14 @@ export default function ProfilePage() {
       </div>
 
       {/* Pricing Plans */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
-            <Gem className="text-primary" /> Subscription Plans
-        </h2>
-        <p className="text-muted-foreground mb-6">Choose the plan that fits your learning needs.</p>
-        <div className="grid gap-6 md:grid-cols-3">
-          {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][]).map(([planKey, plan]) => {
+      {!isTeacher && (
+        <div className="mt-8">
+            <h2 className="text-xl sm:text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
+                <Gem className="text-primary" /> Subscription Plans
+            </h2>
+            <p className="text-muted-foreground mb-6">Choose the plan that fits your learning needs.</p>
+            <div className="grid gap-6 md:grid-cols-3">
+            {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][]).map(([planKey, plan]) => {
             const Icon = plan.icon;
             const isCurrentPlan = tier === planKey;
             const isDowngrade = (planKey === 'free' && tier !== 'free') || (planKey === 'pro' && tier === 'max');
@@ -311,6 +314,7 @@ export default function ProfilePage() {
           })}
         </div>
       </div>
+      )}
     </div>
     </>
   );
