@@ -14,9 +14,10 @@ import {
   FileQuestion,
   BookMarked,
   Layers,
-  WandSparkles,
   Shapes,
   LogOut,
+  LayoutDashboard,
+  WandSparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -41,7 +42,7 @@ import { useRouter } from "next/navigation";
 export function AppSidebar() {
   const pathname = usePathname();
   const { isPremium } = useAppState();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const router = useRouter();
   const isActive = (href: string) => pathname === href;
 
@@ -50,64 +51,82 @@ export function AppSidebar() {
     router.push('/login');
   };
 
-  const menuItems = [
+  const userRole = user?.user_metadata?.role || 'student';
+  const isTeacher = userRole === 'teacher';
+
+  const baseMenuItems = [
     {
       href: "/dashboard",
-      icon: Bot,
-      label: "AI Tutor",
+      icon: isTeacher ? LayoutDashboard : Bot,
+      label: isTeacher ? "My Class" : "AI Tutor",
+      visibleTo: ['all'],
     },
      {
       href: "/tools",
       icon: WandSparkles,
       label: "AI Tools",
+      visibleTo: ['student'],
     },
     {
       href: "/mini-app-generator",
       icon: Shapes,
       label: "App Generator",
       tier: "max",
+      visibleTo: ['student'],
     },
     {
       href: "/homework",
       icon: BookOpen,
       label: "Homework Help",
+      visibleTo: ['student'],
     },
     {
       href: "/scan",
       icon: ScanLine,
       label: "Scan Homework",
+      visibleTo: ['student'],
     },
     {
       href: "/summarizer",
       icon: NotebookText,
       label: "Summarizer",
+      visibleTo: ['student'],
     },
     {
       href: "/quiz",
       icon: FileQuestion,
       label: "Quiz Generator",
+      visibleTo: ['student'],
     },
     {
       href: "/flashcards",
       icon: Layers,
       label: "Flashcards",
+      visibleTo: ['student'],
     },
     {
       href: "/progress",
       icon: LineChart,
       label: "Progress",
+      visibleTo: ['student'],
     },
     {
       href: "/library",
       icon: Library,
       label: "Content Library",
+      visibleTo: ['all'],
     },
       {
       href: "/bible-verse",
       icon: BookMarked,
       label: "Bible Verse",
+      visibleTo: ['all'],
     },
   ];
+
+  const menuItems = baseMenuItems.filter(item => 
+      item.visibleTo.includes('all') || item.visibleTo.includes(isTeacher ? 'teacher' : 'student')
+  );
 
   return (
       <Sidebar
