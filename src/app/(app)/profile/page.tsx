@@ -146,33 +146,33 @@ export default function ProfilePage() {
                         <Label htmlFor="name">Full Name</Label>
                         <Input id="name" defaultValue={displayName} />
                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input id="email" type="email" defaultValue={displayEmail} />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="grade">Grade Level</Label>
-                        <Input id="grade" defaultValue={user.gradeLevel} />
-                    </div>
+                    {!isTeacher && (
+                         <div className="space-y-2">
+                            <Label htmlFor="grade">Grade Level</Label>
+                            <Input id="grade" defaultValue={user.gradeLevel} />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline flex items-center gap-2"><Target/> Learning Goals</CardTitle>
-                    <CardDescription>Your current objectives.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ul className="space-y-3">
-                        {user.learningGoals.map((goal, index) => (
-                            <li key={index} className="flex items-start gap-3">
-                                <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                                <span>{goal}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </CardContent>
-            </Card>
+            {!isTeacher && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline flex items-center gap-2"><Target/> Learning Goals</CardTitle>
+                        <CardDescription>Your current objectives.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-3">
+                            {user.learningGoals.map((goal, index) => (
+                                <li key={index} className="flex items-start gap-3">
+                                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                                    <span>{goal}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+            )}
         </div>
 
         <div className="space-y-8">
@@ -191,43 +191,45 @@ export default function ProfilePage() {
              </Card>
 
              {/* Monthly Usage */}
-             <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline flex items-center gap-2">
-                        <Sigma className="text-primary"/>
-                        Monthly Usage
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">Claude 4.5 Haiku</Label>
-                        <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                            <span>Remaining</span>
-                            <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
-                        </div>
-                        <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
-                    </div>
-                    <div className="space-y-2">
-                        <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
-                        <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                            <span>Remaining</span>
-                            <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
-                        </div>
-                        <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
-                    </div>
-                    { isPremium && (
+             {!isTeacher && (
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline flex items-center gap-2">
+                            <Sigma className="text-primary"/>
+                            Monthly Usage
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Gemini 2.0 Pro</Label>
+                            <Label className="text-sm font-medium">Claude 4.5 Haiku</Label>
                             <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                 <span>Remaining</span>
-                                <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
+                                <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
                             </div>
-                            <Progress value={(proTokensRemaining / proTokenLimit) * 100} />
+                            <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
                         </div>
-                    )}
-                     <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
-                </CardContent>
-            </Card>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
+                            <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                <span>Remaining</span>
+                                <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
+                            </div>
+                            <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
+                        </div>
+                        { isPremium && (
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Gemini 2.0 Pro</Label>
+                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                    <span>Remaining</span>
+                                    <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
+                                </div>
+                                <Progress value={(proTokensRemaining / proTokenLimit) * 100} />
+                            </div>
+                        )}
+                         <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
+                    </CardContent>
+                </Card>
+             )}
 
             <Card>
                 <CardHeader>
