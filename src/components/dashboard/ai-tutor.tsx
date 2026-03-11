@@ -18,6 +18,7 @@ import AdPlaceholder from "@/components/ad-placeholder";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { SupportedModel } from "@/ai/genkit";
 
 const formSchema = z.object({
@@ -94,6 +95,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                 <CardTitle className="font-headline flex items-center gap-2">
                     <Sparkles className="text-primary"/>
                     AI Tutor
+                    {careerField && <Badge variant="secondary" className="ml-2 font-sans font-normal">Optimized for {careerField}</Badge>}
                 </CardTitle>
                 <CardDescription>
                     Ask a question or describe a concept you want to understand better.
@@ -118,6 +120,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
             <CardTitle className="font-headline flex items-center gap-2">
                 <Sparkles className="text-primary"/>
                 AI Tutor
+                {careerField && <Badge variant="secondary" className="ml-2 font-sans font-normal">Optimized for {careerField}</Badge>}
             </CardTitle>
             <div className="flex items-center justify-between">
               <CardDescription>

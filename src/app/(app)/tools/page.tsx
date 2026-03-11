@@ -20,14 +20,21 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/supabase/auth-provider';
 
 const careerCategoryMap: Record<string, string[]> = {
-  "Engineering & Tech": ["Math", "Science", "General Learning"],
-  "Healthcare & Medicine": ["Science", "Math", "General Learning"],
-  "Business & Finance": ["Math", "Reading & Writing", "General Learning"],
-  "Arts & Humanities": ["Grammar & Language Arts", "Reading & Writing", "General Learning"],
-  "Education": ["Grammar & Language Arts", "Reading & Writing", "Math", "Science", "General Learning"],
-  "Science & Research": ["Science", "Math", "Reading & Writing", "General Learning"],
-  "Law & Public Policy": ["Reading & Writing", "Grammar & Language Arts", "General Learning"],
-  "Other": ["Math", "Science", "Grammar & Language Arts", "Reading & Writing", "General Learning"]
+  'Computer Science': ["Math", "Science", "General Learning"],
+  'Engineering': ["Math", "Science", "General Learning"],
+  'Medicine / Pre-Med': ["Science", "Math", "General Learning"],
+  'Nursing': ["Science", "Math", "General Learning"],
+  'Biology / Life Sciences': ["Science", "Math", "General Learning"],
+  'Business / Finance': ["Math", "Reading & Writing", "General Learning"],
+  'Law / Pre-Law': ["Reading & Writing", "Grammar & Language Arts", "General Learning"],
+  'Political Science': ["Reading & Writing", "Grammar & Language Arts", "General Learning"],
+  'Psychology': ["Science", "Reading & Writing", "General Learning"],
+  'Education': ["Grammar & Language Arts", "Reading & Writing", "Math", "Science", "General Learning"],
+  'Arts & Design': ["Grammar & Language Arts", "Reading & Writing", "General Learning"],
+  'Communications / Media': ["Grammar & Language Arts", "Reading & Writing", "General Learning"],
+  'Architecture': ["Math", "Science", "General Learning"],
+  'Mathematics': ["Math", "Science", "General Learning"],
+  'Other': ["Math", "Science", "Grammar & Language Arts", "Reading & Writing", "General Learning"]
 };
 
 type Tool = {
