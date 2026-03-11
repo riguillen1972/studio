@@ -78,7 +78,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         features: [
             "Everything in Pro, plus:",
             "Claude 3.5 Haiku model unlocked",
-            "2M tokens/month (all 3 models)",
+            "2M tokens/month (both models)",
             "AI Mini-App Generator",
             "Create & save custom learning apps",
             "Highest priority support",
@@ -219,7 +219,7 @@ export default function ProfilePage() {
                             </div>
                             <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
                         </div>
-                        { isPremium && (
+                        { tier === 'pro' && (
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">Gemini 2.5 Pro</Label>
                                 <div className="flex justify-between text-sm text-muted-foreground mb-1">

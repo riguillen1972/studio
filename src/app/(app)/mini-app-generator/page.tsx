@@ -52,7 +52,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const generationFormSchema = z.object({
   description: z.string().min(20, { message: 'Please describe the app you want in at least 20 characters.' }),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).default('pro'),
+  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).default('haiku'),
 });
 type GenerationFormValues = z.infer<typeof generationFormSchema>;
 
@@ -115,7 +115,7 @@ export default function MiniAppGeneratorPage() {
     resolver: zodResolver(generationFormSchema),
     defaultValues: {
       description: '',
-      model: 'pro',
+      model: 'haiku',
     },
   });
 
@@ -320,7 +320,6 @@ export default function MiniAppGeneratorPage() {
                           <SelectContent>
                             <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>
                             <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
-                            <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
