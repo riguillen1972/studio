@@ -68,6 +68,7 @@ const ExplanationActionInputSchema = z.object({
   model: modelSchema,
   careerField: z.string().optional(),
   conversationHistory: z.array(z.object({ role: z.enum(['user', 'ai']), content: z.string() })).optional(),
+  mode: z.enum(['help', 'research']).optional(),
 });
 export async function getExplanationAction(input: GenerateExplanationInput) {
   const parsedInput = ExplanationActionInputSchema.safeParse(input);

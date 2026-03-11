@@ -21,6 +21,7 @@ const GenerateExplanationInputSchema = z.object({
   model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
   careerField: z.string().optional().describe('The student\'s college career field for tailored explanations.'),
   conversationHistory: z.array(ConversationTurnSchema).optional().describe('Previous conversation turns for multi-turn context.'),
+  mode: z.enum(['help', 'research']).optional().describe('Tutor mode: help (guides without direct answers) or research (factual direct answers).'),
 });
 export type GenerateExplanationInput = z.infer<typeof GenerateExplanationInputSchema>;
 
@@ -53,13 +54,24 @@ const generateExplanationFlow = ai.defineFlow(
       ? ` The student is studying ${input.careerField} in college. Tailor your explanation to be highly relevant to this career field, using analogies and examples from this industry.`
       : '';
 
-    const prompt = `You are an AI-powered tutor specializing in explaining complex concepts in simple terms. Your goal is to help students understand the underlying principles of a topic without giving them the direct answer to their questions.${careerOptimization}
+    let prompt = '';
+    if (input.mode === 'research') {
+      prompt = `You are an AI-powered research assistant. Your goal is to provide direct, factual, and comprehensive information for the student's question. Provide the direct answer clearly, citing concepts where necessary.${careerOptimization}
+
+    Please provide a factual and direct answer for the following question or concept.
+    ${historySection}
+    Question/Concept to research:
+    ${input.concept}
+    `;
+    } else {
+      prompt = `You are an AI-powered tutor specializing in explaining complex concepts in simple terms. Your goal is to help students understand the underlying principles of a topic without giving them the direct answer to their questions.${careerOptimization}
 
     Please provide a clear and concise explanation for the following concept or question. Guide the student by explaining the concepts and principles involved. Do not provide the final answer to the question if it's a problem to be solved. Instead, help them understand how to arrive at the solution themselves.
     ${historySection}
     Concept/Question:
     ${input.concept}
     `;
+    }
 
     const response = await ai.generate({
         model: getModel(input.model),

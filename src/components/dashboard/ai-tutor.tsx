@@ -37,6 +37,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash');
+  const [mode, setMode] = useState<'help' | 'research'>('help');
   
   useEffect(() => {
     setIsClient(true);
@@ -65,7 +66,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
     setIsLoading(true);
     setConversation((prev) => [...prev, { role: "user", content: data.concept }]);
 
-    const result = await getExplanationAction({ concept: data.concept, model: modelToUse, careerField, conversationHistory: conversation });
+    const result = await getExplanationAction({ concept: data.concept, model: modelToUse, careerField, conversationHistory: conversation, mode });
 
     if (result.success) {
       consumeTokens(result.data.totalTokens, modelToUse);
@@ -183,21 +184,43 @@ export default function AITutor({ careerField }: { careerField?: string }) {
         </ScrollArea>
       </CardContent>
        <CardFooter className="pt-4 border-t flex-col items-start">
-        <div className="mb-4 w-full">
-            <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
-            <Select value={selectedModel} onValueChange={(value: SupportedModel) => setSelectedModel(value)}>
-                <SelectTrigger id="model-select">
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
-                    <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
-                    {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
-                </SelectContent>
-            </Select>
-             <p className="text-xs text-muted-foreground mt-1">
-                Select the AI model to use for your questions.
-            </p>
+        <div className="mb-4 w-full flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+                <Label className="mb-2 block">Tutor Mode</Label>
+                <div className="flex gap-2">
+                    <Button
+                        type="button"
+                        variant={mode === 'help' ? 'default' : 'outline'}
+                        onClick={() => setMode('help')}
+                        size="sm"
+                        className="flex-1"
+                    >
+                        Help Mode
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={mode === 'research' ? 'default' : 'outline'}
+                        onClick={() => setMode('research')}
+                        size="sm"
+                        className="flex-1"
+                    >
+                        Research Mode
+                    </Button>
+                </div>
+            </div>
+            <div className="flex-1">
+                <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>
+                <Select value={selectedModel} onValueChange={(value: SupportedModel) => setSelectedModel(value)}>
+                    <SelectTrigger id="model-select">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
+                        <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
+                        {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
         <Form {...form}>
           <form
