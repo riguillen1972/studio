@@ -192,7 +192,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                 <SelectContent>
                     {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
                     <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
-                    {(tier === 'pro' || tier === 'max') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
+                    {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
                 </SelectContent>
             </Select>
              <p className="text-xs text-muted-foreground mt-1">
