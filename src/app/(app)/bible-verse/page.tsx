@@ -23,10 +23,11 @@ export default function BibleVersePage() {
     const [verseInfo, setVerseInfo] = useState<BibleVerse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { tier, hasTokens, consumeTokens } = useAppState();
+    const { tier, hasTokens, consumeTokens, isLoaded } = useAppState();
+    const [hasFetched, setHasFetched] = useState(false);
     
-    // Use Claude Haiku as default model
-    const modelToUse = 'haiku';
+    // Use Gemini 2.5 Flash as default model since all tiers can access it
+    const modelToUse = 'flash';
 
     const fetchVerse = async () => {
         if (!hasTokens(modelToUse)) {
@@ -55,12 +56,13 @@ export default function BibleVersePage() {
     };
 
     useEffect(() => {
-        fetchVerse();
-        // Only fetch once on mount
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        if (isLoaded && !hasFetched) {
+            fetchVerse();
+            setHasFetched(true);
+        }
+    }, [isLoaded, hasFetched]);
     
-    const isButtonDisabled = isLoading || !hasTokens(modelToUse);
+    const isButtonDisabled = isLoading || !isLoaded || !hasTokens(modelToUse);
 
     return (
         <div className="flex flex-col gap-8">

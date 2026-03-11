@@ -45,6 +45,7 @@ interface AppState {
 
   hasTokens: (model: SupportedModel) => boolean;
   consumeTokens: (amount: number, model: SupportedModel) => void;
+  isLoaded: boolean;
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -211,6 +212,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     haikuTokensRemaining,
     hasTokens,
     consumeTokens,
+    isLoaded: isMounted,
   };
 
   return (
