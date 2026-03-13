@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppStateProvider } from "@/components/app-state-provider";
-import FriendlyTutor from "@/components/friendly-tutor";
 import { Separator } from "@/components/ui/separator";
 import { Bot } from "lucide-react";
 
@@ -27,7 +26,6 @@ export default function AppLayout({
               </div>
             </header>
             <main className="min-h-svh p-4 sm:p-6 lg:p-8">{children}</main>
-            <FriendlyTutor />
           </SidebarInset>
         </SidebarProvider>
       </AppStateProvider>

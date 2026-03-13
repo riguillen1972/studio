@@ -175,9 +175,9 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
                         {isLoadingRoster ? (
                             <p className="text-sm text-center text-muted-foreground p-4">Loading students...</p>
                         ) : students.length === 0 ? (
-                            <div className="text-center p-4">
-                                <p className="text-sm text-muted-foreground">No students have joined your class yet.</p>
-                                <p className="text-xs text-muted-foreground mt-2">Have them sign up using your class code: <strong>{classCode}</strong></p>
+                            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                                <p className="text-sm">No students have joined your class yet.</p>
+                                <p className="text-xs mt-2">Have them sign up using your class code:<br /><span className="font-bold text-foreground">{classCode}</span></p>
                             </div>
                         ) : (
                             students.map((student) => (
