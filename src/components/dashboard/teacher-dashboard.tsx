@@ -31,6 +31,8 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
     const [students, setStudents] = useState<Student[]>([]);
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
     const [isLoadingRoster, setIsLoadingRoster] = useState(true);
+    const [debugInfo, setDebugInfo] = useState<string>("");
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const [instructions, setInstructions] = useState<string>("");
     const [limits, setLimits] = useState({ allowNonAcademic: false, enableBreakEnforcer: true });
@@ -138,7 +140,13 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
             .eq('class_code', classCode)
             .neq('id', user?.id || ''); // Exclude the teacher themselves just in case
 
+        setDebugInfo(`Query for: ${classCode}`);
+        if (error) {
+            setErrorMsg(error.message || JSON.stringify(error));
+        }
+
         if (data) {
+            setDebugInfo(`Query for: ${classCode} | Found: ${data.length}`);
             setStudents(data);
             if (data.length > 0 && !selectedStudentId) {
                 setSelectedStudentId(data[0].id);
@@ -178,6 +186,10 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
                             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
                                 <p className="text-sm">No students have joined your class yet.</p>
                                 <p className="text-xs mt-2">Have them sign up using your class code:<br /><span className="font-bold text-foreground">{classCode}</span></p>
+                                <div className="mt-4 p-2 bg-muted rounded text-[10px] font-mono text-left max-w-full">
+                                    <p>Debug: {debugInfo}</p>
+                                    {errorMsg && <p className="text-red-500 mt-1">Error: {errorMsg}</p>}
+                                </div>
                             </div>
                         ) : (
                             students.map((student) => (
