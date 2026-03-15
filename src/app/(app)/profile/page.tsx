@@ -45,8 +45,8 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         description: "Get started with essential AI study tools.",
         icon: Zap,
         features: [
-            "Gemini 2.5 Flash exclusively",
-            "1M tokens/month",
+            "Gemini 2.5 flash-lite exclusively",
+            "250k tokens/month",
             "AI Tutor, Homework Help, Summarizer",
             "Quiz & Flashcard Generator",
             "Bible Verse & Study Buddy",
