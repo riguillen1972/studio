@@ -45,6 +45,7 @@ export function SupabaseAuthProvider({ children }: { children: React.ReactNode }
       password,
       options: {
         data: { display_name: displayName || email.split('@')[0], ...extraMetadata },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     return { error: error?.message ?? null };
