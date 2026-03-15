@@ -90,6 +90,8 @@ export default function ProfilePage() {
   const { 
     tier, 
     setTier, 
+    flashLiteTokensRemaining,
+    flashLiteTokenLimit,
     flashTokensRemaining, 
     flashTokenLimit, 
     proTokensRemaining, 
@@ -156,24 +158,6 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
 
-            {!isTeacher && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="font-headline flex items-center gap-2"><Target/> Learning Goals</CardTitle>
-                        <CardDescription>Your current objectives.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-3">
-                            {user.learningGoals.map((goal, index) => (
-                                <li key={index} className="flex items-start gap-3">
-                                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                                    <span>{goal}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </CardContent>
-                </Card>
-            )}
         </div>
 
         <div className="space-y-8">
@@ -211,14 +195,25 @@ export default function ProfilePage() {
                                 <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
                             </div>
                         )}
-                        <div className="space-y-2">
-                            <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
-                            <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                <span>Remaining</span>
-                                <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
+                        { tier === 'free' ? (
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Gemini 2.5 Flash-Lite</Label>
+                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                    <span>Remaining</span>
+                                    <span>{new Intl.NumberFormat().format(flashLiteTokensRemaining)} / {new Intl.NumberFormat().format(flashLiteTokenLimit)}</span>
+                                </div>
+                                <Progress value={flashLiteTokenLimit > 0 ? (flashLiteTokensRemaining / flashLiteTokenLimit) * 100 : 0} />
                             </div>
-                            <Progress value={(flashTokensRemaining / flashTokenLimit) * 100} />
-                        </div>
+                        ) : (
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
+                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                    <span>Remaining</span>
+                                    <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
+                                </div>
+                                <Progress value={flashTokenLimit > 0 ? (flashTokensRemaining / flashTokenLimit) * 100 : 0} />
+                            </div>
+                        )}
                         { tier === 'pro' && (
                             <div className="space-y-2">
                                 <Label className="text-sm font-medium">Gemini 2.5 Pro</Label>
