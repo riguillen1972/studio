@@ -3,6 +3,8 @@
 import AITutor from "@/components/dashboard/ai-tutor";
 import { useAuth } from "@/lib/supabase/auth-provider";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "@/components/ad-placeholder";
 
 import { TeacherDashboard } from "@/components/dashboard/teacher-dashboard";
 
@@ -34,6 +36,7 @@ function getRoleGreeting(user: any): { title: string; subtitle: string; role: st
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { tier } = useAppState();
   const { title, subtitle, role } = getRoleGreeting(user);
   const careerField = user?.user_metadata?.career_field;
 
@@ -47,6 +50,8 @@ export default function DashboardPage() {
           {subtitle}
         </p>
       </header>
+
+      {tier === 'free' && <AdPlaceholder />}
 
       {role === 'teacher' ? (
         <TeacherDashboard user={user} />

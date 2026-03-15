@@ -16,12 +16,16 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
   const { tier } = useAppState();
 
   // Determine which models are available for the current subscription tier
-  // Free: Gemini 2.5 Flash only
-  // Pro:  Gemini 2.5 Flash + Gemini 2.5 Pro
-  // Max:  Gemini 2.5 Flash + Claude 3 Haiku
+  // Free: Gemini 2.5 Flash-Lite
+  // Pro:  Gemini 2.5 Flash-Lite, Gemini 2.5 Flash, Gemini 2.5 Pro
+  // Max:  Gemini 2.5 Flash-Lite, Gemini 2.5 Flash, Claude 3 Haiku
   const availableModels: { value: SupportedModel; label: string }[] = [
-    { value: "flash", label: "Gemini 2.5 Flash" },
+    { value: "flash-lite", label: "Gemini 2.5 Flash-Lite" },
   ];
+
+  if (tier === "pro" || tier === "max") {
+    availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
+  }
 
   if (tier === "pro") {
     availableModels.push({ value: "pro", label: "Gemini 2.5 Pro" });
@@ -31,10 +35,10 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
     availableModels.push({ value: "haiku", label: "Claude 3 Haiku" });
   }
 
-  // If the currently selected model is not available for this tier, reset to flash
-  const effectiveValue = availableModels.some((m) => m.value === value) ? value : "flash";
+  // If the currently selected model is not available for this tier, reset to flash-lite
+  const effectiveValue = availableModels.some((m) => m.value === value) ? value : "flash-lite";
   if (effectiveValue !== value) {
-    onChange("flash");
+    onChange("flash-lite");
   }
 
   return (

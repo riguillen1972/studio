@@ -7,6 +7,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { Loader2, Sparkles, Gem, Shapes, Bot, User, Send, RefreshCw, Archive, Trash2 } from 'lucide-react';
 import { useAppState } from '@/components/app-state-provider';
+import AdPlaceholder from '@/components/ad-placeholder';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Card,
@@ -264,6 +265,7 @@ export default function MiniAppGeneratorPage() {
                 <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
                 <p className="text-muted-foreground mt-1">Create custom AI-powered apps to help you learn any topic.</p>
               </header>
+              {tier === 'free' && <AdPlaceholder className="mb-4" />}
               <UpgradePrompt />
           </div>
       );
@@ -279,6 +281,7 @@ export default function MiniAppGeneratorPage() {
           <h1 className="text-2xl sm:text-3xl font-bold font-headline tracking-tight">AI Mini-App Generator</h1>
           <p className="text-muted-foreground mt-1">Describe a learning tool, or load a saved session.</p>
         </header>
+        {/* AdPlaceholder intentionally omitted here because this view is only for Max users */}
         <div className="grid md:grid-cols-2 gap-8 items-start">
           <Card>
             <CardHeader>
@@ -416,6 +419,7 @@ export default function MiniAppGeneratorPage() {
             <Button onClick={startNew} variant="outline"><RefreshCw className="mr-2 h-4 w-4"/> Start New App</Button>
         </div>
       </header>
+      {/* AdPlaceholder intentionally omitted here because this view is only for Max users */}
 
       <AlertDialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
         <AlertDialogContent>

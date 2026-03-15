@@ -37,7 +37,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash');
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash-lite');
   const [mode, setMode] = useState<'help' | 'research'>('help');
   
   useEffect(() => {

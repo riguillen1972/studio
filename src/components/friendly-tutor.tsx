@@ -41,7 +41,7 @@ export default function FriendlyTutor() {
   }, []);
 
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = 'flash';
+  const modelToUse = 'flash-lite';
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

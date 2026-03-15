@@ -18,6 +18,7 @@ import { ToolDialog } from '@/components/tools/tool-dialog';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useAuth } from '@/lib/supabase/auth-provider';
+import AdPlaceholder from '@/components/ad-placeholder';
 
 const careerCategoryMap: Record<string, string[]> = {
   'Computer Science': ["Math", "Science", "General Learning"],
@@ -84,6 +85,8 @@ export default function ToolsPage() {
             Powerful AI-powered tools to help you with any subject.
           </p>
         </header>
+
+        {tier === 'free' && <AdPlaceholder className="mt-4" />}
 
         <div className="space-y-12">
           {(toolData.categories as ToolCategory[])

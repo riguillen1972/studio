@@ -13,6 +13,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
+import { useAppState } from "@/components/app-state-provider";
+import AdPlaceholder from "@/components/ad-placeholder";
 
 type LibraryItem = {
   id: string;
@@ -27,6 +29,7 @@ export default function LibraryPage() {
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { tier } = useAppState();
   const supabase = createClient();
 
   useEffect(() => {
@@ -56,6 +59,7 @@ export default function LibraryPage() {
             Loading curated articles, videos, and simulations...
           </p>
         </header>
+        {tier === 'free' && <AdPlaceholder className="mb-4" />}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="overflow-hidden flex flex-col">
@@ -89,6 +93,7 @@ export default function LibraryPage() {
           supplement your learning.
         </p>
       </header>
+      {tier === 'free' && <AdPlaceholder className="mb-4" />}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {libraryItems.map((item) => (
           <Card key={item.id} className="overflow-hidden flex flex-col">
