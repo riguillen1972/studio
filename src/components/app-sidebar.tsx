@@ -41,7 +41,7 @@ import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { isPremium } = useAppState();
+  const { tier, isPremium } = useAppState();
   const { user, signOut } = useAuth();
   const router = useRouter();
   const isActive = (href: string) => pathname === href;
@@ -124,9 +124,11 @@ export function AppSidebar() {
     },
   ];
 
-  const menuItems = baseMenuItems.filter(item => 
-      item.visibleTo.includes('all') || item.visibleTo.includes(isTeacher ? 'teacher' : 'student')
-  );
+  const menuItems = baseMenuItems.filter(item => {
+    const roleMatch = item.visibleTo.includes('all') || item.visibleTo.includes(isTeacher ? 'teacher' : 'student');
+    const tierMatch = item.tier === 'max' ? tier === 'max' : true;
+    return roleMatch && tierMatch;
+  });
 
   return (
       <Sidebar
