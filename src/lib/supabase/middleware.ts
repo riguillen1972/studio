@@ -34,20 +34,21 @@ export async function updateSession(request: NextRequest) {
 
   // If user is not signed in and trying to access app routes, redirect to login
   if (
-    !user &&
-    request.nextUrl.pathname.startsWith('/dashboard') ||
-    !user && request.nextUrl.pathname.startsWith('/tools') ||
-    !user && request.nextUrl.pathname.startsWith('/quiz') ||
-    !user && request.nextUrl.pathname.startsWith('/flashcards') ||
-    !user && request.nextUrl.pathname.startsWith('/homework') ||
-    !user && request.nextUrl.pathname.startsWith('/scan') ||
-    !user && request.nextUrl.pathname.startsWith('/summarizer') ||
-    !user && request.nextUrl.pathname.startsWith('/progress') ||
-    !user && request.nextUrl.pathname.startsWith('/library') ||
-    !user && request.nextUrl.pathname.startsWith('/profile') ||
-    !user && request.nextUrl.pathname.startsWith('/bible-verse') ||
-    !user && request.nextUrl.pathname.startsWith('/mini-app-generator') ||
-    !user && request.nextUrl.pathname.startsWith('/video-generator')
+    !user && (
+      request.nextUrl.pathname.startsWith('/dashboard') ||
+      request.nextUrl.pathname.startsWith('/tools') ||
+      request.nextUrl.pathname.startsWith('/quiz') ||
+      request.nextUrl.pathname.startsWith('/flashcards') ||
+      request.nextUrl.pathname.startsWith('/homework') ||
+      request.nextUrl.pathname.startsWith('/scan') ||
+      request.nextUrl.pathname.startsWith('/summarizer') ||
+      request.nextUrl.pathname.startsWith('/progress') ||
+      request.nextUrl.pathname.startsWith('/library') ||
+      request.nextUrl.pathname.startsWith('/profile') ||
+      request.nextUrl.pathname.startsWith('/bible-verse') ||
+      request.nextUrl.pathname.startsWith('/mini-app-generator') ||
+      request.nextUrl.pathname.startsWith('/video-generator')
+    )
   ) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
