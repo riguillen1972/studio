@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge";
 const user = {
     name: "Alex Doe",
     email: "alex.doe@example.com",
-    gradeLevel: "High School",
     avatarUrl: "https://picsum.photos/seed/user/200/200",
     imageHint: "student portrait",
     learningGoals: [
@@ -149,12 +148,6 @@ export default function ProfilePage() {
                         <Label htmlFor="name">Full Name</Label>
                         <Input id="name" defaultValue={displayName} />
                     </div>
-                    {!isTeacher && (
-                         <div className="space-y-2">
-                            <Label htmlFor="grade">Grade Level</Label>
-                            <Input id="grade" defaultValue={user.gradeLevel} />
-                        </div>
-                    )}
                 </CardContent>
             </Card>
 
