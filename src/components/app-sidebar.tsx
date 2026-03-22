@@ -120,7 +120,7 @@ export function AppSidebar() {
       href: "/bible-verse",
       icon: BookMarked,
       label: "Bible Verse",
-      visibleTo: ['all'],
+      visibleTo: ['student'],
     },
   ];
 

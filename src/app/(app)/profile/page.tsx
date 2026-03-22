@@ -169,9 +169,11 @@ export default function ProfilePage() {
                     </Avatar>
                     <h2 className="text-xl font-semibold font-headline">{displayName}</h2>
                     <p className="text-muted-foreground text-sm">{displayEmail}</p>
-                    <Badge className="mt-2" variant={tier === 'max' ? 'default' : tier === 'pro' ? 'secondary' : 'outline'}>
-                      {tierPlans[tier].name} Plan
-                    </Badge>
+                    {!isTeacher && (
+                      <Badge className="mt-2" variant={tier === 'max' ? 'default' : tier === 'pro' ? 'secondary' : 'outline'}>
+                        {tierPlans[tier].name} Plan
+                      </Badge>
+                    )}
                 </CardContent>
              </Card>
 
