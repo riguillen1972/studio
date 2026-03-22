@@ -141,7 +141,7 @@ export function AppSidebar() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-9 shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+              className="size-9 shrink-0 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground hover:from-primary/90 hover:to-primary/70 hover:text-primary-foreground shadow-sm"
               asChild
             >
               <Link href="/dashboard">

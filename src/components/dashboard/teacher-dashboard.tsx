@@ -186,10 +186,6 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
                             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
                                 <p className="text-sm">No students have joined your class yet.</p>
                                 <p className="text-xs mt-2">Have them sign up using your class code:<br /><span className="font-bold text-foreground">{classCode}</span></p>
-                                <div className="mt-4 p-2 bg-muted rounded text-[10px] font-mono text-left max-w-full">
-                                    <p>Debug: {debugInfo}</p>
-                                    {errorMsg && <p className="text-red-500 mt-1">Error: {errorMsg}</p>}
-                                </div>
                             </div>
                         ) : (
                             students.map((student) => (

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -43,37 +43,37 @@ body {
     --sidebar-ring: 220 75% 50%;
   }
   .dark {
-    --background: 220 15% 10%;
+    --background: 222 16% 10%;
     --foreground: 220 15% 95%;
-    --card: 220 15% 15%;
+    --card: 222 16% 14%;
     --card-foreground: 220 15% 95%;
-    --popover: 220 15% 15%;
+    --popover: 222 16% 14%;
     --popover-foreground: 220 15% 95%;
     --primary: 220 75% 60%;
     --primary-foreground: 220 15% 10%;
-    --secondary: 220 15% 20%;
+    --secondary: 222 16% 20%;
     --secondary-foreground: 220 15% 95%;
-    --muted: 220 15% 20%;
+    --muted: 222 16% 20%;
     --muted-foreground: 220 15% 60%;
     --accent: 190 70% 50%;
     --accent-foreground: 220 15% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 15% 25%;
-    --input: 220 15% 25%;
+    --border: 222 16% 22%;
+    --input: 222 16% 22%;
     --ring: 220 75% 60%;
     --chart-1: 220 70% 60%;
     --chart-2: 190 70% 50%;
     --chart-3: 30 80% 65%;
     --chart-4: 280 65% 70%;
     --chart-5: 340 75% 65%;
-    --sidebar-background: 220 15% 12%;
+    --sidebar-background: 222 16% 11%;
     --sidebar-foreground: 220 15% 95%;
     --sidebar-primary: 220 75% 60%;
     --sidebar-primary-foreground: 220 15% 10%;
-    --sidebar-accent: 220 15% 22%;
+    --sidebar-accent: 222 16% 20%;
     --sidebar-accent-foreground: 220 15% 95%;
-    --sidebar-border: 220 15% 25%;
+    --sidebar-border: 222 16% 22%;
     --sidebar-ring: 220 75% 60%;
   }
 }
@@ -81,6 +81,7 @@ body {
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.2s ease, color 0.15s ease, border-color 0.2s ease;
   }
   body {
     @apply bg-background text-foreground;

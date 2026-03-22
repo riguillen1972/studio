@@ -43,8 +43,8 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   useEffect(() => {
     setIsClient(true);
     // Ensure the selected model is allowed on load
-    if (tier === 'free' && selectedModel !== 'flash') {
-      setSelectedModel('flash');
+    if (tier === 'free' && selectedModel !== 'flash-lite') {
+      setSelectedModel('flash-lite');
     } else if (tier === 'pro' && selectedModel === 'haiku') {
       setSelectedModel('flash'); // Pro doesn't have haiku
     }
@@ -219,7 +219,8 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                     </SelectTrigger>
                     <SelectContent>
                         {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
-                        <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>
+                        {(tier === 'free') && <SelectItem value="flash-lite">Gemini 2.5 Flash-Lite</SelectItem>}
+                        {(tier !== 'free') && <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>}
                         {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
                     </SelectContent>
                 </Select>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, CheckCircle, Target, Gem, Sigma, Sparkles, Crown, Zap, X } from "lucide-react";
+import { User, CheckCircle, Gem, Sigma, Sparkles, Crown, Zap, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,18 +14,6 @@ import { UpgradeDialog } from "@/components/upgrade-dialog";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-provider";
 import { Badge } from "@/components/ui/badge";
-
-const user = {
-    name: "Alex Doe",
-    email: "alex.doe@example.com",
-    avatarUrl: "https://picsum.photos/seed/user/200/200",
-    imageHint: "student portrait",
-    learningGoals: [
-        "Improve my grade in Physics from B to A.",
-        "Prepare for the upcoming SATs.",
-        "Learn the basics of Python programming.",
-    ]
-}
 
 interface TierPlan {
     name: string;
@@ -100,8 +88,8 @@ export default function ProfilePage() {
     isPremium
   } = useAppState();
   const { user: supabaseUser } = useAuth();
-  const displayName = supabaseUser?.user_metadata?.display_name || supabaseUser?.email?.split('@')[0] || user.name;
-  const displayEmail = supabaseUser?.email || user.email;
+  const displayName = supabaseUser?.user_metadata?.display_name || supabaseUser?.email?.split('@')[0] || 'Student';
+  const displayEmail = supabaseUser?.email || '';
   const role = supabaseUser?.user_metadata?.role || 'student';
   const isTeacher = role === 'teacher';
   const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
@@ -148,17 +136,21 @@ export default function ProfilePage() {
                         <Label htmlFor="name">Full Name</Label>
                         <Input id="name" defaultValue={displayName} />
                     </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="email" className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
+                        <Input id="email" defaultValue={displayEmail} readOnly className="bg-muted/50 cursor-default" />
+                    </div>
                 </CardContent>
             </Card>
 
         </div>
 
         <div className="space-y-8">
-             <Card className="text-center">
-                <CardContent className="p-6">
-                    <Avatar className="h-24 w-24 mx-auto mb-4 border-4 border-primary/50">
-                        <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint={user.imageHint} />
-                        <AvatarFallback><User className="h-10 w-10"/></AvatarFallback>
+             <Card className="text-center overflow-hidden">
+                <div className="h-20 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20" />
+                <CardContent className="p-6 -mt-12">
+                    <Avatar className="h-24 w-24 mx-auto mb-4 border-4 border-background shadow-lg ring-2 ring-primary/30">
+                        <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">{displayName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                     <h2 className="text-xl font-semibold font-headline">{displayName}</h2>
                     <p className="text-muted-foreground text-sm">{displayEmail}</p>
