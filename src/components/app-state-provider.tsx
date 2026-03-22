@@ -15,7 +15,7 @@ const FREE_HAIKU_TOKEN_LIMIT = 0;    // No access
 // Pro tier: Gemini 2.5 Flash + Gemini 2.5 Pro
 const PRO_FLASH_LITE_TOKEN_LIMIT = 250000; // Give them lite access just in case
 const PRO_FLASH_TOKEN_LIMIT = 1000000;
-const PRO_PRO_TOKEN_LIMIT = 1000000;
+const PRO_PRO_TOKEN_LIMIT = 500000;
 const PRO_HAIKU_TOKEN_LIMIT = 0;     // No access
 
 // Max tier: Gemini 2.5 Flash + Claude 3 Haiku

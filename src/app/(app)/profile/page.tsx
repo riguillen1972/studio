@@ -51,7 +51,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         features: [
             "Everything in Free, plus:",
             "Gemini 2.5 Pro model unlocked",
-            "1M tokens/month (both models)",
+            "500k tokens/month (Gemini 2.5 Pro)",
             "Full AI Tools Library (all tools)",
             "Ad-free experience",
             "Priority support",
