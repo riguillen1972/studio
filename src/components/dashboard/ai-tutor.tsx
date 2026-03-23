@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -39,6 +39,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash-lite');
   const [mode, setMode] = useState<'help' | 'research'>('help');
+  const scrollRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     setIsClient(true);
@@ -49,6 +50,13 @@ export default function AITutor({ careerField }: { careerField?: string }) {
       setSelectedModel('flash'); // Pro doesn't have haiku
     }
   }, [tier, selectedModel]);
+
+  // Auto-scroll to bottom when conversation updates
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [conversation, isLoading]);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -115,7 +123,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   }
 
   return (
-    <Card className="h-full flex flex-col max-h-[75vh]">
+    <Card className="h-full flex flex-col max-h-[80vh]">
         <CardHeader>
             <CardTitle className="font-headline flex items-center gap-2">
                 <Sparkles className="text-primary"/>
@@ -133,9 +141,9 @@ export default function AITutor({ careerField }: { careerField?: string }) {
               )}
             </div>
         </CardHeader>
-      <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
+      <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden min-h-0">
         {tier === 'free' && <AdPlaceholder />}
-        <ScrollArea className="flex-grow pr-4 -mr-4">
+        <ScrollArea className="flex-grow min-h-0 pr-4 -mr-4">
             <div className="space-y-6">
             {conversation.length === 0 && (
                 <div className="text-center text-muted-foreground p-8">
@@ -183,6 +191,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                     </div>
                 </div>
             )}
+            <div ref={scrollRef} />
             </div>
         </ScrollArea>
       </CardContent>
