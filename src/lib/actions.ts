@@ -60,7 +60,7 @@ async function handleAction<T_Input, T_Output>(
   }
 }
 
-const modelSchema = z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional();
+const modelSchema = z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional();
 
 // Schema for getExplanationAction
 const ExplanationActionInputSchema = z.object({
