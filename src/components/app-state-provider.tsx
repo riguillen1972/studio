@@ -170,9 +170,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         // Only Max tier has access to Claude 3 Haiku
         return tier === 'max' && tokenInfo.haikuUsedTokens < haikuTokenLimit;
     }
+    if (model === 'flash-lite') {
+        return tokenInfo.flashLiteUsedTokens < flashLiteTokenLimit;
+    }
     // model === 'flash' — available to all tiers
     return tokenInfo.flashUsedTokens < flashTokenLimit;
-  }, [isMounted, tier, tokenInfo, flashTokenLimit, proTokenLimit, haikuTokenLimit]);
+  }, [isMounted, tier, tokenInfo, flashLiteTokenLimit, flashTokenLimit, proTokenLimit, haikuTokenLimit]);
   
   const consumeTokens = useCallback((amount: number, model: SupportedModel) => {
     if (!isMounted) return;
