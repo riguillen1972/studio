@@ -13,7 +13,7 @@ import {z} from 'genkit';
 
 const GetFriendlyAdviceInputSchema = z.object({
   question: z.string().describe("The user's question or problem."),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type GetFriendlyAdviceInput = z.infer<typeof GetFriendlyAdviceInputSchema>;
 

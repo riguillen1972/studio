@@ -19,7 +19,7 @@ const GenerateFlashcardsInputSchema = z.object({
   subject: z.string().describe('The subject of the flashcards.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numFlashcards: z.number().int().min(5).max(20).describe('The number of flashcards to generate.'),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;

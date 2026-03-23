@@ -13,7 +13,7 @@ const RunToolInputSchema = z.object({
   toolName: z.string().describe('The name of the AI tool being used.'),
   toolDescription: z.string().describe('A short description of what the tool does.'),
   userInput: z.string().describe("The user's input text for the tool to process."),
-  model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type RunToolInput = z.infer<typeof RunToolInputSchema>;
 
