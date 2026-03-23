@@ -31,8 +31,6 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
     const [students, setStudents] = useState<Student[]>([]);
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
     const [isLoadingRoster, setIsLoadingRoster] = useState(true);
-    const [debugInfo, setDebugInfo] = useState<string>("");
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const [instructions, setInstructions] = useState<string>("");
     const [limits, setLimits] = useState({ allowNonAcademic: false, enableBreakEnforcer: true });
@@ -140,13 +138,7 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
             .eq('class_code', classCode)
             .neq('id', user?.id || ''); // Exclude the teacher themselves just in case
 
-        setDebugInfo(`Query for: ${classCode}`);
-        if (error) {
-            setErrorMsg(error.message || JSON.stringify(error));
-        }
-
         if (data) {
-            setDebugInfo(`Query for: ${classCode} | Found: ${data.length}`);
             setStudents(data);
             if (data.length > 0 && !selectedStudentId) {
                 setSelectedStudentId(data[0].id);
