@@ -111,12 +111,6 @@ export function AppSidebar() {
       visibleTo: ['student'],
     },
     {
-      href: "/library",
-      icon: Library,
-      label: "Content Library",
-      visibleTo: ['all'],
-    },
-      {
       href: "/bible-verse",
       icon: BookMarked,
       label: "Bible Verse",
