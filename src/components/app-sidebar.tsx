@@ -4,6 +4,7 @@
 import {
   BookOpen,
   Bot,
+  Globe,
   Library,
   LineChart,
   NotebookText,
@@ -71,6 +72,13 @@ export function AppSidebar() {
       href: "/mini-app-generator",
       icon: Shapes,
       label: "App Generator",
+      tier: "max",
+      visibleTo: ['student'],
+    },
+    {
+      href: "/web-tutor",
+      icon: Globe,
+      label: "Web Tutor",
       tier: "max",
       visibleTo: ['student'],
     },

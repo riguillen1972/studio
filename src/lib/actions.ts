@@ -14,6 +14,7 @@ import { getFriendlyAdvice, GetFriendlyAdviceInput } from "@/ai/flows/get-friend
 import { generateMiniApp, GenerateMiniAppInput } from "@/ai/flows/generate-mini-app";
 import { interactWithMiniApp, InteractWithMiniAppInput } from "@/ai/flows/interact-with-mini-app";
 import { runTool, RunToolInput } from "@/ai/flows/run-tool";
+import { webTutor, WebTutorInput } from "@/ai/flows/web-tutor";
 import { SupportedModel } from "@/ai/genkit";
 
 // Simple in-memory rate limiter (per-action, per-minute)
@@ -245,4 +246,66 @@ export async function runToolAction(input: RunToolInput) {
         return { success: false as const, error: "Invalid input." };
     }
     return handleAction(parsedInput.data, runTool);
+}
+
+// --- Web Tutor ---
+
+async function fetchPageContent(url: string): Promise<string> {
+  try {
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'StudyBuddyAI/1.0 (Educational Bot)' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const html = await response.text();
+    // Strip HTML tags, scripts, styles and extract text
+    const text = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '')
+      .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&amp;/gi, '&')
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return text;
+  } catch (error) {
+    throw new Error(`Could not fetch the webpage. Make sure the URL is correct and the site is publicly accessible.`);
+  }
+}
+
+const WebTutorActionInputSchema = z.object({
+  url: z.string().url(),
+  question: z.string(),
+  conversationHistory: z.array(z.object({ role: z.enum(['user', 'ai']), content: z.string() })).optional(),
+  model: modelSchema,
+});
+export async function webTutorAction(input: { url: string; question: string; conversationHistory?: { role: 'user' | 'ai'; content: string }[]; model?: SupportedModel }) {
+  const parsedInput = WebTutorActionInputSchema.safeParse(input);
+  if (!parsedInput.success) {
+    return { success: false as const, error: "Invalid input. Please provide a valid URL and question." };
+  }
+
+  const key = 'webTutor';
+  if (!checkRateLimit(key)) {
+    return { success: false as const, error: "Rate limit exceeded. Please wait a moment and try again." };
+  }
+
+  try {
+    const pageContent = await fetchPageContent(parsedInput.data.url);
+    const result = await webTutor({
+      url: parsedInput.data.url,
+      pageContent,
+      question: parsedInput.data.question,
+      conversationHistory: parsedInput.data.conversationHistory,
+      model: parsedInput.data.model,
+    });
+    return { success: true as const, data: result };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    return { success: false as const, error: errorMessage };
+  }
 }
