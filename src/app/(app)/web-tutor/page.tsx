@@ -187,6 +187,16 @@ export default function WebTutorPage() {
           <Button type="submit" disabled={isLoadingPage} className="h-10 shrink-0">
             {isLoadingPage ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load"}
           </Button>
+          {!showAskPanel && loadedUrl && (
+            <Button 
+              type="button" 
+              onClick={() => setShowAskPanel(true)} 
+              className="h-10 shrink-0 gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 animate-bounce-subtle shadow-md"
+            >
+              <MessageCircleQuestion className="h-4 w-4" />
+              Ask AI
+            </Button>
+          )}
         </form>
       </Form>
 
@@ -221,24 +231,12 @@ export default function WebTutorPage() {
 
                   {/* Info banner about iframe limitations */}
                   <div className="absolute top-2 left-2 right-2 z-10">
-                    <div className="bg-background/90 backdrop-blur-sm border rounded-lg p-2.5 text-xs text-muted-foreground flex items-start gap-2 shadow-lg">
+                    <div className="bg-background/90 backdrop-blur-sm border rounded-lg p-2.5 text-xs text-muted-foreground flex items-start gap-2 shadow-sm">
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5 text-yellow-500" />
                       <span>
-                        Some websites block iframe previews. Don&apos;t worry — the AI can still read and analyze the page content. Click <strong>Ask AI</strong> below to ask questions!
+                        Some websites block iframe previews. Don&apos;t worry — the AI can still read and analyze the page content. Click the <strong>Ask AI</strong> button at the top!
                       </span>
                     </div>
-                  </div>
-                  
-                  {/* Floating Ask AI Button */}
-                  <div className="absolute bottom-4 right-4 z-20">
-                    <Button
-                      size="lg"
-                      className="rounded-full shadow-2xl gap-2 text-base px-6 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 animate-bounce-subtle"
-                      onClick={() => setShowAskPanel(true)}
-                    >
-                      <MessageCircleQuestion className="h-5 w-5" />
-                      Ask AI
-                    </Button>
                   </div>
                 </>
               ) : (
