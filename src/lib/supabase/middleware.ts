@@ -47,7 +47,10 @@ export async function updateSession(request: NextRequest) {
       request.nextUrl.pathname.startsWith('/profile') ||
       request.nextUrl.pathname.startsWith('/bible-verse') ||
       request.nextUrl.pathname.startsWith('/mini-app-generator') ||
-      request.nextUrl.pathname.startsWith('/video-generator')
+      request.nextUrl.pathname.startsWith('/video-generator') ||
+      request.nextUrl.pathname.startsWith('/web-tutor') ||
+      request.nextUrl.pathname.startsWith('/tools') ||
+      request.nextUrl.pathname.startsWith('/flashcards')
     )
   ) {
     const url = request.nextUrl.clone();

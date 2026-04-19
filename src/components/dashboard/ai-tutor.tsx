@@ -69,7 +69,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude 3.5 Haiku'} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash-lite' ? 'Gemini 2.5 Flash-Lite' : modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude 3.5 Haiku'} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);

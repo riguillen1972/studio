@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { SupportedModel } from '@/ai/genkit';
 import { useAuth } from '@/lib/supabase/auth-provider';
 import { createClient } from '@/lib/supabase/client';
@@ -58,7 +58,7 @@ const AppStateContext = createContext<AppState | undefined>(undefined);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [tier, setTierState] = useState<SubscriptionTier>('free');
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ flashLiteUsedTokens: 0, flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);

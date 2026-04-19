@@ -202,7 +202,7 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
 // Schema for generateMiniAppAction
 const MiniAppActionInputSchema = z.object({
     description: z.string(),
-    model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+    model: modelSchema,
     allowLLM: z.boolean(),
 });
 export async function generateMiniAppAction(input: GenerateMiniAppInput) {
@@ -222,7 +222,7 @@ const InteractActionInputSchema = z.object({
     appDescription: z.string(),
     conversationHistory: z.array(ConversationTurnSchema),
     userInput: z.string(),
-    model: z.enum(['flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+    model: modelSchema,
     allowLLM: z.boolean(),
 });
 export async function interactWithMiniAppAction(input: InteractWithMiniAppInput) {
