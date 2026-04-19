@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, CheckCircle, Gem, Sigma, Sparkles, Crown, Zap, Mail } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { User, CheckCircle, Gem, Sigma, Sparkles, Crown, Zap, Mail, Loader2, CreditCard, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAppState, SubscriptionTier } from "@/components/app-state-provider";
 import { Progress } from "@/components/ui/progress";
-import { UpgradeDialog } from "@/components/upgrade-dialog";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-provider";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { useSearchParams } from "next/navigation";
 
 interface TierPlan {
     name: string;
@@ -76,7 +77,6 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
 export default function ProfilePage() {
   const { 
     tier, 
-    setTier, 
     flashLiteTokensRemaining,
     flashLiteTokenLimit,
     flashTokensRemaining, 
@@ -88,32 +88,94 @@ export default function ProfilePage() {
     isPremium
   } = useAppState();
   const { user: supabaseUser } = useAuth();
+  const { toast } = useToast();
+  const searchParams = useSearchParams();
   const displayName = supabaseUser?.user_metadata?.display_name || supabaseUser?.email?.split('@')[0] || 'Student';
   const displayEmail = supabaseUser?.email || '';
   const role = supabaseUser?.user_metadata?.role || 'student';
   const isTeacher = role === 'teacher';
-  const [upgradeTarget, setUpgradeTarget] = useState<{ tier: 'pro' | 'max'; price: number } | null>(null);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState<string | null>(null);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
 
-  const handleUpgrade = (newTier: 'pro' | 'max') => {
-    setTier(newTier);
-  }
+  // Handle Stripe redirect query params
+  useEffect(() => {
+    const upgrade = searchParams.get('upgrade');
+    if (upgrade === 'success') {
+      toast({
+        title: "🎉 Upgrade Successful!",
+        description: "Your subscription is now active. Enjoy your new features! It may take a moment to reflect.",
+      });
+    } else if (upgrade === 'cancelled') {
+      toast({
+        title: "Upgrade Cancelled",
+        description: "No changes were made to your subscription.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams, toast]);
 
-  const handlePlanSelect = (plan: SubscriptionTier) => {
-    if (plan === 'free') {
-      setTier('free');
-    } else {
-      setUpgradeTarget({ tier: plan, price: tierPlans[plan].price });
+  const handleStripeCheckout = async (plan: 'pro' | 'max') => {
+    setIsCheckoutLoading(plan);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Could not start checkout. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCheckoutLoading(null);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setIsPortalLoading(true);
+    try {
+      const response = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Could not open subscription portal.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPortalLoading(false);
     }
   };
 
   return (
-    <>
-    <UpgradeDialog 
-      open={!!upgradeTarget} 
-      onOpenChange={(isOpen) => !isOpen && setUpgradeTarget(null)}
-      upgradeInfo={upgradeTarget}
-      onUpgrade={handleUpgrade}
-    />
     <div className="container max-w-6xl py-8 space-y-8 animate-in fade-in duration-500 pb-24 lg:pb-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-headline flex items-center gap-3">
@@ -158,6 +220,18 @@ export default function ProfilePage() {
                       <Badge className="mt-2" variant={tier === 'max' ? 'default' : tier === 'pro' ? 'secondary' : 'outline'}>
                         {tierPlans[tier].name} Plan
                       </Badge>
+                    )}
+                    {isPremium && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-3 w-full gap-2" 
+                        onClick={handleManageSubscription}
+                        disabled={isPortalLoading}
+                      >
+                        {isPortalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                        Manage Subscription
+                      </Button>
                     )}
                 </CardContent>
              </Card>
@@ -282,16 +356,40 @@ export default function ProfilePage() {
                     <Button className="w-full" variant="outline" disabled>
                       Current Plan
                     </Button>
+                  ) : planKey === 'free' ? (
+                    isPremium ? (
+                      <Button 
+                        className="w-full" 
+                        variant="ghost" 
+                        onClick={handleManageSubscription}
+                        disabled={isPortalLoading}
+                      >
+                        {isPortalLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                        Manage Subscription
+                      </Button>
+                    ) : null
                   ) : isDowngrade ? (
-                    <Button className="w-full" variant="ghost" onClick={() => handlePlanSelect(planKey)}>
-                      Downgrade
+                    <Button 
+                      className="w-full" 
+                      variant="ghost" 
+                      onClick={handleManageSubscription}
+                      disabled={isPortalLoading}
+                    >
+                      {isPortalLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                      Change Plan
                     </Button>
                   ) : (
                     <Button 
                       className="w-full" 
                       variant={plan.highlighted ? "default" : "outline"}
-                      onClick={() => handlePlanSelect(planKey)}
+                      onClick={() => handleStripeCheckout(planKey as 'pro' | 'max')}
+                      disabled={isCheckoutLoading !== null}
                     >
+                      {isCheckoutLoading === planKey ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                      )}
                       Upgrade to {plan.name}
                     </Button>
                   )}
@@ -303,6 +401,5 @@ export default function ProfilePage() {
       </div>
       )}
     </div>
-    </>
   );
 }
