@@ -60,7 +60,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
     },
     max: {
         name: "Max",
-        price: 30,
+        price: 25,
         description: "Maximum power for serious students.",
         icon: Crown,
         features: [
