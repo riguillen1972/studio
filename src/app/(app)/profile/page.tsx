@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, CheckCircle, Gem, Sigma, Sparkles, Crown, Zap, Mail, Loader2, CreditCard, ExternalLink } from "lucide-react";
+import { CheckCircle, Gem, Sigma, Sparkles, Crown, Zap, Mail, Loader2, CreditCard, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -74,7 +74,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
     },
 };
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { 
     tier, 
     flashLiteTokensRemaining,
@@ -401,5 +401,13 @@ export default function ProfilePage() {
       </div>
       )}
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }
