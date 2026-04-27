@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { SupportedModel } from "@/ai/genkit";
@@ -16,30 +17,39 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
   const { tier } = useAppState();
 
   // Determine which models are available for the current subscription tier
-  // Free: Gemini 2.5 Flash-Lite
+  // Free: Gemini 2.5 Flash-Lite only
   // Pro:  Gemini 2.5 Flash-Lite, Gemini 2.5 Flash, Gemini 2.5 Pro
-  // Max:  Gemini 2.5 Flash-Lite, Gemini 2.5 Flash, Claude 3 Haiku
-  const availableModels: { value: SupportedModel; label: string }[] = [
-    { value: "flash-lite", label: "Gemini 2.5 Flash-Lite" },
-  ];
+  // Max:  Gemini 2.5 Flash, Claude 3 Haiku
+  const availableModels: { value: SupportedModel; label: string }[] = [];
 
-  if (tier === "pro" || tier === "max") {
-    availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
+  if (tier === "free") {
+    availableModels.push({ value: "flash-lite", label: "Gemini 2.5 Flash-Lite" });
   }
 
   if (tier === "pro") {
+    availableModels.push({ value: "flash-lite", label: "Gemini 2.5 Flash-Lite" });
+    availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
     availableModels.push({ value: "pro", label: "Gemini 2.5 Pro" });
   }
 
   if (tier === "max") {
+    availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
     availableModels.push({ value: "haiku", label: "Claude 3 Haiku" });
   }
 
-  // If the currently selected model is not available for this tier, reset to flash-lite
-  const effectiveValue = availableModels.some((m) => m.value === value) ? value : "flash-lite";
-  if (effectiveValue !== value) {
-    onChange("flash-lite");
-  }
+  // Determine the correct default for this tier
+  const defaultModel: SupportedModel = tier === "max" ? "haiku" : tier === "pro" ? "flash" : "flash-lite";
+
+  // If the currently selected model is not available for this tier, reset to the tier default
+  const isCurrentValid = availableModels.some((m) => m.value === value);
+  const effectiveValue = isCurrentValid ? value : defaultModel;
+
+  // Use effect to call onChange only when needed (avoid calling during render)
+  useEffect(() => {
+    if (!isCurrentValid) {
+      onChange(defaultModel);
+    }
+  }, [tier, isCurrentValid, defaultModel, onChange]);
 
   return (
     <div className={className}>

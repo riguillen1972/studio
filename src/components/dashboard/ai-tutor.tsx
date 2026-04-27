@@ -37,19 +37,23 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const { tier, hasTokens, consumeTokens } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash-lite');
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>(
+    tier === 'max' ? 'haiku' : tier === 'pro' ? 'flash' : 'flash-lite'
+  );
   const [mode, setMode] = useState<'help' | 'research'>('help');
   const scrollRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     setIsClient(true);
-    // Ensure the selected model is allowed on load
-    if (tier === 'free' && selectedModel !== 'flash-lite') {
+    // Reset to the correct default model when tier changes
+    if (tier === 'free') {
       setSelectedModel('flash-lite');
-    } else if (tier === 'pro' && selectedModel === 'haiku') {
-      setSelectedModel('flash'); // Pro doesn't have haiku
+    } else if (tier === 'pro' && (selectedModel === 'haiku' || selectedModel === 'flash-lite')) {
+      setSelectedModel('flash');
+    } else if (tier === 'max' && (selectedModel === 'pro' || selectedModel === 'flash-lite')) {
+      setSelectedModel('haiku');
     }
-  }, [tier, selectedModel]);
+  }, [tier]);
 
   // Auto-scroll to bottom when conversation updates
   useEffect(() => {
