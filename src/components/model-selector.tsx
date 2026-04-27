@@ -18,7 +18,7 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
 
   // Determine which models are available for the current subscription tier
   // Free: Gemini 2.5 Flash-Lite only
-  // Pro:  Gemini 2.5 Flash-Lite, Gemini 2.5 Flash, Gemini 2.5 Pro
+  // Pro:  Gemini 2.5 Flash, Gemini 2.5 Pro
   // Max:  Gemini 2.5 Flash, Claude 3 Haiku
   const availableModels: { value: SupportedModel; label: string }[] = [];
 
@@ -27,7 +27,6 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
   }
 
   if (tier === "pro") {
-    availableModels.push({ value: "flash-lite", label: "Gemini 2.5 Flash-Lite" });
     availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
     availableModels.push({ value: "pro", label: "Gemini 2.5 Pro" });
   }
