@@ -38,7 +38,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>(
-    tier === 'max' ? 'haiku' : tier === 'pro' ? 'flash' : 'flash-lite'
+    tier === 'max' ? 'haiku' : tier === 'pro' ? 'flash' : 'gemma3'
   );
   const [mode, setMode] = useState<'help' | 'research'>('help');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -47,10 +47,10 @@ export default function AITutor({ careerField }: { careerField?: string }) {
     setIsClient(true);
     // Reset to the correct default model when tier changes
     if (tier === 'free') {
-      setSelectedModel('flash-lite');
-    } else if (tier === 'pro' && (selectedModel === 'haiku' || selectedModel === 'flash-lite')) {
+      setSelectedModel('gemma3');
+    } else if (tier === 'pro' && (selectedModel === 'haiku' || selectedModel === 'gemma3')) {
       setSelectedModel('flash');
-    } else if (tier === 'max' && (selectedModel === 'pro' || selectedModel === 'flash-lite')) {
+    } else if (tier === 'max' && (selectedModel === 'pro' || selectedModel === 'gemma3')) {
       setSelectedModel('haiku');
     }
   }, [tier]);
@@ -73,7 +73,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'flash-lite' ? 'Gemini 2.5 Flash-Lite' : modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude 3.5 Haiku'} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'gemma3' ? 'Gemma 3 1B' : modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude 3.5 Haiku'} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);

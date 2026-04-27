@@ -35,7 +35,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<SupportedModel>('flash-lite');
+  const [selectedModel, setSelectedModel] = useState<SupportedModel>('gemma3');
 
   const handleGenerate = async () => {
     if (!tool || !input || !hasTokens(selectedModel)) return;

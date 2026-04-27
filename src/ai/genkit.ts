@@ -3,12 +3,12 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { anthropic } from 'genkitx-anthropic';
 
 // --- MODEL DEFINITIONS ---
-const geminiFlashLite = 'googleai/gemini-2.5-flash'; // Flash-Lite mapped to Flash (same underlying engine)
+const gemma3Model = 'googleai/gemma-3-1b';
 const geminiFlash = 'googleai/gemini-2.5-flash';
 const geminiPro = 'googleai/gemini-2.5-pro';
 const claudeHaiku = 'anthropic/claude-3-haiku';
 
-export type SupportedModel = 'flash-lite' | 'flash' | 'pro' | 'haiku';
+export type SupportedModel = 'gemma3' | 'flash' | 'pro' | 'haiku';
 
 /**
  * Helper function to get the appropriate model string.
@@ -19,7 +19,7 @@ export function getModel(model: SupportedModel = 'flash'): string {
   switch (model) {
     case 'pro': return geminiPro;
     case 'haiku': return claudeHaiku;
-    case 'flash-lite': return geminiFlashLite;
+    case 'gemma3': return gemma3Model;
     default: return geminiFlash;
   }
 }

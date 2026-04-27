@@ -33,8 +33,8 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         description: "Get started with essential AI study tools.",
         icon: Zap,
         features: [
-            "Gemini 2.5 flash-lite exclusively",
-            "250k tokens/month",
+            "Gemma 3 1B exclusively",
+            "500k tokens/month",
             "AI Tutor, Homework Help, Summarizer",
             "Quiz & Flashcard Generator",
             "Bible Verse & Study Buddy",
@@ -77,8 +77,8 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
 function ProfileContent() {
   const { 
     tier, 
-    flashLiteTokensRemaining,
-    flashLiteTokenLimit,
+    gemma3TokensRemaining,
+    gemma3TokenLimit,
     flashTokensRemaining, 
     flashTokenLimit, 
     proTokensRemaining, 
@@ -258,12 +258,12 @@ function ProfileContent() {
                         )}
                         { tier === 'free' ? (
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Gemini 2.5 Flash-Lite</Label>
+                                <Label className="text-sm font-medium">Gemma 3 1B</Label>
                                 <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                     <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(flashLiteTokensRemaining)} / {new Intl.NumberFormat().format(flashLiteTokenLimit)}</span>
+                                    <span>{new Intl.NumberFormat().format(gemma3TokensRemaining)} / {new Intl.NumberFormat().format(gemma3TokenLimit)}</span>
                                 </div>
-                                <Progress value={flashLiteTokenLimit > 0 ? (flashLiteTokensRemaining / flashLiteTokenLimit) * 100 : 0} />
+                                <Progress value={gemma3TokenLimit > 0 ? (gemma3TokensRemaining / gemma3TokenLimit) * 100 : 0} />
                             </div>
                         ) : (
                             <div className="space-y-2">
