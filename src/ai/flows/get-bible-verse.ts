@@ -13,7 +13,7 @@ import {z} from 'genkit';
 
 const GetBibleVerseInputSchema = z.object({
   topic: z.string().optional().describe('An optional topic for the Bible verse (e.g., "hope", "faith").'),
-  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['gemma3', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 export type GetBibleVerseInput = z.infer<typeof GetBibleVerseInputSchema>;
 

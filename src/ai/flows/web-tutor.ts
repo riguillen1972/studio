@@ -12,7 +12,7 @@ const WebTutorInputSchema = z.object({
     role: z.enum(['user', 'ai']),
     content: z.string(),
   })).optional().describe('Previous conversation turns.'),
-  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['gemma3', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
 export type WebTutorInput = z.infer<typeof WebTutorInputSchema>;

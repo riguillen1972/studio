@@ -18,7 +18,7 @@ const ConversationTurnSchema = z.object({
 
 const GenerateExplanationInputSchema = z.object({
   concept: z.string().describe('The concept or question for which an explanation is needed.'),
-  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['gemma3', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
   careerField: z.string().optional().describe('The student\'s college career field for tailored explanations.'),
   conversationHistory: z.array(ConversationTurnSchema).optional().describe('Previous conversation turns for multi-turn context.'),
   mode: z.enum(['help', 'research']).optional().describe('Tutor mode: help (guides without direct answers) or research (factual direct answers).'),

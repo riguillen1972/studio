@@ -33,7 +33,7 @@ const InteractWithMiniAppInputSchema = z.object({
   appDescription: z.string().describe('The original description of the mini-app.'),
   conversationHistory: z.array(ConversationTurnSchema).describe('The history of the conversation so far.'),
   userInput: z.string().describe("The user's latest message."),
-  model: z.enum(['flash-lite', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
+  model: z.enum(['gemma3', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
   allowLLM: z.boolean().describe('Whether the mini-app is allowed to use other AI models as tools.'),
 });
 export type InteractWithMiniAppInput = z.infer<typeof InteractWithMiniAppInputSchema>;
