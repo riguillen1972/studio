@@ -3,7 +3,7 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { anthropic } from 'genkitx-anthropic';
 
 // --- MODEL DEFINITIONS ---
-const gemma3Model = 'googleai/gemma-3-1b';
+const gemma3Model = 'googleai/gemini-2.5-flash-lite';
 const geminiFlash = 'googleai/gemini-2.5-flash';
 const geminiPro = 'googleai/gemini-2.5-pro';
 const claudeHaiku = 'anthropic/claude-3-haiku';
