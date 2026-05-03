@@ -6,8 +6,8 @@ import { SupportedModel } from '@/ai/genkit';
 import { useAuth } from '@/lib/supabase/auth-provider';
 import { createClient } from '@/lib/supabase/client';
 
-// Free tier: Gemma 3 1B (Ads everywhere)
-const FREE_GEMMA3_TOKEN_LIMIT = 500000;
+// Free tier: Gemini 2.5 Flash-Lite (Ads everywhere)
+const FREE_GEMMA3_TOKEN_LIMIT = 250000;
 const FREE_FLASH_TOKEN_LIMIT = 0;    // No access
 const FREE_PRO_TOKEN_LIMIT = 0;      // No access
 const FREE_HAIKU_TOKEN_LIMIT = 0;    // No access

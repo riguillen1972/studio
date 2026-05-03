@@ -18,7 +18,7 @@ const features = [
 ];
 
 const plans = [
-  { name: 'Free', price: '$0', period: '/forever', desc: 'Get started with essential tools', features: ['Gemma 3 1B model', '500k tokens/month', 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', highlighted: false },
+  { name: 'Free', price: '$0', period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', '250k tokens/month', 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', highlighted: false },
   { name: 'Pro', price: '$15', period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', '1.5M tokens/month', 'All 30+ AI Tools', 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', highlighted: true },
   { name: 'Max', price: '$25', period: '/month', desc: 'Maximum power for serious students', features: ['Gemini 2.5 Flash + Claude 3 Haiku', '4M tokens/month', 'AI Mini-App Generator', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', highlighted: false },
 ];

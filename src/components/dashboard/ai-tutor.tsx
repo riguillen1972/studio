@@ -232,7 +232,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                     </SelectTrigger>
                     <SelectContent>
                         {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
-                        {(tier === 'free') && <SelectItem value="gemma3">Gemma 3 1B</SelectItem>}
+                        {(tier === 'free') && <SelectItem value="gemma3">Gemini 2.5 Flash-Lite</SelectItem>}
                         {(tier !== 'free') && <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>}
                         {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
                     </SelectContent>

@@ -33,8 +33,8 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         description: "Get started with essential AI study tools.",
         icon: Zap,
         features: [
-            "Gemma 3 1B exclusively",
-            "500k tokens/month",
+            "Gemini 2.5 Flash-Lite exclusively",
+            "250k tokens/month",
             "AI Tutor, Homework Help, Summarizer",
             "Quiz & Flashcard Generator",
             "Bible Verse & Study Buddy",
@@ -280,7 +280,7 @@ function ProfileContent() {
                         )}
                         { tier === 'free' ? (
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Gemma 3 1B</Label>
+                                <Label className="text-sm font-medium">Gemini 2.5 Flash-Lite</Label>
                                 <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                     <span>Remaining</span>
                                     <span>{new Intl.NumberFormat().format(gemma3TokensRemaining)} / {new Intl.NumberFormat().format(gemma3TokenLimit)}</span>

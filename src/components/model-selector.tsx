@@ -23,7 +23,7 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
   const availableModels: { value: SupportedModel; label: string }[] = [];
 
   if (tier === "free") {
-    availableModels.push({ value: "gemma3", label: "Gemma 3 1B" });
+    availableModels.push({ value: "gemma3", label: "Gemini 2.5 Flash-Lite" });
   }
 
   if (tier === "pro") {
