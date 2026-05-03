@@ -101,10 +101,32 @@ function ProfileContent() {
   useEffect(() => {
     const upgrade = searchParams.get('upgrade');
     if (upgrade === 'success') {
-      toast({
-        title: "🎉 Upgrade Successful!",
-        description: "Your subscription is now active. Enjoy your new features! It may take a moment to reflect.",
-      });
+      // Verify and sync the tier from Stripe directly
+      const verifyTier = async () => {
+        try {
+          const res = await fetch('/api/stripe/verify', { method: 'POST' });
+          const data = await res.json();
+          if (data.synced && data.tier !== 'free') {
+            toast({
+              title: "🎉 Upgrade Successful!",
+              description: `You are now on the ${data.tier.charAt(0).toUpperCase() + data.tier.slice(1)} plan. Refreshing...`,
+            });
+            // Reload the page after a short delay to reflect the new tier
+            setTimeout(() => window.location.href = '/profile', 1500);
+          } else {
+            toast({
+              title: "🎉 Payment Received!",
+              description: "Your subscription is processing. Please refresh in a moment.",
+            });
+          }
+        } catch {
+          toast({
+            title: "🎉 Upgrade Successful!",
+            description: "Your subscription is now active. Please refresh to see changes.",
+          });
+        }
+      };
+      verifyTier();
     } else if (upgrade === 'cancelled') {
       toast({
         title: "Upgrade Cancelled",
