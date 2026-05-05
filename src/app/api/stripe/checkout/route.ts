@@ -28,7 +28,22 @@ export async function POST(request: NextRequest) {
 
     let customerId = profile?.stripe_customer_id;
 
-    // Create a Stripe customer if they don't have one
+    // Validate the existing customer ID is valid in the current mode
+    if (customerId) {
+      try {
+        await stripe.customers.retrieve(customerId);
+      } catch {
+        // Customer doesn't exist in this mode (e.g. test ID used in live mode) — clear it
+        console.log(`Stale customer ID ${customerId} cleared, creating new one.`);
+        customerId = null;
+        await supabase
+          .from('profiles')
+          .update({ stripe_customer_id: null, stripe_subscription_id: null })
+          .eq('id', user.id);
+      }
+    }
+
+    // Create a Stripe customer if they don't have one (or it was cleared above)
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: user.email,
@@ -38,7 +53,7 @@ export async function POST(request: NextRequest) {
       });
       customerId = customer.id;
 
-      // Store the customer ID
+      // Store the new customer ID
       await supabase
         .from('profiles')
         .update({ stripe_customer_id: customerId })
