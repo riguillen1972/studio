@@ -6,7 +6,7 @@ import { anthropic } from 'genkitx-anthropic';
 const gemmaLite    = 'googleai/gemini-2.5-flash-lite';
 const geminiFlash  = 'googleai/gemini-2.5-flash';
 const geminiPro    = 'googleai/gemini-2.5-pro';
-const claudeHaiku  = 'anthropic/claude-haiku-4-5';
+const claudeHaiku  = 'anthropic/claude-3-5-haiku-20241022';
 
 export type SupportedModel = 'free' | 'pro' | 'max' | 'gemma3' | 'flash' | 'haiku';
 
@@ -21,8 +21,9 @@ export function getModel(model: SupportedModel = 'free'): string {
     case 'flash':
       return geminiFlash;    // Gemini 2.5 Flash
     case 'max':
+      return geminiPro;      // Gemini 2.5 Pro
     case 'haiku':
-      return geminiPro;      // Gemini 2.5 Pro or Claude Haiku 4.5
+      return claudeHaiku;    // Claude Haiku
     case 'gemma3':
     case 'free':
     default:
