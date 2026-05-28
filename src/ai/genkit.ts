@@ -1,6 +1,6 @@
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { anthropic } from 'genkitx-anthropic';
+import { anthropic } from '@genkit-ai/anthropic';
 
 // --- MODEL DEFINITIONS ---
 const gemmaLite    = 'googleai/gemini-2.5-flash-lite';
