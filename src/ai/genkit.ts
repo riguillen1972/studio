@@ -6,7 +6,7 @@ import { anthropic } from 'genkitx-anthropic';
 const gemmaLite    = 'googleai/gemini-2.5-flash-lite';
 const geminiFlash  = 'googleai/gemini-2.5-flash';
 const geminiPro    = 'googleai/gemini-2.5-pro';
-const claudeHaiku  = 'anthropic/claude-3-5-haiku-20241022';
+const claudeHaiku  = 'anthropic/claude-haiku-4-5';
 
 export type SupportedModel = 'free' | 'pro' | 'max' | 'gemma3' | 'flash' | 'haiku';
 
