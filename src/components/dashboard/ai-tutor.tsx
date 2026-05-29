@@ -73,7 +73,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'gemma3' ? 'Gemma 3 1B' : modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude 3.5 Haiku'} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'gemma3' ? 'Gemma 3 1B' : modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude Haiku 4.5'} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);
@@ -231,7 +231,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        {(tier === 'max') && <SelectItem value="haiku">Claude 3.5 Haiku</SelectItem>}
+                        {(tier === 'max') && <SelectItem value="haiku">Claude Haiku 4.5</SelectItem>}
                         {(tier === 'free') && <SelectItem value="gemma3">Gemini 2.5 Flash-Lite</SelectItem>}
                         {(tier !== 'free') && <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>}
                         {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
