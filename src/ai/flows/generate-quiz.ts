@@ -11,7 +11,7 @@
  * @function generateQuiz - The main function that orchestrates the quiz generation flow.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateQuizInputSchema = z.object({
@@ -60,7 +60,7 @@ const generateQuizFlow = ai.defineFlow(
     
     Make sure the questions are appropriate for the specified grade level.
     `;
-    const response = await ai.generate({
+    const response = await smartGenerate({
         model: getModel(input.model),
         prompt: prompt,
         output: {

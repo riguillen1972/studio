@@ -8,7 +8,7 @@
  * - GetBibleVerseOutput - The return type for the getBibleVerse function.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GetBibleVerseInputSchema = z.object({
@@ -46,7 +46,7 @@ const getBibleVerseFlow = ai.defineFlow(
         
         Return the verse and its reference.`;
 
-        const response = await ai.generate({
+        const response = await smartGenerate({
             model: getModel(input.model),
             prompt,
             output: {

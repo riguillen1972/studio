@@ -9,7 +9,7 @@
  * - SummarizeTextOutput - The return type for the summarizeText function.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SummarizeTextInputSchema = z.object({
@@ -40,7 +40,7 @@ const summarizeTextFlow = ai.defineFlow(
   },
   async (input) => {
     const prompt = `Summarize the key concepts in the following text:\n\n${input.text}`;
-    const response = await ai.generate({
+    const response = await smartGenerate({
         model: getModel(input.model),
         prompt,
         output: {

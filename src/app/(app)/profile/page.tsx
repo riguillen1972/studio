@@ -65,7 +65,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         icon: Crown,
         features: [
             "Everything in Pro, plus:",
-            "Claude 3.5 Haiku model unlocked",
+            "Gemini 2.0 Flash model unlocked",
             "2M tokens/month (both models)",
             "AI Mini-App Generator",
             "Create & save custom learning apps",
@@ -270,7 +270,7 @@ function ProfileContent() {
                     <CardContent className="space-y-4">
                         { tier === 'max' && (
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Claude 3.5 Haiku</Label>
+                                <Label className="text-sm font-medium">Gemini 2.0 Flash</Label>
                                 <div className="flex justify-between text-sm text-muted-foreground mb-1">
                                     <span>Remaining</span>
                                     <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>

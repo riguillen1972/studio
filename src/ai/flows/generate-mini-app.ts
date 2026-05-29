@@ -8,7 +8,7 @@
  * - GenerateMiniAppOutput - The return type for the generateMiniApp function.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateMiniAppInputSchema = z.object({
@@ -56,7 +56,7 @@ ${input.allowLLM ? `
 "${input.description}"
 `;
 
-    const response = await ai.generate({
+    const response = await smartGenerate({
         model: getModel(input.model),
         prompt: prompt,
         output: {

@@ -8,7 +8,7 @@
  * - GenerateExplanationOutput - The return type for the generateExplanation function.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ConversationTurnSchema = z.object({
@@ -73,7 +73,7 @@ const generateExplanationFlow = ai.defineFlow(
     `;
     }
 
-    const response = await ai.generate({
+    const response = await smartGenerate({
         model: getModel(input.model),
         prompt: prompt,
         output: {

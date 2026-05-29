@@ -6,7 +6,7 @@
  * then generates a contextual AI response using the tool's persona.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const RunToolInputSchema = z.object({
@@ -54,7 +54,7 @@ You are helping a student. Follow these rules:
 ${input.userInput}
 `;
 
-    const response = await ai.generate({
+    const response = await smartGenerate({
       model: getModel(input.model),
       prompt: prompt,
       output: {

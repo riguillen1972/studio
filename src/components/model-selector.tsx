@@ -19,7 +19,7 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
   // Determine which models are available for the current subscription tier
   // Free: Gemma 3 1B only
   // Pro:  Gemini 2.5 Flash, Gemini 2.5 Pro
-  // Max:  Gemini 2.5 Flash, Claude 3 Haiku
+  // Max:  Gemini 2.5 Flash, Gemini 2.0 Flash
   const availableModels: { value: SupportedModel; label: string }[] = [];
 
   if (tier === "free") {
@@ -33,7 +33,7 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
 
   if (tier === "max") {
     availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
-    availableModels.push({ value: "haiku", label: "Claude 3 Haiku" });
+    availableModels.push({ value: "haiku", label: "Gemini 2.0 Flash" });
   }
 
   // Determine the correct default for this tier

@@ -20,7 +20,7 @@ const features = [
 const plans = [
   { name: 'Free', price: '$0', period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', '250k tokens/month', 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', highlighted: false },
   { name: 'Pro', price: '$15', period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', '1.5M tokens/month', 'All 30+ AI Tools', 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', highlighted: true },
-  { name: 'Max', price: '$25', period: '/month', desc: 'Maximum power for serious students', features: ['Gemini 2.5 Flash + Claude 3 Haiku', '4M tokens/month', 'AI Mini-App Generator', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', highlighted: false },
+  { name: 'Max', price: '$25', period: '/month', desc: 'Maximum power for serious students', features: ['Gemini 2.5 Flash + Gemini 2.0 Flash', '4M tokens/month', 'AI Mini-App Generator', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', highlighted: false },
 ];
 
 export default function LandingPage() {
@@ -58,7 +58,7 @@ export default function LandingPage() {
       {/* Hero */}
       <motion.section className="relative z-10 px-6 md:px-12 lg:px-20 pt-20 md:pt-32 pb-24" initial="hidden" animate="visible" variants={stagger}>
         <motion.p variants={fadeUp} transition={{ duration: 0.6 }} className="text-sm font-medium text-blue-400 mb-6 tracking-wide">
-          POWERED BY GOOGLE GEMINI & ANTHROPIC CLAUDE
+          POWERED BY GOOGLE GEMINI
         </motion.p>
         <motion.h1 variants={fadeUp} transition={{ duration: 0.6, delay: 0.1 }} className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] tracking-tight max-w-5xl" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
           <span className="text-white">AI-powered learning </span>

@@ -257,7 +257,7 @@ export default function LoginPage() {
 
               <p className="text-center text-xs text-muted-foreground mt-8">
                 <Bot className="inline h-3 w-3 mr-1" />
-                Powered by Claude AI & Gemini
+                Powered by Google Gemini AI
               </p>
               <p className="text-center text-xs text-muted-foreground mt-1">
                 <a href="/terms" className="hover:underline">Terms of Service</a>
@@ -466,7 +466,7 @@ export default function LoginPage() {
 
                 <p className="text-center text-xs text-muted-foreground">
                   <Bot className="inline h-3 w-3 mr-1" />
-                  Powered by Claude AI & Gemini
+                  Powered by Google Gemini AI
                 </p>
               </div>
             </motion.div>

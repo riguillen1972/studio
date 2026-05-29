@@ -1,7 +1,7 @@
 
 'use server';
 
-import { ai, getModel, safetySettings, SupportedModel } from '@/ai/genkit';
+import { ai, getModel, isClaudeModel, safetySettings, SupportedModel } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const WebTutorInputSchema = z.object({
@@ -57,12 +57,11 @@ Student's question: ${input.question}
 
 Provide a helpful, educational answer based on the webpage content. If the student's question isn't related to the page, gently redirect them. Use clear language appropriate for a student. Format your response with markdown when helpful (bullet points, bold text, etc).`;
 
+    const modelStr = getModel(input.model);
     const response = await ai.generate({
-      model: getModel(input.model),
+      model: modelStr,
       prompt,
-      config: {
-        safetySettings,
-      },
+      config: isClaudeModel(modelStr) ? {} : { safetySettings },
     });
 
     return {

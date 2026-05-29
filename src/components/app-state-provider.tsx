@@ -18,7 +18,7 @@ const PRO_FLASH_TOKEN_LIMIT = 1000000;
 const PRO_PRO_TOKEN_LIMIT = 500000;
 const PRO_HAIKU_TOKEN_LIMIT = 0;     // No access
 
-// Max tier: Gemini 2.5 Flash + Claude 3 Haiku
+// Max tier: Gemini 2.5 Flash + Gemini 2.0 Flash
 const MAX_GEMMA3_TOKEN_LIMIT = 500000; // Give them lite access just in case
 const MAX_FLASH_TOKEN_LIMIT = 2000000;
 const MAX_PRO_TOKEN_LIMIT = 0;       // No access
@@ -167,7 +167,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         return tier === 'pro' && tokenInfo.proUsedTokens < proTokenLimit;
     }
     if (model === 'haiku') {
-        // Only Max tier has access to Claude 3 Haiku
+        // Only Max tier has access to Gemini 2.0 Flash
         return tier === 'max' && tokenInfo.haikuUsedTokens < haikuTokenLimit;
     }
     if (model === 'gemma3') {

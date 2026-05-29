@@ -11,7 +11,7 @@
  * @function generateQuizFromScan - The main function that orchestrates the quiz generation flow from a scan.
  */
 
-import {ai, getModel, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const QuizQuestionSchema = z.object({
@@ -71,7 +71,7 @@ const generateQuizFromScanFlow = ai.defineFlow(
     Make sure the questions are appropriate for the specified grade level.
     `;
 
-    const response = await ai.generate({
+    const response = await smartGenerate({
         model: getModel(input.model),
         prompt: prompt,
         output: {

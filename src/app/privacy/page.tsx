@@ -27,7 +27,7 @@ export default function PrivacyPage() {
             <p>Your information is used to: provide and improve the service, track subscription usage, personalize your learning experience, and communicate important service updates.</p>
 
             <h3 className="text-lg font-semibold">3. AI Processing</h3>
-            <p>Your questions and inputs are sent to third-party AI providers (Google Gemini and Anthropic Claude) for processing. These providers have their own privacy policies regarding data handling. We do not share your personal identity with AI providers.</p>
+            <p>Your questions and inputs are sent to third-party AI providers (Google Gemini) for processing. These providers have their own privacy policies regarding data handling. We do not share your personal identity with AI providers.</p>
 
             <h3 className="text-lg font-semibold">4. Data Storage</h3>
             <p>Your data is stored securely using Supabase (powered by PostgreSQL) with Row Level Security policies ensuring that only you can access your own data.</p>
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
             <p>We retain your data for as long as your account is active. You can request deletion of your data at any time by deleting your account from the Profile page.</p>
 
             <h3 className="text-lg font-semibold">6. Third-Party Services</h3>
-            <p>We use the following third-party services: Supabase (authentication & database), Google Cloud (Gemini AI), Anthropic (Claude AI), and Vercel (hosting).</p>
+            <p>We use the following third-party services: Supabase (authentication & database), Google Cloud (Gemini AI), and Vercel (hosting).</p>
 
             <h3 className="text-lg font-semibold">7. Children&apos;s Privacy</h3>
             <p>Study Buddy AI is designed for students of all ages. For users under 13, parental consent is required in accordance with COPPA regulations.</p>

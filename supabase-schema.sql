@@ -74,11 +74,28 @@ alter table chat_history enable row level security;
 alter table learning_content enable row level security;
 
 -- RLS Policies
-create policy "Users manage own profile" on profiles for all using (auth.uid() = id);
-create policy "Users manage own tokens" on token_usage for all using (auth.uid() = user_id);
-create policy "Users manage own apps" on saved_apps for all using (auth.uid() = user_id);
-create policy "Users manage own quizzes" on quiz_results for all using (auth.uid() = user_id);
-create policy "Users manage own chats" on chat_history for all using (auth.uid() = user_id);
+-- Profiles
+create policy "profiles_select" on profiles for select using ((select auth.uid()) = id);
+create policy "profiles_insert" on profiles for insert with check ((select auth.uid()) = id);
+create policy "profiles_update" on profiles for update using ((select auth.uid()) = id);
+create policy "profiles_delete" on profiles for delete using ((select auth.uid()) = id);
+
+-- Token Usage
+create policy "token_usage_all" on token_usage for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+
+-- Saved Apps
+create policy "saved_apps_all" on saved_apps for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+
+-- Quiz Results
+create policy "quiz_results_all" on quiz_results for all using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+
+-- Chat History
+create policy "chat_history_select" on chat_history for select using ((select auth.uid()) = user_id);
+create policy "chat_history_insert" on chat_history for insert with check ((select auth.uid()) = user_id);
+create policy "chat_history_update" on chat_history for update using ((select auth.uid()) = user_id);
+create policy "chat_history_delete" on chat_history for delete using ((select auth.uid()) = user_id);
+
+-- Learning Content
 create policy "Anyone can read content" on learning_content for select using (true);
 
 -- Auto-create profile on signup

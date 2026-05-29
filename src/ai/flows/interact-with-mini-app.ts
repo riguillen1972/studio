@@ -6,7 +6,7 @@
  * - interactWithMiniApp - A function that handles the ongoing conversation within a mini-app.
  */
 
-import {ai, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, getModel, isClaudeModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 import { summarizeText } from './summarize-text';
 
@@ -86,24 +86,42 @@ const interactWithMiniAppFlow = ai.defineFlow(
     ${input.userInput}
     `;
 
-    const response = await ai.generate({
-        model: getModel(input.model),
-        prompt: prompt,
-        tools: input.allowLLM ? [summarizeTextTool] : [],
-        output: {
-            schema: MiniAppResponseSchema,
-        },
-        config: {
-            safetySettings,
-        }
-    });
+    const modelStr = getModel(input.model);
+    const isClaude = isClaudeModel(modelStr);
 
-    if (!response.output?.appResponse) {
+    // Claude doesn't support structured output, so handle differently
+    const generateOpts: Record<string, unknown> = {
+        model: modelStr,
+        prompt: isClaude ? prompt + '\n\nRespond with ONLY a JSON object like: {"appResponse": "your response here"}' : prompt,
+        config: isClaude ? {} : { safetySettings },
+    };
+    if (!isClaude) {
+        generateOpts.tools = input.allowLLM ? [summarizeTextTool] : [];
+        generateOpts.output = { schema: MiniAppResponseSchema };
+    }
+
+    const response = await ai.generate(generateOpts as Parameters<typeof ai.generate>[0]);
+
+    let appResponse: string;
+    if (isClaude) {
+        try {
+            let text = response.text.trim();
+            if (text.startsWith('```')) {
+                text = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+            }
+            const parsed = JSON.parse(text);
+            appResponse = parsed.appResponse || text;
+        } catch {
+            appResponse = response.text;
+        }
+    } else if (!response.output?.appResponse) {
         return { appResponse: "I had trouble processing that request. Please try again.", totalTokens: response.usage.totalTokens ?? 0 };
+    } else {
+        appResponse = response.output.appResponse;
     }
 
     return {
-      appResponse: response.output.appResponse,
+      appResponse,
       totalTokens: response.usage.totalTokens ?? 0,
     };
   }
