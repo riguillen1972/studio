@@ -172,7 +172,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                  <div className={`rounded-lg p-3 max-w-[80%] ${
                     turn.role === 'ai' ? 'bg-secondary' : 'bg-primary text-primary-foreground'
                 }`}>
-                    <p className="text-sm whitespace-pre-wrap">{turn.content}</p>
+                    <p className="text-sm whitespace-pre-wrap break-words">{turn.content}</p>
                  </div>
                  {turn.role === "user" && (
                      <Avatar className="w-8 h-8">

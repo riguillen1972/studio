@@ -27,7 +27,7 @@ export default function BibleVersePage() {
     const [hasFetched, setHasFetched] = useState(false);
     
     // Use Gemini 2.5 Flash as default model since all tiers can access it
-    const modelToUse = 'flash-lite';
+    const modelToUse = 'flash';
 
     const fetchVerse = async () => {
         if (!hasTokens(modelToUse)) {
