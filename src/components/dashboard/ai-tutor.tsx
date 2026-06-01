@@ -148,7 +148,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden min-h-0">
         {tier === 'free' && <AdPlaceholder />}
         <ScrollArea className="flex-grow min-h-0 pr-4 -mr-4">
-            <div className="space-y-6">
+            <div className="space-y-6 pb-6">
             {conversation.length === 0 && (
                 <div className="text-center text-muted-foreground p-8">
                     <Bot className="mx-auto h-12 w-12 mb-4"/>
@@ -195,7 +195,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                     </div>
                 </div>
             )}
-            <div ref={scrollRef} />
+            <div ref={scrollRef} className="h-4 w-full" />
             </div>
         </ScrollArea>
       </CardContent>
