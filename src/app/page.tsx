@@ -9,7 +9,7 @@ const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
 
 const features = [
-  { icon: Brain, title: 'AI Tutor', desc: 'Get instant explanations for any concept with conversational AI that adapts to your learning style.' },
+  { icon: Brain, title: 'AI Tutor & Research Mode', desc: 'Get instant explanations with conversational AI, or toggle to Research Mode for direct, factual answers without educational fluff.' },
   { icon: BookOpen, title: 'Homework Help', desc: 'Scan your homework or type a question — get step-by-step hints, never just answers.' },
   { icon: Zap, title: '30+ AI Tools', desc: 'Summarizer, quiz generator, flashcards, essay helper, and more — all powered by AI.' },
   { icon: GraduationCap, title: 'Career-Optimized', desc: 'AI tailored to your major or career path for the most relevant study experience.' },

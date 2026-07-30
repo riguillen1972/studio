@@ -7,6 +7,9 @@ create table if not exists profiles (
   display_name text,
   email text,
   grade_level text,
+  role text,
+  career_field text,
+  class_code text,
   tier text default 'free' check (tier in ('free','pro','max')),
   created_at timestamptz default now()
 );
@@ -16,6 +19,7 @@ create table if not exists token_usage (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users on delete cascade not null,
   month text not null,
+  flash_lite_used integer default 0,
   flash_used integer default 0,
   pro_used integer default 0,
   haiku_used integer default 0,
@@ -121,3 +125,105 @@ insert into learning_content (title, description, image_url, image_hint, type) v
   ('World War II Overview', 'Key events and turning points of the Second World War.', 'https://placehold.co/600x400.png', 'history war', 'History'),
   ('Photosynthesis', 'How plants convert sunlight into energy.', 'https://placehold.co/600x400.png', 'plant biology', 'Science'),
   ('Fractions and Decimals', 'Converting between fractions and decimals made easy.', 'https://placehold.co/600x400.png', 'math fractions', 'Math');
+
+-- ============================================
+-- CLASSES & ENROLLMENTS (Phase 3)
+-- ============================================
+CREATE TABLE classes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    teacher_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    subject TEXT,
+    join_code TEXT UNIQUE NOT NULL,
+    settings JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE enrollments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+    student_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    joined_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(class_id, student_id)
+);
+
+-- ============================================
+-- CONTEXT PACKS (Phase 3)
+-- ============================================
+CREATE TABLE context_packs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+    teacher_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    type TEXT CHECK (type IN ('lesson', 'homework', 'quiz', 'rubric')),
+    title TEXT NOT NULL,
+    subject TEXT,
+    content_raw TEXT,
+    content_parsed TEXT,
+    rubric TEXT,
+    answer_key TEXT,
+    due_date TIMESTAMPTZ,
+    status TEXT DEFAULT 'active' CHECK (status IN ('active', 'archived')),
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- FOCUS SESSIONS (Phase 1)
+-- ============================================
+CREATE TABLE focus_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    sound_id TEXT NOT NULL,
+    secondary_sound_id TEXT,
+    mix_ratio REAL,
+    duration_minutes INT NOT NULL,
+    subject TEXT,
+    rating INT CHECK (rating BETWEEN 1 AND 3),
+    completed BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- STUDY TOOLS & XP (Phase 2)
+-- ============================================
+CREATE TABLE study_tool_usage (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    tool_id TEXT NOT NULL,
+    class_id UUID REFERENCES classes(id),
+    context_pack_id UUID REFERENCES context_packs(id),
+    input_summary TEXT,
+    output_summary TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE spaced_rep_cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    class_id UUID REFERENCES classes(id),
+    context_pack_id UUID REFERENCES context_packs(id),
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    difficulty REAL DEFAULT 2.5,
+    interval_days INT DEFAULT 1,
+    next_review TIMESTAMPTZ DEFAULT now(),
+    review_count INT DEFAULT 0,
+    wrong_count INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE xp_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    class_id UUID REFERENCES classes(id),
+    action TEXT NOT NULL,
+    xp_amount INT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE study_streaks (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    current_streak INT DEFAULT 0,
+    longest_streak INT DEFAULT 0,
+    last_active_date DATE,
+    total_xp INT DEFAULT 0
+);

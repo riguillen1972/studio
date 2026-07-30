@@ -40,6 +40,13 @@ interface AppState {
   setTier: (tier: SubscriptionTier) => void;
   isPremium: boolean;
   
+  role: string | null;
+  gradeLevel: string | null;
+  careerField: string | null;
+  classCode: string | null;
+  needsRolePicker: boolean;
+  updateProfile: (updates: { role?: string; gradeLevel?: string; careerField?: string; classCode?: string }) => Promise<void>;
+  
   gemma3TokenLimit: number;
   gemma3TokensRemaining: number;
   flashTokenLimit: number;
@@ -60,6 +67,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const supabase = useMemo(() => createClient(), []);
   const [tier, setTierState] = useState<SubscriptionTier>('free');
+  const [role, setRole] = useState<string | null>(null);
+  const [gradeLevel, setGradeLevel] = useState<string | null>(null);
+  const [careerField, setCareerField] = useState<string | null>(null);
+  const [classCode, setClassCode] = useState<string | null>(null);
+  const [needsRolePicker, setNeedsRolePicker] = useState<boolean>(false);
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ gemma3UsedTokens: 0, flashUsedTokens: 0, proUsedTokens: 0, haikuUsedTokens: 0, date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
@@ -73,12 +85,21 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const loadProfile = async () => {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('tier')
+        .select('tier, role, grade_level, career_field, class_code')
         .eq('id', user.id)
         .single();
       
-      if (profile?.tier) {
-        setTierState(profile.tier as SubscriptionTier);
+      if (profile) {
+        if (profile.tier) setTierState(profile.tier as SubscriptionTier);
+        setRole(profile.role);
+        setGradeLevel(profile.grade_level);
+        setCareerField(profile.career_field);
+        setClassCode(profile.class_code);
+        
+        // If role is missing or empty, they need to pick one
+        setNeedsRolePicker(!profile.role || profile.role.trim() === '');
+      } else {
+        setNeedsRolePicker(true);
       }
     };
 
@@ -116,6 +137,35 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         .update({ tier: newTier })
         .eq('id', user.id);
     }
+  };
+
+  const updateProfile = async (updates: { role?: string; gradeLevel?: string; careerField?: string; classCode?: string }) => {
+    if (!user) return;
+    
+    const dbUpdates: any = {};
+    if (updates.role !== undefined) {
+      dbUpdates.role = updates.role;
+      setRole(updates.role);
+    }
+    if (updates.gradeLevel !== undefined) {
+      dbUpdates.grade_level = updates.gradeLevel;
+      setGradeLevel(updates.gradeLevel);
+    }
+    if (updates.careerField !== undefined) {
+      dbUpdates.career_field = updates.careerField;
+      setCareerField(updates.careerField);
+    }
+    if (updates.classCode !== undefined) {
+      dbUpdates.class_code = updates.classCode;
+      setClassCode(updates.classCode);
+    }
+
+    await supabase
+      .from('profiles')
+      .update(dbUpdates)
+      .eq('id', user.id);
+      
+    setNeedsRolePicker(false);
   };
 
   const isPremium = tier === 'pro' || tier === 'max';
@@ -239,6 +289,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     hasTokens,
     consumeTokens,
     isLoaded: isMounted,
+    role: isMounted ? role : null,
+    gradeLevel: isMounted ? gradeLevel : null,
+    careerField: isMounted ? careerField : null,
+    classCode: isMounted ? classCode : null,
+    needsRolePicker: isMounted ? needsRolePicker : false,
+    updateProfile,
   };
 
   return (

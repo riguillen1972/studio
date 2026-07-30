@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppStateProvider } from "@/components/app-state-provider";
+import { RolePickerWrapper } from "@/components/role-picker-wrapper";
 import { Separator } from "@/components/ui/separator";
 import { Bot } from "lucide-react";
 
@@ -13,6 +14,7 @@ export default function AppLayout({
 }) {
   return (
     <AppStateProvider>
+      <RolePickerWrapper>
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
@@ -28,6 +30,7 @@ export default function AppLayout({
             <main className="min-h-svh p-4 sm:p-6 lg:p-8">{children}</main>
           </SidebarInset>
         </SidebarProvider>
-      </AppStateProvider>
+      </RolePickerWrapper>
+    </AppStateProvider>
   );
 }
