@@ -19,6 +19,8 @@ import {
   LogOut,
   LayoutDashboard,
   WandSparkles,
+  Headphones,
+  BookDashed,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -61,6 +63,18 @@ export function AppSidebar() {
       icon: isTeacher ? LayoutDashboard : Bot,
       label: isTeacher ? "My Class" : "AI Tutor",
       visibleTo: ['all'],
+    },
+    {
+      href: "/focus",
+      icon: Headphones,
+      label: "Focus Mode",
+      visibleTo: ['student'],
+    },
+    {
+      href: "/assignments",
+      icon: BookDashed,
+      label: "My Assignments",
+      visibleTo: ['student'],
     },
      {
       href: "/tools",
