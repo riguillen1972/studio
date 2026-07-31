@@ -42,7 +42,7 @@ import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { tier, isPremium } = useAppState();
+  const { tier, isPremium, role } = useAppState();
   const { user, signOut } = useAuth();
   const router = useRouter();
   const isActive = (href: string) => pathname === href;
@@ -52,7 +52,7 @@ export function AppSidebar() {
     router.push('/login');
   };
 
-  const userRole = user?.user_metadata?.role || 'student';
+  const userRole = role || 'student';
   const isTeacher = userRole === 'teacher';
 
   const baseMenuItems = [

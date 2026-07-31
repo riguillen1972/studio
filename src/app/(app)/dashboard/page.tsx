@@ -8,37 +8,32 @@ import AdPlaceholder from "@/components/ad-placeholder";
 
 import { TeacherDashboard } from "@/components/dashboard/teacher-dashboard";
 
-function getRoleGreeting(user: any): { title: string; subtitle: string; role: string } {
-  const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Student';
-  const role = user?.user_metadata?.role || 'student';
-  const careerField = user?.user_metadata?.career_field;
-
+function getRoleGreeting(displayName: string, role: string, careerField?: string | null): { title: string; subtitle: string } {
   if (role === 'teacher') {
     return {
       title: `Welcome back, ${displayName}!`,
       subtitle: 'Monitor your students and manage your class instructions below.',
-      role,
     };
   }
   if (role === 'college' && careerField) {
     return {
       title: `Welcome back, ${displayName}!`,
       subtitle: `AI optimized for your ${careerField} studies. Ask the AI Tutor anything.`,
-      role,
     };
   }
   return {
     title: `Welcome back, ${displayName}!`,
     subtitle: 'Ready to learn something new? Ask the AI Tutor anything.',
-    role,
   };
 }
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { tier } = useAppState();
-  const { title, subtitle, role } = getRoleGreeting(user);
-  const careerField = user?.user_metadata?.career_field;
+  const { tier, role, careerField } = useAppState();
+  
+  const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Student';
+  const currentRole = role || 'student';
+  const { title, subtitle } = getRoleGreeting(displayName, currentRole, careerField);
 
   return (
     <div className="flex flex-col gap-8 h-full">
@@ -53,11 +48,11 @@ export default function DashboardPage() {
 
       {tier === 'free' && <AdPlaceholder />}
 
-      {role === 'teacher' ? (
+      {currentRole === 'teacher' ? (
         <TeacherDashboard user={user} />
       ) : (
         <ErrorBoundary fallbackTitle="AI Tutor encountered an error">
-          <AITutor careerField={careerField} />
+          <AITutor careerField={careerField || undefined} />
         </ErrorBoundary>
       )}
     </div>
