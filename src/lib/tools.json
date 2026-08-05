@@ -1,91 +1,39 @@
-
 {
   "categories": [
     {
-      "name": "Math",
-      "icon": "Sigma",
+      "name": "Study Smarter",
+      "icon": "Zap",
       "tools": [
-        { "name": "Step-by-Step Error Finder", "description": "Finds the exact step where a student’s math reasoning went wrong", "input_prompt": "Enter the student's steps..." },
-        { "name": "Instant Concept Detector", "description": "Identifies the concept behind any math problem", "input_prompt": "Enter the problem text..." },
-        { "name": "One-Minute Math Lesson", "description": "Creates a tiny lesson for any topic", "input_prompt": "Enter the topic or problem..." },
-        { "name": "Equation Simplifier Tutor", "description": "Breaks down how to simplify an expression", "input_prompt": "Enter the expression..." },
-        { "name": "Math Vocabulary Clarifier", "description": "Explains math terms simply", "input_prompt": "Enter the term..." },
-        { "name": "Visualizer on Demand", "description": "Turns a concept into a visual description", "input_prompt": "Enter the concept..." },
-        { "name": "Mini Practice Generator", "description": "Creates 3–5 similar problems", "input_prompt": "Enter one example problem..." },
-        { "name": "Wrong-Answer Pattern Spotter", "description": "Detects mistake types from wrong answers", "input_prompt": "Enter the wrong answer and steps..." },
-        { "name": "Word Problem Rewriter", "description": "Makes confusing word problems simpler", "input_prompt": "Enter the word problem..." },
-        { "name": "Formula Breakdown Tool", "description": "Explains each part of a formula", "input_prompt": "Enter the formula..." },
-        { "name": "Check My Reasoning", "description": "Evaluates the logic behind a student’s explanation", "input_prompt": "Enter the explanation text..." },
-        { "name": "Math Shortcut Finder", "description": "Shows faster ways to solve a problem", "input_prompt": "Enter the problem..." }
+        { "name": "Exam Oracle", "description": "Predicts the questions your next test is most likely to ask.", "input_prompt": "What topic or class is your next test on?" },
+        { "name": "Knowledge Gap Scanner", "description": "Finds the topics you have not learned yet, before a test does.", "input_prompt": "What are you studying right now?" },
+        { "name": "MV Study Planner", "description": "Turns a test date into a day-by-day study plan.", "input_prompt": "When is your test and what is it about?" },
+        { "name": "Smart Summarizer", "description": "Cuts long notes or a chapter down to what matters.", "input_prompt": "Paste your notes or chapter text here..." },
+        { "name": "Spaced Repetition Engine", "description": "Brings each card back right before you would forget it.", "input_prompt": "What do you need to memorize?" }
       ]
     },
     {
-      "name": "Grammar & Language Arts",
-      "icon": "PenLine",
+      "name": "Make It Stick",
+      "icon": "Brain",
       "tools": [
-        { "name": "Sentence Fixer", "description": "Corrects grammar and explains why", "input_prompt": "Enter the sentence..." },
-        { "name": "Rewrite at My Level", "description": "Rewrites text at a chosen difficulty", "input_prompt": "Enter the text and desired level..." },
-        { "name": "Grammar Concept Identifier", "description": "Identifies the grammar rule being tested", "input_prompt": "Enter the sentence..." },
-        { "name": "Mini Grammar Lesson", "description": "Gives a 30-second rule explanation", "input_prompt": "Enter the rule or an example..." },
-        { "name": "Punctuation Coach", "description": "Fixes punctuation and explains changes", "input_prompt": "Enter the sentence or paragraph..." },
-        { "name": "Tone Transformer", "description": "Changes the tone of writing", "input_prompt": "Enter the text and desired tone..." },
-        { "name": "Vocabulary Booster", "description": "Gives synonyms, antonyms, and examples", "input_prompt": "Enter the word..." },
-        { "name": "Sentence Expansion Tool", "description": "Makes simple sentences more descriptive", "input_prompt": "Enter the simple sentence..." },
-        { "name": "Sentence Shrinker", "description": "Makes long sentences concise", "input_prompt": "Enter the long sentence..." },
-        { "name": "Paragraph Clarity Checker", "description": "Finds confusing parts of a paragraph", "input_prompt": "Enter the paragraph..." },
-        { "name": "Transition Word Helper", "description": "Suggests transitions between ideas", "input_prompt": "Enter two sentences or the relation..." },
-        { "name": "Reading Level Adjuster", "description": "Rewrites text to a chosen grade level", "input_prompt": "Enter the text and grade level..." }
+        { "name": "Concept Storyteller", "description": "Explains a hard idea as a story you will actually remember.", "input_prompt": "What concept are you struggling to understand?" },
+        { "name": "Debate Mode", "description": "Argues the other side so you learn to defend your answer.", "input_prompt": "State your argument or position..." },
+        { "name": "Curiosity Rabbit Hole", "description": "Follow a question as far down as it goes.", "input_prompt": "What question sparked your curiosity?" },
+        { "name": "Study Streaks & XP", "description": "Tracks your daily streak and XP so studying keeps its momentum.", "input_prompt": "What did you study today?" },
+        { "name": "Personality-Matched Tutor", "description": "A tutor that teaches in the style you learn from best.", "input_prompt": "Describe your learning style and what you want to learn..." },
+        { "name": "Make It Click", "description": "Re-explains the one thing you are stuck on until it lands.", "input_prompt": "What exactly are you stuck on right now?" }
       ]
     },
     {
-      "name": "Science",
-      "icon": "FlaskConical",
+      "name": "Top 1% Habits",
+      "icon": "Trophy",
       "tools": [
-        { "name": "Cause-and-Effect Builder", "description": "Creates cause-effect chains for a topic", "input_prompt": "Enter the topic..." },
-        { "name": "Process Breakdown Tool", "description": "Explains scientific processes step-by-step", "input_prompt": "Enter the process name..." },
-        { "name": "Science Analogy Generator", "description": "Creates real-life analogies for concepts", "input_prompt": "Enter the concept..." },
-        { "name": "Definition Simplifier", "description": "Makes complex definitions kid-friendly", "input_prompt": "Enter the term..." },
-        { "name": "Diagram Explainer", "description": "Explains the parts of a science diagram", "input_prompt": "Describe the diagram..." },
-        { "name": "Quick Lab Summary", "description": "Summarizes lab procedures or results", "input_prompt": "Enter the lab text..." },
-        { "name": "Misconception Fixer", "description": "Corrects common scientific misunderstandings", "input_prompt": "Enter the misconception..." },
-        { "name": "Science Vocabulary Builder", "description": "Explains science terms with examples", "input_prompt": "Enter the term..." },
-        { "name": "Formula Meaning Tool", "description": "Explains variables in a science formula", "input_prompt": "Enter the formula..." },
-        { "name": "Real-World Application Finder", "description": "Shows real-life uses of a scientific concept", "input_prompt": "Enter the concept..." }
-      ]
-    },
-    {
-      "name": "Reading & Writing",
-      "icon": "BookOpen",
-      "tools": [
-        { "name": "Paragraph Question Generator", "description": "Creates comprehension questions for a paragraph", "input_prompt": "Enter the paragraph..." },
-        { "name": "Theme and Main Idea Finder", "description": "Finds the main idea and theme of a passage", "input_prompt": "Enter the passage..." },
-        { "name": "Inference Coach", "description": "Helps students practice making inferences", "input_prompt": "Enter the text..." },
-        { "name": "Evidence Finder", "description": "Finds sentences that support a given claim", "input_prompt": "Enter the passage and the claim..." },
-        { "name": "Summarize in Three Levels", "description": "Creates short, medium, and detailed summaries", "input_prompt": "Enter the text..." },
-        { "name": "Character and Plot Analyzer", "description": "Breaks down story elements from an excerpt", "input_prompt": "Enter the story excerpt..." },
-        { "name": "Thesis Builder", "description": "Helps create a strong thesis statement", "input_prompt": "Enter the topic and your stance..." },
-        { "name": "Paragraph Structure Checker", "description": "Checks if a paragraph has a proper structure", "input_prompt": "Enter the paragraph..." },
-        { "name": "Essay Outline Generator", "description": "Creates a simple essay outline from a topic", "input_prompt": "Enter the topic..." },
-        { "name": "Reading Confusion Detector", "description": "Explains confusing sentences or passages", "input_prompt": "Enter the highlighted text..." }
-      ]
-    },
-    {
-      "name": "General Learning",
-      "icon": "BrainCircuit",
-      "tools": [
-        { "name": "Explain-It-Back Mode", "description": "Gives feedback on a student’s explanation", "input_prompt": "Enter your explanation..." },
-        { "name": "Break-It-Down Tool", "description": "Turns complex ideas into tiny, manageable steps", "input_prompt": "Enter the complex concept..." },
-        { "name": "Quick Quiz Maker", "description": "Makes a 5-question quiz from text or a topic", "input_prompt": "Enter the text or topic..." },
-        { "name": "Concept Connection Map", "description": "Shows how different concepts are related", "input_prompt": "Enter the main topic..." },
-        { "name": "Instant Analogy Maker", "description": "Creates simple analogies to explain anything", "input_prompt": "Enter the concept..." },
-        { "name": "Memory Hook Generator", "description": "Creates mnemonics to help remember facts or lists", "input_prompt": "Enter the fact or list..." },
-        { "name": "Confusion Spotter", "description": "Finds and explains confusing parts of any text", "input_prompt": "Enter the highlighted text..." },
-        { "name": "Study Timer with Micro-Tasks", "description": "Gives tiny, productive tasks to do during study breaks", "input_prompt": "Enter your study session length..." },
-        { "name": "Simplify My Notes", "description": "Cleans up and organizes messy notes", "input_prompt": "Paste your messy notes..." },
-        { "name": "Question Rewriter", "description": "Makes hard questions easier to understand", "input_prompt": "Enter the difficult question..." },
-        { "name": "Concept vs Example Sorter", "description": "Sorts a list of items into concepts and examples", "input_prompt": "Enter the list of items..." },
-        { "name": "Instant Practice Mode", "description": "Generates 3 quick practice items for a topic", "input_prompt": "Enter the topic..." },
-        { "name": "Confidence Checker", "description": "Adjusts problem difficulty based on confidence level", "input_prompt": "State your confidence level (e.g., low, medium, high)..." }
+        { "name": "Feynman Teacher Mode", "description": "You teach the topic back, and it catches what you skipped.", "input_prompt": "Teach me about..." },
+        { "name": "Deep Understanding", "description": "Goes past the answer to why it is the answer.", "input_prompt": "What answer do you want to understand deeply?" },
+        { "name": "Mental Model Builder", "description": "Maps how the ideas in a subject connect to each other.", "input_prompt": "What subject are you mapping out?" },
+        { "name": "Essay Brutalist", "description": "Blunt, specific feedback on your writing. No flattery.", "input_prompt": "Paste your essay here..." },
+        { "name": "Cross-Subject Finder", "description": "Shows where what you are learning shows up in other subjects.", "input_prompt": "What topic are you learning?" },
+        { "name": "Metacognition Coach", "description": "Coaches how you study, not just what you study.", "input_prompt": "How do you usually study for a test?" },
+        { "name": "Professor Mode", "description": "University-level depth on a topic you already half know.", "input_prompt": "What topic do you want to master at a university level?" }
       ]
     }
   ]

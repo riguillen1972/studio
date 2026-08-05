@@ -20,23 +20,6 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/supabase/auth-provider';
 import AdPlaceholder from '@/components/ad-placeholder';
 
-const careerCategoryMap: Record<string, string[]> = {
-  'Computer Science': ["Math", "Science", "General Learning"],
-  'Engineering': ["Math", "Science", "General Learning"],
-  'Medicine / Pre-Med': ["Science", "Math", "General Learning"],
-  'Nursing': ["Science", "Math", "General Learning"],
-  'Biology / Life Sciences': ["Science", "Math", "General Learning"],
-  'Business / Finance': ["Math", "Reading & Writing", "General Learning"],
-  'Law / Pre-Law': ["Reading & Writing", "Grammar & Language Arts", "General Learning"],
-  'Political Science': ["Reading & Writing", "Grammar & Language Arts", "General Learning"],
-  'Psychology': ["Science", "Reading & Writing", "General Learning"],
-  'Education': ["Grammar & Language Arts", "Reading & Writing", "Math", "Science", "General Learning"],
-  'Arts & Design': ["Grammar & Language Arts", "Reading & Writing", "General Learning"],
-  'Communications / Media': ["Grammar & Language Arts", "Reading & Writing", "General Learning"],
-  'Architecture': ["Math", "Science", "General Learning"],
-  'Mathematics': ["Math", "Science", "General Learning"],
-  'Other': ["Math", "Science", "Grammar & Language Arts", "Reading & Writing", "General Learning"]
-};
 
 type Tool = {
   name: string;
@@ -61,8 +44,6 @@ export default function ToolsPage() {
   const [dialogState, setDialogState] = useState<ToolDialogState>({ isOpen: false, tool: null });
 
   const role = user?.user_metadata?.role || 'student';
-  const careerField = user?.user_metadata?.career_field;
-
   const handleToolClick = (tool: Tool) => {
     setDialogState({ isOpen: true, tool });
   };
@@ -90,12 +71,6 @@ export default function ToolsPage() {
 
         <div className="space-y-12">
           {(toolData.categories as ToolCategory[])
-            .filter((category) => {
-              if (role === 'college' && careerField && careerCategoryMap[careerField]) {
-                return careerCategoryMap[careerField].includes(category.name);
-              }
-              return true; // Show all for other roles
-            })
             .map((category) => {
             const Icon = (LucideIcons[category.icon as keyof typeof LucideIcons] || LucideIcons.WandSparkles) as React.ElementType;
             const visibleTools = getVisibleTools(category.tools);

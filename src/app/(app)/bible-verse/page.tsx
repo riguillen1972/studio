@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, BookOpen, Quote, Sparkles } from "lucide-react";
+import { Loader2, BookOpen, Quote, Sparkles, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -12,16 +12,19 @@ import { getBibleVerseAction } from "@/lib/actions";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "@/components/ad-placeholder";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface BibleVerse {
     verse: string;
     reference: string;
+    explanation: string;
 }
 
 export default function BibleVersePage() {
     const [verseInfo, setVerseInfo] = useState<BibleVerse | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [topic, setTopic] = useState("");
     const [error, setError] = useState<string | null>(null);
     const { tier, hasTokens, consumeTokens, isLoaded } = useAppState();
     const [hasFetched, setHasFetched] = useState(false);
@@ -38,15 +41,13 @@ export default function BibleVersePage() {
         setIsLoading(true);
         setError(null);
         
-        const result = await getBibleVerseAction({ model: modelToUse });
+        const result = await getBibleVerseAction({ topic: topic.trim() || undefined, model: modelToUse });
 
-        // FIX APPLIED HERE: We check if 'data' exists in the result object
-        // This satisfies TypeScript's Discriminated Union requirements.
         if ('data' in result) {
-            const { totalTokens, verse, reference } = result.data;
+            const { totalTokens, verse, reference, explanation } = result.data;
             
             consumeTokens(totalTokens, modelToUse);
-            setVerseInfo({ verse, reference });
+            setVerseInfo({ verse, reference, explanation });
         } else {
             // Because 'data' isn't in the object, TypeScript knows this is the error branch
             setError(result.error);
@@ -55,13 +56,7 @@ export default function BibleVersePage() {
         setIsLoading(false);
     };
 
-    useEffect(() => {
-        if (isLoaded && !hasFetched) {
-            fetchVerse();
-            setHasFetched(true);
-        }
-    }, [isLoaded, hasFetched]);
-    
+
     const isButtonDisabled = isLoading || !isLoaded || !hasTokens(modelToUse);
 
     return (
@@ -83,6 +78,21 @@ export default function BibleVersePage() {
                     <CardDescription>A moment of reflection and inspiration.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                    <form 
+                        onSubmit={(e) => { e.preventDefault(); fetchVerse(); }} 
+                        className="flex gap-2"
+                    >
+                        <Input
+                            placeholder="What's on your mind? (e.g., anxiety, upcoming test, gratitude)"
+                            value={topic}
+                            onChange={(e) => setTopic(e.target.value)}
+                            disabled={isButtonDisabled}
+                        />
+                        <Button type="submit" disabled={isButtonDisabled}>
+                            {isLoading ? <Loader2 className="animate-spin" /> : <Send className="w-4 h-4" />}
+                        </Button>
+                    </form>
+
                      {tier === 'free' && <AdPlaceholder />}
                     {isLoading ? (
                         <div className="space-y-4">
@@ -102,11 +112,18 @@ export default function BibleVersePage() {
                                 <Quote className="absolute bottom-2 right-2 h-6 w-6 text-muted-foreground/50 translate-x-2 translate-y-2" />
                             </blockquote>
                             <cite className="block font-semibold text-primary not-italic">{verseInfo.reference}</cite>
+                            {verseInfo.explanation && (
+                                <p className="text-muted-foreground mt-4 text-sm bg-muted p-4 rounded-md">
+                                    {verseInfo.explanation}
+                                </p>
+                            )}
                         </div>
-                    ) : null}
-                     <Button onClick={fetchVerse} disabled={isButtonDisabled} className="w-full">
-                        {isLoading ? <Loader2 className="animate-spin" /> : "Get New Verse"}
-                    </Button>
+                    ) : (
+                        <div className="text-center text-muted-foreground py-10">
+                            <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                            <p>Tell me what's on your mind to find a relevant verse.</p>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

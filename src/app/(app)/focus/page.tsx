@@ -11,9 +11,9 @@ import { createClient } from "@/lib/supabase/client";
 
 const SOUNDS = [
   { id: "none", name: "No Sound", file: "" },
-  { id: "lofi", name: "Lo-Fi Beats", file: "/audio/lofi_study.wav" },
-  { id: "rain", name: "Rain Nature", file: "/audio/rain_nature.wav" },
-  { id: "cafe", name: "Coffee Shop", file: "/audio/cafe_ambient.wav" }
+  { id: "lofi", name: "Lo-Fi Beats", file: "/audio/lofi_study.m4a" },
+  { id: "rain", name: "Rain Nature", file: "/audio/rain_nature.m4a" },
+  { id: "cafe", name: "Coffee Shop", file: "/audio/cafe_ambient.m4a" }
 ];
 
 export default function FocusModePage() {

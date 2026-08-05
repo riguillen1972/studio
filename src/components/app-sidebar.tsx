@@ -68,6 +68,7 @@ export function AppSidebar() {
       href: "/focus",
       icon: Headphones,
       label: "Focus Mode",
+      tier: "pro",
       visibleTo: ['student'],
     },
     {
@@ -142,7 +143,12 @@ export function AppSidebar() {
 
   const menuItems = baseMenuItems.filter(item => {
     const roleMatch = item.visibleTo.includes('all') || item.visibleTo.includes(isTeacher ? 'teacher' : 'student');
-    const tierMatch = item.tier === 'max' ? tier === 'max' : true;
+    let tierMatch = true;
+    if (item.tier === 'max') {
+      tierMatch = tier === 'max';
+    } else if (item.tier === 'pro') {
+      tierMatch = tier === 'pro' || tier === 'max';
+    }
     return roleMatch && tierMatch;
   });
 
@@ -184,6 +190,11 @@ export function AppSidebar() {
                      {item.tier === 'max' && (
                         <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-purple-500/50 text-purple-500 bg-purple-500/10 group-data-[collapsible=icon]:hidden">
                             MAX
+                        </Badge>
+                     )}
+                     {item.tier === 'pro' && (
+                        <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-blue-500/50 text-blue-500 bg-blue-500/10 group-data-[collapsible=icon]:hidden">
+                            PRO
                         </Badge>
                      )}
                   </Link>

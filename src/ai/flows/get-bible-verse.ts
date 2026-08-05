@@ -20,11 +20,13 @@ export type GetBibleVerseInput = z.infer<typeof GetBibleVerseInputSchema>;
 const VerseSchema = z.object({
     verse: z.string().describe('The Bible verse text.'),
     reference: z.string().describe('The reference for the Bible verse (e.g., "John 3:16").'),
+    explanation: z.string().describe('A brief explanation of how the verse relates to the topic.'),
 });
 
 const GetBibleVerseOutputSchema = z.object({
     verse: z.string(),
     reference: z.string(),
+    explanation: z.string(),
     totalTokens: z.number(),
 });
 export type GetBibleVerseOutput = z.infer<typeof GetBibleVerseOutputSchema>;
@@ -40,11 +42,7 @@ const getBibleVerseFlow = ai.defineFlow(
         outputSchema: GetBibleVerseOutputSchema,
     },
     async (input) => {
-        const prompt = `You are an AI assistant that provides Bible verses. 
-        
-        Please provide a random Bible verse. ${input.topic ? `The verse should be related to the topic of: ${input.topic}.` : ''}
-        
-        Return the verse and its reference.`;
+        const prompt = `Find a comforting or relevant Bible verse about: ${input.topic || 'daily inspiration'}. Return a JSON object with 'reference', 'verse', and 'explanation' string fields.`;
 
         const response = await smartGenerate({
             model: getModel(input.model),
