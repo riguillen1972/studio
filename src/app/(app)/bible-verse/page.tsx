@@ -14,6 +14,8 @@ import AdPlaceholder from "@/components/ad-placeholder";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { isCrisis } from "@/lib/crisis-support";
+import { Heart } from "lucide-react";
 
 interface BibleVerse {
     verse: string;
@@ -28,11 +30,23 @@ export default function BibleVersePage() {
     const [error, setError] = useState<string | null>(null);
     const { tier, hasTokens, consumeTokens, isLoaded } = useAppState();
     const [hasFetched, setHasFetched] = useState(false);
+    const [showCrisis, setShowCrisis] = useState(false);
     
     // Use Gemini 2.5 Flash as default model since all tiers can access it
     const modelToUse = 'flash';
 
     const fetchVerse = async () => {
+        const currentTopic = topic.trim();
+        
+        if (currentTopic && isCrisis(currentTopic)) {
+            setShowCrisis(true);
+            setError(null);
+            setVerseInfo(null);
+            return;
+        }
+
+        setShowCrisis(false);
+
         if (!hasTokens(modelToUse)) {
             setError("You have reached your monthly token limit. Please try again next month.");
             return;
@@ -93,7 +107,25 @@ export default function BibleVersePage() {
                         </Button>
                     </form>
 
-                     {tier === 'free' && <AdPlaceholder />}
+                    {tier === 'free' && <AdPlaceholder />}
+                    
+                    {showCrisis && (
+                        <div className="bg-red-500/10 border border-red-500/40 rounded-2xl p-6 text-left space-y-4 shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <Heart className="w-7 h-7 text-red-500 fill-red-500" />
+                                <h3 className="text-lg font-bold text-foreground">Please talk to someone</h3>
+                            </div>
+                            <p className="text-foreground font-medium">
+                                It sounds like you're going through something really hard, and that is too important for an AI tutor. Please tell a parent, teacher, counsellor or another adult you trust right now.
+                            </p>
+                            <div className="text-muted-foreground text-sm space-y-1">
+                                <p>In the US, call or text 988 — the Suicide & Crisis Lifeline. It's free, 24/7.</p>
+                                <p>Or text HOME to 741741 to reach the Crisis Text Line.</p>
+                                <p>If you're in immediate danger, call 911.</p>
+                            </div>
+                        </div>
+                    )}
+
                     {isLoading ? (
                         <div className="space-y-4">
                             <Skeleton className="h-24 w-full" />
@@ -118,12 +150,12 @@ export default function BibleVersePage() {
                                 </p>
                             )}
                         </div>
-                    ) : (
+                    ) : !showCrisis ? (
                         <div className="text-center text-muted-foreground py-10">
                             <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-20" />
                             <p>Tell me what's on your mind to find a relevant verse.</p>
                         </div>
-                    )}
+                    ) : null}
                 </CardContent>
             </Card>
         </div>

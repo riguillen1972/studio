@@ -11,7 +11,7 @@ export const focusRecommend = ai.defineFlow(
     name: "focusRecommend",
     inputSchema: FocusRecommendInput,
     outputSchema: z.object({
-      recommendedSound: z.enum(["brownNoise", "pinkNoise", "whiteNoise", "lofi", "rain", "cafe"]),
+      recommendedSound: z.enum(["deep-focus", "memory-mode", "noise-shield", "adhd-mode", "chill-study", "calm-study"]),
       reasoning: z.string()
     }),
   },
@@ -23,12 +23,12 @@ export const focusRecommend = ai.defineFlow(
     Task Type: ${taskType || "studying"}
 
     Based on research, recommend the best background sound for this session.
-    - brownNoise (Deep Focus): Best for deep concentration, writing, coding, math.
-    - pinkNoise (Memory Mode): Best for reading, memorization, long study sessions.
-    - whiteNoise (Noise Shield): Best for blocking out distracting environments.
-    - lofi (Chill Study): Best for low-intensity work, relaxed review.
-    - rain (Calm Study): Best for reducing anxiety, gentle focus.
-    - cafe (Coffee Shop): Best for brainstorming, creative tasks, essays.
+    - deep-focus (Deep Focus): Best for deep concentration, writing, coding, essays.
+    - memory-mode (Memory Mode): Best for reading, memorization, long study sessions.
+    - noise-shield (Noise Shield): Best for blocking out distracting environments.
+    - adhd-mode (ADHD Mode): Best for attention challenges.
+    - chill-study (Chill Study): Best for low-intensity work, general studying.
+    - calm-study (Calm Study): Best for reducing anxiety, light focus.
 
     Explain your reasoning in 1-2 short sentences.
     `;
@@ -38,7 +38,7 @@ export const focusRecommend = ai.defineFlow(
       prompt: prompt,
       output: {
         schema: z.object({
-          recommendedSound: z.enum(["brownNoise", "pinkNoise", "whiteNoise", "lofi", "rain", "cafe"]),
+          recommendedSound: z.enum(["deep-focus", "memory-mode", "noise-shield", "adhd-mode", "chill-study", "calm-study"]),
           reasoning: z.string()
         })
       }
