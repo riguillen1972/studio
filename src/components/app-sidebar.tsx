@@ -98,6 +98,36 @@ export function AppSidebar() {
       visibleTo: ['student'],
     },
     {
+      href: "/homework",
+      icon: BookOpen,
+      label: "Homework Help",
+      visibleTo: ['student'],
+    },
+    {
+      href: "/scan",
+      icon: ScanLine,
+      label: "Scan Homework",
+      visibleTo: ['student'],
+    },
+    {
+      href: "/summarizer",
+      icon: NotebookText,
+      label: "Summarizer",
+      visibleTo: ['student'],
+    },
+    {
+      href: "/quiz",
+      icon: FileQuestion,
+      label: "Quiz Generator",
+      visibleTo: ['student'],
+    },
+    {
+      href: "/flashcards",
+      icon: Layers,
+      label: "Flashcards",
+      visibleTo: ['student'],
+    },
+    {
       href: "/progress",
       icon: LineChart,
       label: "Progress",
