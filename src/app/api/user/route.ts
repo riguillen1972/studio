@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 
 export async function DELETE(request: NextRequest) {
@@ -10,6 +10,13 @@ export async function DELETE(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+    }
+    const supabaseAdmin = createSupabaseClient(supabaseUrl, supabaseKey);
 
     // Delete user using the admin client. This automatically triggers cascading deletes 
     // for all tables that have foreign keys referencing auth.users with ON DELETE CASCADE.

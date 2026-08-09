@@ -48,6 +48,10 @@ export const parseContextPack = ai.defineFlow(
       }
     });
 
+    if (!output) {
+      throw new Error("Failed to parse context pack");
+    }
+
     return output;
   }
 );

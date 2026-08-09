@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
 
-    const planConfig = STRIPE_PLANS[plan];
+    const planConfig = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS];
 
     // Check if user already has a Stripe customer ID
     const { data: profile } = await supabase
