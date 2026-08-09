@@ -15,6 +15,8 @@ import { useAuth } from "@/lib/supabase/auth-provider";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { createClient } from "@/lib/supabase/client";
 
 interface TierPlan {
     name: string;
@@ -96,6 +98,53 @@ function ProfileContent() {
   const isTeacher = role === 'teacher';
   const [isCheckoutLoading, setIsCheckoutLoading] = useState<string | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
+  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+  const [currentRole, setCurrentRole] = useState(role);
+  const supabase = createClient();
+
+  const handleRoleChange = async (newRole: string) => {
+    setIsUpdatingRole(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: { role: newRole }
+      });
+      if (error) throw error;
+      setCurrentRole(newRole);
+      toast({
+        title: "Role Updated",
+        description: "Your role has been successfully changed.",
+      });
+      // Optionally reload to apply layout changes
+      window.location.reload();
+    } catch (e) {
+      toast({
+        title: "Error",
+        description: "Could not update role. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingRole(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!confirm("Are you sure you want to permanently delete your account? This action cannot be undone.")) return;
+    try {
+      const res = await fetch('/api/user', { method: 'DELETE' });
+      if (!res.ok) throw new Error("Could not delete account");
+      toast({
+        title: "Account Deleted",
+        description: "Your account has been deleted.",
+      });
+      window.location.href = '/login';
+    } catch (e) {
+      toast({
+        title: "Error",
+        description: "Failed to delete account.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Handle Stripe redirect query params
   useEffect(() => {
@@ -224,6 +273,22 @@ function ProfileContent() {
                         <Label htmlFor="email" className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
                         <Input id="email" defaultValue={displayEmail} readOnly className="bg-muted/50 cursor-default" />
                     </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="role">Your Role</Label>
+                        <Select value={currentRole} onValueChange={handleRoleChange} disabled={isUpdatingRole}>
+                            <SelectTrigger id="role">
+                                <SelectValue placeholder="Select your role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="k12">Elementary to High School</SelectItem>
+                                <SelectItem value="college">College Student</SelectItem>
+                                <SelectItem value="teacher">Teacher</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground pt-1">
+                            Changing your role updates the AI's teaching style and features.
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -319,7 +384,7 @@ function ProfileContent() {
                 <CardContent className="space-y-4">
                     <Button variant="outline" className="w-full">Change Password</Button>
                     <Separator/>
-                    <Button variant="destructive" className="w-full">Delete Account</Button>
+                    <Button variant="destructive" className="w-full" onClick={handleDeleteAccount}>Delete Account</Button>
                 </CardContent>
             </Card>
         </div>

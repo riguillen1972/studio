@@ -227,3 +227,59 @@ CREATE TABLE study_streaks (
     last_active_date DATE,
     total_xp INT DEFAULT 0
 );
+
+-- ============================================
+-- RPC FUNCTIONS
+-- ============================================
+CREATE OR REPLACE FUNCTION increment_token_usage(
+  p_user_id UUID,
+  p_month TEXT,
+  p_column_name TEXT,
+  p_tokens INT
+) RETURNS void AS $$
+BEGIN
+  INSERT INTO token_usage (user_id, month, flash_lite_used, flash_used, pro_used, haiku_used)
+  VALUES (
+    p_user_id, 
+    p_month,
+    CASE WHEN p_column_name = 'flash_lite_used' THEN p_tokens ELSE 0 END,
+    CASE WHEN p_column_name = 'flash_used' THEN p_tokens ELSE 0 END,
+    CASE WHEN p_column_name = 'pro_used' THEN p_tokens ELSE 0 END,
+    CASE WHEN p_column_name = 'haiku_used' THEN p_tokens ELSE 0 END
+  )
+  ON CONFLICT (user_id, month)
+  DO UPDATE SET
+    flash_lite_used = token_usage.flash_lite_used + CASE WHEN p_column_name = 'flash_lite_used' THEN p_tokens ELSE 0 END,
+    flash_used = token_usage.flash_used + CASE WHEN p_column_name = 'flash_used' THEN p_tokens ELSE 0 END,
+    pro_used = token_usage.pro_used + CASE WHEN p_column_name = 'pro_used' THEN p_tokens ELSE 0 END,
+    haiku_used = token_usage.haiku_used + CASE WHEN p_column_name = 'haiku_used' THEN p_tokens ELSE 0 END,
+    updated_at = now();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ============================================
+-- PHASE 3 RLS POLICIES
+-- ============================================
+ALTER TABLE classes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE enrollments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE context_packs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE focus_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE study_tool_usage ENABLE ROW LEVEL SECURITY;
+ALTER TABLE spaced_rep_cards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE xp_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE study_streaks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own classes" ON classes FOR ALL USING (teacher_id = auth.uid());
+CREATE POLICY "Users can view classes they are enrolled in" ON classes FOR SELECT USING (id IN (SELECT class_id FROM enrollments WHERE student_id = auth.uid()));
+
+CREATE POLICY "Users can manage their own enrollments" ON enrollments FOR ALL USING (student_id = auth.uid());
+CREATE POLICY "Teachers can manage enrollments for their classes" ON enrollments FOR ALL USING (class_id IN (SELECT id FROM classes WHERE teacher_id = auth.uid()));
+
+CREATE POLICY "Teachers can manage context packs for their classes" ON context_packs FOR ALL USING (teacher_id = auth.uid());
+CREATE POLICY "Students can view context packs for their classes" ON context_packs FOR SELECT USING (class_id IN (SELECT class_id FROM enrollments WHERE student_id = auth.uid()));
+
+CREATE POLICY "Users can manage their own focus sessions" ON focus_sessions FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage their own study tool usage" ON study_tool_usage FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage their own spaced rep cards" ON spaced_rep_cards FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage their own xp logs" ON xp_logs FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can manage their own study streaks" ON study_streaks FOR ALL USING (user_id = auth.uid());

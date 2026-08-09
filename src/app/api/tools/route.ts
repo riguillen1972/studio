@@ -75,6 +75,44 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing toolId" }, { status: 400 });
     }
 
+    // Token Limits Check
+    const currentMonth = new Date().toISOString().substring(0, 7);
+    const { data: usage } = await supabase
+      .from("token_usage")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("month", currentMonth)
+      .single();
+
+    const maxTokens = tier === 'max' ? 4000000 : tier === 'pro' ? 1500000 : 250000;
+    
+    // Check if they exceed general tokens (for simplicity we check the aggregate or specific model limits)
+    // Here we'll check if the requested model is allowed for their tier and if they have tokens left.
+    const requestedModel = model || "gemini-2.5-flash"; // Default model
+
+    let hasTokens = false;
+    if (requestedModel.includes("haiku")) {
+      if (tier === 'max') {
+        const used = usage?.haiku_used || 0;
+        hasTokens = used < maxTokens;
+      }
+    } else if (requestedModel.includes("pro")) {
+      if (tier === 'max' || tier === 'pro') {
+        const used = usage?.pro_used || 0;
+        hasTokens = used < maxTokens;
+      }
+    } else if (requestedModel.includes("flash-lite")) {
+      const used = usage?.flash_lite_used || 0;
+      hasTokens = used < maxTokens;
+    } else { // default flash
+      const used = usage?.flash_used || 0;
+      hasTokens = used < maxTokens;
+    }
+
+    if (!hasTokens) {
+      return NextResponse.json({ error: "Token limit exceeded or model not allowed for tier" }, { status: 402 });
+    }
+
     // Phase 3 - Fetch context pack if provided and inject into groundingContext
     if (contextPackId) {
       const { data: contextPack, error: cpError } = await supabase

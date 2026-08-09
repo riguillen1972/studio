@@ -18,7 +18,7 @@ export default function TermsPage() {
             <CardTitle className="font-headline text-2xl">Terms of Service</CardTitle>
           </CardHeader>
           <CardContent className="prose dark:prose-invert max-w-none space-y-4 text-sm">
-            <p><strong>Last updated:</strong> March 7, 2026</p>
+            <p><strong>Last updated:</strong> August 8, 2026</p>
 
             <h3 className="text-lg font-semibold">1. Acceptance of Terms</h3>
             <p>By accessing and using Study Buddy AI, you agree to be bound by these Terms of Service. If you do not agree, please do not use the service.</p>

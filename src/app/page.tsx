@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Bot, Sparkles, BookOpen, Brain, Zap, GraduationCap, Shield, ChevronRight, Star, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useAuth } from '@/lib/supabase/auth-provider';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
@@ -18,12 +19,13 @@ const features = [
 ];
 
 const plans = [
-  { name: 'Free', price: '$0', period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', '250k tokens/month', 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', highlighted: false },
-  { name: 'Pro', price: '$15', period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', '1.5M tokens/month', 'All 30+ AI Tools', 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', highlighted: true },
-  { name: 'Max', price: '$25', period: '/month', desc: 'Maximum power for serious students', features: ['Gemini 2.5 Flash + Claude Haiku 4.5', '4M tokens/month', 'AI Mini-App Generator', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', highlighted: false },
+  { name: 'Free', price: '$0', period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', '250k tokens/month', 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', href: '/login?action=signup&plan=free', highlighted: false },
+  { name: 'Pro', price: '$15', period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', '1.5M tokens/month', 'All 30+ AI Tools', 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', href: '/login?action=signup&plan=pro', highlighted: true },
+  { name: 'Max', price: '$25', period: '/month', desc: 'Maximum power for serious students', features: ['Gemini 2.5 Flash + Claude Haiku 4.5', '4M tokens/month', 'AI Mini-App Generator', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', href: '/login?action=signup&plan=max', highlighted: false },
 ];
 
 export default function LandingPage() {
+  const { signInWithGoogle } = useAuth();
   return (
     <div className="min-h-screen bg-[#0a0e1a] text-white overflow-hidden">
       {/* Gradient Orbs */}
@@ -49,7 +51,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <Link href="/login" className="hidden sm:inline-flex px-4 py-2 text-sm text-white/80 hover:text-white transition-colors">Sign in</Link>
-          <Link href="/login" className="px-5 py-2.5 text-sm font-medium bg-white text-[#0a0e1a] rounded-full hover:bg-white/90 transition-all hover:shadow-lg hover:shadow-white/10">
+          <Link href="/login?action=signup" className="px-5 py-2.5 text-sm font-medium bg-white text-[#0a0e1a] rounded-full hover:bg-white/90 transition-all hover:shadow-lg hover:shadow-white/10">
             Get started <ChevronRight className="inline h-4 w-4 ml-0.5" />
           </Link>
         </div>
@@ -67,13 +69,13 @@ export default function LandingPage() {
           <span className="text-white/40">—from homework help to exam prep.</span>
         </motion.h1>
         <motion.div variants={fadeUp} transition={{ duration: 0.6, delay: 0.3 }} className="flex flex-wrap gap-4 mt-10">
-          <Link href="/login" className="group inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:shadow-xl hover:shadow-blue-500/25 transition-all text-base">
+          <Link href="/login?action=signup" className="group inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:shadow-xl hover:shadow-blue-500/25 transition-all text-base">
             Get started <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <Link href="/login" className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-all text-base">
+          <button onClick={() => signInWithGoogle?.()} className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-all text-base">
             <svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Sign up with Google
-          </Link>
+          </button>
         </motion.div>
       </motion.section>
 
@@ -122,7 +124,7 @@ export default function LandingPage() {
                   <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="text-white/40 text-sm">{plan.period}</span>
                 </div>
-                <Link href="/login" className={`block text-center py-3 rounded-full font-medium text-sm transition-all mb-8 ${plan.highlighted ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-blue-500/25' : 'border border-white/20 text-white hover:bg-white/5'}`}>
+                <Link href={plan.href} className={`block text-center py-3 rounded-full font-medium text-sm transition-all mb-8 ${plan.highlighted ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-lg hover:shadow-blue-500/25' : 'border border-white/20 text-white hover:bg-white/5'}`}>
                   {plan.cta}
                 </Link>
                 <ul className="space-y-3">
@@ -146,7 +148,7 @@ export default function LandingPage() {
           <motion.h2 variants={fadeUp} className="text-3xl md:text-5xl font-bold max-w-2xl mx-auto mb-4 relative" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Ready to transform your studying?</motion.h2>
           <motion.p variants={fadeUp} className="text-lg text-white/50 max-w-lg mx-auto mb-8 relative">Join thousands of students using AI to learn faster, study smarter, and achieve more.</motion.p>
           <motion.div variants={fadeUp} className="relative">
-            <Link href="/login" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#0a0e1a] font-semibold rounded-full hover:shadow-xl hover:shadow-white/10 transition-all text-base">
+            <Link href="/login?action=signup" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#0a0e1a] font-semibold rounded-full hover:shadow-xl hover:shadow-white/10 transition-all text-base">
               Start learning for free <ArrowRight className="h-4 w-4" />
             </Link>
           </motion.div>

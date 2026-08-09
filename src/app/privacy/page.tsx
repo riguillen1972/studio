@@ -18,7 +18,7 @@ export default function PrivacyPage() {
             <CardTitle className="font-headline text-2xl">Privacy Policy</CardTitle>
           </CardHeader>
           <CardContent className="prose dark:prose-invert max-w-none space-y-4 text-sm">
-            <p><strong>Last updated:</strong> March 7, 2026</p>
+            <p><strong>Last updated:</strong> August 8, 2026</p>
 
             <h3 className="text-lg font-semibold">1. Information We Collect</h3>
             <p>We collect information you provide directly: email address, display name, and grade level. We also collect usage data such as questions asked, quizzes taken, and token consumption for service improvement and billing.</p>

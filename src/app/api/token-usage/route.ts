@@ -39,48 +39,20 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unknown model" }, { status: 400 });
     }
 
-    // Since PostgREST doesn't support raw incrementing without RPC easily unless we fetch and update,
-    // and we want to avoid race conditions, we will fetch current and update. 
-    // In production, an RPC is better.
-    const { data: currentUsage, error: fetchError } = await supabase
-        .from('token_usage')
-        .select(column)
-        .eq('user_id', user.id)
-        .eq('month', month)
-        .single();
-    
-    if (fetchError && fetchError.code !== 'PGRST116') {
-        return NextResponse.json({ error: "Failed to fetch usage" }, { status: 500 });
+    // Call the RPC function to increment tokens safely
+    const { error: updateError } = await supabase.rpc('increment_token_usage', {
+      p_user_id: user.id,
+      p_month: month,
+      p_column_name: column,
+      p_tokens: tokens
+    });
+
+    if (updateError) {
+        console.error("Token update failed:", updateError);
+        return NextResponse.json({ error: "Failed to update usage" }, { status: 500 });
     }
 
-    let newValue = tokens;
-    if (currentUsage) {
-        newValue = (currentUsage[column] || 0) + tokens;
-        
-        const { error: updateError } = await supabase
-            .from('token_usage')
-            .update({ [column]: newValue })
-            .eq('user_id', user.id)
-            .eq('month', month);
-            
-        if (updateError) {
-            return NextResponse.json({ error: "Failed to update usage" }, { status: 500 });
-        }
-    } else {
-        const { error: insertError } = await supabase
-            .from('token_usage')
-            .insert({
-                user_id: user.id,
-                month: month,
-                [column]: newValue
-            });
-            
-        if (insertError) {
-            return NextResponse.json({ error: "Failed to insert usage" }, { status: 500 });
-        }
-    }
-
-    return NextResponse.json({ success: true, updatedValue: newValue });
+    return NextResponse.json({ success: true, updatedValue: tokens });
 
   } catch (error) {
     console.error("Token Usage API POST error:", error);
