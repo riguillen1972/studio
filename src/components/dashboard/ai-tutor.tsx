@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { getExplanationAction } from "@/lib/actions";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "@/components/ad-placeholder";
@@ -58,7 +57,10 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   // Auto-scroll to bottom when conversation updates
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+      const container = scrollRef.current.parentElement?.parentElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
     }
   }, [conversation, isLoading]);
   
@@ -127,7 +129,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   }
 
   return (
-    <Card className="h-full flex flex-col max-h-[80vh]">
+    <Card className="h-full flex flex-col">
         <CardHeader>
             <CardTitle className="font-headline flex items-center gap-2">
                 <Sparkles className="text-primary"/>
@@ -147,7 +149,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
         </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden min-h-0">
         {tier === 'free' && <AdPlaceholder />}
-        <ScrollArea className="flex-grow min-h-0 pr-4 -mr-4">
+        <div className="flex-grow min-h-0 overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 380px)' }}>
             <div className="space-y-6 pb-6">
             {conversation.length === 0 && (
                 <div className="text-center text-muted-foreground p-8">
@@ -197,7 +199,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
             )}
             <div ref={scrollRef} className="h-4 w-full" />
             </div>
-        </ScrollArea>
+        </div>
       </CardContent>
        <CardFooter className="pt-4 border-t flex-col items-start">
         <div className="mb-4 w-full flex flex-col sm:flex-row gap-4">
