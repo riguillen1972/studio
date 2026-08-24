@@ -231,6 +231,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     if (!isMounted) return;
     const currentMonth = getCurrentMonth();
     
+    // Optimistic UI update
     setTokenInfo(prev => {
         const isNewMonth = prev.date !== currentMonth;
         let newGemma3Used = isNewMonth ? 0 : prev.gemma3UsedTokens;
@@ -248,25 +249,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             newFlashUsed += amount;
         }
         
-        const newInfo: TokenInfo = { gemma3UsedTokens: newGemma3Used, flashUsedTokens: newFlashUsed, proUsedTokens: newProUsed, haikuUsedTokens: newHaikuUsed, date: currentMonth };
-        
-        // Save to Supabase in background
-        if (user) {
-          supabase
-            .from('token_usage')
-            .upsert({
-              user_id: user.id,
-              month: currentMonth,
-              flash_lite_used: newGemma3Used, // Mapping gemma3 to the old flash_lite column in DB
-              flash_used: newFlashUsed,
-              pro_used: newProUsed,
-              haiku_used: newHaikuUsed,
-            }, { onConflict: 'user_id,month' })
-            .then();
-        }
-        
-        return newInfo;
+        return { gemma3UsedTokens: newGemma3Used, flashUsedTokens: newFlashUsed, proUsedTokens: newProUsed, haikuUsedTokens: newHaikuUsed, date: currentMonth };
     });
+
+    // Save to Supabase in background securely via API
+    if (user) {
+      // Get the session token to authenticate the API request
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.access_token) {
+          fetch('/api/token-usage', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              tokensUsed: amount,
+              model: model
+            })
+          }).catch(err => console.error("Failed to sync tokens:", err));
+        }
+      });
+    }
   }, [isMounted, isPremium, user, supabase]);
   
   const gemma3TokensRemaining = isMounted ? Math.max(0, gemma3TokenLimit - tokenInfo.gemma3UsedTokens) : gemma3TokenLimit;
