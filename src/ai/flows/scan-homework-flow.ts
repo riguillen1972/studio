@@ -52,20 +52,21 @@ const scanHomeworkFlow = ai.defineFlow(
     outputSchema: ScanHomeworkOutputSchema,
   },
   async (input) => {
-    const prompt = `You are an AI homework helper for a student in grade ${input.gradeLevel}.
+    const promptText = `You are an AI homework helper for a student in grade ${input.gradeLevel}.
+The student is working on a problem in ${input.subject}. They have provided a photo of their work and have the following question:
+    
+Question: ${input.question}
+    
+Analyze the image and the student's question. Provide a few hints to help the student solve the problem independently. Do not give away the answer.
+Also, provide general guidance and strategies for solving this type of problem.
+    
+Format the hints as a numbered list.`;
 
-    The student is working on a problem in ${input.subject}. They have provided a photo of their work and have the following question:
-    
-    Question: ${input.question}
-    
-    Here is the photo of their work:
-    {{media url=${input.photoDataUri}}}
-    
-    Analyze the image and the student's question. Provide a few hints to help the student solve the problem independently. Do not give away the answer.
-    Also, provide general guidance and strategies for solving this type of problem.
-    
-    Format the hints as a numbered list.
-    `;
+    const prompt = [
+      { text: promptText },
+      { media: { url: input.photoDataUri } }
+    ];
+
     const response = await smartGenerate({
         model: getModel(input.model),
         prompt: prompt,

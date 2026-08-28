@@ -59,7 +59,7 @@ export const ai = genkit({
  */
 export async function smartGenerate<T>(opts: {
   model: string;
-  prompt: string;
+  prompt: string | any[];
   output?: { schema: z.ZodType<T> };
   config?: Record<string, unknown>;
 }): Promise<{ output: T | null; text: string; usage: { totalTokens?: number } }> {
@@ -69,7 +69,14 @@ export async function smartGenerate<T>(opts: {
   if (isClaude && opts.output?.schema) {
     // For Claude: request text output and parse JSON manually
     const jsonShape = JSON.stringify(zodToJsonHint(opts.output.schema), null, 2);
-    const augmentedPrompt = `${opts.prompt}\n\n**IMPORTANT: You MUST respond with ONLY valid JSON matching this exact shape (no markdown fences, no extra text):**\n${jsonShape}`;
+    const jsonInstruction = `\n\n**IMPORTANT: You MUST respond with ONLY valid JSON matching this exact shape (no markdown fences, no extra text):**\n${jsonShape}`;
+    
+    let augmentedPrompt = opts.prompt;
+    if (Array.isArray(augmentedPrompt)) {
+      augmentedPrompt = [...augmentedPrompt, { text: jsonInstruction }];
+    } else {
+      augmentedPrompt = `${augmentedPrompt}${jsonInstruction}`;
+    }
 
     const response = await ai.generate({
       model: modelStr,
