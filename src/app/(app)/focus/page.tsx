@@ -27,7 +27,7 @@ export default function FocusModePage() {
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   
-  const { currentTrack, setCurrentTrack, isPlaying, volume, setVolume, toggle, pause } = useFocusAudio();
+  const { currentTrack, setCurrentTrack, isPlaying, volume, setVolume, toggle, play, pause } = useFocusAudio();
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -67,10 +67,11 @@ export default function FocusModePage() {
   }, [isActive, timeLeft, isBreak, user, currentTrack, supabase, pause]);
 
   const toggleTimer = () => {
-    setIsActive(!isActive);
-    if (!isActive && !isBreak && currentTrack) {
-      // start playing when active
-      toggle();
+    const nextActive = !isActive;
+    setIsActive(nextActive);
+    
+    if (nextActive && !isBreak && currentTrack) {
+      play();
     } else {
       pause();
     }
@@ -102,10 +103,17 @@ export default function FocusModePage() {
 
   const handleTrackSelect = (track: FocusTrack) => {
     if (tier === 'free') {
-      // Free users cannot select, this is just to trigger visual indication, or we can use a tooltip
       return;
     }
     setCurrentTrack(track);
+    
+    // If the timer is actively running in focus mode, start playing the new track immediately
+    if (isActive && !isBreak) {
+      // Small timeout to allow useFocusAudio's useEffect to initialize the audio element
+      setTimeout(() => {
+        play();
+      }, 50);
+    }
   };
 
   return (
