@@ -204,7 +204,7 @@ function LoginContent() {
         </div>
 
         <AnimatePresence mode="wait">
-          {!selectedRole ? (
+          {!isLogin && !selectedRole ? (
             /* ==================== STEP 1: ROLE SELECTION ==================== */
             <motion.div
               key="role-selection"
