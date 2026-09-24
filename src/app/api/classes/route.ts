@@ -25,6 +25,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing class name" }, { status: 400 });
     }
 
+    // Verify user has teacher role
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile || profile.role !== 'teacher') {
+      return NextResponse.json({ error: "Only teachers can create classes" }, { status: 403 });
+    }
+
     // Generate a random 6-character alphanumeric join code
     const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 

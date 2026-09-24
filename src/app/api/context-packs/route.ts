@@ -89,7 +89,39 @@ export async function GET(req: NextRequest) {
       .order("created_at", { ascending: false });
       
     if (classId) {
+      // Verify user has access to this class (is teacher or enrolled student)
+      const { data: classData } = await supabase
+        .from("classes")
+        .select("teacher_id")
+        .eq("id", classId)
+        .single();
+
+      if (!classData) {
+        return NextResponse.json({ error: "Class not found" }, { status: 404 });
+      }
+
+      const isTeacher = classData.teacher_id === user.id;
+
+      if (!isTeacher) {
+        // Check if user is an enrolled student
+        const { data: enrollment } = await supabase
+          .from("enrollments")
+          .select("id")
+          .eq("class_id", classId)
+          .eq("student_id", user.id)
+          .single();
+
+        if (!enrollment) {
+          return NextResponse.json({ error: "You don't have access to this class" }, { status: 403 });
+        }
+      }
+
       query = query.eq("class_id", classId);
+
+      // Students should not see answer keys
+      if (!isTeacher) {
+        query = query.select("id, class_id, teacher_id, type, title, subject, content_parsed, rubric, due_date, status, created_at");
+      }
     } else {
        // Only teachers can fetch all their packs across classes
       query = query.eq("teacher_id", user.id);

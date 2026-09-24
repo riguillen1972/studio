@@ -32,27 +32,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If user is not signed in and trying to access app routes, redirect to login
-  if (
-    !user && (
-      request.nextUrl.pathname.startsWith('/dashboard') ||
-      request.nextUrl.pathname.startsWith('/tools') ||
-      request.nextUrl.pathname.startsWith('/quiz') ||
-      request.nextUrl.pathname.startsWith('/flashcards') ||
-      request.nextUrl.pathname.startsWith('/homework') ||
-      request.nextUrl.pathname.startsWith('/scan') ||
-      request.nextUrl.pathname.startsWith('/summarizer') ||
-      request.nextUrl.pathname.startsWith('/progress') ||
-      request.nextUrl.pathname.startsWith('/library') ||
-      request.nextUrl.pathname.startsWith('/profile') ||
-      request.nextUrl.pathname.startsWith('/bible-verse') ||
-      request.nextUrl.pathname.startsWith('/mini-app-generator') ||
-      request.nextUrl.pathname.startsWith('/video-generator') ||
-      request.nextUrl.pathname.startsWith('/web-tutor') ||
-      request.nextUrl.pathname.startsWith('/tools') ||
-      request.nextUrl.pathname.startsWith('/flashcards')
-    )
-  ) {
+  // Public routes that don't require authentication
+  const publicPaths = ['/', '/login', '/auth', '/terms', '/privacy', '/pricing', '/forgot-password'];
+  const isPublicRoute = publicPaths.some(path => 
+    request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
+  );
+  const isApiRoute = request.nextUrl.pathname.startsWith('/api');
+  const isStaticAsset = request.nextUrl.pathname.startsWith('/_next') || 
+                        request.nextUrl.pathname === '/favicon.ico';
+
+  // If user is not signed in and trying to access a protected route, redirect to login
+  if (!user && !isPublicRoute && !isApiRoute && !isStaticAsset) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);

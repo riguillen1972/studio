@@ -16,13 +16,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // Validate action against whitelist
+    const VALID_ACTIONS = ['quiz_complete', 'flashcard_review', 'homework_submit', 'tutor_session', 'focus_session', 'streak_bonus', 'study_tool_use'];
+    if (!VALID_ACTIONS.includes(action)) {
+      return NextResponse.json({ error: "Invalid action type" }, { status: 400 });
+    }
+
+    // Cap XP to prevent client-side manipulation
+    const MAX_XP_PER_ACTION = 100;
+    const safeXpAmount = Math.min(Math.max(0, Math.floor(Number(xp_amount))), MAX_XP_PER_ACTION);
+
+    if (safeXpAmount <= 0) {
+      return NextResponse.json({ error: "Invalid XP amount" }, { status: 400 });
+    }
+
     // 1. Insert XP Log
     const { error: insertError } = await supabase
       .from("xp_logs")
       .insert({
         user_id: user.id,
         action,
-        xp_amount,
+        xp_amount: safeXpAmount,
         class_id: class_id || null
       });
 
@@ -40,7 +54,7 @@ export async function POST(req: NextRequest) {
 
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     let newStreak = 1;
-    let newTotalXp = xp_amount;
+    let newTotalXp = safeXpAmount;
     let longestStreak = 1;
 
     if (streakFetchError && streakFetchError.code !== 'PGRST116') {
@@ -49,7 +63,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (streakData) {
-      newTotalXp = (streakData.total_xp || 0) + xp_amount;
+      newTotalXp = (streakData.total_xp || 0) + safeXpAmount;
       
       if (streakData.last_active_date) {
         const lastDate = new Date(streakData.last_active_date);
@@ -87,7 +101,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ 
       success: true, 
-      xp_awarded: xp_amount, 
+      xp_awarded: safeXpAmount, 
       new_total_xp: newTotalXp,
       current_streak: newStreak 
     });

@@ -41,11 +41,15 @@ export async function POST(req: NextRequest) {
     const requestedModel = body.model || "";
 
     // Enforce tier limitations for Claude
-    // Max tier can use claude-haiku-4-5
-    if (requestedModel.includes("claude")) {
-      if (tier !== "max") {
-        return NextResponse.json({ error: "Claude models are only available on the Max tier." }, { status: 403 });
-      }
+    // Only Max tier can use Claude models
+    if (tier !== "max") {
+      return NextResponse.json({ error: "Claude models are only available on the Max tier." }, { status: 403 });
+    }
+
+    // Whitelist allowed Claude models
+    const ALLOWED_MODELS = ["claude-haiku-4-5", "claude-3-5-haiku-20241022"];
+    if (!ALLOWED_MODELS.some(m => requestedModel.includes(m))) {
+      return NextResponse.json({ error: "This Claude model is not allowed." }, { status: 403 });
     }
 
     // Proxy the request to Anthropic
@@ -54,6 +58,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Anthropic API key not configured" }, { status: 500 });
     }
 
+    // Sanitize the request body — only forward safe, whitelisted fields
+    const MAX_TOKENS_CAP = 8192;
+    const sanitizedBody = {
+      model: requestedModel,
+      messages: Array.isArray(body.messages) ? body.messages.slice(0, 50) : [], // cap conversation length
+      max_tokens: Math.min(Number(body.max_tokens) || 4096, MAX_TOKENS_CAP),
+      ...(typeof body.temperature === 'number' && body.temperature >= 0 && body.temperature <= 2
+        ? { temperature: body.temperature }
+        : {}),
+    };
+
     const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -61,7 +76,7 @@ export async function POST(req: NextRequest) {
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(sanitizedBody),
     });
 
     const responseData = await anthropicResponse.json();

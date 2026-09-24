@@ -264,8 +264,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               'Authorization': `Bearer ${session.access_token}`
             },
             body: JSON.stringify({
-              tokensUsed: amount,
-              model: model
+              tokens: amount,
+              model: model,
+              month: currentMonth,
             })
           }).catch(err => console.error("Failed to sync tokens:", err));
         }
