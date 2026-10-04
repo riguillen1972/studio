@@ -290,3 +290,28 @@ CREATE POLICY "Users can manage their own study tool usage" ON study_tool_usage 
 CREATE POLICY "Users can manage their own spaced rep cards" ON spaced_rep_cards FOR ALL USING (user_id = auth.uid());
 CREATE POLICY "Users can manage their own xp logs" ON xp_logs FOR ALL USING (user_id = auth.uid());
 CREATE POLICY "Users can manage their own study streaks" ON study_streaks FOR ALL USING (user_id = auth.uid());
+
+-- ============================================
+-- PERFORMANCE INDEXES (for scale)
+-- ============================================
+-- Indexes on foreign keys to optimize JOINs and ON DELETE CASCADE
+CREATE INDEX IF NOT EXISTS idx_token_usage_user_id ON token_usage(user_id);
+CREATE INDEX IF NOT EXISTS idx_saved_apps_user_id ON saved_apps(user_id);
+CREATE INDEX IF NOT EXISTS idx_quiz_results_user_id ON quiz_results(user_id);
+CREATE INDEX IF NOT EXISTS idx_chat_history_user_id ON chat_history(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_classes_teacher_id ON classes(teacher_id);
+CREATE INDEX IF NOT EXISTS idx_classes_join_code ON classes(join_code);
+
+CREATE INDEX IF NOT EXISTS idx_enrollments_class_id ON enrollments(class_id);
+CREATE INDEX IF NOT EXISTS idx_enrollments_student_id ON enrollments(student_id);
+
+CREATE INDEX IF NOT EXISTS idx_context_packs_class_id ON context_packs(class_id);
+CREATE INDEX IF NOT EXISTS idx_context_packs_teacher_id ON context_packs(teacher_id);
+
+CREATE INDEX IF NOT EXISTS idx_focus_sessions_user_id ON focus_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_study_tool_usage_user_id ON study_tool_usage(user_id);
+CREATE INDEX IF NOT EXISTS idx_study_tool_usage_class_id ON study_tool_usage(class_id);
+CREATE INDEX IF NOT EXISTS idx_spaced_rep_cards_user_id ON spaced_rep_cards(user_id);
+CREATE INDEX IF NOT EXISTS idx_spaced_rep_cards_class_id ON spaced_rep_cards(class_id);
+CREATE INDEX IF NOT EXISTS idx_xp_logs_user_id ON xp_logs(user_id);

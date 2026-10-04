@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   description: 'Your personal AI-powered learning assistant.',
 };
 
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,6 +41,8 @@ export default function RootLayout({
           </ThemeProvider>
         </SupabaseAuthProvider>
         <Toaster />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
