@@ -49,7 +49,7 @@ export default function DashboardPage() {
       {tier === 'free' && <AdPlaceholder />}
 
       {currentRole === 'teacher' ? (
-        <TeacherDashboard user={user} />
+        <TeacherDashboard user={user} tier={tier} />
       ) : (
         <ErrorBoundary fallbackTitle="AI Tutor encountered an error">
           <AITutor careerField={careerField || undefined} />

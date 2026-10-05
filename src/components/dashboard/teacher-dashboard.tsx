@@ -14,6 +14,7 @@ import { User } from "@supabase/supabase-js";
 
 interface TeacherDashboardProps {
     user: User | null;
+    tier: string;
 }
 
 interface ClassModel {
@@ -33,7 +34,9 @@ interface ContextPackModel {
     created_at: string;
 }
 
-export function TeacherDashboard({ user }: TeacherDashboardProps) {
+import { AITeacherBuilder } from "./ai-teacher-builder";
+
+export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     const supabase = createClient();
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [contextPacks, setContextPacks] = useState<ContextPackModel[]>([]);
@@ -165,6 +168,7 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
             <TabsList className="mb-4">
                 <TabsTrigger value="classes">My Classes</TabsTrigger>
                 <TabsTrigger value="packs">Context Packs</TabsTrigger>
+                <TabsTrigger value="avatar" className="text-purple-600 dark:text-purple-400">My AI Teacher</TabsTrigger>
             </TabsList>
 
             <TabsContent value="classes" className="space-y-4">
@@ -359,6 +363,10 @@ export function TeacherDashboard({ user }: TeacherDashboardProps) {
                         </div>
                     </>
                 )}
+            </TabsContent>
+
+            <TabsContent value="avatar" className="space-y-4">
+                <AITeacherBuilder tier={tier} />
             </TabsContent>
         </Tabs>
     );
