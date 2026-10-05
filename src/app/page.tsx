@@ -79,15 +79,6 @@ export default function LandingPage() {
         </motion.div>
       </motion.section>
 
-      {/* Stats Bar */}
-      <motion.section className="relative z-10 border-t border-white/10 py-10 px-6 md:px-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.8 }}>
-        <div className="flex flex-wrap justify-center md:justify-start gap-12 md:gap-20 text-center md:text-left">
-          {[['10K+', 'Active Students'], ['500K+', 'Questions Answered'], ['30+', 'AI-Powered Tools'], ['99.9%', 'Uptime']].map(([stat, label]) => (
-            <div key={label}><p className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{stat}</p><p className="text-sm text-white/50 mt-1">{label}</p></div>
-          ))}
-        </div>
-      </motion.section>
-
       {/* Features */}
       <section id="features" className="relative z-10 px-6 md:px-12 lg:px-20 py-24 md:py-32">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={stagger}>
