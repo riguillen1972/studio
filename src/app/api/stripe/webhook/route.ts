@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
         const tier = session.metadata?.tier;
 
         if (userId && tier) {
-          // Update the user's tier and store stripe customer ID
+          // Update the user's tier and store stripe customer ID (Standard Subscription Upgrade)
           await supabaseAdmin
             .from('profiles')
             .update({
@@ -49,6 +49,44 @@ export async function POST(request: NextRequest) {
             .eq('id', userId);
 
           console.log(`✅ User ${userId} upgraded to ${tier}`);
+        } else if (userId && session.metadata?.type === 'session_overage') {
+          // It's a one-off payment for an extra AI Teacher Session
+          const currentMonth = new Date().toISOString().slice(0, 7) + '-01'; // YYYY-MM-01
+          
+          // Use Postgres ON CONFLICT to increment the overage sessions
+          const { error } = await supabaseAdmin.rpc('increment_overage_sessions', {
+            p_teacher_id: userId,
+            p_billing_period: currentMonth
+          });
+
+          // Fallback if RPC doesn't exist yet: just insert/update manually
+          if (error) {
+            console.log("RPC increment_overage_sessions not found, performing manual update");
+            const { data: countData } = await supabaseAdmin
+              .from('monthly_session_counts')
+              .select('overage_sessions')
+              .eq('teacher_id', userId)
+              .eq('billing_period', currentMonth)
+              .single();
+            
+            if (countData) {
+              await supabaseAdmin
+                .from('monthly_session_counts')
+                .update({ overage_sessions: (countData.overage_sessions || 0) + 1 })
+                .eq('teacher_id', userId)
+                .eq('billing_period', currentMonth);
+            } else {
+              await supabaseAdmin
+                .from('monthly_session_counts')
+                .insert({
+                  teacher_id: userId,
+                  billing_period: currentMonth,
+                  session_count: 0,
+                  overage_sessions: 1
+                });
+            }
+          }
+          console.log(`✅ User ${userId} purchased an overage session.`);
         }
         break;
       }
