@@ -26,23 +26,23 @@ export default function PrivacyPage() {
             <h3 className="text-lg font-semibold">2. How We Use Your Information</h3>
             <p>Your information is used to: provide and improve the service, track subscription usage, personalize your learning experience, and communicate important service updates.</p>
 
-            <h3 className="text-lg font-semibold">3. AI Processing</h3>
-            <p>Your questions and inputs are sent to third-party AI providers (Google Gemini) for processing. These providers have their own privacy policies regarding data handling. We do not share your personal identity with AI providers.</p>
+            <h3 className="text-lg font-semibold">3. AI Processing & No Training Guarantee</h3>
+            <p>Your questions and inputs are sent to third-party AI providers (Google Gemini, Anthropic Claude) for processing. <strong>We do not use student data to train AI models.</strong> Our agreements with these providers ensure your data is used only for inference and is not retained for model training. We do not share your personal identity with AI providers.</p>
 
-            <h3 className="text-lg font-semibold">4. Data Storage</h3>
-            <p>Your data is stored securely using Supabase (powered by PostgreSQL) with Row Level Security policies ensuring that only you can access your own data.</p>
+            <h3 className="text-lg font-semibold">4. Data Storage & FERPA Compliance</h3>
+            <p>Your data is stored securely using Supabase (powered by PostgreSQL) with Row Level Security policies. <strong>We are compliant with FERPA (Family Educational Rights and Privacy Act).</strong> Schools and parents retain full ownership and control over student educational records. Data can be exported or permanently deleted at any time.</p>
 
             <h3 className="text-lg font-semibold">5. Data Retention</h3>
-            <p>We retain your data for as long as your account is active. You can request deletion of your data at any time by deleting your account from the Profile page.</p>
+            <p>We retain your data for as long as your account is active. You can request deletion of your data at any time by deleting your account from the Profile page. When a school or user requests deletion, all data is permanently purged.</p>
 
             <h3 className="text-lg font-semibold">6. Third-Party Services</h3>
-            <p>We use the following third-party services: Supabase (authentication & database), Google Cloud (Gemini AI), and Vercel (hosting).</p>
+            <p>We use the following secure, SOC2-compliant third-party services: Supabase (authentication & database), Google Cloud (Gemini AI), Anthropic, and Vercel (hosting).</p>
 
-            <h3 className="text-lg font-semibold">7. Children&apos;s Privacy</h3>
-            <p>Study Buddy AI is designed for students of all ages. For users under 13, parental consent is required in accordance with COPPA regulations.</p>
+            <h3 className="text-lg font-semibold">7. Children&apos;s Privacy (COPPA)</h3>
+            <p>Study Buddy AI is designed for students. For users under 13, parental or school consent is required in accordance with COPPA (Children's Online Privacy Protection Act). Schools acting as the agent of the parent may provide consent on behalf of the parent.</p>
 
             <h3 className="text-lg font-semibold">8. Contact</h3>
-            <p>For privacy-related questions, please contact us through the application.</p>
+            <p>For privacy-related questions or data deletion requests, please contact us at privacy@studybuddy.ai.</p>
           </CardContent>
         </Card>
       </div>
