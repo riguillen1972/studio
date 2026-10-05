@@ -315,3 +315,66 @@ CREATE INDEX IF NOT EXISTS idx_study_tool_usage_class_id ON study_tool_usage(cla
 CREATE INDEX IF NOT EXISTS idx_spaced_rep_cards_user_id ON spaced_rep_cards(user_id);
 CREATE INDEX IF NOT EXISTS idx_spaced_rep_cards_class_id ON spaced_rep_cards(class_id);
 CREATE INDEX IF NOT EXISTS idx_xp_logs_user_id ON xp_logs(user_id);
+-- AI Teacher Avatar (Max Tier) Data Models
+-- Run this in Supabase Dashboard > SQL Editor
+
+CREATE TABLE IF NOT EXISTS avatar_configs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  teacher_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  title TEXT,
+  backstory TEXT,
+  greeting_phrase TEXT,
+  sign_off_phrase TEXT,
+  warmth INTEGER CHECK (warmth BETWEEN 1 AND 10),
+  energy INTEGER CHECK (energy BETWEEN 1 AND 10),
+  strictness INTEGER CHECK (strictness BETWEEN 1 AND 10),
+  humor INTEGER CHECK (humor BETWEEN 1 AND 10),
+  teaching_method TEXT,
+  adaptation_style TEXT,
+  pacing TEXT,
+  question_strategy TEXT,
+  catchphrases TEXT[],
+  never_do TEXT,
+  special_instructions TEXT,
+  voice_id TEXT,
+  voice_speed FLOAT DEFAULT 1.0,
+  avatar_appearance JSONB,
+  data_permissions JSONB,
+  phrase_cache_ready BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS session_records (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  teacher_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+  avatar_config_id UUID REFERENCES avatar_configs(id) ON DELETE CASCADE,
+  context_pack_id UUID REFERENCES context_packs(id) ON DELETE CASCADE,
+  started_at TIMESTAMPTZ DEFAULT NOW(),
+  ended_at TIMESTAMPTZ,
+  session_history JSONB,
+  whisper_log JSONB,
+  student_engagement JSONB,
+  report JSONB,
+  cost_breakdown JSONB,
+  status TEXT DEFAULT 'active'
+);
+
+CREATE TABLE IF NOT EXISTS monthly_session_counts (
+  teacher_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  billing_period DATE,
+  session_count INTEGER DEFAULT 0,
+  overage_sessions INTEGER DEFAULT 0,
+  PRIMARY KEY (teacher_id, billing_period)
+);
+
+-- RLS Policies
+ALTER TABLE avatar_configs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE session_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE monthly_session_counts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Teachers can manage their own avatar configs" ON avatar_configs FOR ALL USING (teacher_id = auth.uid());
+CREATE POLICY "Teachers can manage their own session records" ON session_records FOR ALL USING (teacher_id = auth.uid());
+CREATE POLICY "Teachers can view their own session counts" ON monthly_session_counts FOR SELECT USING (teacher_id = auth.uid());
