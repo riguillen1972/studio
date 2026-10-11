@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.128.0",
     "@genkit-ai/anthropic": "^0.3.0",
     "@genkit-ai/google-genai": "^1.19.0",
     "@genkit-ai/next": "^1.19.0",

@@ -37,6 +37,7 @@ interface ContextPackModel {
 }
 
 import { AITeacherBuilder } from "./ai-teacher-builder";
+import { LiveSession } from "./live-session";
 
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     const supabase = createClient();
@@ -199,10 +200,11 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
 
     return (
         <Tabs defaultValue="classes" className="w-full">
-            <TabsList className="mb-4">
+            <TabsList className="mb-4 h-auto flex-wrap">
                 <TabsTrigger value="classes">My Classes</TabsTrigger>
                 <TabsTrigger value="packs">Context Packs</TabsTrigger>
                 <TabsTrigger value="avatar" className="text-purple-600 dark:text-purple-400">My AI Teacher</TabsTrigger>
+                <TabsTrigger value="live" className="text-purple-600 dark:text-purple-400">Live Session</TabsTrigger>
             </TabsList>
 
             <TabsContent value="classes" className="space-y-4">
@@ -419,6 +421,10 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
 
             <TabsContent value="avatar" className="space-y-4">
                 <AITeacherBuilder tier={tier} />
+            </TabsContent>
+
+            <TabsContent value="live" className="space-y-4">
+                <LiveSession tier={tier} classes={classes} contextPacks={contextPacks} />
             </TabsContent>
         </Tabs>
     );

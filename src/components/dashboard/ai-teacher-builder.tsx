@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Bot, Lock, Volume2, Save, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { createClient } from "@/lib/supabase/client";
 
 interface AITeacherBuilderProps {
   tier: string;
@@ -19,6 +20,9 @@ interface AITeacherBuilderProps {
 export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [voiceId, setVoiceId] = useState("voice1");
+  const [guardrails, setGuardrails] = useState({ neverDo: "", special: "" });
   
   const [identity, setIdentity] = useState({
     name: "Ms. Nova",
@@ -41,6 +45,45 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
     pacing: "adaptive",
     questions: "profile"
   });
+
+  // Load the saved AI Teacher, if any
+  useEffect(() => {
+    if (tier !== "max") return;
+    (async () => {
+      try {
+        const { data: { session } } = await createClient().auth.getSession();
+        if (!session) return;
+        const res = await fetch("/api/avatar", { headers: { Authorization: `Bearer ${session.access_token}` } });
+        const { data } = await res.json();
+        if (data) {
+          setIdentity({
+            name: data.name ?? "",
+            title: data.title ?? "",
+            greeting: data.greeting_phrase ?? "",
+            signOff: data.sign_off_phrase ?? "",
+            backstory: data.backstory ?? "",
+          });
+          setPersonality({
+            warmth: [data.warmth ?? 5],
+            energy: [data.energy ?? 5],
+            strictness: [data.strictness ?? 5],
+            humor: [data.humor ?? 5],
+          });
+          setTeachingStyle(prev => ({
+            ...prev,
+            method: data.teaching_method ?? prev.method,
+            adaptation: data.adaptation_style ?? prev.adaptation,
+          }));
+          setVoiceId(data.voice_id ?? "voice1");
+          setGuardrails({ neverDo: data.never_do ?? "", special: data.special_instructions ?? "" });
+        }
+      } catch (e) {
+        console.error("Failed to load AI Teacher:", e);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [tier]);
 
   if (tier !== "max") {
     return (
@@ -81,14 +124,53 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate save
-    await new Promise(r => setTimeout(r, 1500));
-    setIsSaving(false);
-    toast({
-      title: "Avatar Configuration Saved!",
-      description: "Your AI Teacher is ready for live sessions.",
-    });
+    try {
+      const { data: { session } } = await createClient().auth.getSession();
+      if (!session) throw new Error("Your session has expired. Please sign in again.");
+      const res = await fetch("/api/avatar", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          name: identity.name,
+          title: identity.title,
+          backstory: identity.backstory,
+          greeting_phrase: identity.greeting,
+          sign_off_phrase: identity.signOff,
+          warmth: personality.warmth[0],
+          energy: personality.energy[0],
+          strictness: personality.strictness[0],
+          humor: personality.humor[0],
+          teaching_method: teachingStyle.method,
+          adaptation_style: teachingStyle.adaptation,
+          never_do: guardrails.neverDo,
+          special_instructions: guardrails.special,
+          voice_id: voiceId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not save your AI Teacher.");
+      toast({
+        title: "AI Teacher Saved!",
+        description: "Start a live lesson from the Live Session tab.",
+      });
+    } catch (e) {
+      toast({
+        title: "Couldn't save",
+        description: e instanceof Error ? e.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[300px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 pb-12">
@@ -124,9 +206,9 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
             </div>
             
             <div className="space-y-2">
-              <Label>Voice Selection (Flash Models)</Label>
+              <Label>Voice (coming soon)</Label>
               <div className="flex gap-2">
-                <Select defaultValue="voice1">
+                <Select value={voiceId} onValueChange={setVoiceId}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -136,11 +218,11 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
                     <SelectItem value="voice3">Sarah (Professional, Strict)</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline" size="icon" title="Preview Voice">
+                <Button variant="outline" size="icon" title="Voice preview is coming soon" disabled>
                   <Volume2 className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Uses cost-optimized ElevenLabs Flash synthesis.</p>
+              <p className="text-xs text-muted-foreground mt-1">Live lessons are text-only for now. Your voice choice is saved for when voice arrives.</p>
             </div>
 
             <div className="space-y-2">
@@ -206,6 +288,22 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
                 <span>Firm & Demanding</span>
               </div>
             </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <Label>Humor</Label>
+                <span className="text-muted-foreground text-xs">{personality.humor[0]}/10</span>
+              </div>
+              <Slider 
+                min={1} max={10} step={1} 
+                value={personality.humor} 
+                onValueChange={v => setPersonality({...personality, humor: v})} 
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Serious</span>
+                <span>Playful & Funny</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -252,10 +350,39 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
               <Label>Sign-off Phrase (Exact)</Label>
               <Input value={identity.signOff} onChange={e => setIdentity({...identity, signOff: e.target.value})} />
             </div>
-            <div className="p-3 bg-purple-500/10 rounded-md border border-purple-500/20 text-sm flex gap-3 mt-4">
-              <Sparkles className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
-              <p>When you save, the system will pre-generate and cache audio for 200 common conversational phrases using your chosen voice, saving on live streaming costs during sessions.</p>
-            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Classroom Rules</CardTitle>
+          <CardDescription>Tell your AI Teacher what to avoid and anything special about your class.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label>Never do</Label>
+            <Textarea
+              placeholder="e.g. Never use sarcasm. Never compare students to each other."
+              value={guardrails.neverDo}
+              onChange={e => setGuardrails({ ...guardrails, neverDo: e.target.value })}
+              className="h-24"
+              maxLength={1000}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Special instructions</Label>
+            <Textarea
+              placeholder="e.g. Several students are English learners, so use simple words. Use sports examples."
+              value={guardrails.special}
+              onChange={e => setGuardrails({ ...guardrails, special: e.target.value })}
+              className="h-24"
+              maxLength={2000}
+            />
+          </div>
+          <div className="md:col-span-2 p-3 bg-purple-500/10 rounded-md border border-purple-500/20 text-sm flex gap-3">
+            <Sparkles className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
+            <p>Your AI Teacher keeps its answers short in live lessons and never gives away homework or quiz answers.</p>
           </div>
         </CardContent>
       </Card>
