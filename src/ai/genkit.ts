@@ -7,7 +7,7 @@ import type { z } from 'genkit';
 export const gemmaLite    = 'googleai/gemini-2.5-flash-lite';
 export const geminiFlash  = 'googleai/gemini-2.5-flash';
 export const geminiPro    = 'googleai/gemini-2.5-pro';
-export const claudeHaiku  = 'anthropic/claude-haiku-4-5';
+export const claudeHaiku  = 'anthropic/claude-haiku-5-5';
 
 export type SupportedModel = 'free' | 'pro' | 'max' | 'gemma3' | 'flash' | 'haiku';
 

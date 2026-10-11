@@ -47,8 +47,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Claude models are only available on the Max tier." }, { status: 403 });
     }
 
-    // Whitelist allowed Claude models
-    const ALLOWED_MODELS = ["claude-haiku-4-5", "claude-3-5-haiku-20241022"];
+    // Max tier uses Claude Haiku 5.5. Older Haiku IDs (e.g. from older mobile builds) are upgraded to it.
+    const MAX_TIER_MODEL = "claude-haiku-5-5";
+    const ALLOWED_MODELS = [MAX_TIER_MODEL, "claude-haiku-4-5", "claude-3-5-haiku-20241022"];
     if (!ALLOWED_MODELS.some(m => requestedModel.includes(m))) {
       return NextResponse.json({ error: "This Claude model is not allowed." }, { status: 403 });
     }
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
     // Sanitize the request body — only forward safe, whitelisted fields
     const MAX_TOKENS_CAP = 8192;
     const sanitizedBody = {
-      model: requestedModel,
+      model: MAX_TIER_MODEL,
       messages: Array.isArray(body.messages) ? body.messages.slice(0, 50) : [], // cap conversation length
       max_tokens: Math.min(Number(body.max_tokens) || 4096, MAX_TOKENS_CAP),
       ...(typeof body.temperature === 'number' && body.temperature >= 0 && body.temperature <= 2

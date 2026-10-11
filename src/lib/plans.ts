@@ -26,7 +26,7 @@ export const MODEL_LABELS: Record<UsageModel, string> = {
   gemma3: 'Gemini 2.5 Flash-Lite',
   flash: 'Gemini 2.5 Flash',
   pro: 'Gemini 2.5 Pro',
-  haiku: 'Claude Haiku 4.5',
+  haiku: 'Claude Haiku 5.5',
 };
 
 export function defaultModelForTier(tier: SubscriptionTier): UsageModel {
