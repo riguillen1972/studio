@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { stripe, STRIPE_PLANS } from '@/lib/stripe';
+import { stripe, tierForPriceId } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 
@@ -50,9 +50,7 @@ export async function POST() {
     // Determine tier from the subscription's price ID
     const sub = subscriptions.data[0];
     const priceId = sub.items.data[0]?.price?.id;
-    let correctTier = 'free';
-    if (priceId === STRIPE_PLANS.max.priceId) correctTier = 'max';
-    else if (priceId === STRIPE_PLANS.pro.priceId) correctTier = 'pro';
+    const correctTier = tierForPriceId(priceId);
 
     // Update if different
     if (profile.tier !== correctTier) {

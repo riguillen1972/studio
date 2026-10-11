@@ -1,6 +1,7 @@
 // Single source of truth for subscription plans: prices, token limits, and
 // the marketing copy shown on the home page and the Profile page.
-// Keep the prices here in sync with the Stripe prices (STRIPE_PRO_PRICE_ID / STRIPE_MAX_PRICE_ID).
+// Keep the prices here in sync with the Stripe prices
+// (STRIPE_PRO_PRICE_ID / STRIPE_MAX_PRICE_ID / STRIPE_TEACHER_MAX_PRICE_ID).
 
 import toolsData from '@/lib/tools.json';
 
@@ -78,11 +79,20 @@ export const PLANS: Record<SubscriptionTier, PlanInfo> = {
   },
   max: {
     name: 'Max',
-    price: 39.99,
-    priceLabel: '$39.99',
+    price: 24.99,
+    priceLabel: '$24.99',
     tokenSummary: `${formatTokens(premiumTokens('max'))} tokens/month (${formatTokens(TOKEN_LIMITS.max.flash)} Flash + ${formatTokens(TOKEN_LIMITS.max.haiku)} Claude Haiku)`,
   },
 };
+
+// Teachers pay more for Max because it includes the Live AI Teacher Avatar. Same 'max' tier and limits.
+export const TEACHER_MAX: PlanInfo = {
+  ...PLANS.max,
+  price: 39.99,
+  priceLabel: '$39.99',
+};
+
+export const TEACHER_AVATAR_FEATURE = 'Live AI Teacher Avatar (20 sessions/mo)';
 
 // Students in these grades are likely under 13. Under COPPA they may only sign up
 // through a teacher's class code (school consent), never on their own.

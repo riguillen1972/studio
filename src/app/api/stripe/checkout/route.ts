@@ -18,16 +18,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
 
-    const planConfig = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS];
     // Stripe fields on profiles can only be written by the server (see guard_profile_changes)
     const admin = getAdminClient();
 
     // Check if user already has a Stripe customer ID
     const { data: profile } = await admin
       .from('profiles')
-      .select('stripe_customer_id')
+      .select('stripe_customer_id, role')
       .eq('id', user.id)
       .single();
+
+    // Teachers pay the teacher Max price (includes the AI Teacher Avatar)
+    const planConfig = plan === 'max' && profile?.role === 'teacher'
+      ? STRIPE_PLANS.maxTeacher
+      : STRIPE_PLANS[plan as 'pro' | 'max'];
+
+    if (!planConfig.priceId) {
+      console.error(`Missing Stripe price ID for ${plan}${profile?.role === 'teacher' ? ' (teacher)' : ''}`);
+      return NextResponse.json({ error: 'This plan is not available yet. Please contact support.' }, { status: 500 });
+    }
 
     let customerId = profile?.stripe_customer_id;
 

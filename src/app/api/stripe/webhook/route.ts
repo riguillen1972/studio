@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, STRIPE_PLANS } from '@/lib/stripe';
+import { stripe, tierForPriceId } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 
 // Use service role key for admin operations (webhook runs without user context)
@@ -105,9 +105,7 @@ export async function POST(request: NextRequest) {
         if (profile) {
           // Determine tier from the price ID
           const priceId = subscription.items.data[0]?.price?.id;
-          let newTier = 'free';
-          if (priceId === STRIPE_PLANS.max.priceId) newTier = 'max';
-          else if (priceId === STRIPE_PLANS.pro.priceId) newTier = 'pro';
+          const newTier = tierForPriceId(priceId);
 
           // If subscription is active or trialing, set the tier; otherwise downgrade
           if (subscription.status === 'active' || subscription.status === 'trialing') {

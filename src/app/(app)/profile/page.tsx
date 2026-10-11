@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PLANS, AI_TOOL_COUNT, requiresSchoolConsent } from "@/lib/plans";
+import { PLANS, TEACHER_MAX, TEACHER_AVATAR_FEATURE, AI_TOOL_COUNT, requiresSchoolConsent } from "@/lib/plans";
 
 interface TierPlan {
     name: string;
@@ -63,13 +63,12 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
     max: {
         name: PLANS.max.name,
         priceLabel: PLANS.max.priceLabel,
-        description: "Maximum power for teachers & serious students.",
+        description: "Maximum power for serious students.",
         icon: Crown,
         features: [
             "Everything in Pro, plus:",
             "Gemini 2.5 Flash + Claude Haiku 5.5",
             PLANS.max.tokenSummary,
-            "Live AI Teacher Avatar (20 sessions/mo)",
             "AI Mini-App Generator",
             "Create & save custom learning apps",
             "Highest priority support",
@@ -473,7 +472,16 @@ function ProfileContent() {
             </h2>
             <p className="text-muted-foreground mb-6">Choose the plan that fits your learning needs.</p>
             <div className="grid gap-6 md:grid-cols-3">
-            {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][]).map(([planKey, plan]) => {
+            {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][]).map(([planKey, basePlan]) => {
+            // Teachers pay the teacher Max price, which includes the AI Teacher Avatar
+            const plan: TierPlan = planKey === 'max' && isTeacher
+              ? {
+                  ...basePlan,
+                  priceLabel: TEACHER_MAX.priceLabel,
+                  description: "Maximum power for teachers, with a live AI co-teacher.",
+                  features: [...basePlan.features.slice(0, 3), TEACHER_AVATAR_FEATURE, ...basePlan.features.slice(3)],
+                }
+              : basePlan;
             const Icon = plan.icon;
             const isCurrentPlan = tier === planKey;
             const isDowngrade = (planKey === 'free' && tier !== 'free') || (planKey === 'pro' && tier === 'max');
