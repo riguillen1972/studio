@@ -37,9 +37,13 @@ interface ContextPackModel {
 }
 
 import { AITeacherBuilder } from "./ai-teacher-builder";
+import { useAppState } from "@/components/app-state-provider";
 import { LiveSession } from "./live-session";
 
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
+    // The AI Teacher needs Teacher Max; student Max has the same tier but a cheaper price
+    const { billingPlan } = useAppState();
+    const avatarTier = tier === "max" && billingPlan === "max" ? "student-max" : tier;
     const supabase = createClient();
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [contextPacks, setContextPacks] = useState<ContextPackModel[]>([]);
@@ -420,11 +424,11 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             </TabsContent>
 
             <TabsContent value="avatar" className="space-y-4">
-                <AITeacherBuilder tier={tier} />
+                <AITeacherBuilder tier={avatarTier} />
             </TabsContent>
 
             <TabsContent value="live" className="space-y-4">
-                <LiveSession tier={tier} classes={classes} contextPacks={contextPacks} />
+                <LiveSession tier={avatarTier} classes={classes} contextPacks={contextPacks} />
             </TabsContent>
         </Tabs>
     );

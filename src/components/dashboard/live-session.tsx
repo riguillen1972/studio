@@ -172,12 +172,12 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
           </div>
           <CardTitle className="text-2xl">Live AI Teacher Sessions</CardTitle>
           <CardDescription className="text-base max-w-lg mx-auto mt-2">
-            Let your AI Teacher lead a live lesson on your classroom screen, grounded in your own lesson material.
+            Let your AI Teacher lead a live lesson on your classroom screen, grounded in your own lesson material. Included in Teacher Max.
           </CardDescription>
         </CardHeader>
         <CardFooter className="flex justify-center pb-8">
           <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-white rounded-full">
-            <Link href="/profile#plans">Upgrade to Max to Unlock</Link>
+            <Link href="/profile#plans">{tier === "student-max" ? "Switch to Teacher Max to Unlock" : "Upgrade to Max to Unlock"}</Link>
           </Button>
         </CardFooter>
       </Card>

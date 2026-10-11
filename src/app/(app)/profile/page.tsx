@@ -88,6 +88,7 @@ function ProfileContent() {
     haikuTokensRemaining,
     haikuTokenLimit,
     isPremium,
+    billingPlan,
     displayName: profileName,
     role,
     gradeLevel,
@@ -483,7 +484,9 @@ function ProfileContent() {
                 }
               : basePlan;
             const Icon = plan.icon;
-            const isCurrentPlan = tier === planKey;
+            // A teacher on student Max can switch to Teacher Max (same tier, includes the AI Teacher)
+            const canSwitchToTeacherMax = planKey === 'max' && isTeacher && tier === 'max' && billingPlan === 'max';
+            const isCurrentPlan = tier === planKey && !canSwitchToTeacherMax;
             const isDowngrade = (planKey === 'free' && tier !== 'free') || (planKey === 'pro' && tier === 'max');
 
             return (
@@ -560,7 +563,7 @@ function ProfileContent() {
                       ) : (
                         <ExternalLink className="h-4 w-4 mr-2" />
                       )}
-                      Upgrade to {plan.name}
+                      {canSwitchToTeacherMax ? 'Switch to Teacher Max' : `Upgrade to ${plan.name}`}
                     </Button>
                   )}
                 </div>

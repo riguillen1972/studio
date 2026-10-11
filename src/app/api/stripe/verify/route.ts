@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { stripe, tierForPriceId } from '@/lib/stripe';
+import { stripe, tierForPriceId, billingPlanForPriceId } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 
@@ -21,7 +21,7 @@ export async function POST() {
     // Get user's profile to find their Stripe customer ID
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('stripe_customer_id, tier')
+      .select('stripe_customer_id, tier, billing_plan')
       .eq('id', user.id)
       .single();
 
@@ -41,7 +41,7 @@ export async function POST() {
       if (profile.tier !== 'free') {
         await supabaseAdmin
           .from('profiles')
-          .update({ tier: 'free' })
+          .update({ tier: 'free', billing_plan: null })
           .eq('id', user.id);
       }
       return NextResponse.json({ tier: 'free', synced: true });
@@ -51,13 +51,15 @@ export async function POST() {
     const sub = subscriptions.data[0];
     const priceId = sub.items.data[0]?.price?.id;
     const correctTier = tierForPriceId(priceId);
+    const correctPlan = billingPlanForPriceId(priceId);
 
     // Update if different
-    if (profile.tier !== correctTier) {
+    if (profile.tier !== correctTier || profile.billing_plan !== correctPlan) {
       const { error } = await supabaseAdmin
         .from('profiles')
         .update({
           tier: correctTier,
+          billing_plan: correctPlan,
           stripe_subscription_id: sub.id,
         })
         .eq('id', user.id);

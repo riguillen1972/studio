@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, STRIPE_PLANS } from '@/lib/stripe';
+import { stripe, STRIPE_PLANS, tierForPriceId, billingPlanForPriceId } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { getAdminClient } from '@/lib/usage';
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Check if user already has a Stripe customer ID
     const { data: profile } = await admin
       .from('profiles')
-      .select('stripe_customer_id, role')
+      .select('stripe_customer_id, stripe_subscription_id, role')
       .eq('id', user.id)
       .single();
 
@@ -72,6 +72,33 @@ export async function POST(request: NextRequest) {
         .eq('id', user.id);
     }
 
+    // Already subscribed (e.g. Pro -> Max, or a teacher on student Max -> Teacher Max):
+    // change the price on the existing subscription instead of starting a second one.
+    if (profile?.stripe_subscription_id) {
+      try {
+        const existing = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
+        if (existing.status === 'active' || existing.status === 'trialing') {
+          const item = existing.items.data[0];
+          if (item?.price?.id === planConfig.priceId) {
+            return NextResponse.json({ error: 'You are already on this plan.' }, { status: 400 });
+          }
+          await stripe.subscriptions.update(existing.id, {
+            items: [{ id: item.id, price: planConfig.priceId }],
+            proration_behavior: 'create_prorations',
+            metadata: { user_id: user.id, tier: planConfig.tier },
+          });
+          await admin
+            .from('profiles')
+            .update({ tier: tierForPriceId(planConfig.priceId), billing_plan: billingPlanForPriceId(planConfig.priceId) })
+            .eq('id', user.id);
+          return NextResponse.json({ url: `${request.nextUrl.origin}/profile?upgrade=success` });
+        }
+      } catch (e) {
+        // Missing or stale subscription: fall through to a new checkout
+        console.log('Existing subscription not usable, starting a new checkout:', e);
+      }
+    }
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -86,6 +113,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         user_id: user.id,
         tier: planConfig.tier,
+        price_id: planConfig.priceId,
       },
       success_url: `${request.nextUrl.origin}/profile?upgrade=success`,
       cancel_url: `${request.nextUrl.origin}/profile?upgrade=cancelled`,

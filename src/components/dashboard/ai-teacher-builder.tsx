@@ -94,7 +94,7 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
           </div>
           <CardTitle className="text-2xl">AI Teacher Avatar</CardTitle>
           <CardDescription className="text-base max-w-lg mx-auto mt-2">
-            Build a custom, conversational AI avatar that teaches your students in real-time. Complete with voice, personality, and data-driven teaching strategies.
+            Build a custom AI co-teacher that leads live lessons for your students, with its own personality and teaching style. Included in Teacher Max.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center py-6">
@@ -115,7 +115,7 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
         </CardContent>
         <CardFooter className="flex justify-center pb-8">
           <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-white rounded-full">
-            <Link href="/profile#plans">Upgrade to Max to Unlock</Link>
+            <Link href="/profile#plans">{tier === "student-max" ? "Switch to Teacher Max to Unlock" : "Upgrade to Max to Unlock"}</Link>
           </Button>
         </CardFooter>
       </Card>

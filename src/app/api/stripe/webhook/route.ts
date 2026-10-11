@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, tierForPriceId } from '@/lib/stripe';
+import { stripe, tierForPriceId, billingPlanForPriceId } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 
 // Use service role key for admin operations (webhook runs without user context)
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
             .from('profiles')
             .update({
               tier,
+              billing_plan: billingPlanForPriceId(session.metadata?.price_id),
               stripe_customer_id: session.customer as string,
               stripe_subscription_id: session.subscription as string,
             })
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
           if (subscription.status === 'active' || subscription.status === 'trialing') {
             await supabaseAdmin
               .from('profiles')
-              .update({ tier: newTier })
+              .update({ tier: newTier, billing_plan: billingPlanForPriceId(priceId), stripe_subscription_id: subscription.id })
               .eq('id', profile.id);
             console.log(`✅ User ${profile.id} subscription updated to ${newTier}`);
           }
@@ -133,7 +134,7 @@ export async function POST(request: NextRequest) {
         if (profile) {
           await supabaseAdmin
             .from('profiles')
-            .update({ tier: 'free', stripe_subscription_id: null })
+            .update({ tier: 'free', billing_plan: null, stripe_subscription_id: null })
             .eq('id', profile.id);
           console.log(`✅ User ${profile.id} downgraded to free (subscription cancelled)`);
         }

@@ -28,6 +28,9 @@ interface ProfileUpdates {
 interface AppState {
   tier: SubscriptionTier;
   isPremium: boolean;
+  // Which paid price the user is on; 'max' (student) and 'max_teacher' both give the max tier.
+  // null when unknown (no subscription, or not yet synced from Stripe).
+  billingPlan: string | null;
 
   displayName: string | null;
   role: string | null;
@@ -61,6 +64,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const supabase = useMemo(() => createClient(), []);
   const [tier, setTier] = useState<SubscriptionTier>('free');
+  const [billingPlan, setBillingPlan] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [gradeLevel, setGradeLevel] = useState<string | null>(null);
@@ -141,7 +145,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       });
     };
 
+    // Loaded on its own so the profile still loads if the billing_plan column isn't there yet
+    const loadBillingPlan = async () => {
+      const { data } = await supabase.from('profiles').select('billing_plan').eq('id', user.id).maybeSingle();
+      setBillingPlan(data?.billing_plan ?? null);
+    };
+
     loadProfile();
+    loadBillingPlan();
     loadTokenUsage();
     loadClassSettings();
   }, [user, supabase, loadClassSettings]);
@@ -225,6 +236,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value: AppState = {
     tier: isMounted ? tier : 'free',
     isPremium: isMounted ? isPremium : false,
+    billingPlan: isMounted ? billingPlan : null,
     gemma3TokenLimit: limits.gemma3,
     gemma3TokensRemaining: remaining('gemma3'),
     flashTokenLimit: limits.flash,

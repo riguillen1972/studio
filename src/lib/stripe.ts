@@ -29,3 +29,14 @@ export function tierForPriceId(priceId: string | undefined): 'free' | 'pro' | 'm
   if (priceId === STRIPE_PLANS.pro.priceId) return 'pro';
   return 'free';
 }
+
+export type BillingPlan = 'pro' | 'max' | 'max_teacher';
+
+/** Which paid plan a Stripe price is: student Max and teacher Max both give the 'max' tier. */
+export function billingPlanForPriceId(priceId: string | undefined): BillingPlan | null {
+  if (!priceId) return null;
+  if (priceId === STRIPE_PLANS.maxTeacher.priceId) return 'max_teacher';
+  if (priceId === STRIPE_PLANS.max.priceId) return 'max';
+  if (priceId === STRIPE_PLANS.pro.priceId) return 'pro';
+  return null;
+}

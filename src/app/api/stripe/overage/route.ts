@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
+import { hasTeacherMax } from '@/lib/billing';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,11 +19,11 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (profile?.tier !== 'max') {
-      return NextResponse.json({ error: 'Overage sessions are only available on the Max tier.' }, { status: 403 });
+    if (!(await hasTeacherMax(user.id))) {
+      return NextResponse.json({ error: 'Extra sessions are only available on the Teacher Max plan.' }, { status: 403 });
     }
 
-    if (!profile.stripe_customer_id) {
+    if (!profile?.stripe_customer_id) {
       return NextResponse.json({ error: 'No billing account found.' }, { status: 400 });
     }
 
