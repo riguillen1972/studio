@@ -17,6 +17,8 @@ import { runTool, RunToolInput } from "@/ai/flows/run-tool";
 import { webTutor, WebTutorInput } from "@/ai/flows/web-tutor";
 import { SupportedModel } from "@/ai/genkit";
 import { createClient } from "@/lib/supabase/server";
+import { toUsageModel } from "@/lib/plans";
+import { checkUsage, recordUsage, getAdminClient } from "@/lib/usage";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -73,7 +75,21 @@ async function handleAction<T_Input, T_Output>(
       return { success: false as const, error: "Rate limit exceeded. Please wait a moment and try again." };
     }
 
+    // Server-side plan and monthly token limit check
+    const model = toUsageModel((input as { model?: string }).model);
+    if (!model) {
+      return { success: false as const, error: "Unknown AI model." };
+    }
+    const usageError = await checkUsage(auth.userId, model);
+    if (usageError) {
+      return { success: false as const, error: usageError };
+    }
+
     const result = await flow(input);
+
+    const totalTokens = (result as { totalTokens?: number })?.totalTokens ?? 0;
+    await recordUsage(auth.userId, model, totalTokens).catch((e) => console.error("Failed to record token usage:", e));
+
     return { success: true, data: result };
   } catch (error) {
     console.error("AI action failed:", error);
@@ -96,7 +112,25 @@ export async function getExplanationAction(input: GenerateExplanationInput) {
   if (!parsedInput.success) {
     return { success: false as const, error: "Invalid input." };
   }
+  if (parsedInput.data.mode === 'research') {
+    const auth = await requireAuth();
+    if ('userId' in auth && !(await isResearchModeAllowed(auth.userId))) {
+      return { success: false as const, error: "Your teacher has turned off Research Mode for your class." };
+    }
+  }
   return handleAction(parsedInput.data, generateExplanation);
+}
+
+// Research Mode is allowed unless a teacher of one of the student's classes turned it off.
+async function isResearchModeAllowed(userId: string): Promise<boolean> {
+  const { data } = await getAdminClient()
+    .from("enrollments")
+    .select("classes(settings)")
+    .eq("student_id", userId);
+  return !(data ?? []).some((row) => {
+    const cls = Array.isArray(row.classes) ? row.classes[0] : row.classes;
+    return (cls as { settings?: { allow_research_mode?: boolean } } | null)?.settings?.allow_research_mode === false;
+  });
 }
 
 // Schema for getHomeworkHintsAction
@@ -381,6 +415,15 @@ export async function webTutorAction(input: { url: string; question: string; con
     return { success: false as const, error: "Rate limit exceeded. Please wait a moment and try again." };
   }
 
+  const model = toUsageModel(parsedInput.data.model);
+  if (!model) {
+    return { success: false as const, error: "Unknown AI model." };
+  }
+  const usageError = await checkUsage(auth.userId, model);
+  if (usageError) {
+    return { success: false as const, error: usageError };
+  }
+
   try {
     const pageContent = await fetchPageContent(parsedInput.data.url);
     const result = await webTutor({
@@ -390,6 +433,7 @@ export async function webTutorAction(input: { url: string; question: string; con
       conversationHistory: parsedInput.data.conversationHistory,
       model: parsedInput.data.model,
     });
+    await recordUsage(auth.userId, model, result.totalTokens ?? 0).catch((e) => console.error("Failed to record token usage:", e));
     return { success: true as const, data: result };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An error occurred.";

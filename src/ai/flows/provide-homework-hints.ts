@@ -54,6 +54,7 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     Problem: ${input.problem}
     
     Provide a few hints to help the student solve the problem independently. Do not give away the answer.
+    Be accurate about the problem itself. Don't describe how many steps it takes or how hard it is unless you are certain (for example, 3x + 7 = 22 is a two-step equation, not a one-step equation).
     Also, provide general guidance and strategies for solving this type of problem.
     
     Format the hints as a numbered list.

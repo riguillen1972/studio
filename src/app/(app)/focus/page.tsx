@@ -123,7 +123,7 @@ export default function FocusModePage() {
           <Headphones className="w-8 h-8 text-primary" />
           Focus Mode
         </h1>
-        <p className="text-muted-foreground">Boost your productivity with Pomodoro timing and science-backed ambient sounds.</p>
+        <p className="text-muted-foreground">Stay on task with Pomodoro timing and ambient study sounds.</p>
       </div>
 
       <Card className="w-full max-w-lg bg-card/50 backdrop-blur-sm border-primary/20 shadow-xl overflow-hidden">
@@ -186,11 +186,11 @@ export default function FocusModePage() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="text-xs text-primary/80 bg-primary/10 px-3 py-1 rounded-full cursor-help">
-                      Science-backed 16 Hz focus audio
+                      About these focus tracks
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="max-w-xs text-center">These tracks are scientifically processed with 16 Hz beta-range amplitude modulation to enhance concentration and cognitive performance.</p>
+                    <p className="max-w-xs text-center">These tracks use 16 Hz amplitude modulation. Some listeners find this kind of audio helps them focus, but results vary from person to person.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -234,7 +234,7 @@ export default function FocusModePage() {
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-primary">Focus Audio is a Pro feature</p>
-                  <p className="text-xs text-muted-foreground">Upgrade to unlock science-backed study sounds.</p>
+                  <p className="text-xs text-muted-foreground">Upgrade to unlock focus study sounds.</p>
                 </div>
                 <Button asChild variant="default" size="sm" className="mt-1 w-full max-w-[200px] shadow-sm">
                   <Link href="/profile">Upgrade to Pro</Link>

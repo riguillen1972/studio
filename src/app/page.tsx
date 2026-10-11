@@ -5,23 +5,24 @@ import { Bot, Sparkles, BookOpen, Brain, Zap, GraduationCap, Shield, ChevronRigh
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/supabase/auth-provider';
+import { PLANS, AI_TOOL_COUNT } from '@/lib/plans';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
 
 const features = [
-  { icon: Brain, title: 'AI Tutor & Research Mode', desc: 'Get instant explanations with conversational AI, or toggle to Research Mode for direct, factual answers without educational fluff.' },
+  { icon: Brain, title: 'AI Tutor & Research Mode', desc: 'Get instant explanations with conversational AI, or switch to Research Mode for direct, factual answers to research questions. Teachers can turn Research Mode off for their class.' },
   { icon: BookOpen, title: 'Homework Help', desc: 'Scan your homework or type a question — get step-by-step hints, never just answers.' },
-  { icon: Zap, title: '30+ AI Tools', desc: 'Summarizer, quiz generator, flashcards, essay helper, and more — all powered by AI.' },
+  { icon: Zap, title: `${AI_TOOL_COUNT} AI Tools`, desc: 'Summarizer, quiz generator, flashcards, essay helper, and more — all powered by AI.' },
   { icon: GraduationCap, title: 'Career-Optimized', desc: 'AI tailored to your major or career path for the most relevant study experience.' },
   { icon: Shield, title: 'Teacher Dashboard', desc: 'Teachers can monitor students, set AI limits, and manage class codes in real time.' },
   { icon: Sparkles, title: 'Mini-App Generator', desc: 'Describe any learning tool and AI builds it for you instantly — interactive and shareable.' },
 ];
 
 const plans = [
-  { name: 'Free', price: '$0', period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', '250k tokens/month', 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', href: '/login?action=signup&plan=free', highlighted: false },
-  { name: 'Pro', price: '$15', period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', '1.5M tokens/month', 'All 30+ AI Tools', 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', href: '/login?action=signup&plan=pro', highlighted: true },
-  { name: 'Max', price: '$39.99', period: '/month', desc: 'Maximum power for teachers & serious students', features: ['Gemini 2.5 Flash + Claude Haiku 4.5', '4M tokens/month', 'Live AI Teacher Avatar (20 sessions/mo)', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', href: '/login?action=signup&plan=max', highlighted: false },
+  { name: PLANS.free.name, price: PLANS.free.priceLabel, period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', PLANS.free.tokenSummary, 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', href: '/login?action=signup&plan=free', highlighted: false },
+  { name: PLANS.pro.name, price: PLANS.pro.priceLabel, period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', PLANS.pro.tokenSummary, `All ${AI_TOOL_COUNT} AI tools`, 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', href: '/login?action=signup&plan=pro', highlighted: true },
+  { name: PLANS.max.name, price: PLANS.max.priceLabel, period: '/month', desc: 'Maximum power for teachers & serious students', features: ['Gemini 2.5 Flash + Claude Haiku 4.5', PLANS.max.tokenSummary, 'Live AI Teacher Avatar (20 sessions/mo)', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', href: '/login?action=signup&plan=max', highlighted: false },
 ];
 
 export default function LandingPage() {
@@ -137,7 +138,7 @@ export default function LandingPage() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 p-12 md:p-20 text-center overflow-hidden">
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-blue-500/20 to-transparent blur-3xl rounded-full" /></div>
           <motion.h2 variants={fadeUp} className="text-3xl md:text-5xl font-bold max-w-2xl mx-auto mb-4 relative" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Ready to transform your studying?</motion.h2>
-          <motion.p variants={fadeUp} className="text-lg text-white/50 max-w-lg mx-auto mb-8 relative">Join thousands of students using AI to learn faster, study smarter, and achieve more.</motion.p>
+          <motion.p variants={fadeUp} className="text-lg text-white/50 max-w-lg mx-auto mb-8 relative">Use AI to learn faster, study smarter, and achieve more.</motion.p>
           <motion.div variants={fadeUp} className="relative">
             <Link href="/login?action=signup" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#0a0e1a] font-semibold rounded-full hover:shadow-xl hover:shadow-white/10 transition-all text-base">
               Start learning for free <ArrowRight className="h-4 w-4" />

@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  signUp: (email: string, password: string, displayName?: string, extraMetadata?: Record<string, string>) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, displayName?: string, extraMetadata?: Record<string, string>) => Promise<{ error: string | null; needsEmailConfirmation: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signInWithGoogle?: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -41,7 +41,7 @@ export function SupabaseAuthProvider({ children }: { children: React.ReactNode }
   }, [supabase]);
 
   const signUp = useCallback(async (email: string, password: string, displayName?: string, extraMetadata?: Record<string, string>) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -49,7 +49,8 @@ export function SupabaseAuthProvider({ children }: { children: React.ReactNode }
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    return { error: error?.message ?? null };
+    // With "Confirm email" off in Supabase, sign-up returns a session right away.
+    return { error: error?.message ?? null, needsEmailConfirmation: !error && !data.session };
   }, [supabase]);
 
   const signIn = useCallback(async (email: string, password: string) => {

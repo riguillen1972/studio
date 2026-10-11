@@ -6,7 +6,7 @@
       "tools": [
         { "name": "Exam Oracle", "description": "Predicts the questions your next test is most likely to ask.", "input_prompt": "What topic or class is your next test on?" },
         { "name": "Knowledge Gap Scanner", "description": "Finds the topics you have not learned yet, before a test does.", "input_prompt": "What are you studying right now?" },
-        { "name": "MV Study Planner", "description": "Turns a test date into a day-by-day study plan.", "input_prompt": "When is your test and what is it about?" },
+        { "name": "Test Prep Planner", "description": "Turns a test date into a day-by-day study plan.", "input_prompt": "When is your test and what is it about?" },
         { "name": "Smart Summarizer", "description": "Cuts long notes or a chapter down to what matters.", "input_prompt": "Paste your notes or chapter text here..." },
         { "name": "Spaced Repetition Engine", "description": "Brings each card back right before you would forget it.", "input_prompt": "What do you need to memorize?" }
       ]

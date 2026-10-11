@@ -65,6 +65,12 @@ export function AppSidebar() {
       visibleTo: ['all'],
     },
     {
+      href: "/tutor",
+      icon: Bot,
+      label: "AI Tutor",
+      visibleTo: ['teacher'],
+    },
+    {
       href: "/focus",
       icon: Headphones,
       label: "Focus Mode",
@@ -81,7 +87,7 @@ export function AppSidebar() {
       href: "/tools",
       icon: WandSparkles,
       label: "AI Tools",
-      visibleTo: ['student'],
+      visibleTo: ['student', 'teacher'],
     },
     {
       href: "/mini-app-generator",
@@ -101,7 +107,7 @@ export function AppSidebar() {
       href: "/homework",
       icon: BookOpen,
       label: "Homework Help",
-      visibleTo: ['student'],
+      visibleTo: ['student', 'teacher'],
     },
     {
       href: "/scan",
@@ -113,19 +119,19 @@ export function AppSidebar() {
       href: "/summarizer",
       icon: NotebookText,
       label: "Summarizer",
-      visibleTo: ['student'],
+      visibleTo: ['student', 'teacher'],
     },
     {
       href: "/quiz",
       icon: FileQuestion,
       label: "Quiz Generator",
-      visibleTo: ['student'],
+      visibleTo: ['student', 'teacher'],
     },
     {
       href: "/flashcards",
       icon: Layers,
       label: "Flashcards",
-      visibleTo: ['student'],
+      visibleTo: ['student', 'teacher'],
     },
     {
       href: "/progress",

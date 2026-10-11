@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Loader2, Plus, Users, BookOpen, KeyRound, Copy } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -22,6 +23,7 @@ interface ClassModel {
     name: string;
     subject: string | null;
     join_code: string;
+    settings: { allow_research_mode?: boolean } | null;
     created_at: string;
 }
 
@@ -41,6 +43,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     const [classes, setClasses] = useState<ClassModel[]>([]);
     const [contextPacks, setContextPacks] = useState<ContextPackModel[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
 
     // Classes form state
     const [newClassName, setNewClassName] = useState("");
@@ -58,10 +61,14 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     const fetchData = useCallback(async () => {
         if (!user) return;
         setIsLoading(true);
+        setLoadError(null);
         
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) return;
+            if (!session) {
+                setLoadError("Your session has expired. Please sign in again.");
+                return;
+            }
 
             const headers = { 'Authorization': `Bearer ${session.access_token}` };
 
@@ -73,6 +80,8 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             if (classesRes.ok) {
                 const data = await classesRes.json();
                 setClasses(data.data || []);
+            } else {
+                setLoadError("Couldn't load your classes.");
             }
             if (packsRes.ok) {
                 const data = await packsRes.json();
@@ -80,6 +89,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             }
         } catch (error) {
             console.error("Failed to load teacher data:", error);
+            setLoadError("Couldn't load your classes.");
         } finally {
             setIsLoading(false);
         }
@@ -117,6 +127,30 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             console.error("Failed to create class:", error);
         } finally {
             setIsCreatingClass(false);
+        }
+    };
+
+    const handleResearchModeChange = async (classId: string, allowed: boolean) => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        // Optimistic update, rolled back if the request fails
+        const setAllowed = (value: boolean) => setClasses(prev => prev.map(c =>
+            c.id === classId ? { ...c, settings: { ...(c.settings ?? {}), allow_research_mode: value } } : c
+        ));
+        setAllowed(allowed);
+        try {
+            const res = await fetch(`/api/classes/${classId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify({ settings: { allow_research_mode: allowed } })
+            });
+            if (!res.ok) setAllowed(!allowed);
+        } catch (error) {
+            console.error("Failed to update class settings:", error);
+            setAllowed(!allowed);
         }
     };
 
@@ -207,6 +241,13 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                     </CardContent>
                 </Card>
 
+                {loadError && (
+                    <div className="flex items-center justify-between gap-4 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+                        <span>{loadError}</span>
+                        <Button variant="outline" size="sm" onClick={fetchData}>Try again</Button>
+                    </div>
+                )}
+
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {classes.length === 0 ? (
                         <div className="col-span-full py-12 text-center text-muted-foreground border rounded-lg border-dashed">
@@ -234,6 +275,17 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                         >
                                             <Copy className="h-4 w-4" />
                                         </Button>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-3 pt-4">
+                                        <div>
+                                            <Label htmlFor={`research-${cls.id}`} className="text-sm">Allow Research Mode</Label>
+                                            <p className="text-xs text-muted-foreground">When off, students only get guided hints.</p>
+                                        </div>
+                                        <Switch
+                                            id={`research-${cls.id}`}
+                                            checked={cls.settings?.allow_research_mode !== false}
+                                            onCheckedChange={(checked) => handleResearchModeChange(cls.id, checked)}
+                                        />
                                     </div>
                                 </CardContent>
                                 <CardFooter className="text-xs text-muted-foreground">

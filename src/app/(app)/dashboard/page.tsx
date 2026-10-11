@@ -29,9 +29,9 @@ function getRoleGreeting(displayName: string, role: string, careerField?: string
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { tier, role, careerField } = useAppState();
+  const { tier, role, careerField, displayName: profileName } = useAppState();
   
-  const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Student';
+  const displayName = profileName || user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'there';
   const currentRole = role || 'student';
   const { title, subtitle } = getRoleGreeting(displayName, currentRole, careerField);
 

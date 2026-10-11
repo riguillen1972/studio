@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe, STRIPE_PLANS } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/usage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,9 +19,11 @@ export async function POST(request: NextRequest) {
     }
 
     const planConfig = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS];
+    // Stripe fields on profiles can only be written by the server (see guard_profile_changes)
+    const admin = getAdminClient();
 
     // Check if user already has a Stripe customer ID
-    const { data: profile } = await supabase
+    const { data: profile } = await admin
       .from('profiles')
       .select('stripe_customer_id')
       .eq('id', user.id)
@@ -36,7 +39,7 @@ export async function POST(request: NextRequest) {
         // Customer doesn't exist in this mode (e.g. test ID used in live mode) — clear it
         console.log(`Stale customer ID ${customerId} cleared, creating new one.`);
         customerId = null;
-        await supabase
+        await admin
           .from('profiles')
           .update({ stripe_customer_id: null, stripe_subscription_id: null })
           .eq('id', user.id);
@@ -54,7 +57,7 @@ export async function POST(request: NextRequest) {
       customerId = customer.id;
 
       // Store the new customer ID
-      await supabase
+      await admin
         .from('profiles')
         .update({ stripe_customer_id: customerId })
         .eq('id', user.id);

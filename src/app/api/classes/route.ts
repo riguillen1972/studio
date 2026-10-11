@@ -80,8 +80,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check user role from metadata to determine if we fetch taught classes or enrolled classes
-    const role = user.user_metadata?.role;
+    // The role lives in profiles (not the login metadata) and decides taught vs. enrolled classes
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    const role = profile?.role;
 
     if (role === 'teacher') {
       const { data: classes, error } = await supabase

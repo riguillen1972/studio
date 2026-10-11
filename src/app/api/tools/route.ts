@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { runTool } from "@/ai/flows/run-tool";
+import { toUsageModel } from "@/lib/plans";
+import { checkUsage, recordUsage } from "@/lib/usage";
 
 // Import all existing flows to route to them
 import { generateExplanation } from "@/ai/flows/generate-explanation";
@@ -66,8 +68,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    const tier = profile.tier || "free";
-    
     const body = await req.json();
     const { toolId, input, model, classId, contextPackId } = body;
     
@@ -75,42 +75,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing toolId" }, { status: 400 });
     }
 
-    // Token Limits Check
-    const currentMonth = new Date().toISOString().substring(0, 7);
-    const { data: usage } = await supabase
-      .from("token_usage")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("month", currentMonth)
-      .single();
-
-    const maxTokens = tier === 'max' ? 4000000 : tier === 'pro' ? 1500000 : 250000;
-    
-    // Check if they exceed general tokens (for simplicity we check the aggregate or specific model limits)
-    // Here we'll check if the requested model is allowed for their tier and if they have tokens left.
-    const requestedModel = model || "gemini-2.5-flash"; // Default model
-
-    let hasTokens = false;
-    if (requestedModel.includes("haiku")) {
-      if (tier === 'max') {
-        const used = usage?.haiku_used || 0;
-        hasTokens = used < maxTokens;
-      }
-    } else if (requestedModel.includes("pro")) {
-      if (tier === 'max' || tier === 'pro') {
-        const used = usage?.pro_used || 0;
-        hasTokens = used < maxTokens;
-      }
-    } else if (requestedModel.includes("flash-lite")) {
-      const used = usage?.flash_lite_used || 0;
-      hasTokens = used < maxTokens;
-    } else { // default flash
-      const used = usage?.flash_used || 0;
-      hasTokens = used < maxTokens;
+    // Server-side plan and monthly token limit check
+    // The flow runs with input.model, so that is the model to gate and bill.
+    const usageModel = toUsageModel(input?.model ?? model);
+    if (!usageModel) {
+      return NextResponse.json({ error: "Unknown model" }, { status: 400 });
     }
-
-    if (!hasTokens) {
-      return NextResponse.json({ error: "Token limit exceeded or model not allowed for tier" }, { status: 402 });
+    const usageError = await checkUsage(user.id, usageModel);
+    if (usageError) {
+      return NextResponse.json({ error: usageError }, { status: 402 });
     }
 
     // Phase 3 - Fetch context pack if provided and inject into groundingContext
@@ -234,6 +207,9 @@ export async function POST(req: NextRequest) {
       default:
         return NextResponse.json({ error: `Unknown toolId: ${toolId}` }, { status: 404 });
     }
+
+    const totalTokens = (result as { totalTokens?: number } | undefined)?.totalTokens ?? 0;
+    await recordUsage(user.id, usageModel, totalTokens).catch((e) => console.error("Failed to record token usage:", e));
 
     return NextResponse.json(result);
 

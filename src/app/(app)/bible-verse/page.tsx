@@ -9,6 +9,7 @@ import { Loader2, BookOpen, Quote, Sparkles, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { getBibleVerseAction } from "@/lib/actions";
+import { defaultModelForTier } from "@/lib/plans";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "@/components/ad-placeholder";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,8 +33,8 @@ export default function BibleVersePage() {
     const [hasFetched, setHasFetched] = useState(false);
     const [showCrisis, setShowCrisis] = useState(false);
     
-    // Use Gemini 2.5 Flash as default model since all tiers can access it
-    const modelToUse = 'flash';
+    // Use the default model for the user's plan (free users only have Flash-Lite)
+    const modelToUse = defaultModelForTier(tier);
 
     const fetchVerse = async () => {
         const currentTopic = topic.trim();

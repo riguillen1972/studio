@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
 
     const { join_code } = await req.json();
 
-    if (!join_code) {
+    const code = typeof join_code === "string" ? join_code.trim().toUpperCase() : "";
+    if (!code) {
       return NextResponse.json({ error: "Missing join code" }, { status: 400 });
     }
 
@@ -29,8 +30,8 @@ export async function POST(req: NextRequest) {
     const { data: classData, error: classError } = await supabase
       .from("classes")
       .select("id")
-      .eq("join_code", join_code.toUpperCase())
-      .single();
+      .eq("join_code", code)
+      .maybeSingle();
 
     if (classError || !classData) {
       return NextResponse.json({ error: "Invalid join code or class not found" }, { status: 404 });
@@ -44,13 +45,13 @@ export async function POST(req: NextRequest) {
         student_id: user.id
       });
 
-    if (enrollError) {
-      // Check for unique constraint violation (already enrolled)
-      if (enrollError.code === '23505') {
-        return NextResponse.json({ error: "You are already enrolled in this class" }, { status: 400 });
-      }
+    // 23505 = unique violation, i.e. already enrolled, which is fine
+    if (enrollError && enrollError.code !== '23505') {
       return NextResponse.json({ error: "Failed to enroll", details: enrollError.message }, { status: 500 });
     }
+
+    // Keep the profile's class code in sync with the enrollment
+    await supabase.from("profiles").update({ class_code: code }).eq("id", user.id);
 
     return NextResponse.json({ success: true, message: "Successfully enrolled in class" });
 

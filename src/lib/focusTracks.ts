@@ -30,8 +30,8 @@ export const FOCUS_TRACKS: FocusTrack[] = [
   },
   {
     id: 'adhd-mode',
-    label: 'ADHD Mode',
-    description: 'Attention challenges',
+    label: 'Steady Focus',
+    description: 'Staying on task',
     tier: 'pro',
     url: 'https://feccdhxvyfdogfodglpk.supabase.co/storage/v1/object/public/focus-audio/tracks/Kinetic_Alignment_16Hz_focus.wav',
   },

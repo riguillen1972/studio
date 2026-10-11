@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { checkUsage, recordUsage } from "@/lib/usage";
 
 export async function POST(req: NextRequest) {
   try {
@@ -52,6 +53,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "This Claude model is not allowed." }, { status: 403 });
     }
 
+    const usageError = await checkUsage(user.id, "haiku");
+    if (usageError) {
+      return NextResponse.json({ error: usageError }, { status: 402 });
+    }
+
     // Proxy the request to Anthropic
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
     if (!anthropicKey) {
@@ -80,6 +86,11 @@ export async function POST(req: NextRequest) {
     });
 
     const responseData = await anthropicResponse.json();
+
+    if (anthropicResponse.ok && responseData?.usage) {
+      const tokens = (responseData.usage.input_tokens ?? 0) + (responseData.usage.output_tokens ?? 0);
+      await recordUsage(user.id, "haiku", tokens).catch((e) => console.error("Failed to record token usage:", e));
+    }
     
     return NextResponse.json(responseData, {
       status: anthropicResponse.status,

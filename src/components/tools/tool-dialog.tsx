@@ -16,6 +16,7 @@ import { Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import ModelSelector from '@/components/model-selector';
 import { SupportedModel } from '@/ai/genkit';
 import { runToolAction } from '@/lib/actions';
+import { Markdown } from '@/components/markdown';
 
 type Tool = {
   name: string;
@@ -106,7 +107,7 @@ export function ToolDialog({ isOpen, tool, onClose }: ToolDialogProps) {
                         <p className="text-sm">{error}</p>
                     </div>
                 ) : output ? (
-                    <p className="text-sm whitespace-pre-wrap">{output}</p>
+                    <Markdown className="text-sm">{output}</Markdown>
                 ) : (
                     <div className="flex items-center justify-center h-full text-muted-foreground">
                         <p>AI output will appear here.</p>

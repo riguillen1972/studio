@@ -26,7 +26,7 @@ export const focusRecommend = ai.defineFlow(
     - deep-focus (Deep Focus): Best for deep concentration, writing, coding, essays.
     - memory-mode (Memory Mode): Best for reading, memorization, long study sessions.
     - noise-shield (Noise Shield): Best for blocking out distracting environments.
-    - adhd-mode (ADHD Mode): Best for attention challenges.
+    - adhd-mode (Steady Focus): Best for staying on task when it is hard to concentrate.
     - chill-study (Chill Study): Best for low-intensity work, general studying.
     - calm-study (Calm Study): Best for reducing anxiety, light focus.
 

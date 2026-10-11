@@ -72,7 +72,7 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
         </CardContent>
         <CardFooter className="flex justify-center pb-8">
           <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-white rounded-full">
-            <Link href="/pricing">Upgrade to Max to Unlock</Link>
+            <Link href="/profile#plans">Upgrade to Max to Unlock</Link>
           </Button>
         </CardFooter>
       </Card>

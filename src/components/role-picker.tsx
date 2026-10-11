@@ -8,24 +8,49 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Card } from "./ui/card";
+import { requiresSchoolConsent } from "@/lib/plans";
 
 export function RolePicker() {
-  const { updateProfile } = useAppState();
+  const { updateProfile, joinClass } = useAppState();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [gradeLevel, setGradeLevel] = useState<string>("");
   const [careerField, setCareerField] = useState<string>("");
   const [classCode, setClassCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const needsClassCode = selectedRole === "k12" && requiresSchoolConsent("k12", gradeLevel);
 
   const handleContinue = async () => {
     if (!selectedRole) return;
+    setError(null);
+
+    if (selectedRole === "k12" && !gradeLevel) {
+      setError("Please select your grade.");
+      return;
+    }
+    if (needsClassCode && !classCode.trim()) {
+      setError("Students in 7th grade and below need a class code from their teacher.");
+      return;
+    }
+
     setIsLoading(true);
-    await updateProfile({
+    // Join the class first: under-13 students can only be saved once they're in a class
+    if (classCode.trim() && selectedRole !== "teacher") {
+      const { error } = await joinClass(classCode);
+      if (error) {
+        setError(error);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    const { error } = await updateProfile({
       role: selectedRole,
       gradeLevel: selectedRole === "k12" ? gradeLevel : undefined,
       careerField: selectedRole === "college" ? careerField : undefined,
-      classCode: classCode,
     });
+    if (error) setError("Could not save your role. Please try again.");
     setIsLoading(false);
   };
 
@@ -114,17 +139,26 @@ export function RolePicker() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-white">Class Code (Optional)</Label>
+                <Label className="text-white">Class Code {needsClassCode ? "(Required)" : "(Optional)"}</Label>
                 <Input
                   placeholder="e.g. A7X9WQ"
                   value={classCode}
                   onChange={(e) => setClassCode(e.target.value.toUpperCase())}
                   className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 uppercase"
                 />
+                {needsClassCode && (
+                  <p className="text-xs text-gray-400">
+                    Students in 7th grade and below can only join through their teacher&apos;s class, so your school can give permission.
+                  </p>
+                )}
               </div>
             </div>
           )}
         </div>
+
+        {error && (
+          <p className="w-full text-sm text-red-400 bg-red-500/10 p-3 rounded-md">{error}</p>
+        )}
 
         <Button
           className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white"

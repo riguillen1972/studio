@@ -4,11 +4,10 @@ import { Toaster } from "@/components/ui/toaster"
 import { SupabaseAuthProvider } from "@/lib/supabase/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
+// Pinch-to-zoom stays enabled for students with low vision
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export const metadata: Metadata = {

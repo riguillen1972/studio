@@ -30,6 +30,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    // Old links to a standalone pricing page
+    return [{ source: '/pricing', destination: '/profile#plans', permanent: false }];
+  },
   async headers() {
     return [
       {

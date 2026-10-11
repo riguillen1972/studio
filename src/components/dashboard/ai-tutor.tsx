@@ -19,6 +19,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { SupportedModel } from "@/ai/genkit";
+import { Markdown } from "@/components/markdown";
+import { MODEL_LABELS, toUsageModel } from "@/lib/plans";
 
 const formSchema = z.object({
   concept: z.string().min(10, { message: "Please enter a concept or question with at least 10 characters." }),
@@ -33,13 +35,18 @@ interface ConversationTurn {
 
 export default function AITutor({ careerField }: { careerField?: string }) {
   const [isClient, setIsClient] = useState(false);
-  const { tier, hasTokens, consumeTokens } = useAppState();
+  const { tier, hasTokens, consumeTokens, researchModeAllowed } = useAppState();
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>(
     tier === 'max' ? 'haiku' : tier === 'pro' ? 'flash' : 'gemma3'
   );
   const [mode, setMode] = useState<'help' | 'research'>('help');
+
+  // A teacher can turn Research Mode off for their class
+  useEffect(() => {
+    if (!researchModeAllowed) setMode('help');
+  }, [researchModeAllowed]);
   const scrollRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -75,7 +82,8 @@ export default function AITutor({ careerField }: { careerField?: string }) {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${modelToUse === 'gemma3' ? 'Gemma 3 1B' : modelToUse === 'flash' ? 'Gemini 2.5 Flash' : modelToUse === 'pro' ? 'Gemini 2.5 Pro' : 'Claude Haiku 4.5'} model. Please try again next month.` }]);
+        const usageModel = toUsageModel(modelToUse);
+        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${usageModel ? MODEL_LABELS[usageModel] : modelToUse} model. Please try again next month.` }]);
         return;
     }
     setIsLoading(true);
@@ -174,7 +182,9 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                  <div className={`rounded-lg p-3 max-w-[80%] ${
                     turn.role === 'ai' ? 'bg-secondary' : 'bg-primary text-primary-foreground'
                 }`}>
-                    <p className="text-sm whitespace-pre-wrap break-words">{turn.content}</p>
+                    {turn.role === 'ai'
+                      ? <Markdown className="text-sm">{turn.content}</Markdown>
+                      : <p className="text-sm whitespace-pre-wrap break-words">{turn.content}</p>}
                  </div>
                  {turn.role === "user" && (
                      <Avatar className="w-8 h-8">
@@ -221,10 +231,15 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                         onClick={() => setMode('research')}
                         size="sm"
                         className="flex-1"
+                        disabled={!researchModeAllowed}
+                        title={researchModeAllowed ? undefined : "Your teacher has turned off Research Mode"}
                     >
                         Research Mode
                     </Button>
                 </div>
+                {!researchModeAllowed && (
+                    <p className="mt-1 text-xs text-muted-foreground">Your teacher has turned off Research Mode.</p>
+                )}
             </div>
             <div className="flex-1">
                 <Label htmlFor="model-select" className="mb-2 block">AI Model</Label>

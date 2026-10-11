@@ -16,11 +16,11 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createClient } from "@/lib/supabase/client";
+import { PLANS, AI_TOOL_COUNT, requiresSchoolConsent } from "@/lib/plans";
 
 interface TierPlan {
     name: string;
-    price: number;
+    priceLabel: string;
     description: string;
     icon: React.ElementType;
     features: string[];
@@ -30,13 +30,13 @@ interface TierPlan {
 
 const tierPlans: Record<SubscriptionTier, TierPlan> = {
     free: {
-        name: "Free",
-        price: 0,
+        name: PLANS.free.name,
+        priceLabel: PLANS.free.priceLabel,
         description: "Get started with essential AI study tools.",
         icon: Zap,
         features: [
             "Gemini 2.5 Flash-Lite exclusively",
-            "250k tokens/month",
+            PLANS.free.tokenSummary,
             "AI Tutor, Homework Help, Summarizer",
             "Quiz & Flashcard Generator",
             "Bible Verse & Study Buddy",
@@ -45,30 +45,31 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         ],
     },
     pro: {
-        name: "Pro",
-        price: 15,
+        name: PLANS.pro.name,
+        priceLabel: PLANS.pro.priceLabel,
         description: "Unlock full potential with premium models & tools.",
         icon: Sparkles,
         highlighted: true,
         badge: "POPULAR",
         features: [
             "Everything in Free, plus:",
-            "Gemini 2.5 Pro model unlocked",
-            "500k tokens/month (Gemini 2.5 Pro)",
-            "Full AI Tools Library (all tools)",
+            "Gemini 2.5 Flash & Pro models unlocked",
+            PLANS.pro.tokenSummary,
+            `All ${AI_TOOL_COUNT} AI tools`,
             "Ad-free experience",
             "Priority support",
         ],
     },
     max: {
-        name: "Max",
-        price: 25,
-        description: "Maximum power for serious students.",
+        name: PLANS.max.name,
+        priceLabel: PLANS.max.priceLabel,
+        description: "Maximum power for teachers & serious students.",
         icon: Crown,
         features: [
             "Everything in Pro, plus:",
-            "Claude Haiku 4.5 model unlocked",
-            "2M tokens/month (both models)",
+            "Gemini 2.5 Flash + Claude Haiku 4.5",
+            PLANS.max.tokenSummary,
+            "Live AI Teacher Avatar (20 sessions/mo)",
             "AI Mini-App Generator",
             "Create & save custom learning apps",
             "Highest priority support",
@@ -87,43 +88,76 @@ function ProfileContent() {
     proTokenLimit,
     haikuTokensRemaining,
     haikuTokenLimit,
-    isPremium
+    isPremium,
+    displayName: profileName,
+    role,
+    gradeLevel,
+    classCode,
+    updateProfile,
+    joinClass,
   } = useAppState();
   const { user: supabaseUser } = useAuth();
   const { toast } = useToast();
   const searchParams = useSearchParams();
-  const displayName = supabaseUser?.user_metadata?.display_name || supabaseUser?.email?.split('@')[0] || 'Student';
+  const fallbackName = supabaseUser?.user_metadata?.display_name || supabaseUser?.user_metadata?.full_name || supabaseUser?.email?.split('@')[0] || '';
+  const displayName = profileName || fallbackName;
   const displayEmail = supabaseUser?.email || '';
-  const role = supabaseUser?.user_metadata?.role || 'student';
   const isTeacher = role === 'teacher';
   const [isCheckoutLoading, setIsCheckoutLoading] = useState<string | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
   const [isUpdatingRole, setIsUpdatingRole] = useState(false);
-  const [currentRole, setCurrentRole] = useState(role);
-  const supabase = createClient();
+  const [nameInput, setNameInput] = useState(displayName);
+  const [isSavingName, setIsSavingName] = useState(false);
+  const [classCodeInput, setClassCodeInput] = useState("");
+  const [isJoiningClass, setIsJoiningClass] = useState(false);
 
-  const handleRoleChange = async (newRole: string) => {
-    setIsUpdatingRole(true);
-    try {
-      const { error } = await supabase.auth.updateUser({
-        data: { role: newRole }
-      });
-      if (error) throw error;
-      setCurrentRole(newRole);
+  // The profile loads after first render, so sync the name field once it arrives
+  useEffect(() => {
+    setNameInput(displayName);
+  }, [displayName]);
+
+  const handleProfileChange = async (updates: { role?: string; gradeLevel?: string }) => {
+    const newRole = updates.role ?? role;
+    const newGrade = updates.gradeLevel ?? gradeLevel;
+    if (requiresSchoolConsent(newRole, newGrade) && !classCode) {
       toast({
-        title: "Role Updated",
-        description: "Your role has been successfully changed.",
-      });
-      // Optionally reload to apply layout changes
-      window.location.reload();
-    } catch (e) {
-      toast({
-        title: "Error",
-        description: "Could not update role. Please try again.",
+        title: "Class code needed",
+        description: newRole === 'k12' && !newGrade
+          ? "Choose your grade first."
+          : "Students in 7th grade and below need to join a teacher's class first. Enter the class code below.",
         variant: "destructive",
       });
-    } finally {
-      setIsUpdatingRole(false);
+      return;
+    }
+
+    setIsUpdatingRole(true);
+    const { error } = await updateProfile(updates);
+    setIsUpdatingRole(false);
+    toast(error
+      ? { title: "Error", description: "Could not update your profile. Please try again.", variant: "destructive" }
+      : { title: "Profile Updated", description: "Your changes have been saved." });
+  };
+
+  const handleSaveName = async () => {
+    const name = nameInput.trim();
+    if (!name) return;
+    setIsSavingName(true);
+    const { error } = await updateProfile({ displayName: name });
+    setIsSavingName(false);
+    toast(error
+      ? { title: "Error", description: "Could not save your name.", variant: "destructive" }
+      : { title: "Name Saved", description: "Your name has been updated." });
+  };
+
+  const handleJoinClass = async () => {
+    setIsJoiningClass(true);
+    const { error } = await joinClass(classCodeInput);
+    setIsJoiningClass(false);
+    if (error) {
+      toast({ title: "Couldn't join class", description: error, variant: "destructive" });
+    } else {
+      setClassCodeInput("");
+      toast({ title: "Joined class", description: "You're now linked to your teacher's class." });
     }
   };
 
@@ -267,7 +301,16 @@ function ProfileContent() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
-                        <Input id="name" defaultValue={displayName} />
+                        <div className="flex gap-2">
+                            <Input id="name" value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="Your name" />
+                            <Button
+                                variant="outline"
+                                onClick={handleSaveName}
+                                disabled={isSavingName || !nameInput.trim() || nameInput.trim() === displayName}
+                            >
+                                {isSavingName ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+                            </Button>
+                        </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email" className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> Email</Label>
@@ -275,7 +318,7 @@ function ProfileContent() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="role">Your Role</Label>
-                        <Select value={currentRole} onValueChange={handleRoleChange} disabled={isUpdatingRole}>
+                        <Select value={role ?? undefined} onValueChange={(newRole) => handleProfileChange({ role: newRole })} disabled={isUpdatingRole}>
                             <SelectTrigger id="role">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -289,6 +332,41 @@ function ProfileContent() {
                             Changing your role updates the AI's teaching style and features.
                         </p>
                     </div>
+                    {role === 'k12' && (
+                        <div className="space-y-2">
+                            <Label htmlFor="grade">Grade</Label>
+                            <Select value={gradeLevel ?? undefined} onValueChange={(grade) => handleProfileChange({ gradeLevel: grade })} disabled={isUpdatingRole}>
+                                <SelectTrigger id="grade">
+                                    <SelectValue placeholder="Select your grade" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Array.from({ length: 12 }, (_, i) => String(i + 1)).map((g) => (
+                                        <SelectItem key={g} value={g}>Grade {g}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
+                    {!isTeacher && (
+                        <div className="space-y-2">
+                            <Label htmlFor="joinClass">Join a Class</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    id="joinClass"
+                                    placeholder="Class code from your teacher"
+                                    value={classCodeInput}
+                                    onChange={(e) => setClassCodeInput(e.target.value.toUpperCase())}
+                                    className="uppercase"
+                                />
+                                <Button variant="outline" onClick={handleJoinClass} disabled={isJoiningClass || !classCodeInput.trim()}>
+                                    {isJoiningClass ? <Loader2 className="h-4 w-4 animate-spin" /> : "Join"}
+                                </Button>
+                            </div>
+                            {classCode && (
+                                <p className="text-xs text-muted-foreground">Current class code: <span className="font-mono">{classCode}</span></p>
+                            )}
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 
@@ -303,11 +381,9 @@ function ProfileContent() {
                     </Avatar>
                     <h2 className="text-xl font-semibold font-headline">{displayName}</h2>
                     <p className="text-muted-foreground text-sm">{displayEmail}</p>
-                    {!isTeacher && (
                       <Badge className="mt-2" variant={tier === 'max' ? 'default' : tier === 'pro' ? 'secondary' : 'outline'}>
                         {tierPlans[tier].name} Plan
                       </Badge>
-                    )}
                     {isPremium && (
                       <Button 
                         variant="outline" 
@@ -324,7 +400,6 @@ function ProfileContent() {
              </Card>
 
              {/* Monthly Usage */}
-             {!isTeacher && (
                  <Card>
                     <CardHeader>
                         <CardTitle className="font-headline flex items-center gap-2">
@@ -375,14 +450,15 @@ function ProfileContent() {
                          <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
                     </CardContent>
                 </Card>
-             )}
 
             <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Account Settings</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <Button variant="outline" className="w-full">Change Password</Button>
+                    <Button variant="outline" className="w-full" asChild>
+                        <a href="/forgot-password">Change Password</a>
+                    </Button>
                     <Separator/>
                     <Button variant="destructive" className="w-full" onClick={handleDeleteAccount}>Delete Account</Button>
                 </CardContent>
@@ -391,8 +467,7 @@ function ProfileContent() {
       </div>
 
       {/* Pricing Plans */}
-      {!isTeacher && (
-        <div className="mt-8">
+        <div id="plans" className="mt-8 scroll-mt-8">
             <h2 className="text-xl sm:text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
                 <Gem className="text-primary" /> Subscription Plans
             </h2>
@@ -423,7 +498,7 @@ function ProfileContent() {
                   </div>
                   <CardTitle className="font-headline text-xl">{plan.name}</CardTitle>
                   <div className="mt-2">
-                    <span className="text-4xl font-bold">${plan.price}</span>
+                    <span className="text-4xl font-bold">{plan.priceLabel}</span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
                   <CardDescription className="mt-2">{plan.description}</CardDescription>
@@ -486,7 +561,6 @@ function ProfileContent() {
           })}
         </div>
       </div>
-      )}
     </div>
   );
 }

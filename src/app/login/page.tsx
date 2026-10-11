@@ -12,6 +12,7 @@ import { Bot, Loader2, GraduationCap, ArrowLeft, User, Users, BookOpen, ChevronR
 import { ThemeToggle } from '@/components/theme-toggle';
 import { PageTransition } from '@/components/page-transition';
 import { motion, AnimatePresence } from 'framer-motion';
+import { requiresSchoolConsent } from '@/lib/plans';
 
 type UserRole = 'teacher' | 'college' | 'k12';
 
@@ -118,6 +119,29 @@ function LoginContent() {
   const { signIn, signUp, signInWithGoogle } = useAuth();
   const router = useRouter();
 
+  const needsClassCode = selectedRole === 'k12' && requiresSchoolConsent('k12', gradeLevel);
+
+  // After signing in, send paid-plan sign-ups to checkout, everyone else to the dashboard
+  const goToApp = async () => {
+    if (selectedPlan && (selectedPlan === 'pro' || selectedPlan === 'max')) {
+      try {
+        const res = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan: selectedPlan })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+      } catch (e) {
+        console.error('Checkout error:', e);
+      }
+    }
+    router.push('/dashboard');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -129,40 +153,60 @@ function LoginContent() {
       if (error) {
         setError(error);
       } else {
-        if (selectedPlan && (selectedPlan === 'pro' || selectedPlan === 'max')) {
-          try {
-            const res = await fetch('/api/stripe/checkout', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ plan: selectedPlan })
-            });
-            const data = await res.json();
-            if (data.url) {
-              window.location.href = data.url;
-              return;
-            }
-          } catch (e) {
-            console.error('Checkout error:', e);
-          }
-        }
-        router.push('/dashboard');
+        await goToApp();
+        return;
       }
     } else {
       if (!selectedRole) return;
+
+      if (selectedRole === 'k12' && !gradeLevel) {
+        setError('Please select your grade.');
+        setIsLoading(false);
+        return;
+      }
+
+      const code = classCode.trim().toUpperCase();
+      if (needsClassCode && !code) {
+        setError("Students in 7th grade and below need a class code from their teacher to sign up. Ask your teacher for the code, or ask a parent to contact your school.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Students joining a class: make sure the code exists before creating the account
+      if (code && selectedRole !== 'teacher') {
+        try {
+          const res = await fetch(`/api/classes/validate?code=${encodeURIComponent(code)}`);
+          const { valid } = await res.json();
+          if (!valid) {
+            setError("We couldn't find a class with that code. Check the code with your teacher and try again.");
+            setIsLoading(false);
+            return;
+          }
+        } catch {
+          setError('Could not check the class code. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+      }
 
       const metadata: Record<string, string> = {
         role: selectedRole,
       };
       if (selectedRole === 'k12' && gradeLevel) metadata.grade_level = gradeLevel;
       if (selectedRole === 'college' && careerField) metadata.career_field = careerField;
-      if (classCode) metadata.class_code = classCode;
+      // Teachers create classes from their dashboard; only students send a class code
+      if (code && selectedRole !== 'teacher') metadata.class_code = code;
 
-      const { error } = await signUp(email, password, displayName, metadata);
+      const { error, needsEmailConfirmation } = await signUp(email, password, displayName, metadata);
       if (error) {
         setError(error);
-      } else {
+      } else if (needsEmailConfirmation) {
         setSuccessMessage(`Account created! Check your email to confirm, then log in${selectedPlan ? ' to start your trial' : ''}.`);
         setIsLogin(true);
+      } else {
+        // Email confirmation is off, so the account is already signed in
+        await goToApp();
+        return;
       }
     }
 
@@ -420,34 +464,30 @@ function LoginContent() {
 
                       {!isLogin && (selectedRole === 'k12' || selectedRole === 'college') && (
                         <div className="space-y-2">
-                          <Label htmlFor="studentClassCode">Teacher&apos;s Class Password (Optional)</Label>
+                          <Label htmlFor="studentClassCode">
+                            Teacher&apos;s Class Code {needsClassCode ? '(Required)' : '(Optional)'}
+                          </Label>
                           <Input
                             id="studentClassCode"
                             placeholder="Enter the code provided by your teacher"
                             value={classCode}
-                            onChange={(e) => setClassCode(e.target.value)}
+                            onChange={(e) => setClassCode(e.target.value.toUpperCase())}
+                            required={needsClassCode}
                             disabled={isLoading}
+                            className="uppercase"
                           />
                           <p className="text-xs text-muted-foreground">
-                            Link your account to your teacher&apos;s class to get personalized AI assistance.
+                            {needsClassCode
+                              ? 'Students in 7th grade and below can only join through their teacher’s class, so your school can give permission.'
+                              : 'Link your account to your teacher’s class to get personalized AI assistance.'}
                           </p>
                         </div>
                       )}
 
                       {!isLogin && selectedRole === 'teacher' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="classCode">Class Password / Code</Label>
-                          <Input
-                            id="classCode"
-                            placeholder="Create a unique class code (e.g., MATH-2026)"
-                            value={classCode}
-                            onChange={(e) => setClassCode(e.target.value)}
-                            disabled={isLoading}
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            Share this code with your students so they can link to your class. You&apos;ll be able to view their progress, see what they ask the AI, and set usage limits.
-                          </p>
-                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          After you sign up, create a class from your dashboard to get a class code to share with your students.
+                        </p>
                       )}
 
                       {/* Error / success messages */}

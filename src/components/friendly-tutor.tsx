@@ -15,6 +15,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useAppState } from "./app-state-provider";
 import { getFriendlyAdviceAction } from "@/lib/actions";
+import { defaultModelForTier } from "@/lib/plans";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
@@ -41,7 +42,7 @@ export default function FriendlyTutor() {
   }, []);
 
   const { tier, hasTokens, consumeTokens } = useAppState();
-  const modelToUse = 'flash';
+  const modelToUse = defaultModelForTier(tier);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
