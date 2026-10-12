@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
+import { MIN_VOICE_SPEED, MAX_VOICE_SPEED } from "@/lib/elevenlabs";
 
 const TEXT_FIELDS = {
   name: 60,
@@ -65,6 +66,13 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: `${field} must be a whole number from 1 to 10` }, { status: 400 });
     }
     config[field] = value;
+  }
+  if (body.voice_speed !== undefined && body.voice_speed !== null) {
+    const speed = Number(body.voice_speed);
+    if (!Number.isFinite(speed) || speed < MIN_VOICE_SPEED || speed > MAX_VOICE_SPEED) {
+      return NextResponse.json({ error: `voice_speed must be between ${MIN_VOICE_SPEED} and ${MAX_VOICE_SPEED}` }, { status: 400 });
+    }
+    config.voice_speed = Math.round(speed * 100) / 100;
   }
 
   const supabase = getAdminClient();

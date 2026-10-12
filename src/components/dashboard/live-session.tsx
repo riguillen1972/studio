@@ -12,7 +12,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Markdown } from "@/components/markdown";
 import { useToast } from "@/hooks/use-toast";
-import { Bot, Loader2, Lock, Play, Send, Square, Users } from "lucide-react";
+import { Bot, Loader2, Lock, Mic, MicOff, Play, Send, Square, Users, Volume2, VolumeX } from "lucide-react";
+import { useAvatarVoice } from "@/hooks/use-avatar-voice";
+import { useSpeechInput } from "@/hooks/use-speech-input";
 
 interface ClassOption { id: string; name: string }
 interface PackOption { id: string; title: string; class_id: string }
@@ -52,6 +54,10 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
   const [isSending, setIsSending] = useState(false);
   const [isBuying, setIsBuying] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  // Set when a new avatar reply arrives, so it's spoken once (not when resuming a session)
+  const speakNextRef = useRef(false);
+  const voice = useAvatarVoice(session?.id ?? null);
+  const mic = useSpeechInput(setInput);
 
   const api = useCallback(async (path: string, init?: RequestInit) => {
     const { data: { session: auth } } = await createClient().auth.getSession();
@@ -83,6 +89,21 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, isSending]);
 
+  // Speak each new avatar reply aloud
+  const { enabled: voiceOn, speak } = voice;
+  useEffect(() => {
+    if (!speakNextRef.current) return;
+    speakNextRef.current = false;
+    const last = messages[messages.length - 1];
+    if (!voiceOn || last?.role !== "avatar") return;
+    const turn = messages.filter((m) => m.role === "avatar").length - 1;
+    speak(turn, last.text);
+  }, [messages, voiceOn, speak]);
+
+  useEffect(() => {
+    if (mic.error) toast({ title: "Microphone", description: mic.error, variant: "destructive" });
+  }, [mic.error, toast]);
+
   const showError = (e: unknown) =>
     toast({ title: "AI Teacher", description: e instanceof Error ? e.message : "Something went wrong.", variant: "destructive" });
 
@@ -93,6 +114,7 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
         method: "POST",
         body: JSON.stringify({ class_id: classId, context_pack_id: packId === NO_PACK ? null : packId }),
       });
+      speakNextRef.current = true;
       setSession(data.session);
       setMessages(data.messages);
       setUsage(data.usage);
@@ -118,11 +140,14 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
   const sendMessage = async () => {
     const text = input.trim();
     if (!session || !text) return;
+    mic.stop();
+    voice.stop();
     setIsSending(true);
     setMessages((prev) => [...prev, { role: "class", text }]);
     setInput("");
     try {
       const data = await api(`/api/sessions/${session.id}/messages`, { method: "POST", body: JSON.stringify({ text }) });
+      speakNextRef.current = true;
       setMessages((prev) => [...prev, { role: "avatar", text: data.reply }]);
     } catch (e) {
       // Nothing was saved on the server, so put the message back to edit and resend
@@ -136,6 +161,8 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
 
   const endSession = async () => {
     if (!session) return;
+    mic.stop();
+    voice.stop();
     try {
       await api(`/api/sessions/${session.id}/end`, { method: "POST" });
     } catch (e) {
@@ -199,18 +226,55 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
               <CardDescription className="flex items-center gap-1"><Users className="h-3 w-3" /> {session.class_name}</CardDescription>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={endSession} disabled={isSending}>
-            <Square className="mr-2 h-3 w-3" /> End session
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={voice.toggle}
+              title={voice.enabled ? "Turn the AI Teacher's voice off" : "Turn the AI Teacher's voice on"}
+            >
+              {voice.enabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+              <span className="ml-2 hidden sm:inline">{voice.enabled ? "Voice on" : "Voice off"}</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={endSession} disabled={isSending}>
+              <Square className="mr-2 h-3 w-3" /> End session
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 420px)", minHeight: 240 }}>
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === "class" ? "justify-end" : ""}`}>
-              <div className={`rounded-lg p-3 max-w-[85%] ${m.role === "avatar" ? "bg-purple-500/10 text-base" : "bg-primary text-primary-foreground text-sm"}`}>
-                {m.role === "avatar" ? <Markdown>{m.text}</Markdown> : <p className="whitespace-pre-wrap break-words">{m.text}</p>}
-              </div>
-            </div>
-          ))}
+          {(() => {
+            let avatarTurn = -1;
+            return messages.map((m, i) => {
+              if (m.role === "class") {
+                return (
+                  <div key={i} className="flex justify-end">
+                    <div className="rounded-lg p-3 max-w-[85%] bg-primary text-primary-foreground text-sm">
+                      <p className="whitespace-pre-wrap break-words">{m.text}</p>
+                    </div>
+                  </div>
+                );
+              }
+              const turn = ++avatarTurn;
+              const isSpeaking = voice.speakingTurn === turn;
+              return (
+                <div key={i} className="flex items-start gap-2">
+                  <div className="rounded-lg p-3 max-w-[85%] bg-purple-500/10 text-base">
+                    <Markdown>{m.text}</Markdown>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`shrink-0 h-8 w-8 ${voice.blockedTurn === turn ? "animate-pulse text-purple-600" : ""}`}
+                    title={isSpeaking ? "Stop" : "Play this reply"}
+                    onClick={() => (isSpeaking ? voice.stop() : voice.speak(turn, m.text))}
+                  >
+                    {voice.loadingTurn === turn ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : isSpeaking ? <Square className="h-3 w-3" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
+                </div>
+              );
+            });
+          })()}
           {isSending && (
             <div className="flex">
               <div className="rounded-lg p-3 bg-purple-500/10"><Loader2 className="h-5 w-5 animate-spin" /></div>
@@ -222,7 +286,7 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
           <form className="flex w-full items-end gap-2" onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
             <Textarea
               rows={2}
-              placeholder="Type what the class says or asks, e.g. “Maya says plants eat dirt”"
+              placeholder={mic.listening ? "Listening… speak now" : "Type or speak what the class says, e.g. “Maya says plants eat dirt”"}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -231,6 +295,24 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
               maxLength={2000}
               disabled={isSending}
             />
+            {mic.supported && (
+              <Button
+                type="button"
+                variant={mic.listening ? "destructive" : "outline"}
+                onClick={() => {
+                  if (mic.listening) {
+                    mic.stop();
+                  } else {
+                    voice.stop();
+                    mic.start(input);
+                  }
+                }}
+                disabled={isSending}
+                title={mic.listening ? "Stop listening" : "Speak what the class says"}
+              >
+                {mic.listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
+            )}
             <Button type="submit" disabled={isSending || !input.trim()}>
               {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>

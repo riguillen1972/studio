@@ -74,7 +74,8 @@ export interface SessionCost {
   cache_write_tokens: number;
   cache_read_tokens: number;
   output_tokens: number;
-  estimated_usd: number;
+  estimated_usd: number; // Claude only
+  tts_characters?: number; // characters sent to ElevenLabs
 }
 
 export const emptyCost = (): SessionCost => ({
@@ -184,6 +185,7 @@ export function addUsage(cost: SessionCost, usage: Anthropic.Beta.BetaUsage): Se
   const turnUsd =
     (input * PRICE_PER_MTOK.input + write * PRICE_PER_MTOK.cacheWrite + read * PRICE_PER_MTOK.cacheRead + output * PRICE_PER_MTOK.output) / 1_000_000;
   return {
+    ...cost, // keeps fields tracked elsewhere, like tts_characters
     turns: cost.turns + 1,
     input_tokens: cost.input_tokens + input,
     cache_write_tokens: cost.cache_write_tokens + write,

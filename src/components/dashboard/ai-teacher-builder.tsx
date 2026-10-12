@@ -21,7 +21,10 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [voiceId, setVoiceId] = useState("voice1");
+  const [voiceId, setVoiceId] = useState("");
+  const [voiceSpeed, setVoiceSpeed] = useState([1]);
+  const [voices, setVoices] = useState<{ voice_id: string; name: string; labels: Record<string, string>; preview_url: string | null }[]>([]);
+  const [voiceConfigured, setVoiceConfigured] = useState(true);
   const [guardrails, setGuardrails] = useState({ neverDo: "", special: "" });
   
   const [identity, setIdentity] = useState({
@@ -53,7 +56,14 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
       try {
         const { data: { session } } = await createClient().auth.getSession();
         if (!session) return;
-        const res = await fetch("/api/avatar", { headers: { Authorization: `Bearer ${session.access_token}` } });
+        const headers = { Authorization: `Bearer ${session.access_token}` };
+        const [res, voicesRes] = await Promise.all([
+          fetch("/api/avatar", { headers }),
+          fetch("/api/avatar/voices", { headers }),
+        ]);
+        const voiceData = await voicesRes.json().catch(() => ({ configured: false, voices: [] }));
+        setVoiceConfigured(!!voiceData.configured);
+        setVoices(voiceData.voices ?? []);
         const { data } = await res.json();
         if (data) {
           setIdentity({
@@ -74,7 +84,8 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
             method: data.teaching_method ?? prev.method,
             adaptation: data.adaptation_style ?? prev.adaptation,
           }));
-          setVoiceId(data.voice_id ?? "voice1");
+          setVoiceId(data.voice_id ?? "");
+          setVoiceSpeed([data.voice_speed ?? 1]);
           setGuardrails({ neverDo: data.never_do ?? "", special: data.special_instructions ?? "" });
         }
       } catch (e) {
@@ -145,6 +156,7 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
           never_do: guardrails.neverDo,
           special_instructions: guardrails.special,
           voice_id: voiceId,
+          voice_speed: voiceSpeed[0],
         }),
       });
       const data = await res.json();
@@ -206,23 +218,53 @@ export function AITeacherBuilder({ tier }: AITeacherBuilderProps) {
             </div>
             
             <div className="space-y-2">
-              <Label>Voice (coming soon)</Label>
+              <Label>Voice</Label>
               <div className="flex gap-2">
-                <Select value={voiceId} onValueChange={setVoiceId}>
+                <Select value={voiceId} onValueChange={setVoiceId} disabled={!voices.length}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder={voices.length ? "Choose a voice" : "Voices aren't available yet"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="voice1">Rachel (Calm, Warm)</SelectItem>
-                    <SelectItem value="voice2">Drew (Energetic, Coach)</SelectItem>
-                    <SelectItem value="voice3">Sarah (Professional, Strict)</SelectItem>
+                    {voices.map(v => {
+                      const details = [v.labels.gender, v.labels.accent, v.labels.description ?? v.labels.descriptive].filter(Boolean).join(", ");
+                      return (
+                        <SelectItem key={v.voice_id} value={v.voice_id}>
+                          {v.name}{details ? ` (${details})` : ""}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
-                <Button variant="outline" size="icon" title="Voice preview is coming soon" disabled>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  title="Preview voice"
+                  disabled={!voices.find(v => v.voice_id === voiceId)?.preview_url}
+                  onClick={() => {
+                    const url = voices.find(v => v.voice_id === voiceId)?.preview_url;
+                    if (url) new Audio(url).play().catch(() => {});
+                  }}
+                >
                   <Volume2 className="w-4 h-4" />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Live lessons are text-only for now. Your voice choice is saved for when voice arrives.</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {voiceConfigured
+                  ? "Your AI Teacher speaks its replies aloud in live lessons."
+                  : "Voice isn't available yet. Live lessons use your browser's built-in voice until it is."}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <Label>Speaking speed</Label>
+                <span className="text-muted-foreground text-xs">{voiceSpeed[0].toFixed(2)}x</span>
+              </div>
+              <Slider min={0.7} max={1.2} step={0.05} value={voiceSpeed} onValueChange={setVoiceSpeed} />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Slower</span>
+                <span>Faster</span>
+              </div>
             </div>
 
             <div className="space-y-2">
