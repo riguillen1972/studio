@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Users, BookOpen, KeyRound, Copy } from "lucide-react";
+import { Loader2, Plus, Users, BookOpen, KeyRound, Copy, CalendarClock } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
 interface TeacherDashboardProps {
@@ -33,12 +33,15 @@ interface ContextPackModel {
     subject: string | null;
     type: string;
     class_id: string;
+    due_date: string | null;
     created_at: string;
 }
 
 import { AITeacherBuilder } from "./ai-teacher-builder";
+import { dueDateToIso, todayIso } from "@/lib/dates";
 import { useAppState } from "@/components/app-state-provider";
 import { LiveSession } from "./live-session";
+import { WorksheetGenerator } from "./worksheet-generator";
 
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     // The AI Teacher needs Teacher Max; student Max has the same tier but a cheaper price
@@ -61,11 +64,13 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     const [packType, setPackType] = useState("lesson");
     const [packClassId, setPackClassId] = useState("");
     const [packContent, setPackContent] = useState("");
+    const [packDueDate, setPackDueDate] = useState(""); // YYYY-MM-DD from the date picker
     const [isCreatingPack, setIsCreatingPack] = useState(false);
 
     const fetchData = useCallback(async () => {
         if (!user) return;
-        setIsLoading(true);
+        // isLoading starts true, so only the first load shows the full-page spinner;
+        // refreshes after creating things keep the current tab and its state
         setLoadError(null);
         
         try {
@@ -177,7 +182,8 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                     subject: packSubject,
                     type: packType,
                     class_id: packClassId,
-                    content_raw: packContent
+                    content_raw: packContent,
+                    due_date: dueDateToIso(packDueDate)
                 })
             });
 
@@ -185,6 +191,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                 setPackTitle("");
                 setPackSubject("");
                 setPackContent("");
+                setPackDueDate("");
                 await fetchData();
             }
         } catch (error) {
@@ -207,6 +214,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             <TabsList className="mb-4 h-auto flex-wrap">
                 <TabsTrigger value="classes">My Classes</TabsTrigger>
                 <TabsTrigger value="packs">Context Packs</TabsTrigger>
+                <TabsTrigger value="worksheets" className="text-purple-600 dark:text-purple-400">Worksheets</TabsTrigger>
                 <TabsTrigger value="avatar" className="text-purple-600 dark:text-purple-400">My AI Teacher</TabsTrigger>
                 <TabsTrigger value="live" className="text-purple-600 dark:text-purple-400">Live Session</TabsTrigger>
             </TabsList>
@@ -379,6 +387,19 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                     />
                                     <p className="text-xs text-muted-foreground">The AI will parse this text into a structured Context Pack.</p>
                                 </div>
+                                {(packType === "homework" || packType === "quiz") && (
+                                    <div className="grid gap-2 sm:max-w-xs">
+                                        <Label htmlFor="packDueDate">Due date (optional)</Label>
+                                        <Input
+                                            id="packDueDate"
+                                            type="date"
+                                            min={todayIso()}
+                                            value={packDueDate}
+                                            onChange={(e) => setPackDueDate(e.target.value)}
+                                        />
+                                        <p className="text-xs text-muted-foreground">Students see it in My Assignments, sorted by what&apos;s due first.</p>
+                                    </div>
+                                )}
                                 <Button 
                                     onClick={handleCreateContextPack} 
                                     disabled={!packTitle || !packClassId || !packContent || isCreatingPack}
@@ -410,6 +431,12 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                                     <Users className="h-4 w-4" />
                                                     <span>{assignedClass?.name || 'Unknown Class'}</span>
                                                 </div>
+                                                {pack.due_date && (
+                                                    <div className="flex items-center gap-1 text-muted-foreground mt-1">
+                                                        <CalendarClock className="h-4 w-4" />
+                                                        <span>Due {new Date(pack.due_date).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}</span>
+                                                    </div>
+                                                )}
                                             </CardContent>
                                             <CardFooter className="text-xs text-muted-foreground">
                                                 Created {new Date(pack.created_at).toLocaleDateString()}
@@ -421,6 +448,10 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                         </div>
                     </>
                 )}
+            </TabsContent>
+
+            <TabsContent value="worksheets" className="space-y-4">
+                <WorksheetGenerator tier={avatarTier} classes={classes} onSaved={fetchData} />
             </TabsContent>
 
             <TabsContent value="avatar" className="space-y-4">

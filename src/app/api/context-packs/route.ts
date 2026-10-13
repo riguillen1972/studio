@@ -20,19 +20,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { class_id, title, subject, type, content_raw, due_date } = await req.json();
+    const { class_id, title, subject, type, content_raw, due_date, generated } = await req.json();
 
     if (!class_id || !title || !type || !content_raw) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+    if (!["lesson", "homework", "quiz", "rubric"].includes(type)) {
+      return NextResponse.json({ error: "Invalid material type" }, { status: 400 });
+    }
+    if (due_date && Number.isNaN(Date.parse(due_date))) {
+      return NextResponse.json({ error: "Invalid due date" }, { status: 400 });
+    }
 
-    // 1. Run the Genkit Flow to parse the raw text
-    const parsedData = await parseContextPack({
-      rawContent: content_raw,
-      type: type as any
-    });
+    // Only the class's own teacher can add material to it
+    const { data: cls } = await supabase
+      .from("classes")
+      .select("teacher_id")
+      .eq("id", class_id)
+      .maybeSingle();
+    if (!cls || cls.teacher_id !== user.id) {
+      return NextResponse.json({ error: "Class not found" }, { status: 404 });
+    }
 
-    // 2. Save to Supabase
+    // Worksheets from the generator are already structured, with their own answer key.
+    // Everything else goes through the AI parser.
+    let parsed: { content_parsed: string; rubric?: string | null; answer_key?: string | null };
+    if (generated && typeof generated.content_parsed === "string") {
+      parsed = {
+        content_parsed: generated.content_parsed,
+        answer_key: typeof generated.answer_key === "string" ? generated.answer_key : null,
+      };
+    } else {
+      parsed = await parseContextPack({
+        rawContent: content_raw,
+        type: type as any
+      });
+    }
+
     const { data: newPack, error: insertError } = await supabase
       .from("context_packs")
       .insert({
@@ -42,9 +66,9 @@ export async function POST(req: NextRequest) {
         subject,
         type,
         content_raw,
-        content_parsed: parsedData.content_parsed,
-        rubric: parsedData.rubric,
-        answer_key: parsedData.answer_key,
+        content_parsed: parsed.content_parsed,
+        rubric: parsed.rubric ?? null,
+        answer_key: parsed.answer_key ?? null,
         due_date: due_date || null
       })
       .select("*")
