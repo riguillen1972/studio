@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Play, Pause, RotateCcw, Volume2, Headphones, Lock, Brain, BookOpen, Shield, Zap, Coffee, Leaf } from "lucide-react";
-import { useAuth } from "@/lib/supabase/auth-provider";
-import { createClient } from "@/lib/supabase/client";
 import { FOCUS_TRACKS, FocusTrack } from "@/lib/focusTracks";
-import { useFocusAudio } from "@/hooks/useFocusAudio";
+import { useFocus, formatFocusTime } from "@/components/focus-provider";
 import { useAppState } from "@/components/app-state-provider";
 import Link from "next/link";
 import {
@@ -19,75 +16,12 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function FocusModePage() {
-  const { user } = useAuth();
-  const supabase = createClient();
   const { tier } = useAppState();
-  
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 mins
-  const [isActive, setIsActive] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
-  
-  const { currentTrack, setCurrentTrack, isPlaying, volume, setVolume, toggle, play, pause } = useFocusAudio();
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (isActive && timeLeft === 0) {
-      // Timer finished!
-      setIsActive(false);
-      pause();
-      
-      // Log session to supabase if it was a focus session
-      if (!isBreak && user && currentTrack) {
-        supabase.from('focus_sessions').insert({
-          user_id: user.id,
-          sound_id: currentTrack.id,
-          duration_minutes: 25,
-          completed: true
-        }).then(() => console.log("Session saved."));
-      }
-
-      // Switch mode
-      if (isBreak) {
-        setIsBreak(false);
-        setTimeLeft(25 * 60);
-      } else {
-        setIsBreak(true);
-        setTimeLeft(5 * 60);
-      }
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isActive, timeLeft, isBreak, user, currentTrack, supabase, pause]);
-
-  const toggleTimer = () => {
-    const nextActive = !isActive;
-    setIsActive(nextActive);
-    
-    if (nextActive && !isBreak && currentTrack) {
-      play();
-    } else {
-      pause();
-    }
-  };
-
-  const resetTimer = () => {
-    setIsActive(false);
-    pause();
-    setTimeLeft(isBreak ? 5 * 60 : 25 * 60);
-  };
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
+  const {
+    mode, timeLeft, isActive, currentTrack, volume, error,
+    toggleTimer, resetTimer, setMode, selectTrack, setVolume,
+  } = useFocus();
+  const isBreak = mode === "break";
 
   const getTrackIcon = (id: string) => {
     switch (id) {
@@ -102,18 +36,8 @@ export default function FocusModePage() {
   };
 
   const handleTrackSelect = (track: FocusTrack) => {
-    if (tier === 'free') {
-      return;
-    }
-    setCurrentTrack(track);
-    
-    // If the timer is actively running in focus mode, start playing the new track immediately
-    if (isActive && !isBreak) {
-      // Small timeout to allow useFocusAudio's useEffect to initialize the audio element
-      setTimeout(() => {
-        play();
-      }, 50);
-    }
+    if (tier === 'free') return;
+    selectTrack(track);
   };
 
   return (
@@ -123,7 +47,7 @@ export default function FocusModePage() {
           <Headphones className="w-8 h-8 text-primary" />
           Focus Mode
         </h1>
-        <p className="text-muted-foreground">Stay on task with Pomodoro timing and ambient study sounds.</p>
+        <p className="text-muted-foreground">Stay on task with Pomodoro timing and ambient study sounds. Keep using the app while it plays.</p>
       </div>
 
       <Card className="w-full max-w-lg bg-card/50 backdrop-blur-sm border-primary/20 shadow-xl overflow-hidden">
@@ -132,24 +56,14 @@ export default function FocusModePage() {
             <Button 
               variant={!isBreak ? "default" : "outline"} 
               size="sm"
-              onClick={() => {
-                setIsBreak(false);
-                setIsActive(false);
-                pause();
-                setTimeLeft(25 * 60);
-              }}
+              onClick={() => setMode("focus")}
             >
               Focus (25m)
             </Button>
             <Button 
               variant={isBreak ? "default" : "outline"} 
               size="sm"
-              onClick={() => {
-                setIsBreak(true);
-                setIsActive(false);
-                pause();
-                setTimeLeft(5 * 60);
-              }}
+              onClick={() => setMode("break")}
             >
               Break (5m)
             </Button>
@@ -158,7 +72,7 @@ export default function FocusModePage() {
         
         <CardContent className="flex flex-col items-center space-y-8 pt-8 pb-10">
           <div className="text-[6rem] font-mono font-bold tracking-tighter text-foreground tabular-nums leading-none">
-            {formatTime(timeLeft)}
+            {formatFocusTime(timeLeft)}
           </div>
           
           <div className="flex gap-4">
@@ -178,6 +92,8 @@ export default function FocusModePage() {
               <RotateCcw className="w-6 h-6" />
             </Button>
           </div>
+
+          {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
           <div className="w-full space-y-4 pt-6 border-t mt-6">
             <div className="flex flex-col items-center gap-2 mb-4">

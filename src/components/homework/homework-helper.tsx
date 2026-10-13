@@ -1,7 +1,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,7 +43,10 @@ export default function HomeworkHelper() {
   const [result, setResult] = useState<HintsResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { tier, hasTokens, consumeTokens } = useAppState();
+  const { tier, hasTokens, consumeTokens, role, gradeLevel } = useAppState();
+  const searchParams = useSearchParams();
+  const assignmentId = searchParams.get("assignment");
+  const [assignmentTitle, setAssignmentTitle] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
   const modelToUse = selectedModel;
 
@@ -53,6 +58,31 @@ export default function HomeworkHelper() {
       gradeLevel: "",
     },
   });
+
+  // Opened from My Assignments: fill in the assignment, subject and the student's grade level
+  useEffect(() => {
+    const grade = parseInt(gradeLevel ?? "", 10);
+    const level = role === "college" ? "University"
+      : grade >= 9 ? "High School" : grade >= 6 ? "Middle School" : grade >= 1 ? "Elementary" : "";
+    if (level && !form.getValues("gradeLevel")) form.setValue("gradeLevel", level);
+  }, [role, gradeLevel, form]);
+
+  useEffect(() => {
+    if (!assignmentId) return;
+    (async () => {
+      const { data: { session } } = await createClient().auth.getSession();
+      if (!session) return;
+      const res = await fetch(`/api/assignments?id=${encodeURIComponent(assignmentId)}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const assignment = (await res.json().catch(() => ({}))).data?.[0];
+      if (!assignment) return;
+      setAssignmentTitle(assignment.title);
+      if (assignment.content_parsed) form.setValue("problem", assignment.content_parsed);
+      const subject = subjects.find((s) => s.toLowerCase() === (assignment.subject ?? "").toLowerCase());
+      if (subject) form.setValue("subject", subject);
+    })();
+  }, [assignmentId, form]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
@@ -85,6 +115,11 @@ export default function HomeworkHelper() {
         </CardHeader>
         <CardContent>
           {tier === 'free' && <AdPlaceholder className="mb-4" />}
+          {assignmentTitle && (
+            <p className="mb-4 rounded-md bg-primary/10 p-3 text-sm">
+              Working on your assignment: <span className="font-medium">{assignmentTitle}</span>. Edit the text to focus on the part you&apos;re stuck on.
+            </p>
+          )}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -112,7 +147,7 @@ export default function HomeworkHelper() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Subject</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={isLoading}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a subject" />
@@ -134,7 +169,7 @@ export default function HomeworkHelper() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Grade Level</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={isLoading}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a grade level" />

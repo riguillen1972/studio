@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import HomeworkHelper from "@/components/homework/homework-helper";
 
 export default function HomeworkPage() {
@@ -11,7 +12,9 @@ export default function HomeworkPage() {
           Stuck on a problem? Describe it below to get helpful hints.
         </p>
       </header>
-      <HomeworkHelper />
+      <Suspense>
+        <HomeworkHelper />
+      </Suspense>
     </div>
   );
 }
