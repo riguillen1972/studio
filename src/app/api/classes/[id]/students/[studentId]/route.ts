@@ -18,11 +18,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Student not found in this class" }, { status: 404 });
     }
 
-    const [{ data: profile }, { data: chats }, { data: apps }, { data: submissions }] = await Promise.all([
-      supabase.from("profiles").select("display_name, grade_level, tier").eq("id", studentId).maybeSingle(),
-      supabase.from("ai_interactions").select("id, tool, prompt, response, created_at")
+    // College students' chats and apps are private; their teacher only sees turned-in work
+    const { data: profile } = await supabase.from("profiles").select("display_name, grade_level, tier, role").eq("id", studentId).maybeSingle();
+    const isPrivate = profile?.role === "college";
+    const none = Promise.resolve({ data: [] });
+
+    const [{ data: chats }, { data: apps }, { data: submissions }] = await Promise.all([
+      isPrivate ? none : supabase.from("ai_interactions").select("id, tool, prompt, response, created_at")
         .eq("user_id", studentId).order("created_at", { ascending: false }).limit(100),
-      supabase.from("saved_apps").select("id, name, description, conversation, created_at")
+      isPrivate ? none : supabase.from("saved_apps").select("id, name, description, conversation, created_at")
         .eq("user_id", studentId).order("created_at", { ascending: false }).limit(50),
       supabase.from("assignment_submissions")
         .select("id, context_pack_id, answers, status, score, ai_feedback, teacher_feedback, graded_by, submitted_at, context_packs(title, type)")
@@ -35,6 +39,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         name: profile?.display_name || "Student",
         grade_level: profile?.grade_level ?? null,
         tier: profile?.tier ?? "free",
+        role: profile?.role ?? null,
+        private: isPrivate,
       },
       chats: chats ?? [],
       apps: apps ?? [],

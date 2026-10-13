@@ -365,7 +365,11 @@ function ProfileContent() {
                             {classCode && (
                                 <p className="text-xs text-muted-foreground">Current class code: <span className="font-mono">{classCode}</span></p>
                             )}
-                            <p className="text-xs text-muted-foreground">Your teacher can see what you ask the AI, the apps you save, and the work you turn in.</p>
+                            <p className="text-xs text-muted-foreground">
+                                {role === 'college'
+                                    ? "Your teacher can see work you turn in. Your AI chats and apps stay private."
+                                    : "Your teacher can see what you ask the AI, the apps you save, and the work you turn in."}
+                            </p>
                         </div>
                     )}
                 </CardContent>

@@ -107,7 +107,7 @@ export function RolePicker() {
                   onChange={(e) => setClassCode(e.target.value.toUpperCase())}
                   className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 uppercase"
                 />
-                <p className="text-xs text-gray-500">Your teacher can see what you ask the AI and the work you turn in.</p>
+                <p className="text-xs text-gray-500">Your teacher can see work you turn in. Your AI chats and apps stay private.</p>
               </div>
             </div>
           )}

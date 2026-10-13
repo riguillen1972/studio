@@ -21,8 +21,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
     const [{ data: profiles }, { data: activity }, { data: packs }, { data: submissions }] = await Promise.all([
       studentIds.length
-        ? supabase.from("profiles").select("id, display_name, grade_level, tier").in("id", studentIds)
-        : Promise.resolve({ data: [] as { id: string; display_name: string | null; grade_level: string | null; tier: string | null }[] }),
+        ? supabase.from("profiles").select("id, display_name, grade_level, tier, role").in("id", studentIds)
+        : Promise.resolve({ data: [] as { id: string; display_name: string | null; grade_level: string | null; tier: string | null; role: string | null }[] }),
       studentIds.length
         ? supabase.from("ai_interactions").select("user_id, created_at").in("user_id", studentIds).gte("created_at", weekAgo).limit(5000)
         : Promise.resolve({ data: [] as { user_id: string; created_at: string }[] }),
@@ -39,15 +39,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       activityByStudent.set(a.user_id, entry);
     }
 
+    // College students' AI activity is private
     const students = (profiles ?? [])
-      .map((p) => ({
-        id: p.id,
-        name: p.display_name || "Student",
-        grade_level: p.grade_level,
-        tier: p.tier ?? "free",
-        ai_requests_this_week: activityByStudent.get(p.id)?.count ?? 0,
-        last_active: activityByStudent.get(p.id)?.last ?? null,
-      }))
+      .map((p) => {
+        const isPrivate = p.role === "college";
+        return {
+          id: p.id,
+          name: p.display_name || "Student",
+          grade_level: p.grade_level,
+          tier: p.tier ?? "free",
+          private: isPrivate,
+          ai_requests_this_week: isPrivate ? null : activityByStudent.get(p.id)?.count ?? 0,
+          last_active: isPrivate ? null : activityByStudent.get(p.id)?.last ?? null,
+        };
+      })
       .sort((a, b) => a.name.localeCompare(b.name));
 
     return NextResponse.json({ students, assignments: packs ?? [], submissions: submissions ?? [] });

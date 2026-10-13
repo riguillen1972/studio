@@ -22,14 +22,15 @@ interface StudentRow {
   name: string;
   grade_level: string | null;
   tier: string;
-  ai_requests_this_week: number;
+  private: boolean;
+  ai_requests_this_week: number | null;
   last_active: string | null;
 }
 interface AssignmentCol { id: string; title: string; type: string; due_date: string | null }
 interface SubmissionCell { id: string; context_pack_id: string; student_id: string; status: string; score: number | null; graded_by: string | null }
 
 interface StudentDetail {
-  student: { id: string; name: string; grade_level: string | null; tier: string };
+  student: { id: string; name: string; grade_level: string | null; tier: string; private: boolean };
   chats: { id: string; tool: string; prompt: string | null; response: string | null; created_at: string }[];
   apps: { id: string; name: string; description: string | null; conversation: { role: string; content: string }[] | null; created_at: string }[];
   submissions: {
@@ -174,9 +175,9 @@ export function StudentsPanel({ classes }: { classes: ClassOption[] }) {
                 {students.map((s) => (
                   <tr key={s.id} className="border-b last:border-0 hover:bg-muted/50 cursor-pointer" onClick={() => openStudent(s.id)}>
                     <td className="py-2 pr-4 font-medium text-primary">{s.name}</td>
-                    <td className="py-2 pr-4">{s.grade_level ?? "—"}</td>
+                    <td className="py-2 pr-4">{s.private ? "College" : s.grade_level ?? "—"}</td>
                     <td className="py-2 pr-4"><Badge variant={s.tier === "max" ? "default" : "outline"} className="capitalize">{s.tier}</Badge></td>
-                    <td className="py-2 pr-4">{s.ai_requests_this_week}</td>
+                    <td className="py-2 pr-4">{s.private ? <span className="text-muted-foreground">Private</span> : s.ai_requests_this_week}</td>
                     <td className="py-2 pr-4 text-muted-foreground">{s.last_active ? when(s.last_active) : "—"}</td>
                   </tr>
                 ))}
@@ -237,10 +238,15 @@ export function StudentsPanel({ classes }: { classes: ClassOption[] }) {
                   {[detail.student.grade_level ? `Grade ${detail.student.grade_level}` : null, `${detail.student.tier} plan`].filter(Boolean).join(" · ")}
                 </DialogDescription>
               </DialogHeader>
-              <Tabs defaultValue="chats" className="flex-1 flex flex-col min-h-0">
+              <Tabs key={detail.student.id} defaultValue={detail.student.private ? "work" : "chats"} className="flex-1 flex flex-col min-h-0">
+                {detail.student.private && (
+                  <p className="mb-2 rounded-md bg-muted p-3 text-sm text-muted-foreground">
+                    College students&apos; AI chats and apps are private. You can see and grade the work they turn in.
+                  </p>
+                )}
                 <TabsList className="h-auto flex-wrap">
-                  <TabsTrigger value="chats">AI chats ({detail.chats.length})</TabsTrigger>
-                  <TabsTrigger value="apps">Apps ({detail.apps.length})</TabsTrigger>
+                  {!detail.student.private && <TabsTrigger value="chats">AI chats ({detail.chats.length})</TabsTrigger>}
+                  {!detail.student.private && <TabsTrigger value="apps">Apps ({detail.apps.length})</TabsTrigger>}
                   <TabsTrigger value="work">Work ({detail.submissions.length})</TabsTrigger>
                 </TabsList>
 

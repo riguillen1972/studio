@@ -1,5 +1,6 @@
-// Server-only: records students' AI requests so their teacher can see them.
+// Server-only: records K-12 students' AI requests so their teacher can see them.
 // Only logged while the student is enrolled in a class; students are told about this when they join.
+// College students are never logged: their teachers only see work they turn in.
 
 import { getAdminClient } from "@/lib/usage";
 
@@ -36,11 +37,11 @@ function responseFrom(result: Record<string, unknown>): string {
 export async function logInteraction(userId: string, tool: string, input: unknown, result: unknown, model?: string) {
   try {
     const supabase = getAdminClient();
-    const { count } = await supabase
-      .from("enrollments")
-      .select("id", { count: "exact", head: true })
-      .eq("student_id", userId);
-    if (!count) return;
+    const [{ count }, { data: profile }] = await Promise.all([
+      supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("student_id", userId),
+      supabase.from("profiles").select("role").eq("id", userId).maybeSingle(),
+    ]);
+    if (!count || profile?.role === "college") return;
 
     await supabase.from("ai_interactions").insert({
       user_id: userId,
