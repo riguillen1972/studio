@@ -29,6 +29,8 @@ export default function PrivacyPage() {
             <h3 className="text-lg font-semibold">3. AI Processing & No Training Guarantee</h3>
             <p>Your questions and inputs are sent to third-party AI providers (Google Gemini, Anthropic Claude) for processing. <strong>We do not use student data to train AI models.</strong> Our agreements with these providers ensure your data is used only for inference and is not retained for model training. We do not share your personal identity with AI providers.</p>
 
+            <p><strong>What teachers can see:</strong> when a student joins a teacher&apos;s class, that teacher can see the questions the student asks the AI tools and the AI&apos;s answers while they are in the class, the apps the student saves in the App Generator, and the work the student turns in, including grades and feedback (which may be produced by AI and can be changed by the teacher).</p>
+
             <h3 className="text-lg font-semibold">4. Data Storage & FERPA Compliance</h3>
             <p>Your data is stored securely using Supabase (powered by PostgreSQL) with Row Level Security policies. <strong>We are compliant with FERPA (Family Educational Rights and Privacy Act).</strong> Schools and parents retain full ownership and control over student educational records. Data can be exported or permanently deleted at any time.</p>
 

@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { runTool } from "@/ai/flows/run-tool";
 import { toUsageModel } from "@/lib/plans";
 import { checkUsage, recordUsage } from "@/lib/usage";
+import { logInteraction } from "@/lib/activity";
 
 // Import all existing flows to route to them
 import { generateExplanation } from "@/ai/flows/generate-explanation";
@@ -209,7 +210,10 @@ export async function POST(req: NextRequest) {
     }
 
     const totalTokens = (result as { totalTokens?: number } | undefined)?.totalTokens ?? 0;
-    await recordUsage(user.id, usageModel, totalTokens).catch((e) => console.error("Failed to record token usage:", e));
+    await Promise.all([
+      recordUsage(user.id, usageModel, totalTokens).catch((e) => console.error("Failed to record token usage:", e)),
+      logInteraction(user.id, toolId, input, result, usageModel),
+    ]);
 
     return NextResponse.json(result);
 

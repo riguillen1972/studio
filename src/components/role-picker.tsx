@@ -107,6 +107,7 @@ export function RolePicker() {
                   onChange={(e) => setClassCode(e.target.value.toUpperCase())}
                   className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 uppercase"
                 />
+                <p className="text-xs text-gray-500">Your teacher can see what you ask the AI and the work you turn in.</p>
               </div>
             </div>
           )}
@@ -151,6 +152,7 @@ export function RolePicker() {
                     Students in 7th grade and below can only join through their teacher&apos;s class, so your school can give permission.
                   </p>
                 )}
+                <p className="text-xs text-gray-500">Your teacher can see what you ask the AI and the work you turn in.</p>
               </div>
             </div>
           )}

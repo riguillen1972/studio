@@ -49,6 +49,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/lib/supabase/auth-provider";
 
 
 const generationFormSchema = z.object({
@@ -109,6 +111,7 @@ export default function MiniAppGeneratorPage() {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [saveAppName, setSaveAppName] = useState('');
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const modelToUse = selectedModel;
 
@@ -129,16 +132,50 @@ export default function MiniAppGeneratorPage() {
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
+  // Saved apps live in the database (saved_apps) so they follow the student across devices
+  // and their teacher can see them. Apps saved in this browser before are moved over once.
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem('savedMiniApps');
-      const apps = item ? JSON.parse(item) : [];
-      setSavedApps(apps);
-    } catch (error) {
-      console.error("Failed to load saved apps from localStorage", error);
-      setSavedApps([]);
-    }
-  }, []);
+    if (!user) return;
+    const supabase = createClient();
+    (async () => {
+      try {
+        const local = window.localStorage.getItem('savedMiniApps');
+        const localApps: SavedApp[] = local ? JSON.parse(local) : [];
+        if (localApps.length) {
+          const { error } = await supabase.from('saved_apps').insert(localApps.map(a => ({
+            user_id: user.id,
+            name: a.name,
+            description: a.appDescription,
+            conversation: a.conversation,
+            model: a.model,
+            allow_llm: a.allowLLM,
+          })));
+          if (!error) window.localStorage.removeItem('savedMiniApps');
+        }
+      } catch (e) {
+        console.error("Failed to move saved apps from this browser", e);
+      }
+
+      const { data, error } = await supabase
+        .from('saved_apps')
+        .select('id, name, description, conversation, model, allow_llm, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+      if (error) {
+        console.error("Failed to load saved apps", error);
+        return;
+      }
+      setSavedApps((data ?? []).map(row => ({
+        id: row.id,
+        name: row.name,
+        appDescription: row.description ?? '',
+        conversation: (row.conversation ?? []) as ConversationTurn[],
+        model: (row.model ?? 'haiku') as SupportedModel,
+        allowLLM: !!row.allow_llm,
+        savedAt: row.created_at,
+      })));
+    })();
+  }, [user]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -211,27 +248,36 @@ export default function MiniAppGeneratorPage() {
     setSaveAppName('');
   }
 
-  const handleSaveApp = () => {
-    if (!appDescription || !saveAppName) return;
+  const handleSaveApp = async () => {
+    if (!appDescription || !saveAppName || !user) return;
 
-    const newApp: SavedApp = {
-      id: Date.now().toString(),
-      name: saveAppName,
-      appDescription: appDescription,
-      conversation: conversation,
-      model: modelToUse,
-      allowLLM: allowLLMInConversation,
-      savedAt: new Date().toISOString(),
-    };
-    
-    const updatedApps = [...savedApps, newApp];
-    setSavedApps(updatedApps);
-    try {
-      window.localStorage.setItem('savedMiniApps', JSON.stringify(updatedApps));
+    const { data, error } = await createClient()
+      .from('saved_apps')
+      .insert({
+        user_id: user.id,
+        name: saveAppName,
+        description: appDescription,
+        conversation,
+        model: modelToUse,
+        allow_llm: allowLLMInConversation,
+      })
+      .select('id, created_at')
+      .single();
+
+    if (error || !data) {
+      console.error("Failed to save app", error);
+      toast({ variant: "destructive", title: "Save Failed", description: "Could not save your app. Please try again." });
+    } else {
+      setSavedApps(prev => [...prev, {
+        id: data.id,
+        name: saveAppName,
+        appDescription,
+        conversation,
+        model: modelToUse,
+        allowLLM: allowLLMInConversation,
+        savedAt: data.created_at,
+      }]);
       toast({ title: "App Saved!", description: `"${saveAppName}" has been saved.` });
-    } catch (error) {
-      console.error("Failed to save app to localStorage", error);
-      toast({ variant: "destructive", title: "Save Failed", description: "Could not save app to your computer's memory." });
     }
 
     setIsSaveDialogOpen(false);
@@ -246,16 +292,15 @@ export default function MiniAppGeneratorPage() {
     setError(null);
   };
 
-  const handleDeleteApp = (appId: string) => {
-    const updatedApps = savedApps.filter(app => app.id !== appId);
-    setSavedApps(updatedApps);
-    try {
-      window.localStorage.setItem('savedMiniApps', JSON.stringify(updatedApps));
-      toast({ title: "App Deleted" });
-    } catch (error) {
-      console.error("Failed to delete app from localStorage", error);
+  const handleDeleteApp = async (appId: string) => {
+    const { error } = await createClient().from('saved_apps').delete().eq('id', appId);
+    if (error) {
+      console.error("Failed to delete app", error);
       toast({ variant: "destructive", title: "Delete Failed" });
+      return;
     }
+    setSavedApps(prev => prev.filter(app => app.id !== appId));
+    toast({ title: "App Deleted" });
   };
 
   if (tier !== 'max') {

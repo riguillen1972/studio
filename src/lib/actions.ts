@@ -19,6 +19,7 @@ import { SupportedModel } from "@/ai/genkit";
 import { createClient } from "@/lib/supabase/server";
 import { toUsageModel } from "@/lib/plans";
 import { checkUsage, recordUsage, getAdminClient } from "@/lib/usage";
+import { logInteraction } from "@/lib/activity";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -60,7 +61,7 @@ async function requireAuth(): Promise<{ userId: string } | { error: string }> {
 async function handleAction<T_Input, T_Output>(
   input: T_Input,
   flow: (input: T_Input) => Promise<T_Output>,
-  rateLimitKey?: string
+  tool: string // stable name for activity logs (function names can be minified)
 ): Promise<{ success: true; data: T_Output } | { success: false; error: string }> {
   try {
     // Server-side authentication check
@@ -70,7 +71,7 @@ async function handleAction<T_Input, T_Output>(
     }
 
     // Server-side rate limiting (keyed per user)
-    const key = `${auth.userId}:${rateLimitKey || 'action'}`;
+    const key = `${auth.userId}:action`;
     if (!checkRateLimit(key)) {
       return { success: false as const, error: "Rate limit exceeded. Please wait a moment and try again." };
     }
@@ -88,7 +89,11 @@ async function handleAction<T_Input, T_Output>(
     const result = await flow(input);
 
     const totalTokens = (result as { totalTokens?: number })?.totalTokens ?? 0;
-    await recordUsage(auth.userId, model, totalTokens).catch((e) => console.error("Failed to record token usage:", e));
+    await Promise.all([
+      recordUsage(auth.userId, model, totalTokens).catch((e) => console.error("Failed to record token usage:", e)),
+      // Lets the student's teacher see what they asked (only while enrolled in a class)
+      logInteraction(auth.userId, tool, input, result, model),
+    ]);
 
     return { success: true, data: result };
   } catch (error) {
@@ -118,7 +123,7 @@ export async function getExplanationAction(input: GenerateExplanationInput) {
       return { success: false as const, error: "Your teacher has turned off Research Mode for your class." };
     }
   }
-  return handleAction(parsedInput.data, generateExplanation);
+  return handleAction(parsedInput.data, generateExplanation, "generateExplanation");
 }
 
 // Research Mode is allowed unless a teacher of one of the student's classes turned it off.
@@ -145,7 +150,7 @@ export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput) {
     if (!parsedInput.success) {
       return { success: false as const, error: "Invalid input." };
     }
-  return handleAction(parsedInput.data, provideHomeworkHints);
+  return handleAction(parsedInput.data, provideHomeworkHints, "provideHomeworkHints");
 }
 
 // Schema for getSummaryAction
@@ -158,7 +163,7 @@ export async function getSummaryAction(input: SummarizeTextInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-  return handleAction(parsedInput.data, summarizeText);
+  return handleAction(parsedInput.data, summarizeText, "summarizeText");
 }
 
 // Schema for getHomeworkScanAction
@@ -174,7 +179,7 @@ export async function getHomeworkScanAction(input: ScanHomeworkInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, scanHomework);
+    return handleAction(parsedInput.data, scanHomework, "scanHomework");
 }
 
 // Schema for getQuizAction
@@ -190,7 +195,7 @@ export async function getQuizAction(input: GenerateQuizInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateQuiz);
+    return handleAction(parsedInput.data, generateQuiz, "generateQuiz");
 }
 
 // Schema for getQuizFromScanAction
@@ -206,7 +211,7 @@ export async function getQuizFromScanAction(input: GenerateQuizFromScanInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateQuizFromScan);
+    return handleAction(parsedInput.data, generateQuizFromScan, "generateQuizFromScan");
 }
 
 
@@ -220,7 +225,7 @@ export async function getBibleVerseAction(input: GetBibleVerseInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, getBibleVerse);
+    return handleAction(parsedInput.data, getBibleVerse, "getBibleVerse");
 }
 
 
@@ -237,7 +242,7 @@ export async function getFlashcardsAction(input: GenerateFlashcardsInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateFlashcards);
+    return handleAction(parsedInput.data, generateFlashcards, "generateFlashcards");
 }
 
 // Schema for getFriendlyAdviceAction
@@ -250,7 +255,7 @@ export async function getFriendlyAdviceAction(input: GetFriendlyAdviceInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, getFriendlyAdvice);
+    return handleAction(parsedInput.data, getFriendlyAdvice, "getFriendlyAdvice");
 }
 
 // Schema for generateMiniAppAction
@@ -264,7 +269,7 @@ export async function generateMiniAppAction(input: GenerateMiniAppInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateMiniApp);
+    return handleAction(parsedInput.data, generateMiniApp, "generateMiniApp");
 }
 
 // Schema for interactWithMiniAppAction
@@ -284,7 +289,7 @@ export async function interactWithMiniAppAction(input: InteractWithMiniAppInput)
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, interactWithMiniApp);
+    return handleAction(parsedInput.data, interactWithMiniApp, "interactWithMiniApp");
 }
 
 // Schema for runToolAction
@@ -299,7 +304,7 @@ export async function runToolAction(input: RunToolInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, runTool);
+    return handleAction(parsedInput.data, runTool, "runTool");
 }
 
 // --- Web Tutor ---
@@ -433,7 +438,10 @@ export async function webTutorAction(input: { url: string; question: string; con
       conversationHistory: parsedInput.data.conversationHistory,
       model: parsedInput.data.model,
     });
-    await recordUsage(auth.userId, model, result.totalTokens ?? 0).catch((e) => console.error("Failed to record token usage:", e));
+    await Promise.all([
+      recordUsage(auth.userId, model, result.totalTokens ?? 0).catch((e) => console.error("Failed to record token usage:", e)),
+      logInteraction(auth.userId, "webTutor", parsedInput.data, result, model),
+    ]);
     return { success: true as const, data: result };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An error occurred.";

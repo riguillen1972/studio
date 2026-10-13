@@ -480,6 +480,7 @@ function LoginContent() {
                             {needsClassCode
                               ? 'Students in 7th grade and below can only join through their teacher’s class, so your school can give permission.'
                               : 'Link your account to your teacher’s class to get personalized AI assistance.'}
+                            {' '}Your teacher can see what you ask the AI and the work you turn in.
                           </p>
                         </div>
                       )}

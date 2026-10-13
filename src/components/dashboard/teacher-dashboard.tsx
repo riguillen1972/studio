@@ -42,6 +42,7 @@ import { dueDateToIso, todayIso } from "@/lib/dates";
 import { useAppState } from "@/components/app-state-provider";
 import { LiveSession } from "./live-session";
 import { WorksheetGenerator } from "./worksheet-generator";
+import { StudentsPanel } from "./students-panel";
 
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     // The AI Teacher needs Teacher Max; student Max has the same tier but a cheaper price
@@ -213,6 +214,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
         <Tabs defaultValue="classes" className="w-full">
             <TabsList className="mb-4 h-auto flex-wrap">
                 <TabsTrigger value="classes">My Classes</TabsTrigger>
+                <TabsTrigger value="students">Students</TabsTrigger>
                 <TabsTrigger value="packs">Context Packs</TabsTrigger>
                 <TabsTrigger value="worksheets" className="text-purple-600 dark:text-purple-400">Worksheets</TabsTrigger>
                 <TabsTrigger value="avatar" className="text-purple-600 dark:text-purple-400">My AI Teacher</TabsTrigger>
@@ -309,6 +311,10 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                         ))
                     )}
                 </div>
+            </TabsContent>
+
+            <TabsContent value="students" className="space-y-4">
+                <StudentsPanel classes={classes} />
             </TabsContent>
 
             <TabsContent value="packs" className="space-y-4">

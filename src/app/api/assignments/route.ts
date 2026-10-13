@@ -47,9 +47,20 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Failed to load assignments" }, { status: 500 });
     }
 
+    // The student's own submissions and grades (not the answers they wrote, to keep the payload small)
+    const packIds = (packs ?? []).map((p) => p.id);
+    const { data: submissions } = packIds.length
+      ? await supabase
+          .from("assignment_submissions")
+          .select("context_pack_id, status, score, ai_feedback, teacher_feedback, submitted_at")
+          .eq("student_id", user.id)
+          .in("context_pack_id", packIds)
+      : { data: [] };
+    const submissionByPack = new Map((submissions ?? []).map((s) => [s.context_pack_id, s]));
+
     // Soonest due first; undated assignments after, newest first
     const sorted = (packs ?? [])
-      .map((p) => ({ ...p, class_name: classNames.get(p.class_id) ?? "Class" }))
+      .map((p) => ({ ...p, class_name: classNames.get(p.class_id) ?? "Class", submission: submissionByPack.get(p.id) ?? null }))
       .sort((a, b) => {
         if (a.due_date && b.due_date) return a.due_date.localeCompare(b.due_date);
         if (a.due_date) return -1;

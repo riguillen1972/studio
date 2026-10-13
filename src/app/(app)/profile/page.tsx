@@ -365,6 +365,7 @@ function ProfileContent() {
                             {classCode && (
                                 <p className="text-xs text-muted-foreground">Current class code: <span className="font-mono">{classCode}</span></p>
                             )}
+                            <p className="text-xs text-muted-foreground">Your teacher can see what you ask the AI, the apps you save, and the work you turn in.</p>
                         </div>
                     )}
                 </CardContent>
