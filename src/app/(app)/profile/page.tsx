@@ -57,7 +57,6 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
             PLANS.pro.tokenSummary,
             `All ${AI_TOOL_COUNT} AI tools`,
             "Ad-free experience",
-            "Priority support",
         ],
     },
     max: {
@@ -71,7 +70,6 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
             PLANS.max.tokenSummary,
             "AI Mini-App Generator",
             "Create & save custom learning apps",
-            "Highest priority support",
         ],
     },
 };

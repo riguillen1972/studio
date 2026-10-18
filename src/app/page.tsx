@@ -21,8 +21,8 @@ const features = [
 
 const plans = [
   { name: PLANS.free.name, price: PLANS.free.priceLabel, period: '/forever', desc: 'Get started with essential tools', features: ['Gemini 2.5 Flash-Lite model', PLANS.free.tokenSummary, 'AI Tutor & Homework Help', 'Quiz & Flashcard Generator', 'Ad-supported'], cta: 'Get Started Free', href: '/login?action=signup&plan=free', highlighted: false },
-  { name: PLANS.pro.name, price: PLANS.pro.priceLabel, period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', PLANS.pro.tokenSummary, `All ${AI_TOOL_COUNT} AI tools`, 'Ad-free experience', 'Priority support'], cta: 'Start Pro Trial', href: '/login?action=signup&plan=pro', highlighted: true },
-  { name: PLANS.max.name, price: PLANS.max.priceLabel, period: '/month', desc: 'Maximum power for serious students', note: `Teachers: ${TEACHER_MAX.priceLabel}/month, includes ${TEACHER_AVATAR_FEATURE}`, features: ['Gemini 2.5 Flash + Claude Haiku 5.5', PLANS.max.tokenSummary, 'AI Mini-App Generator', 'Custom learning apps', 'Highest priority support'], cta: 'Go Max', href: '/login?action=signup&plan=max', highlighted: false },
+  { name: PLANS.pro.name, price: PLANS.pro.priceLabel, period: '/month', desc: 'Unlock premium AI models', badge: 'POPULAR', features: ['Gemini 2.5 Flash & Pro', PLANS.pro.tokenSummary, `All ${AI_TOOL_COUNT} AI tools`, 'Ad-free experience'], cta: 'Start Pro Trial', href: '/login?action=signup&plan=pro', highlighted: true },
+  { name: PLANS.max.name, price: PLANS.max.priceLabel, period: '/month', desc: 'Maximum power for serious students', note: `Teachers: ${TEACHER_MAX.priceLabel}/month, includes ${TEACHER_AVATAR_FEATURE}`, features: ['Gemini 2.5 Flash + Claude Haiku 5.5', PLANS.max.tokenSummary, 'AI Mini-App Generator', 'Custom learning apps'], cta: 'Go Max', href: '/login?action=signup&plan=max', highlighted: false },
 ];
 
 export default function LandingPage() {
