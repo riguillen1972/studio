@@ -41,6 +41,8 @@ interface HintsResult {
 const subjects = ["Math", "Science", "History", "English", "Physics", "Chemistry", "Biology"];
 const gradeLevels = ["Elementary", "Middle School", "High School", "University"];
 
+const MAX_PHOTO_SIZE = 1024;
+
 export default function HomeworkScanner() {
   const [result, setResult] = useState<HintsResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,12 +94,14 @@ export default function HomeworkScanner() {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      // Shrink to at most 1024px on the long side: plenty to read homework, and far fewer AI tokens
+      const scale = Math.min(1, MAX_PHOTO_SIZE / Math.max(video.videoWidth, video.videoHeight));
+      canvas.width = Math.round(video.videoWidth * scale);
+      canvas.height = Math.round(video.videoHeight * scale);
       const context = canvas.getContext('2d');
       if (context) {
-        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-        const dataUri = canvas.toDataURL('image/jpeg');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUri = canvas.toDataURL('image/jpeg', 0.85);
         setCapturedImage(dataUri);
         if (video.srcObject) {
             const stream = video.srcObject as MediaStream;

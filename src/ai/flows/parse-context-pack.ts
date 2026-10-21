@@ -1,4 +1,4 @@
-import { ai, getModel } from "../genkit";
+import { ai, smartGenerate, getModel } from "../genkit";
 import { z } from "zod";
 
 export const ParseContextPackInput = z.object({
@@ -36,9 +36,12 @@ export const parseContextPack = ai.defineFlow(
 
     promptText += `\n\nRaw Content:\n${input.rawContent}`;
 
-    const { output } = await ai.generate({
-      model: getModel('flash'),
+    // Answer keys need to be right, so this runs at medium effort
+    const { output } = await smartGenerate({
+      model: getModel('haiku'),
       prompt: promptText,
+      maxOutputTokens: 8000,
+      effort: 'medium',
       output: {
         schema: z.object({
           content_parsed: z.string(),

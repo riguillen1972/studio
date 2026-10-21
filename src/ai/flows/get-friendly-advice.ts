@@ -56,6 +56,8 @@ const getFriendlyAdviceFlow = ai.defineFlow(
 
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 1500,
+        effort: 'low',
         prompt: prompt,
         output: {
             schema: AdviceSchema

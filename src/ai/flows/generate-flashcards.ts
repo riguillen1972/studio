@@ -61,6 +61,8 @@ const generateFlashcardsFlow = ai.defineFlow(
     `;
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 4096,
+        effort: 'low',
         prompt: prompt,
         output: {
             schema: FlashcardsSchema,

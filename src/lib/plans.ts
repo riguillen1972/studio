@@ -9,10 +9,12 @@ export type SubscriptionTier = 'free' | 'pro' | 'max';
 export type UsageModel = 'gemma3' | 'flash' | 'pro' | 'haiku';
 
 // Monthly token limits per tier and model. 0 means the model is not available on that tier.
+// Free runs on Gemini 2.5 Flash-Lite; Pro and Max run on Claude Haiku 5.5 only.
+// ('flash' and 'pro' are kept as usage buckets for older records.)
 export const TOKEN_LIMITS: Record<SubscriptionTier, Record<UsageModel, number>> = {
   free: { gemma3: 250_000, flash: 0, pro: 0, haiku: 0 },
-  pro: { gemma3: 500_000, flash: 1_000_000, pro: 500_000, haiku: 0 },
-  max: { gemma3: 500_000, flash: 2_000_000, pro: 0, haiku: 2_000_000 },
+  pro: { gemma3: 500_000, flash: 0, pro: 0, haiku: 1_500_000 },
+  max: { gemma3: 500_000, flash: 0, pro: 0, haiku: 4_000_000 },
 };
 
 // Column in the token_usage table that tracks each model.
@@ -31,7 +33,17 @@ export const MODEL_LABELS: Record<UsageModel, string> = {
 };
 
 export function defaultModelForTier(tier: SubscriptionTier): UsageModel {
-  return tier === 'max' ? 'haiku' : tier === 'pro' ? 'flash' : 'gemma3';
+  return tier === 'free' ? 'gemma3' : 'haiku';
+}
+
+/**
+ * The model a request actually runs on: the requested one if the plan includes it, otherwise
+ * the plan's default. Decided on the server, so a client can't pick a pricier model.
+ */
+export function resolveModel(tier: SubscriptionTier, requested: string | null | undefined): UsageModel {
+  if (!requested) return defaultModelForTier(tier);
+  const model = toUsageModel(requested);
+  return model && TOKEN_LIMITS[tier][model] > 0 ? model : defaultModelForTier(tier);
 }
 
 /**
@@ -49,9 +61,8 @@ export function toUsageModel(model: string | null | undefined): UsageModel | nul
   return null;
 }
 
-// Paid plans are advertised by their premium-model allowance (the Flash-Lite fallback isn't counted).
-const premiumTokens = (tier: SubscriptionTier) =>
-  TOKEN_LIMITS[tier].flash + TOKEN_LIMITS[tier].pro + TOKEN_LIMITS[tier].haiku;
+// Paid plans are advertised by their Claude allowance (the Flash-Lite fallback isn't counted).
+const premiumTokens = (tier: SubscriptionTier) => TOKEN_LIMITS[tier].haiku;
 
 const formatTokens = (n: number) => (n >= 1_000_000 ? `${n / 1_000_000}M` : `${n / 1_000}k`);
 
@@ -75,13 +86,13 @@ export const PLANS: Record<SubscriptionTier, PlanInfo> = {
     name: 'Pro',
     price: 15,
     priceLabel: '$15',
-    tokenSummary: `${formatTokens(premiumTokens('pro'))} tokens/month (${formatTokens(TOKEN_LIMITS.pro.flash)} Flash + ${formatTokens(TOKEN_LIMITS.pro.pro)} Pro)`,
+    tokenSummary: `${formatTokens(premiumTokens('pro'))} tokens/month`,
   },
   max: {
     name: 'Max',
     price: 24.99,
     priceLabel: '$24.99',
-    tokenSummary: `${formatTokens(premiumTokens('max'))} tokens/month (${formatTokens(TOKEN_LIMITS.max.flash)} Flash + ${formatTokens(TOKEN_LIMITS.max.haiku)} Claude Haiku)`,
+    tokenSummary: `${formatTokens(premiumTokens('max'))} tokens/month`,
   },
 };
 

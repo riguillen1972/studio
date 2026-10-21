@@ -4,9 +4,9 @@ import { anthropic } from '@genkit-ai/anthropic';
 import type { z } from 'genkit';
 
 // --- MODEL DEFINITIONS ---
+// Free plan: Gemini 2.5 Flash-Lite. Pro and Max: Claude Haiku 5.5 only (cheaper than
+// Gemini Flash, and newer Gemini models cost more still).
 export const gemmaLite    = 'googleai/gemini-2.5-flash-lite';
-export const geminiFlash  = 'googleai/gemini-2.5-flash';
-export const geminiPro    = 'googleai/gemini-2.5-pro';
 export const claudeHaiku  = 'anthropic/claude-haiku-5-5';
 
 export type SupportedModel = 'free' | 'pro' | 'max' | 'gemma3' | 'flash' | 'haiku';
@@ -18,18 +18,23 @@ export type SupportedModel = 'free' | 'pro' | 'max' | 'gemma3' | 'flash' | 'haik
  */
 export function getModel(model: SupportedModel = 'free'): string {
   switch (model) {
-    case 'pro':
-    case 'flash':
-      return geminiFlash;    // Gemini 2.5 Flash
-    case 'max':
-      return geminiPro;      // Gemini 2.5 Pro
     case 'haiku':
-      return claudeHaiku;    // Claude Haiku
+    case 'pro':
+    case 'max':
+    case 'flash': // older clients may still send these; paid plans now use Haiku
+      return claudeHaiku;
     case 'gemma3':
     case 'free':
     default:
-      return gemmaLite;      // free
+      return gemmaLite;
   }
+}
+
+const DEFAULT_MAX_OUTPUT_TOKENS = 4096;
+
+/** Keeps only the most recent turns of a conversation, so long chats don't get more expensive with every message. */
+export function recentTurns<T>(turns: T[] | undefined, max = 10): T[] {
+  return (turns ?? []).slice(-max);
 }
 
 /** Check if a model string refers to a Claude/Anthropic model */
@@ -62,9 +67,17 @@ export async function smartGenerate<T>(opts: {
   prompt: string | any[];
   output?: { schema: z.ZodType<T> };
   config?: Record<string, unknown>;
+  /** Cap on the answer length (thinking counts toward it on Claude). */
+  maxOutputTokens?: number;
+  /** Claude only: how much it thinks first. 'low' is cheapest; use 'medium' where accuracy matters. */
+  effort?: 'low' | 'medium';
 }): Promise<{ output: T | null; text: string; usage: { totalTokens?: number } }> {
   const modelStr = opts.model;
   const isClaude = isClaudeModel(modelStr);
+  const maxOutputTokens = opts.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS;
+  // Claude ignores Gemini safety settings, and Haiku 5.5 rejects non-default sampling settings
+  const claudeConfig = { maxOutputTokens, output_config: { effort: opts.effort ?? 'low' } };
+  const geminiConfig = { ...opts.config, maxOutputTokens };
 
   if (isClaude && opts.output?.schema) {
     // For Claude: request text output and parse JSON manually
@@ -81,7 +94,7 @@ export async function smartGenerate<T>(opts: {
     const response = await ai.generate({
       model: modelStr,
       prompt: augmentedPrompt,
-      config: isClaude ? {} : opts.config, // skip safetySettings for Claude
+      config: claudeConfig,
     });
 
     let parsed: T | null = null;
@@ -104,12 +117,18 @@ export async function smartGenerate<T>(opts: {
     };
   }
 
+  // Claude without a schema: plain text
+  if (isClaude) {
+    const response = await ai.generate({ model: modelStr, prompt: opts.prompt, config: claudeConfig });
+    return { output: null, text: response.text, usage: { totalTokens: response.usage.totalTokens ?? 0 } };
+  }
+
   // For Gemini: use native structured output
   const response = await ai.generate({
     model: modelStr,
     prompt: opts.prompt,
     output: opts.output,
-    config: opts.config,
+    config: geminiConfig,
   });
 
   return {

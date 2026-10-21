@@ -17,8 +17,8 @@ import { runTool, RunToolInput } from "@/ai/flows/run-tool";
 import { webTutor, WebTutorInput } from "@/ai/flows/web-tutor";
 import { SupportedModel } from "@/ai/genkit";
 import { createClient } from "@/lib/supabase/server";
-import { toUsageModel } from "@/lib/plans";
-import { checkUsage, recordUsage, getAdminClient } from "@/lib/usage";
+import { resolveModel } from "@/lib/plans";
+import { checkUsage, recordUsage, getAdminClient, getUserTier } from "@/lib/usage";
 import { logInteraction } from "@/lib/activity";
 
 // Simple in-memory rate limiter (per-user, per-minute)
@@ -76,11 +76,9 @@ async function handleAction<T_Input, T_Output>(
       return { success: false as const, error: "Rate limit exceeded. Please wait a moment and try again." };
     }
 
-    // Server-side plan and monthly token limit check
-    const model = toUsageModel((input as { model?: string }).model);
-    if (!model) {
-      return { success: false as const, error: "Unknown AI model." };
-    }
+    // The plan decides the model (Free: Flash-Lite, Pro/Max: Claude Haiku 5.5), then the monthly limit applies
+    const model = resolveModel(await getUserTier(auth.userId), (input as { model?: string }).model);
+    (input as { model?: string }).model = model;
     const usageError = await checkUsage(auth.userId, model);
     if (usageError) {
       return { success: false as const, error: usageError };
@@ -420,10 +418,7 @@ export async function webTutorAction(input: { url: string; question: string; con
     return { success: false as const, error: "Rate limit exceeded. Please wait a moment and try again." };
   }
 
-  const model = toUsageModel(parsedInput.data.model);
-  if (!model) {
-    return { success: false as const, error: "Unknown AI model." };
-  }
+  const model = resolveModel(await getUserTier(auth.userId), parsedInput.data.model);
   const usageError = await checkUsage(auth.userId, model);
   if (usageError) {
     return { success: false as const, error: usageError };
@@ -436,7 +431,7 @@ export async function webTutorAction(input: { url: string; question: string; con
       pageContent,
       question: parsedInput.data.question,
       conversationHistory: parsedInput.data.conversationHistory,
-      model: parsedInput.data.model,
+      model,
     });
     await Promise.all([
       recordUsage(auth.userId, model, result.totalTokens ?? 0).catch((e) => console.error("Failed to record token usage:", e)),

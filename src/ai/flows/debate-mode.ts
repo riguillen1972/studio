@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const DebateModeInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   topic: z.string(),
   userArgument: z.string(),
   groundingContext: z.string().optional(),
@@ -12,11 +13,12 @@ export const debateMode = ai.defineFlow(
     name: "debateMode",
     inputSchema: DebateModeInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       counterArgument: z.string(),
       feedback: z.string()
     }),
   },
-  async ({ topic, userArgument, groundingContext }) => {
+  async ({ topic, userArgument, groundingContext, model }) => {
     let prompt = `
     You are in Debate Mode. The user is practicing their understanding of "${topic}" by debating you.
     User's Argument: "${userArgument}"
@@ -29,8 +31,8 @@ export const debateMode = ai.defineFlow(
       prompt += `\n\nEnsure your counter-arguments are grounded in the following teacher-provided Context Pack:\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -41,6 +43,6 @@ export const debateMode = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate debate response.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

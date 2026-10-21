@@ -1,7 +1,8 @@
-import { ai, gemmaLite, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const ExamOracleInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   materials: z.string(),
   groundingContext: z.string().optional(),
 });
@@ -11,6 +12,7 @@ export const examOracle = ai.defineFlow(
     name: "examOracle",
     inputSchema: ExamOracleInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       predictions: z.array(z.object({
         question: z.string(),
         likelihood: z.enum(["High", "Medium"]),
@@ -18,7 +20,7 @@ export const examOracle = ai.defineFlow(
       }))
     }),
   },
-  async ({ materials, groundingContext }) => {
+  async ({ materials, groundingContext, model }) => {
     let prompt = `
     You are the Exam Oracle. Based on the provided syllabus or study materials, predict the most likely exam questions.
     Return 3 to 5 predicted questions, their likelihood (High or Medium), and a brief explanation of why it will likely be on the exam.
@@ -31,8 +33,8 @@ export const examOracle = ai.defineFlow(
       prompt += `\n\nAdditionally, prioritize predicting questions based on the following teacher-provided Context Pack:\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -46,6 +48,6 @@ export const examOracle = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate exam predictions.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

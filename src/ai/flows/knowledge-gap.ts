@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const KnowledgeGapInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   topic: z.string(),
   quizResults: z.array(z.object({
     question: z.string(),
@@ -17,6 +18,7 @@ export const knowledgeGap = ai.defineFlow(
     name: "knowledgeGap",
     inputSchema: KnowledgeGapInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       weakAreas: z.array(z.string()),
       studyPlan: z.array(z.object({
         topic: z.string(),
@@ -24,7 +26,7 @@ export const knowledgeGap = ai.defineFlow(
       }))
     }),
   },
-  async ({ topic, quizResults, groundingContext }) => {
+  async ({ topic, quizResults, groundingContext, model }) => {
     let prompt = `
     You are the Knowledge Gap Scanner. Analyze the following diagnostic quiz results for the topic "${topic}".
     Identify specific weak areas where the student answered incorrectly, and build a targeted study plan.
@@ -37,8 +39,8 @@ export const knowledgeGap = ai.defineFlow(
       prompt += `\n\nAdditionally, tailor the study plan to the following teacher-provided Context Pack:\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -52,6 +54,6 @@ export const knowledgeGap = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate knowledge gap analysis.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

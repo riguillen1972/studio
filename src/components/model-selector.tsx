@@ -18,26 +18,19 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
 
   // Determine which models are available for the current subscription tier
   // Free: Gemma 3 1B only
-  // Pro:  Gemini 2.5 Flash, Gemini 2.5 Pro
-  // Max:  Gemini 2.5 Flash, Claude Haiku 5.5
+  // Pro and Max: Claude Haiku 5.5
   const availableModels: { value: SupportedModel; label: string }[] = [];
 
   if (tier === "free") {
     availableModels.push({ value: "gemma3", label: "Gemini 2.5 Flash-Lite" });
   }
 
-  if (tier === "pro") {
-    availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
-    availableModels.push({ value: "pro", label: "Gemini 2.5 Pro" });
-  }
-
-  if (tier === "max") {
-    availableModels.push({ value: "flash", label: "Gemini 2.5 Flash" });
+  if (tier === "pro" || tier === "max") {
     availableModels.push({ value: "haiku", label: "Claude Haiku 5.5" });
   }
 
   // Determine the correct default for this tier
-  const defaultModel: SupportedModel = tier === "max" ? "haiku" : tier === "pro" ? "flash" : "gemma3";
+  const defaultModel: SupportedModel = tier === "free" ? "gemma3" : "haiku";
 
   // If the currently selected model is not available for this tier, reset to the tier default
   const isCurrentValid = availableModels.some((m) => m.value === value);

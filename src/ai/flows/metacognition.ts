@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const MetacognitionInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   topic: z.string(),
   studyMethod: z.string(),
   groundingContext: z.string().optional(),
@@ -12,11 +13,12 @@ export const metacognition = ai.defineFlow(
     name: "metacognition",
     inputSchema: MetacognitionInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       reflectionQuestions: z.array(z.string()),
       optimizationAdvice: z.string()
     }),
   },
-  async ({ topic, studyMethod, groundingContext }) => {
+  async ({ topic, studyMethod, groundingContext, model }) => {
     let prompt = `
     You are the Metacognition Coach. The user is studying "${topic}" using this method: "${studyMethod}".
     Help them think about HOW they are thinking.
@@ -29,8 +31,8 @@ export const metacognition = ai.defineFlow(
       prompt += `\n\nEnsure your advice is relevant to this Context Pack:\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -41,6 +43,6 @@ export const metacognition = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate Metacognition response.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

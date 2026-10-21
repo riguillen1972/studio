@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const CuriosityInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   topic: z.string(),
   depth: z.number().int().min(1).max(3).describe("Depth of the rabbit hole (1-3)"),
 });
@@ -11,12 +12,13 @@ export const curiosityRabbitHole = ai.defineFlow(
     name: "curiosityRabbitHole",
     inputSchema: CuriosityInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       fascinatingFact: z.string(),
       deepDive: z.string(),
       nextRabbitHole: z.string()
     }),
   },
-  async ({ topic, depth }) => {
+  async ({ topic, depth, model }) => {
     let prompt = `
     You are the Curiosity Rabbit Hole guide. The user wants to go down a rabbit hole about "${topic}" at depth level ${depth}.
     
@@ -27,8 +29,8 @@ export const curiosityRabbitHole = ai.defineFlow(
     Return a fascinating fact, a short deep dive paragraph, and a suggestion for the next related rabbit hole to explore.
     `;
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -40,6 +42,6 @@ export const curiosityRabbitHole = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate curiosity response.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

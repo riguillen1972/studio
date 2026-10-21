@@ -1,7 +1,8 @@
-import { ai, gemmaLite } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const FocusRecommendInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   subject: z.string(),
   taskType: z.string().optional(),
 });
@@ -11,11 +12,12 @@ export const focusRecommend = ai.defineFlow(
     name: "focusRecommend",
     inputSchema: FocusRecommendInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       recommendedSound: z.enum(["deep-focus", "memory-mode", "noise-shield", "adhd-mode", "chill-study", "calm-study"]),
       reasoning: z.string()
     }),
   },
-  async ({ subject, taskType }) => {
+  async ({ subject, taskType, model }) => {
     const prompt = `
     You are an expert in cognitive psychology and acoustic environments. 
     A student is about to start a focus session.
@@ -33,8 +35,8 @@ export const focusRecommend = ai.defineFlow(
     Explain your reasoning in 1-2 short sentences.
     `;
 
-    const { output } = await ai.generate({
-      model: gemmaLite,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -48,6 +50,6 @@ export const focusRecommend = ai.defineFlow(
       throw new Error("Failed to generate recommendation");
     }
 
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

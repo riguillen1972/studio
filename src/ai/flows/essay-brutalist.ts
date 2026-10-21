@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const EssayBrutalistInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   essayText: z.string(),
   groundingContext: z.string().optional(),
 });
@@ -11,12 +12,13 @@ export const essayBrutalist = ai.defineFlow(
     name: "essayBrutalist",
     inputSchema: EssayBrutalistInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       brutalFeedback: z.string(),
       fluffWordsFound: z.array(z.string()),
       restructuredParagraph: z.string()
     }),
   },
-  async ({ essayText, groundingContext }) => {
+  async ({ essayText, groundingContext, model }) => {
     let prompt = `
     You are the Essay Brutalist. Your job is to tear down weak, fluffy essays and rebuild them stronger.
     Review the following essay draft:
@@ -31,8 +33,8 @@ export const essayBrutalist = ai.defineFlow(
       prompt += `\n\nEnsure your feedback holds the essay to the standards of this Context Pack (e.g. rubric):\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -44,6 +46,6 @@ export const essayBrutalist = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate Essay Brutalist response.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

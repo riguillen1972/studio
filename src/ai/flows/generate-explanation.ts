@@ -8,7 +8,7 @@
  * - GenerateExplanationOutput - The return type for the generateExplanation function.
  */
 
-import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, smartGenerate, getModel, recentTurns, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ConversationTurnSchema = z.object({
@@ -46,8 +46,10 @@ const generateExplanationFlow = ai.defineFlow(
     outputSchema: GenerateExplanationOutputSchema,
   },
   async (input) => {
-    const historySection = input.conversationHistory && input.conversationHistory.length > 0
-      ? `\n\nHere is the previous conversation for context:\n${input.conversationHistory.map(t => `${t.role === 'user' ? 'Student' : 'Tutor'}: ${t.content}`).join('\n')}\n\nNow the student has a follow-up:`
+    // Only the last 10 turns are sent, so long chats don't cost more with every question
+    const history = recentTurns(input.conversationHistory);
+    const historySection = history.length > 0
+      ? `\n\nHere is the previous conversation for context:\n${history.map(t => `${t.role === 'user' ? 'Student' : 'Tutor'}: ${t.content}`).join('\n')}\n\nNow the student has a follow-up:`
       : '';
 
     const careerOptimization = input.careerField
@@ -80,6 +82,8 @@ const generateExplanationFlow = ai.defineFlow(
 
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 3000,
+        effort: 'medium',
         prompt: prompt,
         output: {
             schema: ExplanationSchema

@@ -61,6 +61,8 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     `;
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 2048,
+        effort: 'medium',
         prompt: prompt,
         output: {
             schema: HintsSchema,

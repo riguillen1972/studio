@@ -56,6 +56,8 @@ ${input.userInput}
 
     const response = await smartGenerate({
       model: getModel(input.model),
+      maxOutputTokens: 3000,
+      effort: 'low',
       prompt: prompt,
       output: {
         schema: ToolResponseSchema,

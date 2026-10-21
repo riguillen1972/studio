@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { runTool } from "@/ai/flows/run-tool";
-import { toUsageModel } from "@/lib/plans";
-import { checkUsage, recordUsage } from "@/lib/usage";
+import { resolveModel } from "@/lib/plans";
+import { checkUsage, recordUsage, getUserTier } from "@/lib/usage";
 import { logInteraction } from "@/lib/activity";
 
 // Import all existing flows to route to them
@@ -76,12 +76,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing toolId" }, { status: 400 });
     }
 
-    // Server-side plan and monthly token limit check
-    // The flow runs with input.model, so that is the model to gate and bill.
-    const usageModel = toUsageModel(input?.model ?? model);
-    if (!usageModel) {
-      return NextResponse.json({ error: "Unknown model" }, { status: 400 });
+    // The plan decides the model the flow runs on, then the monthly limit applies
+    const usageModel = resolveModel(await getUserTier(user.id), input?.model ?? model);
+    if (!input || typeof input !== "object") {
+      return NextResponse.json({ error: "Missing input" }, { status: 400 });
     }
+    input.model = usageModel;
     const usageError = await checkUsage(user.id, usageModel);
     if (usageError) {
       return NextResponse.json({ error: usageError }, { status: 402 });

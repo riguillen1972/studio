@@ -62,6 +62,8 @@ const generateQuizFlow = ai.defineFlow(
     `;
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 4096,
+        effort: 'medium',
         prompt: prompt,
         output: {
             schema: QuizSchema,

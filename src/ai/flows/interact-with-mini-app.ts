@@ -6,7 +6,7 @@
  * - interactWithMiniApp - A function that handles the ongoing conversation within a mini-app.
  */
 
-import {ai, getModel, isClaudeModel, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, getModel, isClaudeModel, recentTurns, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 import { summarizeText } from './summarize-text';
 
@@ -19,7 +19,7 @@ const summarizeTextTool = ai.defineTool(
   },
   async (input) => {
     // This tool calls another flow.
-    const result = await summarizeText({ text: input.text, model: 'flash' }); // Use flash to be economical
+    const result = await summarizeText({ text: input.text, model: 'gemma3' }); // cheapest model
     return result.summary;
   }
 );
@@ -62,7 +62,7 @@ const interactWithMiniAppFlow = ai.defineFlow(
     const genericPersonality = `You are an AI that is running an interactive, text-based "mini-app" for a student. Your primary goal is to guide the student to discover concepts and solutions on their own.`;
 
     // Build the full prompt including conversation history context
-    const historyText = input.conversationHistory
+    const historyText = recentTurns(input.conversationHistory)
       .map(turn => `${turn.role === 'user' ? 'Student' : 'App'}: ${turn.content}`)
       .join('\n');
 
@@ -93,7 +93,7 @@ const interactWithMiniAppFlow = ai.defineFlow(
     const generateOpts: Record<string, unknown> = {
         model: modelStr,
         prompt: isClaude ? prompt + '\n\nRespond with ONLY a JSON object like: {"appResponse": "your response here"}' : prompt,
-        config: isClaude ? {} : { safetySettings },
+        config: isClaude ? { maxOutputTokens: 2048, output_config: { effort: 'low' } } : { safetySettings, maxOutputTokens: 2048 },
     };
     if (!isClaude) {
         generateOpts.tools = input.allowLLM ? [summarizeTextTool] : [];

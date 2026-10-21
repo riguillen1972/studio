@@ -39,7 +39,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<SupportedModel>(
-    tier === 'max' ? 'haiku' : tier === 'pro' ? 'flash' : 'gemma3'
+    tier === 'free' ? 'gemma3' : 'haiku'
   );
   const [mode, setMode] = useState<'help' | 'research'>('help');
 
@@ -52,13 +52,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   useEffect(() => {
     setIsClient(true);
     // Reset to the correct default model when tier changes
-    if (tier === 'free') {
-      setSelectedModel('gemma3');
-    } else if (tier === 'pro' && (selectedModel === 'haiku' || selectedModel === 'gemma3')) {
-      setSelectedModel('flash');
-    } else if (tier === 'max' && (selectedModel === 'pro' || selectedModel === 'gemma3')) {
-      setSelectedModel('haiku');
-    }
+    setSelectedModel(tier === 'free' ? 'gemma3' : 'haiku');
   }, [tier]);
 
   // Auto-scroll to bottom when conversation updates
@@ -248,10 +242,8 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        {(tier === 'max') && <SelectItem value="haiku">Claude Haiku 5.5</SelectItem>}
+                        {(tier !== 'free') && <SelectItem value="haiku">Claude Haiku 5.5</SelectItem>}
                         {(tier === 'free') && <SelectItem value="gemma3">Gemini 2.5 Flash-Lite</SelectItem>}
-                        {(tier !== 'free') && <SelectItem value="flash">Gemini 2.5 Flash</SelectItem>}
-                        {(tier === 'pro') && <SelectItem value="pro">Gemini 2.5 Pro</SelectItem>}
                     </SelectContent>
                 </Select>
             </div>

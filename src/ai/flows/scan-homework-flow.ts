@@ -69,6 +69,8 @@ Format the hints as a numbered list.`;
 
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 3000,
+        effort: 'medium',
         prompt: prompt,
         output: {
             schema: HintsSchema,

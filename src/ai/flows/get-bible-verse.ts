@@ -46,6 +46,8 @@ const getBibleVerseFlow = ai.defineFlow(
 
         const response = await smartGenerate({
             model: getModel(input.model),
+            maxOutputTokens: 1024,
+            effort: 'low',
             prompt,
             output: {
                 schema: VerseSchema,

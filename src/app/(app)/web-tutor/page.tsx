@@ -44,7 +44,7 @@ export default function WebTutorPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const model = tier === 'max' ? 'haiku' : 'flash';
+  const model = tier === 'free' ? 'gemma3' : 'haiku';
 
   useEffect(() => {
     if (scrollRef.current) {

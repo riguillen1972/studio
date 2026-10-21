@@ -53,7 +53,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         badge: "POPULAR",
         features: [
             "Everything in Free, plus:",
-            "Gemini 2.5 Flash & Pro models unlocked",
+            "Claude Haiku 5.5 model unlocked",
             PLANS.pro.tokenSummary,
             `All ${AI_TOOL_COUNT} AI tools`,
             "Ad-free experience",
@@ -66,7 +66,7 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
         icon: Crown,
         features: [
             "Everything in Pro, plus:",
-            "Gemini 2.5 Flash + Claude Haiku 5.5",
+            "Claude Haiku 5.5",
             PLANS.max.tokenSummary,
             "AI Mini-App Generator",
             "Create & save custom learning apps",
@@ -79,10 +79,6 @@ function ProfileContent() {
     tier, 
     gemma3TokensRemaining,
     gemma3TokenLimit,
-    flashTokensRemaining, 
-    flashTokenLimit, 
-    proTokensRemaining, 
-    proTokenLimit,
     haikuTokensRemaining,
     haikuTokenLimit,
     isPremium,
@@ -411,45 +407,22 @@ function ProfileContent() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        { tier === 'max' && (
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">Claude Haiku 5.5</Label>
-                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                    <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(haikuTokensRemaining)} / {new Intl.NumberFormat().format(haikuTokenLimit)}</span>
+                        {(() => {
+                            // Free: Gemini 2.5 Flash-Lite. Pro and Max: Claude Haiku 5.5.
+                            const [label, remaining, limit] = tier === 'free'
+                                ? ["Gemini 2.5 Flash-Lite", gemma3TokensRemaining, gemma3TokenLimit]
+                                : ["Claude Haiku 5.5", haikuTokensRemaining, haikuTokenLimit];
+                            return (
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">{label}</Label>
+                                    <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                                        <span>Remaining</span>
+                                        <span>{new Intl.NumberFormat().format(remaining)} / {new Intl.NumberFormat().format(limit)}</span>
+                                    </div>
+                                    <Progress value={limit > 0 ? (remaining / limit) * 100 : 0} />
                                 </div>
-                                <Progress value={(haikuTokensRemaining / haikuTokenLimit) * 100} />
-                            </div>
-                        )}
-                        { tier === 'free' ? (
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">Gemini 2.5 Flash-Lite</Label>
-                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                    <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(gemma3TokensRemaining)} / {new Intl.NumberFormat().format(gemma3TokenLimit)}</span>
-                                </div>
-                                <Progress value={gemma3TokenLimit > 0 ? (gemma3TokensRemaining / gemma3TokenLimit) * 100 : 0} />
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">Gemini 2.5 Flash</Label>
-                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                    <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(flashTokensRemaining)} / {new Intl.NumberFormat().format(flashTokenLimit)}</span>
-                                </div>
-                                <Progress value={flashTokenLimit > 0 ? (flashTokensRemaining / flashTokenLimit) * 100 : 0} />
-                            </div>
-                        )}
-                        { tier === 'pro' && (
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">Gemini 2.5 Pro</Label>
-                                <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                                    <span>Remaining</span>
-                                    <span>{new Intl.NumberFormat().format(proTokensRemaining)} / {new Intl.NumberFormat().format(proTokenLimit)}</span>
-                                </div>
-                                <Progress value={(proTokensRemaining / proTokenLimit) * 100} />
-                            </div>
-                        )}
+                            );
+                        })()}
                          <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
                     </CardContent>
                 </Card>

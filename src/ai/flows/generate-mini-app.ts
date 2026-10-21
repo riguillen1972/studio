@@ -58,6 +58,8 @@ ${input.allowLLM ? `
 
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 2048,
+        effort: 'low',
         prompt: prompt,
         output: {
             schema: MiniAppResponseSchema,

@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const ConceptStorytellerInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   concept: z.string(),
   groundingContext: z.string().optional(),
 });
@@ -11,11 +12,12 @@ export const conceptStoryteller = ai.defineFlow(
     name: "conceptStoryteller",
     inputSchema: ConceptStorytellerInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       story: z.string(),
       analogy: z.string()
     }),
   },
-  async ({ concept, groundingContext }) => {
+  async ({ concept, groundingContext, model }) => {
     let prompt = `
     You are the Concept Storyteller. Take the concept "${concept}" and turn it into an engaging, memorable story.
     Use vivid imagery and strong narrative structure to make the facts unforgettable.
@@ -26,8 +28,8 @@ export const conceptStoryteller = ai.defineFlow(
       prompt += `\n\nEnsure the story aligns with the following teacher-provided Context Pack:\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -38,6 +40,6 @@ export const conceptStoryteller = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate concept story.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

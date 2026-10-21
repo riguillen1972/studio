@@ -1,7 +1,8 @@
-import { ai, geminiFlash } from "../genkit";
+import { ai, smartGenerate, getModel, type SupportedModel } from "../genkit";
 import { z } from "zod";
 
 export const MakeItClickInput = z.object({
+  model: z.string().optional(), // set by the server from the student\'s plan
   concept: z.string(),
   userStruggle: z.string(),
   groundingContext: z.string().optional(),
@@ -12,11 +13,12 @@ export const makeItClick = ai.defineFlow(
     name: "makeItClick",
     inputSchema: MakeItClickInput,
     outputSchema: z.object({
+      totalTokens: z.number().optional(),
       ahaMoment: z.string(),
       visualization: z.string()
     }),
   },
-  async ({ concept, userStruggle, groundingContext }) => {
+  async ({ concept, userStruggle, groundingContext, model }) => {
     let prompt = `
     The user is struggling to understand "${concept}".
     Their specific struggle: "${userStruggle}"
@@ -29,8 +31,8 @@ export const makeItClick = ai.defineFlow(
       prompt += `\n\nEnsure your explanation aligns with this Context Pack:\n${groundingContext}`;
     }
 
-    const { output } = await ai.generate({
-      model: geminiFlash,
+    const { output, usage } = await smartGenerate({
+      model: getModel(model as SupportedModel),
       prompt: prompt,
       output: {
         schema: z.object({
@@ -41,6 +43,6 @@ export const makeItClick = ai.defineFlow(
     });
 
     if (!output) throw new Error("Failed to generate Make It Click response.");
-    return output;
+    return { ...output, totalTokens: usage.totalTokens ?? 0 };
   }
 );

@@ -1,7 +1,7 @@
 
 'use server';
 
-import { ai, getModel, isClaudeModel, safetySettings, SupportedModel } from '@/ai/genkit';
+import { ai, getModel, isClaudeModel, recentTurns, safetySettings, SupportedModel } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const WebTutorInputSchema = z.object({
@@ -36,7 +36,7 @@ const webTutorFlow = ai.defineFlow(
   },
   async (input) => {
     const historyContext = input.conversationHistory?.length
-      ? `\n\nPrevious conversation:\n${input.conversationHistory.map(t => `${t.role === 'user' ? 'Student' : 'You'}: ${t.content}`).join('\n')}`
+      ? `\n\nPrevious conversation:\n${recentTurns(input.conversationHistory).map(t => `${t.role === 'user' ? 'Student' : 'You'}: ${t.content}`).join('\n')}`
       : '';
 
     // Truncate page content to avoid token overflow (roughly 12k chars ≈ 3k tokens)
@@ -61,7 +61,7 @@ Provide a helpful, educational answer based on the webpage content. If the stude
     const response = await ai.generate({
       model: modelStr,
       prompt,
-      config: isClaudeModel(modelStr) ? {} : { safetySettings },
+      config: isClaudeModel(modelStr) ? { maxOutputTokens: 2048, output_config: { effort: 'low' } } : { safetySettings, maxOutputTokens: 2048 },
     });
 
     return {

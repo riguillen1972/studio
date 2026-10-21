@@ -42,6 +42,8 @@ const summarizeTextFlow = ai.defineFlow(
     const prompt = `Summarize the key concepts in the following text:\n\n${input.text}`;
     const response = await smartGenerate({
         model: getModel(input.model),
+        maxOutputTokens: 2048,
+        effort: 'low',
         prompt,
         output: {
             schema: SummarySchema,
