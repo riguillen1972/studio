@@ -12,7 +12,7 @@ export type UsageModel = 'gemma3' | 'flash' | 'pro' | 'haiku';
 // Free runs on Gemini 2.5 Flash-Lite; Pro and Max run on Claude Haiku 5.5 only.
 // ('flash' and 'pro' are kept as usage buckets for older records.)
 export const TOKEN_LIMITS: Record<SubscriptionTier, Record<UsageModel, number>> = {
-  free: { gemma3: 250_000, flash: 0, pro: 0, haiku: 0 },
+  free: { gemma3: 50_000, flash: 0, pro: 0, haiku: 0 },
   pro: { gemma3: 500_000, flash: 0, pro: 0, haiku: 1_500_000 },
   max: { gemma3: 500_000, flash: 0, pro: 0, haiku: 4_000_000 },
 };

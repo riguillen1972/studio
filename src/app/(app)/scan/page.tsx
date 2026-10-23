@@ -8,7 +8,7 @@ export default function ScanPage() {
           Scan Homework
         </h1>
         <p className="text-muted-foreground mt-1">
-          Use your camera to scan a homework problem and get helpful hints.
+          Scan a homework problem and get step-by-step help. You do the last step yourself.
         </p>
       </header>
       <HomeworkScanner />

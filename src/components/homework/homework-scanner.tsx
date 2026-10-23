@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Camera, Lightbulb, Loader2, RefreshCw, Send, FileQuestion } from "lucide-react";
+import { Markdown } from "@/components/markdown";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
 
@@ -15,7 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getHomeworkScanAction, getQuizFromScanAction } from "@/lib/actions";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "../ui/separator";
@@ -34,8 +34,11 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface HintsResult {
-  hints: string[];
-  guidance: string;
+  problem: string;
+  explanation: string;
+  steps: string[];
+  feedback: string;
+  check: string;
 }
 
 const subjects = ["Math", "Science", "History", "English", "Physics", "Chemistry", "Biology"];
@@ -297,7 +300,7 @@ export default function HomeworkScanner() {
                             name="question"
                             render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Question for AI Hints</FormLabel>
+                                <FormLabel>What do you need help with?</FormLabel>
                                 <FormControl>
                                 <Textarea
                                     placeholder="e.g., I'm stuck on question 3, can you explain the first step?"
@@ -311,13 +314,13 @@ export default function HomeworkScanner() {
                             )}
                         />
                         <Button type="submit" className="w-full" disabled={isQuizButtonDisabled}>
-                            {isLoading ? <Loader2 className="animate-spin" /> : <><Send className="mr-2"/> Get Hints</>}
+                            {isLoading ? <Loader2 className="animate-spin" /> : <><Send className="mr-2"/> Get Help</>}
                         </Button>
                         
                         <Separator />
 
                         <div className="space-y-2 text-center">
-                            <Label>Finished getting hints?</Label>
+                            <Label>Ready to practice?</Label>
                              <Button onClick={handleGenerateQuiz} type="button" variant="secondary" className="w-full" disabled={isQuizButtonDisabled}>
                                 {isGeneratingQuiz ? <Loader2 className="animate-spin" /> : <><FileQuestion className="mr-2" /> Generate Quiz From Scan</>}
                             </Button>
@@ -330,8 +333,8 @@ export default function HomeworkScanner() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">AI Generated Hints</CardTitle>
-          <CardDescription>Guidance based on your scanned problem.</CardDescription>
+          <CardTitle className="font-headline">Help With Your Problem</CardTitle>
+          <CardDescription>How to solve it step by step. You finish the last step yourself.</CardDescription>
         </CardHeader>
         <CardContent className="h-full">
           {isLoading && (
@@ -343,25 +346,39 @@ export default function HomeworkScanner() {
           {!isLoading && !result && !error && (
             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
               <Lightbulb className="h-12 w-12 mb-4" />
-              <p>Your hints and guidance will appear here after you scan your work.</p>
+              <p>Scan your work and ask a question to get step-by-step help here.</p>
             </div>
           )}
           {result && (
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-2">Hints</h3>
-                <Accordion type="single" collapsible className="w-full">
-                  {result.hints.map((hint, index) => (
-                    <AccordionItem value={`item-${index}`} key={index}>
-                      <AccordionTrigger>Hint #{index + 1}</AccordionTrigger>
-                      <AccordionContent>{hint}</AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                <h3 className="font-semibold mb-1">The problem</h3>
+                <Markdown className="text-sm">{result.problem}</Markdown>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">General Guidance</h3>
-                <p className="text-sm text-muted-foreground bg-secondary p-4 rounded-md">{result.guidance}</p>
+                <h3 className="font-semibold mb-1">How it works</h3>
+                <Markdown className="text-sm">{result.explanation}</Markdown>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-2">Step by step</h3>
+                <ol className="space-y-2">
+                  {result.steps.map((step, index) => (
+                    <li key={index} className="flex gap-3 text-sm">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">{index + 1}</span>
+                      <Markdown className="flex-1">{step}</Markdown>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              {result.feedback.trim() && (
+                <div>
+                  <h3 className="font-semibold mb-1">About your work</h3>
+                  <div className="text-sm bg-secondary p-4 rounded-md"><Markdown>{result.feedback}</Markdown></div>
+                </div>
+              )}
+              <div>
+                <h3 className="font-semibold mb-1">Check your answer</h3>
+                <Markdown className="text-sm text-muted-foreground">{result.check}</Markdown>
               </div>
             </div>
           )}
