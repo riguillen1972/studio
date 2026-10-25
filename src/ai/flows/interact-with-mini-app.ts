@@ -6,7 +6,7 @@
  * - interactWithMiniApp - A function that handles the ongoing conversation within a mini-app.
  */
 
-import {ai, getModel, isClaudeModel, recentTurns, safetySettings, SupportedModel} from '@/ai/genkit';
+import {ai, getModel, isClaudeModel, recentTurns, countTokens, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
 import { summarizeText } from './summarize-text';
 
@@ -115,14 +115,14 @@ const interactWithMiniAppFlow = ai.defineFlow(
             appResponse = response.text;
         }
     } else if (!response.output?.appResponse) {
-        return { appResponse: "I had trouble processing that request. Please try again.", totalTokens: response.usage.totalTokens ?? 0 };
+        return { appResponse: "I had trouble processing that request. Please try again.", totalTokens: countTokens(response.usage) };
     } else {
         appResponse = response.output.appResponse;
     }
 
     return {
       appResponse,
-      totalTokens: response.usage.totalTokens ?? 0,
+      totalTokens: countTokens(response.usage),
     };
   }
 );

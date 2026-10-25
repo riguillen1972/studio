@@ -32,6 +32,15 @@ export function getModel(model: SupportedModel = 'free'): string {
 
 const DEFAULT_MAX_OUTPUT_TOKENS = 4096;
 
+/**
+ * Total tokens for a response. The Claude plugin reports only input and output tokens (no total),
+ * so add them up; otherwise every Claude request would count as 0 toward the student's limit.
+ */
+export function countTokens(usage: { totalTokens?: number; inputTokens?: number; outputTokens?: number } | undefined): number {
+  if (!usage) return 0;
+  return usage.totalTokens || (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
+}
+
 /** Keeps only the most recent turns of a conversation, so long chats don't get more expensive with every message. */
 export function recentTurns<T>(turns: T[] | undefined, max = 10): T[] {
   return (turns ?? []).slice(-max);
@@ -113,14 +122,14 @@ export async function smartGenerate<T>(opts: {
     return {
       output: parsed,
       text: response.text,
-      usage: { totalTokens: response.usage.totalTokens ?? 0 },
+      usage: { totalTokens: countTokens(response.usage) },
     };
   }
 
   // Claude without a schema: plain text
   if (isClaude) {
     const response = await ai.generate({ model: modelStr, prompt: opts.prompt, config: claudeConfig });
-    return { output: null, text: response.text, usage: { totalTokens: response.usage.totalTokens ?? 0 } };
+    return { output: null, text: response.text, usage: { totalTokens: countTokens(response.usage) } };
   }
 
   // For Gemini: use native structured output
@@ -134,7 +143,7 @@ export async function smartGenerate<T>(opts: {
   return {
     output: response.output ?? null,
     text: response.text,
-    usage: { totalTokens: response.usage.totalTokens ?? 0 },
+    usage: { totalTokens: countTokens(response.usage) },
   };
 }
 

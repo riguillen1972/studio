@@ -1,7 +1,7 @@
 
 'use server';
 
-import { ai, getModel, isClaudeModel, recentTurns, safetySettings, SupportedModel } from '@/ai/genkit';
+import { ai, getModel, isClaudeModel, recentTurns, countTokens, safetySettings, SupportedModel } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const WebTutorInputSchema = z.object({
@@ -66,7 +66,7 @@ Provide a helpful, educational answer based on the webpage content. If the stude
 
     return {
       answer: response.text,
-      totalTokens: response.usage.totalTokens ?? 0,
+      totalTokens: countTokens(response.usage),
     };
   }
 );
