@@ -25,7 +25,11 @@ export async function listVoices(): Promise<VoiceOption[]> {
     headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY! },
     next: { revalidate: 3600 },
   });
-  if (!res.ok) throw new Error(`ElevenLabs voices request failed: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    console.error("ElevenLabs voices request failed:", res.status, body.slice(0, 300));
+    throw new Error(`ElevenLabs voices request failed: ${res.status}`);
+  }
   const data = await res.json();
   return (data.voices ?? []).map((v: VoiceOption) => ({
     voice_id: v.voice_id,
