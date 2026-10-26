@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CheckCircle, Gem, Sigma, Sparkles, Crown, Zap, Mail, Loader2, CreditCard, ExternalLink } from "lucide-react";
@@ -111,15 +111,16 @@ function ProfileContent() {
   const [currentClass, setCurrentClass] = useState<{ name: string; join_code: string } | null>(null);
   const mustStayInClass = requiresSchoolConsent(role, gradeLevel);
 
+  const loadCurrentClass = useCallback(async () => {
+    const { data: { session } } = await createClient().auth.getSession();
+    if (!session) return;
+    const res = await fetch('/api/enroll', { headers: { Authorization: `Bearer ${session.access_token}` } });
+    if (res.ok) setCurrentClass((await res.json()).class ?? null);
+  }, []);
+
   useEffect(() => {
-    if (!supabaseUser || isTeacher) return;
-    (async () => {
-      const { data: { session } } = await createClient().auth.getSession();
-      if (!session) return;
-      const res = await fetch('/api/enroll', { headers: { Authorization: `Bearer ${session.access_token}` } });
-      if (res.ok) setCurrentClass((await res.json()).class ?? null);
-    })();
-  }, [supabaseUser, isTeacher, classCode]);
+    if (supabaseUser && !isTeacher) loadCurrentClass();
+  }, [supabaseUser, isTeacher, loadCurrentClass]);
 
   // The profile loads after first render, so sync the name field once it arrives
   useEffect(() => {
@@ -169,6 +170,7 @@ function ProfileContent() {
       toast({ title: "Couldn't join class", description: error, variant: "destructive" });
     } else {
       setClassCodeInput("");
+      loadCurrentClass();
       toast({ title: switching ? "Class changed" : "Joined class", description: "You're now linked to your teacher's class." });
     }
   };
