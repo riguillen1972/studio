@@ -15,7 +15,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Class not found" }, { status: 404 });
     }
 
-    const { data: enrollments } = await supabase.from("enrollments").select("student_id").eq("class_id", classId);
+    const { data: enrollments } = await supabase.from("enrollments").select("student_id, joined_at").eq("class_id", classId);
+    const joinedAt = new Map((enrollments ?? []).map((e) => [e.student_id, e.joined_at as string]));
     const studentIds = (enrollments ?? []).map((e) => e.student_id);
 
     const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
@@ -32,7 +33,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     ]);
 
     const activityByStudent = new Map<string, { count: number; last: string }>();
-    for (const a of activity ?? []) {
+    // Count only activity since the student joined this class
+    for (const a of (activity ?? []).filter((a) => a.created_at >= (joinedAt.get(a.user_id) ?? ""))) {
       const entry = activityByStudent.get(a.user_id) ?? { count: 0, last: a.created_at };
       entry.count += 1;
       if (a.created_at > entry.last) entry.last = a.created_at;

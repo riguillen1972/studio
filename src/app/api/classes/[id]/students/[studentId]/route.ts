@@ -24,8 +24,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const none = Promise.resolve({ data: [] });
 
     const [{ data: chats }, { data: apps }, { data: submissions }] = await Promise.all([
+      // Only chats from since the student joined this class, not from a previous teacher's class
       isPrivate ? none : supabase.from("ai_interactions").select("id, tool, prompt, response, created_at")
-        .eq("user_id", studentId).order("created_at", { ascending: false }).limit(100),
+        .eq("user_id", studentId).gte("created_at", enrollment.joined_at).order("created_at", { ascending: false }).limit(100),
       isPrivate ? none : supabase.from("saved_apps").select("id, name, description, conversation, created_at")
         .eq("user_id", studentId).order("created_at", { ascending: false }).limit(50),
       supabase.from("assignment_submissions")
