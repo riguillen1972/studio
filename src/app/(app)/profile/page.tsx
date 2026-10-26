@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PLANS, TEACHER_MAX, TEACHER_AVATAR_FEATURE, AI_TOOL_COUNT, requiresSchoolConsent } from "@/lib/plans";
+import { createClient } from "@/lib/supabase/client";
 
 interface TierPlan {
     name: string;
@@ -89,6 +90,7 @@ function ProfileContent() {
     classCode,
     updateProfile,
     joinClass,
+    leaveClass,
   } = useAppState();
   const { user: supabaseUser } = useAuth();
   const { toast } = useToast();
@@ -104,6 +106,20 @@ function ProfileContent() {
   const [isSavingName, setIsSavingName] = useState(false);
   const [classCodeInput, setClassCodeInput] = useState("");
   const [isJoiningClass, setIsJoiningClass] = useState(false);
+  const [isLeavingClass, setIsLeavingClass] = useState(false);
+  // The class the student is actually enrolled in (not just a saved code)
+  const [currentClass, setCurrentClass] = useState<{ name: string; join_code: string } | null>(null);
+  const mustStayInClass = requiresSchoolConsent(role, gradeLevel);
+
+  useEffect(() => {
+    if (!supabaseUser || isTeacher) return;
+    (async () => {
+      const { data: { session } } = await createClient().auth.getSession();
+      if (!session) return;
+      const res = await fetch('/api/enroll', { headers: { Authorization: `Bearer ${session.access_token}` } });
+      if (res.ok) setCurrentClass((await res.json()).class ?? null);
+    })();
+  }, [supabaseUser, isTeacher, classCode]);
 
   // The profile loads after first render, so sync the name field once it arrives
   useEffect(() => {
@@ -144,6 +160,8 @@ function ProfileContent() {
   };
 
   const handleJoinClass = async () => {
+    const switching = !!currentClass && currentClass.join_code !== classCodeInput.trim().toUpperCase();
+    if (switching && !confirm(`Switch from ${currentClass!.name} to the new class? Your current teacher will be notified that you left.`)) return;
     setIsJoiningClass(true);
     const { error } = await joinClass(classCodeInput);
     setIsJoiningClass(false);
@@ -151,7 +169,21 @@ function ProfileContent() {
       toast({ title: "Couldn't join class", description: error, variant: "destructive" });
     } else {
       setClassCodeInput("");
-      toast({ title: "Joined class", description: "You're now linked to your teacher's class." });
+      toast({ title: switching ? "Class changed" : "Joined class", description: "You're now linked to your teacher's class." });
+    }
+  };
+
+  const handleLeaveClass = async () => {
+    if (!currentClass) return;
+    if (!confirm(`Remove your class code and leave ${currentClass.name}? Your teacher will be notified.`)) return;
+    setIsLeavingClass(true);
+    const { error } = await leaveClass();
+    setIsLeavingClass(false);
+    if (error) {
+      toast({ title: "Couldn't leave class", description: error, variant: "destructive" });
+    } else {
+      setCurrentClass(null);
+      toast({ title: "Left class", description: "Your class code was removed." });
     }
   };
 
@@ -343,21 +375,41 @@ function ProfileContent() {
                     )}
                     {!isTeacher && (
                         <div className="space-y-2">
-                            <Label htmlFor="joinClass">Join a Class</Label>
+                            <Label htmlFor="joinClass">My Class</Label>
+                            {currentClass ? (
+                                <div className="flex items-center justify-between gap-2 rounded-md border p-3 text-sm">
+                                    <span>
+                                        <span className="font-medium">{currentClass.name}</span>
+                                        <span className="text-muted-foreground"> · code <span className="font-mono">{currentClass.join_code}</span></span>
+                                    </span>
+                                    {!mustStayInClass && (
+                                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={handleLeaveClass} disabled={isLeavingClass}>
+                                            {isLeavingClass ? <Loader2 className="h-4 w-4 animate-spin" /> : "Remove code"}
+                                        </Button>
+                                    )}
+                                </div>
+                            ) : (
+                                <p className="text-xs text-muted-foreground">You&apos;re not in a class yet.</p>
+                            )}
                             <div className="flex gap-2">
                                 <Input
                                     id="joinClass"
-                                    placeholder="Class code from your teacher"
+                                    placeholder={currentClass ? "New class code to switch classes" : "Class code from your teacher"}
                                     value={classCodeInput}
                                     onChange={(e) => setClassCodeInput(e.target.value.toUpperCase())}
                                     className="uppercase"
                                 />
                                 <Button variant="outline" onClick={handleJoinClass} disabled={isJoiningClass || !classCodeInput.trim()}>
-                                    {isJoiningClass ? <Loader2 className="h-4 w-4 animate-spin" /> : "Join"}
+                                    {isJoiningClass ? <Loader2 className="h-4 w-4 animate-spin" /> : currentClass ? "Change" : "Join"}
                                 </Button>
                             </div>
-                            {classCode && (
-                                <p className="text-xs text-muted-foreground">Current class code: <span className="font-mono">{classCode}</span></p>
+                            {currentClass && (
+                                <p className="text-xs text-muted-foreground">
+                                    {mustStayInClass
+                                        ? "Students in 7th grade and below need to stay in a class, but you can change to a new class code. "
+                                        : ""}
+                                    If you change or remove your code, your teacher is notified.
+                                </p>
                             )}
                             <p className="text-xs text-muted-foreground">
                                 {role === 'college'

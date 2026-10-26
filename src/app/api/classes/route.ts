@@ -36,6 +36,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Only teachers can create classes" }, { status: 403 });
     }
 
+    // One class (one class code) per teacher. They can delete it to start a new one.
+    const { count: existing } = await supabase
+      .from("classes")
+      .select("id", { count: "exact", head: true })
+      .eq("teacher_id", user.id);
+    if (existing && existing > 0) {
+      return NextResponse.json({ error: "You already have a class. Delete it first to create a new one." }, { status: 409 });
+    }
+
     // Generate a random 6-character alphanumeric join code
     const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 

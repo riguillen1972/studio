@@ -10,7 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Users, BookOpen, KeyRound, Copy, CalendarClock } from "lucide-react";
+import { Loader2, Plus, Users, BookOpen, KeyRound, Copy, CalendarClock, Trash2 } from "lucide-react";
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+    AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { User } from "@supabase/supabase-js";
 
 interface TeacherDashboardProps {
@@ -43,6 +47,7 @@ import { useAppState } from "@/components/app-state-provider";
 import { LiveSession } from "./live-session";
 import { WorksheetGenerator } from "./worksheet-generator";
 import { StudentsPanel } from "./students-panel";
+import { TeacherNotifications } from "./teacher-notifications";
 
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     // The AI Teacher needs Teacher Max; student Max has the same tier but a cheaper price
@@ -58,6 +63,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     const [newClassName, setNewClassName] = useState("");
     const [newClassSubject, setNewClassSubject] = useState("");
     const [isCreatingClass, setIsCreatingClass] = useState(false);
+    const [deletingClassId, setDeletingClassId] = useState<string | null>(null);
 
     // Context pack form state
     const [packTitle, setPackTitle] = useState("");
@@ -110,6 +116,30 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
         fetchData();
     }, [fetchData]);
 
+    const handleDeleteClass = async (classId: string) => {
+        setDeletingClassId(classId);
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+            const res = await fetch(`/api/classes/${classId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${session.access_token}` },
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                setLoadError(data.error || "Couldn't delete the class.");
+            } else {
+                setClasses(prev => prev.filter(c => c.id !== classId));
+                setContextPacks(prev => prev.filter(p => p.class_id !== classId));
+            }
+        } catch (error) {
+            console.error("Failed to delete class:", error);
+            setLoadError("Couldn't delete the class.");
+        } finally {
+            setDeletingClassId(null);
+        }
+    };
+
     const handleCreateClass = async () => {
         if (!newClassName) return;
         setIsCreatingClass(true);
@@ -133,6 +163,9 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                 setNewClassName("");
                 setNewClassSubject("");
                 await fetchData();
+            } else {
+                const data = await res.json().catch(() => ({}));
+                setLoadError(data.error || "Couldn't create the class.");
             }
         } catch (error) {
             console.error("Failed to create class:", error);
@@ -211,6 +244,8 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     }
 
     return (
+        <>
+        <TeacherNotifications />
         <Tabs defaultValue="classes" className="w-full">
             <TabsList className="mb-4 h-auto flex-wrap">
                 <TabsTrigger value="classes">My Classes</TabsTrigger>
@@ -222,6 +257,11 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             </TabsList>
 
             <TabsContent value="classes" className="space-y-4">
+                {classes.length > 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                        Each teacher has one class code. To start a new class, delete this one first.
+                    </p>
+                ) : (
                 <Card>
                     <CardHeader>
                         <CardTitle>Create New Class</CardTitle>
@@ -256,6 +296,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                         </Button>
                     </CardContent>
                 </Card>
+                )}
 
                 {loadError && (
                     <div className="flex items-center justify-between gap-4 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
@@ -304,8 +345,30 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                         />
                                     </div>
                                 </CardContent>
-                                <CardFooter className="text-xs text-muted-foreground">
-                                    Created {new Date(cls.created_at).toLocaleDateString()}
+                                <CardFooter className="flex items-center justify-between text-xs text-muted-foreground">
+                                    <span>Created {new Date(cls.created_at).toLocaleDateString()}</span>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" disabled={deletingClassId === cls.id}>
+                                                {deletingClassId === cls.id ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Trash2 className="mr-1 h-3 w-3" />}
+                                                Delete class
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Delete {cls.name}?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This deletes the class code {cls.join_code}, removes every student from the class, and permanently deletes its lesson materials, assignments, turned-in work and grades. It can&apos;t be undone.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => handleDeleteClass(cls.id)}>
+                                                    Delete class
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </CardFooter>
                             </Card>
                         ))
@@ -468,5 +531,6 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                 <LiveSession tier={avatarTier} classes={classes} contextPacks={contextPacks} />
             </TabsContent>
         </Tabs>
+        </>
     );
 }

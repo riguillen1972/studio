@@ -64,3 +64,58 @@ export async function PATCH(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+// The teacher deletes their class. Its enrollments, materials, submissions and sessions are deleted with it.
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Missing or invalid authorization header" }, { status: 401 });
+    }
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.split(" ")[1]);
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id: classId } = await params;
+    const { data: cls } = await supabase.from("classes").select("teacher_id").eq("id", classId).maybeSingle();
+    if (!cls || cls.teacher_id !== user.id) {
+      return NextResponse.json({ error: "Class not found" }, { status: 404 });
+    }
+
+    // Students in this class no longer have a class code
+    const { data: enrollments } = await supabase.from("enrollments").select("student_id").eq("class_id", classId);
+    const studentIds = (enrollments ?? []).map((e) => e.student_id);
+
+    // These tables reference classes without ON DELETE CASCADE; detach their rows so the delete can succeed
+    const { data: packs } = await supabase.from("context_packs").select("id").eq("class_id", classId);
+    const packIds = (packs ?? []).map((p) => p.id);
+    await Promise.all([
+      ...["study_tool_usage", "spaced_rep_cards", "xp_logs"].map((table) =>
+        supabase.from(table).update({ class_id: null }).eq("class_id", classId)
+      ),
+      ...(packIds.length
+        ? ["study_tool_usage", "spaced_rep_cards"].map((table) =>
+            supabase.from(table).update({ context_pack_id: null }).in("context_pack_id", packIds)
+          )
+        : []),
+    ]);
+
+    const { error } = await supabase.from("classes").delete().eq("id", classId);
+    if (error) {
+      console.error("Class delete failed:", error);
+      return NextResponse.json({ error: "Failed to delete the class" }, { status: 500 });
+    }
+    if (studentIds.length) {
+      await supabase.from("profiles").update({ class_code: null }).in("id", studentIds);
+    }
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Classes API DELETE error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

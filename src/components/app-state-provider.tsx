@@ -41,6 +41,7 @@ interface AppState {
   researchModeAllowed: boolean;
   updateProfile: (updates: ProfileUpdates) => Promise<{ error: string | null }>;
   joinClass: (code: string) => Promise<{ error: string | null }>;
+  leaveClass: () => Promise<{ error: string | null }>;
 
   gemma3TokenLimit: number;
   gemma3TokensRemaining: number;
@@ -203,6 +204,18 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     return { error: null };
   };
 
+  // Removes the student's class code; their teacher is notified
+  const leaveClass = async (): Promise<{ error: string | null }> => {
+    const headers = await authHeaders();
+    if (!headers) return { error: 'Not signed in' };
+    const res = await fetch('/api/enroll', { method: 'DELETE', headers });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return { error: data.error || 'Could not leave the class' };
+    setClassCode(null);
+    setResearchModeAllowed(true);
+    return { error: null };
+  };
+
   const isPremium = tier === 'pro' || tier === 'max';
   const limits = TOKEN_LIMITS[tier];
 
@@ -257,6 +270,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     researchModeAllowed,
     updateProfile,
     joinClass,
+    leaveClass,
   };
 
   return (
