@@ -47,6 +47,7 @@ import { useAppState } from "@/components/app-state-provider";
 import { LiveSession } from "./live-session";
 import { WorksheetGenerator } from "./worksheet-generator";
 import { StudentsPanel } from "./students-panel";
+import { QuestTeacher } from "./quest/quest-teacher";
 import { TeacherNotifications } from "./teacher-notifications";
 
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
@@ -250,6 +251,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             <TabsList className="mb-4 h-auto flex-wrap">
                 <TabsTrigger value="classes">My Classes</TabsTrigger>
                 <TabsTrigger value="students">Students</TabsTrigger>
+                <TabsTrigger value="quest">Math Quest</TabsTrigger>
                 <TabsTrigger value="packs">Context Packs</TabsTrigger>
                 <TabsTrigger value="worksheets" className="text-purple-600 dark:text-purple-400">Worksheets</TabsTrigger>
                 <TabsTrigger value="avatar" className="text-purple-600 dark:text-purple-400">My AI Teacher</TabsTrigger>
@@ -374,6 +376,10 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                         ))
                     )}
                 </div>
+            </TabsContent>
+
+            <TabsContent value="quest" className="space-y-4">
+                <QuestTeacher />
             </TabsContent>
 
             <TabsContent value="students" className="space-y-4">
