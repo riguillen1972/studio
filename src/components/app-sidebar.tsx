@@ -19,6 +19,7 @@ import {
   LogOut,
   LayoutDashboard,
   WandSparkles,
+  Compass,
   Headphones,
   BookDashed,
 } from "lucide-react";
@@ -44,7 +45,7 @@ import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { tier, isPremium, role } = useAppState();
+  const { tier, isPremium, role, gradeLevel } = useAppState();
   const { user, signOut } = useAuth();
   const router = useRouter();
   const isActive = (href: string) => pathname === href;
@@ -76,6 +77,12 @@ export function AppSidebar() {
       label: "Focus Mode",
       tier: "pro",
       visibleTo: ['student'],
+    },
+    {
+      href: "/quest",
+      icon: Compass,
+      label: "Math Quest",
+      visibleTo: ['quest'],
     },
     {
       href: "/assignments",
@@ -148,6 +155,9 @@ export function AppSidebar() {
   ];
 
   const menuItems = baseMenuItems.filter(item => {
+    // Math Quest is for grades 6–8 students
+    const gradeNum = parseInt(gradeLevel ?? "", 10);
+    if (item.visibleTo.includes('quest')) return userRole === 'k12' && gradeNum >= 6 && gradeNum <= 8;
     return item.visibleTo.includes('all') || item.visibleTo.includes(isTeacher ? 'teacher' : 'student');
   });
 
