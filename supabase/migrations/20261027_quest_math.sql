@@ -81,3 +81,21 @@ ALTER TABLE quest_mastery ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quest_assessments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quest_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quest_class_focus ENABLE ROW LEVEL SECURITY;
+
+-- Teacher opens the Friday post-check for the class
+ALTER TABLE quest_class_focus ADD COLUMN IF NOT EXISTS post_check_open BOOLEAN NOT NULL DEFAULT false;
+
+-- Pilot feedback: does the teacher agree with each diagnostic, plus short student and teacher surveys
+CREATE TABLE IF NOT EXISTS quest_feedback (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+  student_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  author_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('teacher_agreement', 'student_survey', 'teacher_survey')),
+  rating SMALLINT,
+  answer TEXT,
+  comment TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_quest_feedback_class ON quest_feedback(class_id, kind);
+ALTER TABLE quest_feedback ENABLE ROW LEVEL SECURITY;
