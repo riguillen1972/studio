@@ -379,7 +379,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             </TabsContent>
 
             <TabsContent value="quest" className="space-y-4">
-                <QuestTeacher />
+                <QuestTeacher classes={classes} />
             </TabsContent>
 
             <TabsContent value="students" className="space-y-4">
