@@ -3,7 +3,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAdminClient } from "@/lib/usage";
-import { SKILLS, SKILLS_BY_ID, prerequisiteChain, type Skill } from "./skills";
+import { SKILLS, SKILLS_BY_ID, diagnosticOrder, prerequisiteChain, type Skill } from "./skills";
 import { MISCONCEPTIONS_BY_ID } from "./misconceptions";
 import { checkAnswer, type QuestChoice, type QuestItem } from "./answers";
 import {
@@ -135,8 +135,12 @@ export async function startAssessment(studentId: string, kind: "diagnostic" | "p
   let queue: string[];
   let max: number;
   if (kind === "diagnostic") {
-    // Start with this grade's skills; misses lead back to the skills they build on
-    queue = SKILLS.filter((s) => s.grade === grade).map((s) => s.id);
+    // Start with the teacher's focus skills, then this grade's skills taking turns across strands;
+    // misses lead back to the skills they build on
+    const { data: focusRow } = classId
+      ? await supabase.from("quest_class_focus").select("skill_ids").eq("class_id", classId).maybeSingle()
+      : { data: null };
+    queue = diagnosticOrder(grade, (focusRow?.skill_ids as string[] | undefined) ?? []);
     max = DIAGNOSTIC_MAX_QUESTIONS;
   } else {
     queue = await postCheckSkills(supabase, studentId);
@@ -492,7 +496,7 @@ export async function studentOverview(studentId: string) {
     skills: relevant.map((s) => {
       const m = masteryById.get(s.id);
       return {
-        id: s.id, name: s.name, grade: s.grade, strand: s.strand,
+        id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad,
         status: m?.mastered_at ? "mastered" : statusOf(m?.p_known, m?.attempts ?? 0),
         p_known: m?.p_known ?? null,
       };

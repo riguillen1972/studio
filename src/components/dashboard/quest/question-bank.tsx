@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
+import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
 import { Check, Loader2, Pencil, Sparkles, X } from "lucide-react";
 
-interface BankSkill { id: string; name: string; grade: number; standard: string; approved: number; draft: number }
+interface BankSkill { id: string; name: string; grade: number; strand: Strand; standard: string; nad: string; approved: number; draft: number }
 interface BankItem {
   id: string; skill_id: string; difficulty: number; kind: "multiple_choice" | "numeric";
   stem: string; choices: QuestChoice[] | null; answer: string; explanation: string; status: string;
@@ -35,6 +36,7 @@ export function QuestionBank() {
   const [items, setItems] = useState<BankItem[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [grade, setGrade] = useState(6);
 
   const loadBank = useCallback(async () => {
     try {
@@ -115,29 +117,42 @@ export function QuestionBank() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {grades.map((g) => (
-            <div key={g}>
-              <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-                {g <= 5 ? `Foundation (grade ${g})` : `Grade ${g}`}
-              </p>
-              <ul className="space-y-1">
-                {skills.filter((s) => s.grade === g).map((s) => (
-                  <li key={s.id}>
-                    <button
-                      onClick={() => open(s)}
-                      className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted ${selected?.id === s.id ? "bg-muted" : ""}`}
-                    >
-                      <span className="truncate">{s.name}</span>
-                      <span className="flex shrink-0 gap-1">
-                        {s.draft > 0 && <Badge variant="outline" className="border-amber-500 text-amber-600">{s.draft} to review</Badge>}
-                        <Badge variant={s.approved >= TARGET_PER_SKILL ? "default" : "secondary"}>{s.approved} ready</Badge>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="flex flex-wrap gap-1">
+            {grades.map((g) => {
+              const inGrade = skills.filter((s) => s.grade === g);
+              return (
+                <Button key={g} size="sm" variant={grade === g ? "default" : "outline"} className="h-7 px-2 text-xs" onClick={() => setGrade(g)}>
+                  {g <= 5 ? `Foundation ${g}` : `Grade ${g}`}
+                  <span className="ml-1 opacity-70">{inGrade.filter((s) => s.approved >= TARGET_PER_SKILL).length}/{inGrade.length}</span>
+                </Button>
+              );
+            })}
+          </div>
+          {STRAND_ORDER.map((strand) => {
+            const inStrand = skills.filter((s) => s.grade === grade && s.strand === strand);
+            if (!inStrand.length) return null;
+            return (
+              <div key={strand}>
+                <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">{STRAND_NAMES[strand]}</p>
+                <ul className="space-y-1">
+                  {inStrand.map((s) => (
+                    <li key={s.id}>
+                      <button
+                        onClick={() => open(s)}
+                        className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted ${selected?.id === s.id ? "bg-muted" : ""}`}
+                      >
+                        <span className="truncate">{s.name}</span>
+                        <span className="flex shrink-0 gap-1">
+                          {s.draft > 0 && <Badge variant="outline" className="border-amber-500 text-amber-600">{s.draft} to review</Badge>}
+                          <Badge variant={s.approved >= TARGET_PER_SKILL ? "default" : "secondary"}>{s.approved} ready</Badge>
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
           {skills.length === 0 && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
         </CardContent>
       </Card>
@@ -149,7 +164,9 @@ export function QuestionBank() {
           <>
             <CardHeader>
               <CardTitle className="text-lg">{selected.name}</CardTitle>
-              <CardDescription>Standard {selected.standard}</CardDescription>
+              <CardDescription>
+                {[selected.nad && `NAD ${selected.nad}`, selected.standard && `Common Core ${selected.standard}`].filter(Boolean).join(" · ")}
+              </CardDescription>
               <div className="flex flex-wrap gap-2 pt-2">
                 <Button size="sm" onClick={generate} disabled={isGenerating}>
                   {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}

@@ -86,6 +86,9 @@ function structurallyValid(item: DraftItem): boolean {
   return true;
 }
 
+const standardsText = (skill: Skill) =>
+  [skill.nad && `NAD ${skill.nad}`, skill.standard && `Common Core ${skill.standard}`].filter(Boolean).join(", ");
+
 /** Drafts `count` questions for a skill and returns the ones that pass both checks. */
 export async function generateItems(skill: Skill, count: number): Promise<{ items: DraftItem[]; totalTokens: number; dropped: number }> {
   const misconceptionList = MISCONCEPTIONS.map((m) => `- ${m.id}: ${m.name}`).join("\n");
@@ -104,7 +107,7 @@ export async function generateItems(skill: Skill, count: number): Promise<{ item
       role: "user",
       content:
         `Write ${count} questions for this skill:\n` +
-        `Skill: ${skill.name} (${gradeText}, standard ${skill.standard})\n` +
+        `Skill: ${skill.name} (${gradeText}, ${standardsText(skill)})\n` +
         `What it covers: ${skill.description}\n\n` +
         `Rules:\n` +
         `- Mix difficulty: about a third each of 1 (straightforward), 2 (typical), 3 (multi-step or word problem).\n` +
@@ -113,7 +116,10 @@ export async function generateItems(skill: Skill, count: number): Promise<{ item
         `the answer a student would get from a specific misconception; tag it with the best-matching id below (use ` +
         `"computation-slip" only for a plain arithmetic mistake). "answer" must equal the correct choice's text.\n` +
         `- numeric: choices must be an empty array. "answer" is just the number: an integer, a decimal, or a simplified fraction ` +
-        `like 3/4 or -5/2 (no units, no "x =").\n` +
+        `like 3/4 or -5/2 (no units, no "x =").\\n` +
+        `- If the answer depends on π, rounding, units or time, the stem must say exactly how to answer (for example "Use 3.14 for π ` +
+        `and round to the nearest tenth" or "Give your answer in minutes"), so the number alone is unambiguous.\n` +
+        `- No pictures: describe any graph, figure, table or data set fully in the text of the stem.\n` +
         `- explanation: 2–3 short sentences showing how to solve it, for the student to read after answering.\n\n` +
         `Misconception ids:\n${misconceptionList}`,
     }],

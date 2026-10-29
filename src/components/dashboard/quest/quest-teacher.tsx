@@ -9,12 +9,13 @@ import { questFetch } from "@/components/quest/quest-api";
 import { QuestionBank } from "./question-bank";
 import { ClassOverview } from "./class-overview";
 import { FridayReport } from "./friday-report";
+import type { Strand } from "@/lib/quest/skills";
 
 export interface QuestClassData {
   class: { id: string; name: string };
   focus_skill_ids: string[];
   post_check_open: boolean;
-  all_skills: { id: string; name: string; grade: number }[];
+  all_skills: { id: string; name: string; grade: number; strand: Strand; nad: string }[];
   students: { id: string; name: string; grade: number }[];
   skills: { id: string; name: string; grade: number }[];
   heat: Record<string, Record<string, { p: number; status: string }>>;

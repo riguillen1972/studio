@@ -9,9 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { AssessmentRunner } from "@/components/quest/assessment-runner";
 import { PracticeRunner } from "@/components/quest/practice-runner";
 import { questFetch } from "@/components/quest/quest-api";
+import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
 import { ClipboardCheck, Compass, Loader2, Play, Target } from "lucide-react";
 
-interface SkillSummary { id: string; name: string; grade: number; status: string; p_known: number | null }
+interface SkillSummary { id: string; name: string; grade: number; strand: Strand; status: string; p_known: number | null }
 interface Overview {
   eligible: boolean;
   grade?: number;
@@ -54,7 +55,7 @@ export default function QuestPage() {
         <h1 className="flex items-center gap-2 text-2xl font-bold font-headline tracking-tight sm:text-3xl">
           <Compass className="h-7 w-7 text-primary" /> Math Quest
         </h1>
-        <p className="mt-1 text-muted-foreground">Practice that adapts to you: fractions, ratios and proportions, and equations.</p>
+        <p className="mt-1 text-muted-foreground">Practice that adapts to you, covering all of grades 6–8 math: numbers, ratios, equations, functions, geometry and data.</p>
       </header>
 
       {error && <p className="text-destructive">{error}</p>}
@@ -142,18 +143,27 @@ function Home({ overview, onStart }: { overview: Overview; onStart: (mode: Mode)
         </CardHeader>
         <CardContent className="space-y-4">
           {byGrade.map((g) => (
-            <div key={g}>
-              <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? "Foundations" : `Grade ${g}`}</p>
-              <div className="flex flex-wrap gap-2">
-                {overview.skills.filter((s) => s.grade === g).map((s) => {
-                  const style = STATUS_STYLE[s.status] ?? STATUS_STYLE.not_started;
-                  return (
-                    <span key={s.id} title={style.label} className={`rounded-full border px-3 py-1 text-xs ${style.className}`}>
-                      {s.name}
-                    </span>
-                  );
-                })}
-              </div>
+            <div key={g} className="space-y-2">
+              <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? "Foundations" : `Grade ${g}`}</p>
+              {STRAND_ORDER.map((strand) => {
+                const skills = overview.skills.filter((s) => s.grade === g && s.strand === strand);
+                if (!skills.length) return null;
+                return (
+                  <div key={strand}>
+                    <p className="mb-1 text-xs text-muted-foreground">{STRAND_NAMES[strand]}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {skills.map((s) => {
+                        const style = STATUS_STYLE[s.status] ?? STATUS_STYLE.not_started;
+                        return (
+                          <span key={s.id} title={style.label} className={`rounded-full border px-3 py-1 text-xs ${style.className}`}>
+                            {s.name}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ))}
           <div className="flex flex-wrap gap-3 pt-2 text-xs text-muted-foreground">

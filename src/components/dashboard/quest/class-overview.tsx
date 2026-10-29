@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Users } from "lucide-react";
+import { STRAND_NAMES, STRAND_ORDER } from "@/lib/quest/skills";
 import type { QuestClassData } from "./quest-teacher";
 
 const cellStyle = (cell?: { p: number; status: string }) => {
@@ -51,20 +52,29 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
             <div className="space-y-3 rounded-md border p-3">
               <p className="text-xs text-muted-foreground">Pick what you&apos;re teaching this week (up to 12). About 60% of practice will come from these.</p>
               {grades.map((g) => (
-                <div key={g}>
-                  <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? `Foundation (grade ${g})` : `Grade ${g}`}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {data.all_skills.filter((s) => s.grade === g).map((s) => {
-                      const on = focus.includes(s.id);
-                      return (
-                        <button key={s.id} type="button"
-                          onClick={() => setFocus(on ? focus.filter((f) => f !== s.id) : focus.length < 12 ? [...focus, s.id] : focus)}
-                          className={`rounded-full border px-3 py-1 text-xs ${on ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"}`}>
-                          {s.name}
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div key={g} className="space-y-2">
+                  <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? `Foundation (grade ${g})` : `Grade ${g}`}</p>
+                  {STRAND_ORDER.map((strand) => {
+                    const skills = data.all_skills.filter((s) => s.grade === g && s.strand === strand);
+                    if (!skills.length) return null;
+                    return (
+                      <div key={strand}>
+                        <p className="mb-1 text-xs text-muted-foreground">{STRAND_NAMES[strand]}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {skills.map((s) => {
+                            const on = focus.includes(s.id);
+                            return (
+                              <button key={s.id} type="button" title={s.nad ? `NAD ${s.nad}` : undefined}
+                                onClick={() => setFocus(on ? focus.filter((f) => f !== s.id) : focus.length < 12 ? [...focus, s.id] : focus)}
+                                className={`rounded-full border px-3 py-1 text-xs ${on ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"}`}>
+                                {s.name}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
               <Button size="sm" onClick={async () => { await onSaveFocus(focus); setEditingFocus(false); }}>Save focus</Button>
