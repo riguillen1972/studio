@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
+import { PlacementLadder, PlacementSummary } from "./placement-card";
+import type { Placement } from "@/lib/quest/placement";
 
 interface Progress {
   assessment_id: string;
@@ -19,7 +21,7 @@ interface Progress {
 }
 
 /** Runs the diagnostic or the post-check. No right/wrong feedback during, so it measures fairly. */
-export function AssessmentRunner({ kind, onDone }: { kind: "diagnostic" | "post"; onDone: () => void }) {
+export function AssessmentRunner({ kind, grade, onDone }: { kind: "diagnostic" | "post"; grade: number; onDone: () => void }) {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -59,7 +61,7 @@ export function AssessmentRunner({ kind, onDone }: { kind: "diagnostic" | "post"
   if (!progress) return <div className="flex h-40 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
 
   if (progress.status === "completed") {
-    return <AssessmentDone kind={kind} results={progress.results ?? {}} onDone={onDone} />;
+    return <AssessmentDone kind={kind} grade={grade} results={progress.results ?? {}} onDone={onDone} />;
   }
 
   return (
@@ -83,18 +85,27 @@ export function AssessmentRunner({ kind, onDone }: { kind: "diagnostic" | "post"
   );
 }
 
-function AssessmentDone({ kind, results, onDone }: { kind: "diagnostic" | "post"; results: Record<string, unknown>; onDone: () => void }) {
+function AssessmentDone({ kind, grade, results, onDone }: { kind: "diagnostic" | "post"; grade: number; results: Record<string, unknown>; onDone: () => void }) {
   if (kind === "diagnostic") {
-    const skills = (results.skills as { name: string; result: string; grade: number }[] | undefined) ?? [];
+    const skills = (results.skills as { skill_id: string; name: string; result: string; grade: number }[] | undefined) ?? [];
+    const gaps = new Set((results.gaps as string[] | undefined) ?? []);
     const strong = skills.filter((s) => s.result === "correct").map((s) => s.name);
-    const focus = skills.filter((s) => s.result === "wrong").map((s) => s.name);
+    const focus = skills.filter((s) => gaps.has(s.skill_id)).map((s) => s.name);
+    const placement = results.placement as Placement | undefined;
+    const previous = (results.previous as { placement: Placement } | null | undefined)?.placement ?? null;
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Done! Here&apos;s your starting point</CardTitle>
+          <CardTitle>{previous ? "Check-in done! Here's how you've grown" : "Done! Here's your starting point"}</CardTitle>
           <CardDescription>Everyone has things to work on. Your practice will focus on these first.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {placement && placement.overall !== null && (
+            <div className="space-y-3 rounded-md border p-3">
+              <PlacementSummary placement={placement} grade={grade} previous={previous} />
+              <PlacementLadder placement={placement} grade={grade} previous={previous} />
+            </div>
+          )}
           {strong.length > 0 && (
             <div>
               <p className="font-medium text-green-700 dark:text-green-400">You&apos;re strong in</p>

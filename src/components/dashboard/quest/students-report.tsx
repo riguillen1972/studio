@@ -10,6 +10,7 @@ import { questFetch } from "@/components/quest/quest-api";
 import { downloadCsv, fileSlug } from "@/lib/csv";
 import { openWorksheet } from "./question-bank";
 import { BandLegend, bandInfo } from "./band";
+import { PlacementLadder, PlacementSummary } from "@/components/quest/placement-card";
 import type { StudentReport } from "@/lib/quest/engine";
 import type { QuestClassData } from "./quest-teacher";
 
@@ -106,6 +107,8 @@ function StudentDetail({ report: r, classId }: { report: StudentReport; classId:
   const grade = r.student.grade;
   const gradeTopics = r.topics.filter((t) => t.section === grade);
   const otherTopics = r.topics.filter((t) => t.section !== grade);
+  const latestPlacement = r.placements.at(-1) ?? null;
+  const firstPlacement = r.placements.length > 1 ? r.placements[0] : null;
 
   return (
     <div className="space-y-4">
@@ -136,6 +139,23 @@ function StudentDetail({ report: r, classId }: { report: StudentReport; classId:
         <Stat value={r.totals.mastered} label="skills mastered" />
         <Stat value={<span className="flex items-center gap-1"><Flame className={`h-5 w-5 ${r.totals.streak ? "text-orange-500" : "text-muted-foreground"}`} />{r.totals.streak}</span>} label="day streak" />
       </div>
+
+      {latestPlacement?.overall != null && grade && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Placement</CardTitle>
+            <CardDescription>
+              {r.placements.length > 1
+                ? `Latest check-in (${new Date(latestPlacement.completed_at).toLocaleDateString()}) compared with the first diagnostic`
+                : "From the diagnostic"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <PlacementSummary placement={latestPlacement} grade={grade} previous={firstPlacement} />
+            <PlacementLadder placement={latestPlacement} grade={grade} previous={firstPlacement} forTeacher />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-2">

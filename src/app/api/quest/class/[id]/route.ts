@@ -3,7 +3,7 @@ import { getAdminClient } from "@/lib/usage";
 import { SKILLS, SKILLS_BY_ID, SKILL_CODES, sectionOf } from "@/lib/quest/skills";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
 import { GAP_BELOW, scoreOf, statusOf } from "@/lib/quest/mastery";
-import { classQuestionsSince } from "@/lib/quest/engine";
+import { classQuestionsSince, placementOf } from "@/lib/quest/engine";
 import { parseTzOffset, weekStart } from "@/lib/quest/progress";
 import { bandOf, topicScores } from "@/lib/quest/reports";
 import { ownQuestClass } from "@/lib/quest/teacher";
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       ids.length ? supabase.from("quest_mastery").select("student_id, skill_id, p_known, attempts, mastered_at").in("student_id", ids) : Promise.resolve(none),
       ids.length ? supabase.from("quest_assessments").select("student_id, kind, status, results, started_at, completed_at").in("student_id", ids).order("started_at", { ascending: false }) : Promise.resolve(none),
       ids.length ? supabase.from("quest_attempts").select("student_id, skill_id, phase, correct, misconception, seconds, created_at").in("student_id", ids).gte("created_at", weekAgo) : Promise.resolve(none),
-      supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal").eq("class_id", classId).maybeSingle(),
+      supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal, checkin_opened_at").eq("class_id", classId).maybeSingle(),
       supabase.from("quest_feedback").select("kind, student_id, rating, answer, comment, created_at").eq("class_id", classId),
     ]);
 
@@ -76,7 +76,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     // Report per student
     const agreement = new Map((feedback ?? []).filter((f) => f.kind === "teacher_agreement").map((f) => [f.student_id, f.answer]));
     const report = students.map((st) => {
-      const diag = latest(st.id, "diagnostic");
+      // A check-in in progress doesn't hide the finished diagnostic before it
+      const diag = (assessments ?? []).find((a) => a.student_id === st.id && a.kind === "diagnostic" && a.status === "completed") ?? latest(st.id, "diagnostic");
       const post = latest(st.id, "post");
       const practice = attemptsOf(st.id).filter((a) => a.phase === "practice" || a.phase === "review");
       const postResults = post?.status === "completed" ? post.results as { pre_average: number | null; post_average_same_skills: number | null; post_average: number | null } : null;
@@ -112,6 +113,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       };
     }));
 
+    // Placement: first and latest diagnostic per student, and who has done the open check-in
+    const checkinOpened: string | null = focus?.checkin_opened_at ?? null;
+    const placement = students.map((st) => {
+      const done = (assessments ?? []).filter((a) => a.student_id === st.id && a.kind === "diagnostic" && a.status === "completed")
+        .sort((a, b) => (a.completed_at < b.completed_at ? -1 : 1));
+      const at = (a: (typeof done)[number] | undefined) => (a ? { completed_at: a.completed_at as string, ...placementOf(a.results, st.grade) } : null);
+      return {
+        student_id: st.id, name: st.name, grade: st.grade, rounds: done.length,
+        first: done.length > 1 ? at(done[0]) : null,
+        latest: at(done.at(-1)),
+        checkin_done: !!checkinOpened && !!done.at(-1) && done.at(-1)!.completed_at >= checkinOpened,
+      };
+    });
+
     const surveys = (feedback ?? []).filter((f) => f.kind === "student_survey");
     const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
     const withBoth = report.filter((r) => r.pre_average !== null && r.post_average !== null);
@@ -129,6 +144,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       groups,
       report,
       standards,
+      placement,
+      checkin_opened_at: checkinOpened,
       summary: {
         students: students.length,
         diagnostic_done: report.filter((r) => r.diagnostic_done).length,
@@ -158,15 +175,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-// Set the week's focus skills, open the end-of-week check, and/or set the weekly class goal:
-// { skill_ids?: string[], post_check_open?: boolean, weekly_goal?: number | null }
+// Set the week's focus skills, open the end-of-week check, set the weekly class goal, and/or
+// open or close a check-in: { skill_ids?: string[], post_check_open?: boolean, weekly_goal?: number | null, checkin_open?: boolean }
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: classId } = await params;
   const owned = await ownQuestClass(req, classId);
   if (owned.error) return owned.error;
   const body = await req.json().catch(() => ({}));
 
-  const { data: existing } = await getAdminClient().from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal").eq("class_id", classId).maybeSingle();
+  const { data: existing } = await getAdminClient().from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal, checkin_opened_at").eq("class_id", classId).maybeSingle();
   const goal = Number(body.weekly_goal);
   const row = {
     class_id: classId,
@@ -174,6 +191,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     post_check_open: typeof body.post_check_open === "boolean" ? body.post_check_open : existing?.post_check_open ?? false,
     weekly_goal: body.weekly_goal === null ? null
       : Number.isFinite(goal) && goal >= 10 ? Math.min(100000, Math.round(goal)) : existing?.weekly_goal ?? null,
+    checkin_opened_at: body.checkin_open === true ? existing?.checkin_opened_at ?? new Date().toISOString()
+      : body.checkin_open === false ? null : existing?.checkin_opened_at ?? null,
     updated_at: new Date().toISOString(),
   };
   const { error } = await getAdminClient().from("quest_class_focus").upsert(row, { onConflict: "class_id" });

@@ -3,16 +3,20 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAdminClient } from "@/lib/usage";
-import { SKILLS, SKILLS_BY_ID, SKILL_CODES, diagnosticOrder, prerequisiteChain, sectionOf } from "./skills";
+import { SKILLS, SKILLS_BY_ID, SKILL_CODES, diagnosticOrder, prerequisiteChain, sectionOf, type Strand } from "./skills";
 import { MISCONCEPTIONS_BY_ID } from "./misconceptions";
 import { badgesFor, dayStart, localDayKey, newBadges, streakFrom, weekStart, type Badge, type ProgressStats } from "./progress";
 import { strengthsAndFocus, topicScores } from "./reports";
+import {
+  initSearch, levelOf, levelSkills, nextSearchStrand, placementFrom, placementFromSearch, skipLevel, updateSearch,
+  type DiagnosticResult, type Placement, type StrandSearch,
+} from "./placement";
 import { checkAnswer, type QuestChoice, type QuestItem } from "./answers";
 import {
   MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, scoreOf, statusOf, updatePKnown, type SkillStatus,
 } from "./mastery";
 
-export const DIAGNOSTIC_MAX_QUESTIONS = 24;
+export const DIAGNOSTIC_MAX_QUESTIONS = 30;
 export const POST_MAX_SKILLS = 8;
 export const POST_ITEMS_PER_SKILL = 2;
 export const DAILY_GOAL = 15;
@@ -98,13 +102,14 @@ const clampSeconds = (s: unknown) => {
 
 // ---------- Assessments (diagnostic and post-check) ----------
 
-interface Asked { skill_id: string; item_id: string; correct: boolean; difficulty: number }
+interface Asked { skill_id: string; item_id: string; correct: boolean; difficulty: number; kind?: QuestItem["kind"] }
 interface AssessmentState {
   grade: number;
   queue: string[];          // skills still to ask
   asked: Asked[];
   probed: string[];         // skills already asked or queued
-  current: { item_id: string; skill_id: string } | null;
+  search?: Record<Strand, StrandSearch>; // diagnostic: each strand's level search, asked before the queue
+  current: { item_id: string; skill_id: string; search?: Strand } | null;
   max: number;
 }
 
@@ -134,6 +139,10 @@ export async function startAssessment(studentId: string, kind: "diagnostic" | "p
     return { assessment_id: existing.id, kind, status: "in_progress", question: item ? toPublic(item) : null, answered: state.asked.length, total_estimate: state.max };
   }
 
+  if (kind === "diagnostic" && !(await diagnosticAvailable(supabase, studentId, classId))) {
+    return { error: "You've already found your starting point. Your teacher can open a check-in to take it again." };
+  }
+
   let queue: string[];
   let max: number;
   if (kind === "diagnostic") {
@@ -151,7 +160,9 @@ export async function startAssessment(studentId: string, kind: "diagnostic" | "p
     max = queue.length;
   }
 
-  const state: AssessmentState = { grade, queue, asked: [], probed: [...new Set(queue)], current: null, max };
+  const state: AssessmentState = {
+    grade, queue, asked: [], probed: [...new Set(queue)], current: null, max, ...(kind === "diagnostic" ? { search: initSearch(grade) } : {}),
+  };
   const first = await advance(supabase, studentId, state, kind);
   if (!first) return { error: "There aren't enough approved questions yet. Ask your teacher to approve some in Math Quest." };
 
@@ -171,6 +182,27 @@ async function advance(supabase: SupabaseClient, studentId: string, state: Asses
     // Avoid questions seen in the diagnostic or practice where possible
     const { data } = await supabase.from("quest_attempts").select("item_id").eq("student_id", studentId);
     for (const r of data ?? []) if (r.item_id) usedItems.add(r.item_id);
+  }
+  // Diagnostic: first find each strand's level, then use what's left to look for gaps
+  if (kind === "diagnostic" && state.search) {
+    const { data: approved } = await supabase.from("quest_items").select("skill_id").eq("status", "approved");
+    const ready = new Set((approved ?? []).map((a) => a.skill_id));
+    const askedSkills = new Set(state.asked.map((a) => a.skill_id));
+    while (state.asked.length < state.max) {
+      const strand = nextSearchStrand(state.search);
+      if (!strand) break;
+      const search = state.search[strand];
+      let item: QuestItem | null = null;
+      for (const id of levelSkills(strand, search.target!).filter((id) => ready.has(id) && !askedSkills.has(id))) {
+        item = await pickItem(supabase, studentId, id, { difficulty: 2, exclude: usedItems });
+        if (item) break;
+      }
+      if (item) {
+        state.current = { item_id: item.id, skill_id: item.skill_id, search: strand };
+        return item;
+      }
+      skipLevel(search);
+    }
   }
   while (state.queue.length && state.asked.length < state.max) {
     const skillId = state.queue.shift()!;
@@ -199,18 +231,23 @@ export async function answerAssessment(
   const item = await getItem(supabase, itemId);
   if (!item) return { error: "Question not found" };
 
+  const searchStrand = state.current.search;
   const { correct, misconception } = checkAnswer(item, response);
   await recordAttempt(supabase, {
     student_id: studentId, class_id: assessment.class_id, item, phase: assessment.kind, assessment_id: assessmentId,
     correct, response, misconception, seconds: clampSeconds(seconds),
   });
-  state.asked.push({ skill_id: item.skill_id, item_id: item.id, correct, difficulty: item.difficulty });
+  state.asked.push({ skill_id: item.skill_id, item_id: item.id, correct, difficulty: item.difficulty, kind: item.kind });
 
-  // Diagnostic: a miss means checking the skills this one builds on, nearest first
-  if (assessment.kind === "diagnostic" && !correct) {
-    const prereqs = (SKILLS_BY_ID[item.skill_id]?.prereqs ?? []).filter((p) => !state.probed.includes(p));
-    state.queue.unshift(...prereqs);
-    state.probed.push(...prereqs);
+  const skill = SKILLS_BY_ID[item.skill_id];
+  if (assessment.kind === "diagnostic" && skill) {
+    if (searchStrand && state.search) updateSearch(state.search[searchStrand], state.grade, levelOf(skill), correct);
+    if (!correct && levelOf(skill) <= state.grade) {
+      // A miss at or below grade level means checking the skills this one builds on, nearest first
+      const prereqs = skill.prereqs.filter((p) => !state.probed.includes(p));
+      state.queue.unshift(...prereqs);
+      state.probed.push(...prereqs);
+    }
   }
 
   const next = await advance(supabase, studentId, state, assessment.kind);
@@ -227,14 +264,34 @@ export async function answerAssessment(
   return { assessment_id: assessmentId, kind: assessment.kind, status: "completed", question: null, answered: state.asked.length, total_estimate: state.asked.length, results };
 }
 
-type DiagnosticResult = "correct" | "wrong" | "inferred_known" | "inferred_unsure";
+/** The first diagnostic is always available; after that only when a check-in has opened since the last one. */
+async function diagnosticAvailable(supabase: SupabaseClient, studentId: string, classId: string | null): Promise<boolean> {
+  const { data: last } = await supabase.from("quest_assessments").select("completed_at")
+    .eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
+    .order("completed_at", { ascending: false }).limit(1).maybeSingle();
+  if (!last) return true;
+  const opened = await checkinOpenedAt(supabase, classId);
+  return !!opened && last.completed_at < opened;
+}
+
+async function checkinOpenedAt(supabase: SupabaseClient, classId: string | null): Promise<string | null> {
+  if (!classId) return null;
+  const { data } = await supabase.from("quest_class_focus").select("checkin_opened_at").eq("class_id", classId).maybeSingle();
+  return (data as { checkin_opened_at?: string | null } | null)?.checkin_opened_at ?? null;
+}
+
+/** Placement for a stored diagnostic result (computed for diagnostics saved before placement existed). */
+export const placementOf = (results: unknown, grade: number): Placement => {
+  const r = results as { placement?: Placement; skills?: { skill_id: string; result: DiagnosticResult }[] } | null;
+  return r?.placement ?? placementFrom(r?.skills ?? [], grade);
+};
 
 async function finishDiagnostic(supabase: SupabaseClient, studentId: string, state: AssessmentState) {
-  const result = new Map<string, { result: DiagnosticResult; difficulty: number }>();
+  const result = new Map<string, { result: DiagnosticResult; difficulty: number; kind?: QuestItem["kind"] }>();
   for (const a of state.asked) {
     // If a skill was asked twice, a miss wins
     const prev = result.get(a.skill_id);
-    if (!prev || !a.correct) result.set(a.skill_id, { result: a.correct ? "correct" : "wrong", difficulty: a.difficulty });
+    if (!prev || !a.correct) result.set(a.skill_id, { result: a.correct ? "correct" : "wrong", difficulty: a.difficulty, kind: a.kind });
   }
   // Skills a correct answer builds on are probably known
   for (const a of state.asked.filter((x) => x.correct)) {
@@ -247,31 +304,53 @@ async function finishDiagnostic(supabase: SupabaseClient, studentId: string, sta
   ];
   for (const id of untested) if (!result.has(id)) result.set(id, { result: "inferred_unsure", difficulty: 2 });
 
+  // Missing an above-grade question isn't a weak spot: it only sets the placement
+  const aboveGrade = (id: string) => SKILLS_BY_ID[id] && levelOf(SKILLS_BY_ID[id]) > state.grade;
+  const toSave = [...result.entries()].filter(([id, r]) => !(aboveGrade(id) && r.result === "wrong"));
+
+  // Skills already practiced keep their progress: a direct answer updates the estimate, an
+  // inferred one leaves it alone. Everything else starts from the diagnostic.
   const now = new Date().toISOString();
-  const rows = [...result.entries()].map(([skill_id, r]) => ({
+  const { data: existing } = await supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at")
+    .eq("student_id", studentId).in("skill_id", toSave.map(([id]) => id));
+  const practiced = new Map((existing ?? []).filter((m) => m.attempts > 0).map((m) => [m.skill_id, m]));
+  const fresh = toSave.filter(([id]) => !practiced.has(id)).map(([skill_id, r]) => ({
     student_id: studentId, skill_id, p_known: diagnosticPrior(r.result, r.difficulty),
     attempts: 0, correct: 0, streak: 0, review_step: 0, mastered_at: null, next_review: null, updated_at: now,
   }));
-  const { error } = await supabase.from("quest_mastery").upsert(rows, { onConflict: "student_id,skill_id" });
+  const { error } = fresh.length ? await supabase.from("quest_mastery").upsert(fresh, { onConflict: "student_id,skill_id" }) : { error: null };
   if (error) console.error("Failed to save diagnostic mastery:", error);
+  await Promise.all(toSave.filter(([id, r]) => practiced.has(id) && (r.result === "correct" || r.result === "wrong")).map(([id, r]) => {
+    const m = practiced.get(id)!;
+    const p = updatePKnown(m.p_known, r.result === "correct", r.kind ?? "multiple_choice");
+    // A mastered skill that's now missed goes back into review
+    const lost = m.mastered_at && p < MASTERED_AT;
+    return supabase.from("quest_mastery").update({
+      p_known: p, updated_at: now, ...(lost ? { mastered_at: null, review_step: 0, next_review: now } : {}),
+    }).eq("student_id", studentId).eq("skill_id", id);
+  }));
 
   const skills = [...result.entries()].map(([skill_id, r]) => ({
     skill_id, name: SKILLS_BY_ID[skill_id]?.name, grade: SKILLS_BY_ID[skill_id]?.grade,
     result: r.result, status: statusOf(diagnosticPrior(r.result, r.difficulty), 0),
   }));
+  const { data: earlier } = await supabase.from("quest_assessments").select("results, completed_at")
+    .eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed").order("completed_at", { ascending: true });
+  const previous = earlier?.length ? earlier[earlier.length - 1] : null;
   return {
     questions: state.asked.length,
     correct: state.asked.filter((a) => a.correct).length,
-    gaps: skills.filter((s) => s.result === "wrong").map((s) => s.skill_id),
+    gaps: skills.filter((s) => s.result === "wrong" && !aboveGrade(s.skill_id)).map((s) => s.skill_id),
     skills,
+    placement: state.search ? placementFromSearch(state.search, state.grade) : placementFrom(skills, state.grade),
+    round: (earlier?.length ?? 0) + 1,
+    previous: previous ? { completed_at: previous.completed_at, placement: placementOf(previous.results, state.grade) } : null,
   };
 }
 
 /** Skills for the post-check: what the student practiced, weakest first, plus diagnostic gaps. */
 async function postCheckSkills(supabase: SupabaseClient, studentId: string): Promise<string[]> {
-  const { data: diag } = await supabase.from("quest_assessments").select("results, completed_at")
-    .eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
-    .order("completed_at", { ascending: false }).limit(1).maybeSingle();
+  const diag = await latestDiagnostic(supabase, studentId);
   const since = diag?.completed_at ?? new Date(0).toISOString();
   const { data: practiced } = await supabase.from("quest_attempts").select("skill_id")
     .eq("student_id", studentId).in("phase", ["practice", "review"]).gte("created_at", since);
@@ -282,10 +361,19 @@ async function postCheckSkills(supabase: SupabaseClient, studentId: string): Pro
   return ordered.slice(0, POST_MAX_SKILLS);
 }
 
+async function latestDiagnostic(supabase: SupabaseClient, studentId: string) {
+  const { data } = await supabase.from("quest_assessments").select("id, results, completed_at")
+    .eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
+    .order("completed_at", { ascending: false }).limit(1).maybeSingle();
+  return data;
+}
+
 async function finishPostCheck(supabase: SupabaseClient, studentId: string, state: AssessmentState) {
   const skillIds = [...new Set(state.asked.map((a) => a.skill_id))];
-  const { data: diagAttempts } = await supabase.from("quest_attempts").select("skill_id, correct")
-    .eq("student_id", studentId).eq("phase", "diagnostic").in("skill_id", skillIds);
+  const diag = await latestDiagnostic(supabase, studentId);
+  const { data: diagAttempts } = diag
+    ? await supabase.from("quest_attempts").select("skill_id, correct").eq("student_id", studentId).eq("assessment_id", diag.id).in("skill_id", skillIds)
+    : { data: [] as { skill_id: string; correct: boolean }[] };
   const { data: mastery } = await supabase.from("quest_mastery").select("skill_id, p_known").eq("student_id", studentId).in("skill_id", skillIds);
 
   const skills = skillIds.map((skill_id) => {
@@ -512,7 +600,7 @@ export async function studentOverview(studentId: string, tzOffset = 0) {
     supabase.from("quest_assessments").select("id, kind, status, results, completed_at").eq("student_id", studentId).order("started_at", { ascending: false }),
     supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at").eq("student_id", studentId),
     supabase.from("quest_attempts").select("correct, seconds").eq("student_id", studentId).in("phase", ["practice", "review"]).gte("created_at", startOfDay.toISOString()),
-    classId ? supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal").eq("class_id", classId).maybeSingle() : Promise.resolve({ data: null }),
+    classId ? supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal, checkin_opened_at").eq("class_id", classId).maybeSingle() : Promise.resolve({ data: null }),
     supabase.from("quest_items").select("skill_id").eq("status", "approved"),
     progressStats(supabase, studentId, tzOffset),
     classId ? classQuestionsSince(supabase, classId, monday) : Promise.resolve(0),
@@ -521,11 +609,23 @@ export async function studentOverview(studentId: string, tzOffset = 0) {
   const ready = new Set((approved ?? []).map((a) => a.skill_id));
   const latest = (kind: string) => (assessments ?? []).find((a) => a.kind === kind) ?? null;
   const masteryById = new Map((mastery ?? []).map((m) => [m.skill_id, m]));
+  // The latest finished diagnostic counts even while a check-in retake is in progress
+  const diagnostics = (assessments ?? []).filter((a) => a.kind === "diagnostic");
+  const lastDone = diagnostics.find((a) => a.status === "completed") ?? null;
+  const diagnostic = lastDone ?? diagnostics[0] ?? null;
+  const checkinOpened = (focus as { checkin_opened_at?: string | null } | null)?.checkin_opened_at ?? null;
+  const checkinDue = !!lastDone && !!checkinOpened && lastDone.completed_at < checkinOpened;
 
   return {
     eligible: true as const,
     grade,
-    diagnostic: latest("diagnostic") ? { status: latest("diagnostic")!.status, results: latest("diagnostic")!.results } : null,
+    diagnostic: diagnostic ? {
+      status: diagnostic.status, results: diagnostic.results,
+      placement: lastDone ? placementOf(lastDone.results, grade) : null,
+      first_placement: lastDone && diagnostics.filter((a) => a.status === "completed").length > 1
+        ? placementOf(diagnostics.filter((a) => a.status === "completed").at(-1)!.results, grade) : null,
+    } : null,
+    checkin: checkinDue ? { in_progress: diagnostics[0]?.status === "in_progress" } : null,
     post: latest("post") ? { status: latest("post")!.status, results: latest("post")!.results } : null,
     post_check_open: !!(focus as { post_check_open?: boolean } | null)?.post_check_open,
     progress: {
@@ -624,15 +724,16 @@ export async function certificatesFor(studentIds: string[], tzOffset = 0): Promi
 export async function studentReport(studentId: string, tzOffset = 0) {
   const supabase = getAdminClient();
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
-  const [{ data: profile }, { data: mastery }, { data: attempts }, { data: diagnostic }, progress] = await Promise.all([
+  const [{ data: profile }, { data: mastery }, { data: attempts }, { data: diagnostics }, progress] = await Promise.all([
     supabase.from("profiles").select("id, display_name, grade_level").eq("id", studentId).maybeSingle(),
     supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at, last_practiced").eq("student_id", studentId),
     supabase.from("quest_attempts").select("skill_id, phase, correct, misconception, seconds, created_at")
       .eq("student_id", studentId).gte("created_at", since).order("created_at", { ascending: false }).limit(1000),
     supabase.from("quest_assessments").select("results, completed_at").eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
-      .order("completed_at", { ascending: false }).limit(1).maybeSingle(),
+      .order("completed_at", { ascending: true }),
     progressStats(supabase, studentId, tzOffset),
   ]);
+  const diagnostic = diagnostics?.at(-1) ?? null;
   const rows = (mastery ?? []) as { skill_id: string; p_known: number; attempts: number; mastered_at: string | null; last_practiced: string | null }[];
   const practice = (attempts ?? []).filter((a) => a.phase === "practice" || a.phase === "review");
   const topics = topicScores(rows);
@@ -669,6 +770,8 @@ export async function studentReport(studentId: string, tzOffset = 0) {
       completed_at: diagnostic.completed_at,
       gaps: ((diagnostic.results as { gaps?: string[] }).gaps ?? []).map((g) => SKILLS_BY_ID[g]?.name ?? g),
     } : null,
+    // Placement at each diagnostic and check-in, oldest first
+    placements: (diagnostics ?? []).map((d) => ({ completed_at: d.completed_at as string, ...placementOf(d.results, Number(profile?.grade_level) || 6) })),
     topics,
     ...strengthsAndFocus(topics),
     skills: rows

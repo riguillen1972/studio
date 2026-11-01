@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { questFetch } from "@/components/quest/quest-api";
 import { Loader2, Printer } from "lucide-react";
 import type { StudentReport } from "@/lib/quest/engine";
+import { levelLabel, relationOf } from "@/lib/quest/placement";
 
 interface ReportsResponse { class_name: string; teacher_name: string | null; reports: StudentReport[] }
 
@@ -111,6 +112,8 @@ function ParentReports() {
                 ))}
               </div>
 
+              <PlacementSentence report={r} first={first} />
+
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <h2 className="mb-1 font-semibold">Going well</h2>
@@ -180,5 +183,24 @@ function ParentReports() {
         })}
       </div>
     </div>
+  );
+}
+
+/** One or two plain sentences on placement and growth, from the latest diagnostic or check-in. */
+function PlacementSentence({ report: r, first }: { report: StudentReport; first: string }) {
+  const latest = r.placements.at(-1);
+  const grade = r.student.grade;
+  if (!latest || latest.overall === null || !grade) return null;
+  const relation = relationOf(latest.overall, grade);
+  const where = relation === "above" ? "above grade level" : relation === "on" ? "at grade level"
+    : relation === "one_below" ? "about one grade below grade level" : "more than one grade below grade level, and is building up earlier skills";
+  const start = r.placements.length > 1 ? r.placements[0] : null;
+  const growth = start?.average != null && latest.average != null ? Math.round((latest.average - start.average) * 10) / 10 : null;
+  return (
+    <p>
+      <span className="font-semibold">Placement: </span>
+      On the latest Math Quest check, {first} is working {where} overall ({levelLabel(latest.overall).toLowerCase()} level).
+      {growth !== null && growth > 0 && <> That is <strong>{growth} grade levels</strong> of growth since the first check.</>}
+    </p>
   );
 }

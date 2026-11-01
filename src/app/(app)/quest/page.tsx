@@ -11,12 +11,15 @@ import { PracticeRunner } from "@/components/quest/practice-runner";
 import { questFetch } from "@/components/quest/quest-api";
 import { SkillList, type SkillSummary } from "@/components/quest/skill-list";
 import { ProgressCard, type QuestProgress } from "@/components/quest/progress-card";
-import { ClipboardCheck, Compass, Loader2, Play, Target } from "lucide-react";
+import { ClipboardCheck, Compass, Loader2, Mountain, Play, Target } from "lucide-react";
+import { PlacementLadder, PlacementSummary } from "@/components/quest/placement-card";
+import type { Placement } from "@/lib/quest/placement";
 
 interface Overview {
   eligible: boolean;
   grade?: number;
-  diagnostic: { status: string; results: unknown } | null;
+  diagnostic: { status: string; results: unknown; placement: Placement | null; first_placement: Placement | null } | null;
+  checkin: { in_progress: boolean } | null;
   post: { status: string; results: unknown } | null;
   post_check_open: boolean;
   progress: QuestProgress;
@@ -61,8 +64,8 @@ export default function QuestPage() {
         <Card><CardContent className="py-8 text-center text-muted-foreground">Math Quest is for students in grades 6–8.</CardContent></Card>
       )}
 
-      {overview?.eligible && mode === "diagnostic" && <AssessmentRunner kind="diagnostic" onDone={backHome} />}
-      {overview?.eligible && mode === "post" && <AssessmentRunner kind="post" onDone={backHome} />}
+      {overview?.eligible && mode === "diagnostic" && <AssessmentRunner kind="diagnostic" grade={overview.grade ?? 6} onDone={backHome} />}
+      {overview?.eligible && mode === "post" && <AssessmentRunner kind="post" grade={overview.grade ?? 6} onDone={backHome} />}
       {overview?.eligible && mode === "practice" && (
         <PracticeRunner answeredToday={overview.today.answered} goal={overview.today.goal} onExit={backHome} />
       )}
@@ -89,7 +92,7 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" /> Find your starting point</CardTitle>
             <CardDescription>
-              About 20 questions, around 20 minutes. It isn&apos;t graded. It helps Study Buddy find what you already know and
+              About 30 questions, around 25 minutes. It isn&apos;t graded. It helps Study Buddy find what you already know and
               what to practice. Have scratch paper ready.
             </CardDescription>
           </CardHeader>
@@ -126,6 +129,21 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
         </CardContent>
       </Card>
 
+      {overview.checkin && (
+        <Card className="border-primary/40">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Mountain className="h-5 w-5 text-primary" /> Check-in time</CardTitle>
+            <CardDescription>
+              Your teacher opened a check-in. It&apos;s like your first starting-point check (about 30 questions), so you can see how much
+              you&apos;ve grown. Your practice progress is kept.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => onStart("diagnostic")}>{overview.checkin.in_progress ? "Continue" : "Start the check-in"}</Button>
+          </CardContent>
+        </Card>
+      )}
+
       {overview.post_check_open && !postDone && (
         <Card className="border-primary/40">
           <CardHeader>
@@ -142,6 +160,21 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
 
       <ProgressCard progress={overview.progress} classGoal={overview.class_goal}
         onCertificate={() => window.open(`/print/certificate?tz=${new Date().getTimezoneOffset()}`, "_blank")} />
+
+      {overview.diagnostic?.placement?.overall != null && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Where you are</CardTitle>
+            <CardDescription>
+              {overview.diagnostic.first_placement ? "From your latest check-in, compared with your first check." : "From your starting-point check."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <PlacementSummary placement={overview.diagnostic.placement} grade={overview.grade ?? 6} previous={overview.diagnostic.first_placement} />
+            <PlacementLadder placement={overview.diagnostic.placement} grade={overview.grade ?? 6} previous={overview.diagnostic.first_placement} />
+          </CardContent>
+        </Card>
+      )}
 
       {skillList}
     </div>

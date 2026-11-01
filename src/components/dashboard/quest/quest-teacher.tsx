@@ -11,6 +11,8 @@ import { ClassOverview } from "./class-overview";
 import { FridayReport } from "./friday-report";
 import { StudentsReport } from "./students-report";
 import { StandardsReport } from "./standards-report";
+import { PlacementReport } from "./placement-report";
+import type { Placement } from "@/lib/quest/placement";
 import type { Strand } from "@/lib/quest/skills";
 
 export interface QuestClassData {
@@ -28,6 +30,12 @@ export interface QuestClassData {
     section: number; letter: string; title: string; nad: string; average: number | null;
     proficient: number; developing: number; needs_help: number; no_data: number;
   }[];
+  placement: {
+    student_id: string; name: string; grade: number; rounds: number; checkin_done: boolean;
+    first: (Placement & { completed_at: string }) | null;
+    latest: (Placement & { completed_at: string }) | null;
+  }[];
+  checkin_opened_at: string | null;
   report: {
     student_id: string; name: string; grade: number; diagnostic_done: boolean; diagnostic_gaps: string[];
     practice_questions: number; practice_correct: number; minutes: number; mastered_this_week: number;
@@ -103,6 +111,7 @@ export function QuestTeacher({ classes }: { classes: { id: string; name: string 
           <TabsTrigger value="class">Class overview</TabsTrigger>
           <TabsTrigger value="students">Students</TabsTrigger>
           <TabsTrigger value="standards">Standards</TabsTrigger>
+          <TabsTrigger value="placement">Placement</TabsTrigger>
           <TabsTrigger value="report">Friday report</TabsTrigger>
           <TabsTrigger value="bank">Question bank</TabsTrigger>
         </TabsList>
@@ -121,6 +130,11 @@ export function QuestTeacher({ classes }: { classes: { id: string; name: string 
           {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>
             : !data ? <Loader2 className="h-5 w-5 animate-spin" />
             : <StandardsReport key={data.class.id} data={data} />}
+        </TabsContent>
+        <TabsContent value="placement" className="mt-4">
+          {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>
+            : !data ? <Loader2 className="h-5 w-5 animate-spin" />
+            : <PlacementReport data={data} onToggleCheckin={(checkin_open) => patch({ checkin_open })} />}
         </TabsContent>
         <TabsContent value="report" className="mt-4">
           {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>
