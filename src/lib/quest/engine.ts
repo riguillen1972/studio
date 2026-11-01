@@ -5,7 +5,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAdminClient } from "@/lib/usage";
 import { SKILLS, SKILLS_BY_ID, SKILL_CODES, diagnosticOrder, prerequisiteChain, sectionOf } from "./skills";
 import { MISCONCEPTIONS_BY_ID } from "./misconceptions";
-import { badgesFor, dayStart, newBadges, streakFrom, weekStart, type Badge, type ProgressStats } from "./progress";
+import { badgesFor, dayStart, localDayKey, newBadges, streakFrom, weekStart, type Badge, type ProgressStats } from "./progress";
+import { strengthsAndFocus, topicScores } from "./reports";
 import { checkAnswer, type QuestChoice, type QuestItem } from "./answers";
 import {
   MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, scoreOf, statusOf, updatePKnown, type SkillStatus,
@@ -616,3 +617,72 @@ export async function certificatesFor(studentIds: string[], tzOffset = 0): Promi
   }));
   return certificates.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+// ---------- Teacher reports ----------
+
+/** Everything about one student's Math Quest work, for the teacher's detail view and parent summaries. */
+export async function studentReport(studentId: string, tzOffset = 0) {
+  const supabase = getAdminClient();
+  const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
+  const [{ data: profile }, { data: mastery }, { data: attempts }, { data: diagnostic }, progress] = await Promise.all([
+    supabase.from("profiles").select("id, display_name, grade_level").eq("id", studentId).maybeSingle(),
+    supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at, last_practiced").eq("student_id", studentId),
+    supabase.from("quest_attempts").select("skill_id, phase, correct, misconception, seconds, created_at")
+      .eq("student_id", studentId).gte("created_at", since).order("created_at", { ascending: false }).limit(1000),
+    supabase.from("quest_assessments").select("results, completed_at").eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
+      .order("completed_at", { ascending: false }).limit(1).maybeSingle(),
+    progressStats(supabase, studentId, tzOffset),
+  ]);
+  const rows = (mastery ?? []) as { skill_id: string; p_known: number; attempts: number; mastered_at: string | null; last_practiced: string | null }[];
+  const practice = (attempts ?? []).filter((a) => a.phase === "practice" || a.phase === "review");
+  const topics = topicScores(rows);
+
+  // Questions per day for the last 14 days, oldest first
+  const days: { date: string; questions: number; correct: number; minutes: number }[] = [];
+  for (let i = 13; i >= 0; i--) days.push({ date: localDayKey(Date.now() - i * 86_400_000, tzOffset), questions: 0, correct: 0, minutes: 0 });
+  const dayIndex = new Map(days.map((d, i) => [d.date, i]));
+  for (const a of practice) {
+    const i = dayIndex.get(localDayKey(a.created_at, tzOffset));
+    if (i === undefined) continue;
+    days[i].questions++;
+    if (a.correct) days[i].correct++;
+    days[i].minutes += (a.seconds ?? 0) / 60;
+  }
+  days.forEach((d) => { d.minutes = Math.round(d.minutes); });
+
+  const mistakeCounts = new Map<string, number>();
+  for (const a of attempts ?? []) {
+    if (a.misconception && a.misconception !== "computation-slip") mistakeCounts.set(a.misconception, (mistakeCounts.get(a.misconception) ?? 0) + 1);
+  }
+
+  return {
+    student: { id: studentId, name: profile?.display_name || "Student", grade: profile?.grade_level ? Number(profile.grade_level) : null },
+    totals: {
+      questions_30d: practice.length,
+      accuracy_30d: practice.length ? Math.round((practice.filter((a) => a.correct).length / practice.length) * 100) : null,
+      minutes_30d: Math.round(practice.reduce((t, a) => t + (a.seconds ?? 0), 0) / 60),
+      mastered: rows.filter((r) => r.mastered_at).length,
+      streak: progress.stats.streak,
+    },
+    badges: badgesFor(progress.stats).filter((b) => b.earned).map((b) => b.name),
+    diagnostic: diagnostic ? {
+      completed_at: diagnostic.completed_at,
+      gaps: ((diagnostic.results as { gaps?: string[] }).gaps ?? []).map((g) => SKILLS_BY_ID[g]?.name ?? g),
+    } : null,
+    topics,
+    ...strengthsAndFocus(topics),
+    skills: rows
+      .filter((r) => SKILLS_BY_ID[r.skill_id])
+      .map((r) => ({
+        id: r.skill_id, code: SKILL_CODES[r.skill_id], name: SKILLS_BY_ID[r.skill_id].name, section: sectionOf(SKILLS_BY_ID[r.skill_id]),
+        score: scoreOf(r.p_known, r.attempts, r.mastered_at), attempts: r.attempts, mastered: !!r.mastered_at, last_practiced: r.last_practiced,
+      }))
+      .sort((a, b) => a.section - b.section || a.code.localeCompare(b.code, undefined, { numeric: true })),
+    mistakes: [...mistakeCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)
+      .map(([id, count]) => ({ id, name: MISCONCEPTIONS_BY_ID[id]?.name ?? id, count })),
+    activity: days,
+    recent: practice.slice(0, 15).map((a) => ({ skill: SKILLS_BY_ID[a.skill_id]?.name ?? a.skill_id, correct: a.correct, at: a.created_at })),
+  };
+}
+
+export type StudentReport = Awaited<ReturnType<typeof studentReport>>;

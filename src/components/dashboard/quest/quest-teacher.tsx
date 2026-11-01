@@ -9,6 +9,8 @@ import { questFetch } from "@/components/quest/quest-api";
 import { QuestionBank } from "./question-bank";
 import { ClassOverview } from "./class-overview";
 import { FridayReport } from "./friday-report";
+import { StudentsReport } from "./students-report";
+import { StandardsReport } from "./standards-report";
 import type { Strand } from "@/lib/quest/skills";
 
 export interface QuestClassData {
@@ -22,6 +24,10 @@ export interface QuestClassData {
   skills: { id: string; code: string; name: string; grade: number }[];
   heat: Record<string, Record<string, { p: number; score: number; status: string }>>;
   groups: { reason: string; students: string[] }[];
+  standards: {
+    section: number; letter: string; title: string; nad: string; average: number | null;
+    proficient: number; developing: number; needs_help: number; no_data: number;
+  }[];
   report: {
     student_id: string; name: string; grade: number; diagnostic_done: boolean; diagnostic_gaps: string[];
     practice_questions: number; practice_correct: number; minutes: number; mastered_this_week: number;
@@ -95,6 +101,8 @@ export function QuestTeacher({ classes }: { classes: { id: string; name: string 
       <Tabs defaultValue="class">
         <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="class">Class overview</TabsTrigger>
+          <TabsTrigger value="students">Students</TabsTrigger>
+          <TabsTrigger value="standards">Standards</TabsTrigger>
           <TabsTrigger value="report">Friday report</TabsTrigger>
           <TabsTrigger value="bank">Question bank</TabsTrigger>
         </TabsList>
@@ -103,6 +111,16 @@ export function QuestTeacher({ classes }: { classes: { id: string; name: string 
             : !data ? <Loader2 className="h-5 w-5 animate-spin" />
             : <ClassOverview data={data} onSaveFocus={(skill_ids) => patch({ skill_ids })} onToggleCheck={(post_check_open) => patch({ post_check_open })}
                 onSaveGoal={(weekly_goal) => patch({ weekly_goal })} />}
+        </TabsContent>
+        <TabsContent value="students" className="mt-4">
+          {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>
+            : !data ? <Loader2 className="h-5 w-5 animate-spin" />
+            : <StudentsReport key={data.class.id} data={data} />}
+        </TabsContent>
+        <TabsContent value="standards" className="mt-4">
+          {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>
+            : !data ? <Loader2 className="h-5 w-5 animate-spin" />
+            : <StandardsReport key={data.class.id} data={data} />}
         </TabsContent>
         <TabsContent value="report" className="mt-4">
           {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>

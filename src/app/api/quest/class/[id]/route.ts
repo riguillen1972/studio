@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
 import { SKILLS, SKILLS_BY_ID, SKILL_CODES, sectionOf } from "@/lib/quest/skills";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
 import { GAP_BELOW, scoreOf, statusOf } from "@/lib/quest/mastery";
 import { classQuestionsSince } from "@/lib/quest/engine";
 import { parseTzOffset, weekStart } from "@/lib/quest/progress";
-
-async function ownClass(req: NextRequest, classId: string) {
-  const auth = await requireTeacher(req);
-  if (auth.error) return { error: auth.error };
-  const { data: cls } = await getAdminClient().from("classes").select("id, name, teacher_id").eq("id", classId).maybeSingle();
-  if (!cls || cls.teacher_id !== auth.user.id) return { error: NextResponse.json({ error: "Class not found" }, { status: 404 }) };
-  return { cls, teacherId: auth.user.id };
-}
+import { bandOf, topicScores } from "@/lib/quest/reports";
+import { ownQuestClass } from "@/lib/quest/teacher";
+import { TOPICS_BY_SECTION } from "@/lib/quest/skills";
 
 // Everything the teacher needs for Math Quest: heat map, small groups, focus, and the week's report
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: classId } = await params;
-    const owned = await ownClass(req, classId);
+    const owned = await ownQuestClass(req, classId);
     if (owned.error) return owned.error;
     const supabase = getAdminClient();
 
@@ -103,6 +97,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       };
     });
 
+    // Standards: for each NAD topic, how many students are proficient, developing or need help
+    const scoresByStudent = new Map(students.map((st) => [st.id, topicScores(masteryOf(st.id))]));
+    const standards = [6, 7, 8].flatMap((section) => (TOPICS_BY_SECTION[section] ?? []).map((t) => {
+      const scores = students.map((st) => scoresByStudent.get(st.id)!.find((x) => x.section === section && x.letter === t.letter)?.score)
+        .filter((x): x is number => x !== undefined);
+      return {
+        section, letter: t.letter, title: t.title, nad: t.nad,
+        average: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null,
+        proficient: scores.filter((x) => bandOf(x) === "proficient").length,
+        developing: scores.filter((x) => bandOf(x) === "developing").length,
+        needs_help: scores.filter((x) => bandOf(x) === "needs_help").length,
+        no_data: students.length - scores.length,
+      };
+    }));
+
     const surveys = (feedback ?? []).filter((f) => f.kind === "student_survey");
     const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
     const withBoth = report.filter((r) => r.pre_average !== null && r.post_average !== null);
@@ -119,6 +128,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       heat,
       groups,
       report,
+      standards,
       summary: {
         students: students.length,
         diagnostic_done: report.filter((r) => r.diagnostic_done).length,
@@ -152,7 +162,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 // { skill_ids?: string[], post_check_open?: boolean, weekly_goal?: number | null }
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: classId } = await params;
-  const owned = await ownClass(req, classId);
+  const owned = await ownQuestClass(req, classId);
   if (owned.error) return owned.error;
   const body = await req.json().catch(() => ({}));
 
