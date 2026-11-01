@@ -2,6 +2,8 @@
 // 1. Draft: structured output, with every wrong choice tagged with the misconception it reveals.
 // 2. Verify: a separate call solves each question without seeing the answer; any question whose
 //    answer doesn't match is dropped. Survivors are saved as drafts for a teacher to approve.
+// 3. Strict (starter bank): a second, independent solve by a stronger model that must agree and
+//    judge the question clear with exactly one right answer. These go live without review.
 
 import Anthropic from "@anthropic-ai/sdk";
 import { jsonSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/json-schema";
@@ -10,6 +12,7 @@ import { MISCONCEPTIONS, MISCONCEPTION_IDS } from "./misconceptions";
 import { checkAnswer, type QuestChoice } from "./answers";
 
 export const QUEST_MODEL = "claude-haiku-5-5";
+export const CHECK_MODEL = "claude-sonnet-5-5";
 
 export interface DraftItem {
   skill_id: string;
@@ -67,6 +70,29 @@ const verifyFormat = jsonSchemaOutputFormat({
   },
 });
 
+const reviewFormat = jsonSchemaOutputFormat({
+  type: "object",
+  additionalProperties: false,
+  required: ["reviews"],
+  properties: {
+    reviews: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["answer", "clear"],
+        properties: {
+          answer: { type: "string" },
+          clear: {
+            type: "boolean",
+            description: "true only if the question is clearly worded, has exactly one correct answer, gives everything needed to solve it, and is right for grades 6–8",
+          },
+        },
+      },
+    },
+  },
+});
+
 let client: Anthropic | null = null;
 const getClient = () => (client ??= new Anthropic());
 
@@ -89,8 +115,26 @@ function structurallyValid(item: DraftItem): boolean {
 const standardsText = (skill: Skill) =>
   [skill.nad && `NAD ${skill.nad}`, skill.standard && `Common Core ${skill.standard}`].filter(Boolean).join(", ");
 
-/** Drafts `count` questions for a skill and returns the ones that pass both checks. */
-export async function generateItems(skill: Skill, count: number): Promise<{ items: DraftItem[]; totalTokens: number; dropped: number }> {
+const questionList = (items: DraftItem[]) => items.map((c, i) =>
+  `${i + 1}. ${c.stem}${c.choices ? `\nChoices: ${c.choices.map((ch) => ch.text).join(" | ")}` : ""}`
+).join("\n\n");
+
+/** Whether a solver's answer matches the question's intended answer. */
+function agrees(c: DraftItem, given: string | undefined): boolean {
+  if (given === undefined) return false;
+  if (checkAnswer(c, given).correct) return true;
+  // Multiple choice: also accept the same value written differently (0.75 vs 3/4)
+  const correctText = c.choices?.find((ch) => ch.correct)?.text;
+  return !!correctText && checkAnswer({ kind: "numeric", choices: null, answer: correctText }, given).correct;
+}
+
+/**
+ * Drafts `count` questions for a skill and returns the ones that pass the checks. With `strict`,
+ * survivors also need a second independent solve (CHECK_MODEL) that agrees and finds them clear.
+ */
+export async function generateItems(
+  skill: Skill, count: number, opts: { strict?: boolean } = {},
+): Promise<{ items: DraftItem[]; totalTokens: number; dropped: number }> {
   const misconceptionList = MISCONCEPTIONS.map((m) => `- ${m.id}: ${m.name}`).join("\n");
   const gradeText = skill.grade <= 5 ? `grade ${skill.grade} (foundation skill, but written for middle schoolers)` : `grade ${skill.grade}`;
 
@@ -158,21 +202,33 @@ export async function generateItems(skill: Skill, count: number): Promise<{ item
       content:
         "Solve each question. For multiple choice, answer with the exact text of the correct choice. For the others, give just " +
         "the number (integer, decimal, or simplified fraction like 3/4).\n\n" +
-        candidates.map((c, i) =>
-          `${i + 1}. ${c.stem}${c.choices ? `\nChoices: ${c.choices.map((ch) => ch.text).join(" | ")}` : ""}`
-        ).join("\n\n"),
+        questionList(candidates),
     }],
   });
   totalTokens += tokensOf(verify.usage);
 
   const solved = (verify.parsed_output?.answers ?? []) as string[];
-  const agrees = (c: DraftItem, given: string | undefined) => {
-    if (given === undefined) return false;
-    if (checkAnswer(c, given).correct) return true;
-    // Multiple choice: also accept the same value written differently (0.75 vs 3/4)
-    const correctText = c.choices?.find((ch) => ch.correct)?.text;
-    return !!correctText && checkAnswer({ kind: "numeric", choices: null, answer: correctText }, given).correct;
-  };
-  const items = candidates.filter((c, i) => agrees(c, solved[i]));
+  let items = candidates.filter((c, i) => agrees(c, solved[i]));
+
+  if (opts.strict && items.length > 0) {
+    const review = await getClient().messages.parse({
+      model: CHECK_MODEL,
+      max_tokens: 8000,
+      output_config: { effort: "medium", format: reviewFormat },
+      system: "You are a careful middle school math reviewer. Solve each question yourself and judge whether it is fit for students.",
+      messages: [{
+        role: "user",
+        content:
+          `These are grade ${skill.grade <= 5 ? "6–8 review" : skill.grade} questions for the skill "${skill.name}". For each, in order: ` +
+          "solve it (for multiple choice, give the exact text of the correct choice; otherwise just the number), and say whether " +
+          "it is clear, has exactly one correct answer, and gives everything needed to solve it.\n\n" +
+          questionList(items),
+      }],
+    });
+    totalTokens += tokensOf(review.usage);
+    const reviews = (review.parsed_output?.reviews ?? []) as { answer: string; clear: boolean }[];
+    items = items.filter((c, i) => reviews[i]?.clear === true && agrees(c, reviews[i]?.answer));
+  }
+
   return { items, totalTokens, dropped: raw.length - items.length };
 }

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Markdown } from "@/components/markdown";
-import { CheckCircle2, Lightbulb, Loader2, Trophy, XCircle } from "lucide-react";
+import { CheckCircle2, Flag, Lightbulb, Loader2, Trophy, XCircle } from "lucide-react";
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
 import type { SkillSummary } from "./skill-list";
@@ -176,12 +176,55 @@ function FeedbackPanel({ question, feedback, onNext, onExit }: {
         </div>
       )}
 
+      <ReportProblem itemId={question.id} />
+
       <div className="flex flex-wrap gap-2">
         {onExit && <Button size="lg" onClick={onExit} autoFocus>Pick another skill</Button>}
         <Button size="lg" variant={onExit ? "outline" : "default"} onClick={onNext} autoFocus={!onExit}>
           {onExit ? "Keep practicing" : "Next question"}
         </Button>
       </div>
+    </div>
+  );
+}
+
+const REPORT_REASONS = [
+  { id: "wrong_answer", label: "The answer is wrong" },
+  { id: "confusing", label: "It's confusing" },
+  { id: "typo", label: "Typo or missing info" },
+  { id: "other", label: "Something else" },
+] as const;
+
+/** Lets a student flag a bad question. Reports from two students take it back to the teacher. */
+function ReportProblem({ itemId }: { itemId: string }) {
+  const [open, setOpen] = useState(false);
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  const send = async (reason: string) => {
+    setState("sending");
+    try {
+      await questFetch(`/api/quest/items/${itemId}/report`, { method: "POST", body: JSON.stringify({ reason }) });
+      setState("sent");
+    } catch {
+      setState("error");
+    }
+  };
+
+  if (state === "sent") return <p className="text-xs text-muted-foreground">Thanks! Your teacher will take a look.</p>;
+  if (!open) {
+    return (
+      <button type="button" onClick={() => setOpen(true)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+        <Flag className="h-3 w-3" /> Report a problem with this question
+      </button>
+    );
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs">
+      <span className="text-muted-foreground">What&apos;s wrong?</span>
+      {REPORT_REASONS.map((r) => (
+        <Button key={r.id} size="sm" variant="outline" className="h-7 text-xs" disabled={state === "sending"} onClick={() => send(r.id)}>{r.label}</Button>
+      ))}
+      {state === "error" && <span className="text-destructive">Couldn&apos;t send. Try again.</span>}
     </div>
   );
 }

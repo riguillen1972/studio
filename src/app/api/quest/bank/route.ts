@@ -8,17 +8,18 @@ export async function GET(req: NextRequest) {
   const auth = await requireTeacher(req);
   if (auth.error) return auth.error;
 
-  const { data, error } = await getAdminClient().from("quest_items").select("skill_id, status");
+  const { data, error } = await getAdminClient().from("quest_items").select("skill_id, status, report_count");
   if (error) {
     console.error("Question bank query failed:", error);
     return NextResponse.json({ error: "Failed to load the question bank" }, { status: 500 });
   }
 
-  const counts = new Map<string, { approved: number; draft: number }>();
+  const counts = new Map<string, { approved: number; draft: number; reported: number }>();
   for (const row of data ?? []) {
-    const c = counts.get(row.skill_id) ?? { approved: 0, draft: 0 };
+    const c = counts.get(row.skill_id) ?? { approved: 0, draft: 0, reported: 0 };
     if (row.status === "approved") c.approved++;
     else if (row.status === "draft") c.draft++;
+    if (row.status !== "rejected" && row.report_count > 0) c.reported++;
     counts.set(row.skill_id, c);
   }
 
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
       id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade, section: sectionOf(s), strand: s.strand, standard: s.standard, nad: s.nad, advanced: !!s.advanced,
       approved: counts.get(s.id)?.approved ?? 0,
       draft: counts.get(s.id)?.draft ?? 0,
+      reported: counts.get(s.id)?.reported ?? 0,
     })),
   });
 }

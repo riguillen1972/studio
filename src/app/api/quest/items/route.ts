@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   let query = getAdminClient()
     .from("quest_items")
-    .select("id, skill_id, difficulty, kind, stem, choices, answer, explanation, status, created_at")
+    .select("id, skill_id, difficulty, kind, stem, choices, answer, explanation, status, source, report_count, created_at")
     .eq("skill_id", skillId)
     .order("difficulty", { ascending: true })
     .order("created_at", { ascending: true });

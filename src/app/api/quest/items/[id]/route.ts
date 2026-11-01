@@ -58,6 +58,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       updates.status = body.status;
       updates.reviewed_by = auth.user.id;
       updates.reviewed_at = new Date().toISOString();
+      // Approving after review clears old student reports, so they don't count toward pulling it again
+      if (body.status === "approved" && item.report_count > 0) {
+        updates.report_count = 0;
+        await supabase.from("quest_item_reports").delete().eq("item_id", id);
+      }
     }
 
     const { data, error } = await supabase.from("quest_items").update(updates).eq("id", id).select("*").single();

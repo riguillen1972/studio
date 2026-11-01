@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,12 +13,13 @@ import { useToast } from "@/hooks/use-toast";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
 import { TOPICS_BY_SECTION, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
-import { Check, Loader2, Pencil, Sparkles, X } from "lucide-react";
+import { Check, Flag, Loader2, Pencil, ShieldCheck, Sparkles, Square, X } from "lucide-react";
 
-interface BankSkill { id: string; code: string; name: string; grade: number; section: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number }
+interface BankSkill { id: string; code: string; name: string; grade: number; section: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number; reported: number }
 interface BankItem {
   id: string; skill_id: string; difficulty: number; kind: "multiple_choice" | "numeric";
   stem: string; choices: QuestChoice[] | null; answer: string; explanation: string; status: string;
+  source: "teacher" | "starter"; report_count: number;
 }
 
 // Questions a student needs per skill for a solid week: diagnostic + practice + post-check
@@ -37,6 +39,8 @@ export function QuestionBank() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [grade, setGrade] = useState(6);
+  const [building, setBuilding] = useState<{ done: number; total: number; current: string[] } | null>(null);
+  const stopBuilding = useRef(false);
 
   const loadBank = useCallback(async () => {
     try {
@@ -100,6 +104,53 @@ export function QuestionBank() {
     }
   };
 
+  /**
+   * Fills skills with checked, ready-to-use questions, three skills at a time, until each has
+   * TARGET_PER_SKILL live questions. The page must stay open while it runs.
+   */
+  const buildStarter = async (scope: number | "all") => {
+    const queue = skills.filter((s) => (scope === "all" || s.section === scope) && s.approved < TARGET_PER_SKILL);
+    if (queue.length === 0) {
+      toast({ title: "Already full", description: "Every skill here has enough ready questions." });
+      return;
+    }
+    stopBuilding.current = false;
+    const label = (s: BankSkill) => `${s.section <= 5 ? "F" : s.section} ${s.code}`;
+    const total = queue.length;
+    let done = 0;
+    let failed = 0;
+    setBuilding({ done, total, current: [] });
+    const worker = async () => {
+      while (queue.length && !stopBuilding.current) {
+        const s = queue.shift()!;
+        setBuilding((b) => b && { ...b, current: [...b.current, label(s)] });
+        // Up to 3 rounds per skill, stopping early when it's full or a round adds nothing
+        for (let round = 0; round < 3 && !stopBuilding.current; round++) {
+          try {
+            const res = await fetch("/api/quest/bank/build", { method: "POST", headers: await authHeaders(), body: JSON.stringify({ skill_id: s.id }) });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            setSkills((prev) => prev.map((x) => (x.id === s.id ? { ...x, approved: data.live } : x)));
+            if (data.done || data.added === 0) break;
+          } catch {
+            failed++;
+            break;
+          }
+        }
+        done++;
+        setBuilding((b) => b && { ...b, done, current: b.current.filter((c) => c !== label(s)) });
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    setBuilding(null);
+    loadBank();
+    if (selected) loadItems(selected.id);
+    toast({
+      title: stopBuilding.current ? "Stopped" : "Starter bank built",
+      description: `${done} of ${total} skills processed${failed ? `, ${failed} had an error (run it again to retry)` : ""}.`,
+    });
+  };
+
   const approveAll = async () => {
     for (const item of items.filter((i) => i.status === "draft")) await update(item, { status: "approved" });
   };
@@ -117,6 +168,29 @@ export function QuestionBank() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+            <p className="flex items-center gap-2 font-medium"><ShieldCheck className="h-4 w-4 text-primary" /> Starter bank</p>
+            <p className="text-xs text-muted-foreground">
+              Fills skills with up to {TARGET_PER_SKILL} questions each. Every question is solved by two separate AI checkers and only
+              goes live if both agree and find it clear. You can hide any question, and questions students report come back to you for review.
+            </p>
+            {building ? (
+              <div className="space-y-1">
+                <Progress value={(building.done / building.total) * 100} />
+                <p className="text-xs text-muted-foreground">
+                  {building.done} of {building.total} skills{building.current.length ? ` · working on ${building.current.join(", ")}` : ""}. Keep this page open.
+                </p>
+                <Button size="sm" variant="outline" onClick={() => { stopBuilding.current = true; }}>
+                  <Square className="mr-2 h-3 w-3" /> Stop after these
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => buildStarter(grade)}>Fill {grade <= 5 ? "Foundations" : `Grade ${grade}`}</Button>
+                <Button size="sm" variant="outline" onClick={() => buildStarter("all")}>Fill all grades</Button>
+              </div>
+            )}
+          </div>
           <div className="flex flex-wrap gap-1">
             {grades.map((g) => {
               const inGrade = skills.filter((s) => s.section === g);
@@ -143,6 +217,7 @@ export function QuestionBank() {
                       >
                         <span className="truncate"><span className="mr-1 text-xs tabular-nums text-muted-foreground">{s.code}</span>{s.name}{s.advanced && <span className="ml-1 text-amber-500" title="Challenge skill">★</span>}</span>
                         <span className="flex shrink-0 gap-1">
+                          {s.reported > 0 && <Badge variant="outline" className="border-destructive text-destructive"><Flag className="mr-1 h-3 w-3" />{s.reported}</Badge>}
                           {s.draft > 0 && <Badge variant="outline" className="border-amber-500 text-amber-600">{s.draft} to review</Badge>}
                           <Badge variant={s.approved >= TARGET_PER_SKILL ? "default" : "secondary"}>{s.approved} ready</Badge>
                         </span>
@@ -188,9 +263,16 @@ export function QuestionBank() {
                       <div className="flex gap-1">
                         <Badge variant="outline">{["", "Easy", "Medium", "Hard"][item.difficulty]}</Badge>
                         <Badge variant="outline">{item.kind === "numeric" ? "Type answer" : "Multiple choice"}</Badge>
-                        {item.status === "approved"
-                          ? <Badge>Approved</Badge>
-                          : <Badge variant="outline" className="border-amber-500 text-amber-600">Needs review</Badge>}
+                        {item.status !== "approved"
+                          ? <Badge variant="outline" className="border-amber-500 text-amber-600">Needs review</Badge>
+                          : item.source === "starter"
+                            ? <Badge variant="secondary" title="Passed two independent AI checks"><ShieldCheck className="mr-1 h-3 w-3" />AI-checked</Badge>
+                            : <Badge>Approved</Badge>}
+                        {item.report_count > 0 && (
+                          <Badge variant="outline" className="border-destructive text-destructive" title="Students reported a problem with this question">
+                            <Flag className="mr-1 h-3 w-3" />Reported by {item.report_count}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex gap-1">
                         {item.status !== "approved" && (
@@ -201,7 +283,7 @@ export function QuestionBank() {
                         <Button size="icon" variant="ghost" className="h-7 w-7" title="Edit" onClick={() => setEditingId(item.id)}>
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" title="Reject" onClick={() => update(item, { status: "rejected" })}>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" title={item.status === "approved" ? "Hide from students" : "Reject"} onClick={() => update(item, { status: "rejected" })}>
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
