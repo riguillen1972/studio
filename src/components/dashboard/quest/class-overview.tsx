@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Users } from "lucide-react";
-import { STRAND_NAMES, STRAND_ORDER } from "@/lib/quest/skills";
+import { TOPICS_BY_SECTION } from "@/lib/quest/skills";
 import type { QuestClassData } from "./quest-teacher";
 
 const cellStyle = (cell?: { p: number; score: number; status: string }) => {
@@ -54,12 +54,12 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
               {sections.map((g) => (
                 <div key={g} className="space-y-2">
                   <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? "Foundations" : `Grade ${g}`}</p>
-                  {STRAND_ORDER.map((strand) => {
-                    const skills = data.all_skills.filter((s) => s.section === g && s.strand === strand);
+                  {(TOPICS_BY_SECTION[g] ?? []).map((topic) => {
+                    const skills = data.all_skills.filter((s) => topic.skillIds.includes(s.id));
                     if (!skills.length) return null;
                     return (
-                      <div key={strand}>
-                        <p className="mb-1 text-xs text-muted-foreground">{STRAND_NAMES[strand]}</p>
+                      <div key={topic.letter}>
+                        <p className="mb-1 text-xs text-muted-foreground">{topic.letter}. {topic.title}{topic.nad && ` (NAD ${topic.nad})`}</p>
                         <div className="flex flex-wrap gap-2">
                           {skills.map((s) => {
                             const on = focus.includes(s.id);

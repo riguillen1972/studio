@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
-import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
+import { TOPICS_BY_SECTION, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
 import { Check, Loader2, Pencil, Sparkles, X } from "lucide-react";
 
@@ -128,12 +128,12 @@ export function QuestionBank() {
               );
             })}
           </div>
-          {STRAND_ORDER.map((strand) => {
-            const inStrand = skills.filter((s) => s.section === grade && s.strand === strand);
+          {(TOPICS_BY_SECTION[grade] ?? []).map((topic) => {
+            const inStrand = skills.filter((s) => topic.skillIds.includes(s.id));
             if (!inStrand.length) return null;
             return (
-              <div key={strand}>
-                <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">{STRAND_NAMES[strand]}</p>
+              <div key={topic.letter}>
+                <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">{topic.letter}. {topic.title}</p>
                 <ul className="space-y-1">
                   {inStrand.map((s) => (
                     <li key={s.id}>

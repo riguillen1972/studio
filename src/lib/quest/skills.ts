@@ -584,17 +584,66 @@ export function diagnosticOrder(grade: number, focus: string[] = []): string[] {
 /** Section a skill is listed under: "Foundations" for grades 4–5, otherwise its grade. */
 export const sectionOf = (skill: Skill) => (skill.grade <= 5 ? 5 : skill.grade);
 
+/** Topic titles for the NAD standards, in the order they're listed (one topic = one NAD lesson). */
+export const NAD_TOPICS: Record<string, string> = {
+  "6.NO.1": "Whole numbers and decimals",
+  "6.NO.2": "Factors, multiples and exponents",
+  "6.NO.3": "Integers and the coordinate plane",
+  "6.NO.4": "Fractions, decimals and percents",
+  "6.NO.5": "Ratios and rates",
+  "6.OAT.1": "Expressions, equations and inequalities",
+  "6.OAT.2": "Variables and relationships",
+  "6.M.1": "Time",
+  "6.GEO.1": "Area, surface area and volume",
+  "6.DSP.1": "Statistics: center and spread",
+  "6.DSP.2": "Data displays and distributions",
+  "7.NO.1": "Operations with integers and rationals",
+  "7.NO.2": "Number properties and problem solving",
+  "7.NO.3": "Exponents, roots and scientific notation",
+  "7.NO.4": "Proportional relationships and percents",
+  "7.OAT.1": "Equivalent expressions",
+  "7.OAT.2": "Solving equations",
+  "7.OAT.3": "Patterns, rules and inequalities",
+  "7.M.1": "Units of measure",
+  "7.GEO.1": "Scale drawings, triangles and solids",
+  "7.GEO.2": "Angles, circles, area and volume",
+  "7.DSP.1": "Sampling",
+  "7.DSP.2": "Comparing populations",
+  "7.DSP.3": "Probability",
+  "8.NO.1": "Rational and irrational numbers",
+  "8.OAT.1": "Exponents and scientific notation",
+  "8.OAT.2": "Slope and lines",
+  "8.OAT.3": "Equations and systems",
+  "8.OAT.4": "Functions",
+  "8.M.1": "Precision and significant digits",
+  "8.GEO.1": "Transformations, congruence and similarity",
+  "8.GEO.2": "The Pythagorean theorem",
+  "8.GEO.3": "Volume of cylinders, cones and spheres",
+  "8.DSP.1": "Scatter plots and two-way tables",
+};
+
+export interface Topic { letter: string; title: string; nad: string; skillIds: string[] }
+
 /**
- * Short skill codes like "C.4": within each grade section, strands get letters in strand order
- * and skills are numbered in map order. Codes are for finding a skill quickly in a list.
+ * The lettered topics in each section. Grades 6–8 have one topic per NAD standard (its 5–6
+ * skills, core first); Foundations are grouped by strand.
  */
-export const SKILL_CODES: Record<string, string> = (() => {
-  const codes: Record<string, string> = {};
-  for (const section of [...new Set(SKILLS.map(sectionOf))]) {
+export const TOPICS_BY_SECTION: Record<number, Topic[]> = (() => {
+  const result: Record<number, Topic[]> = {};
+  for (const section of [...new Set(SKILLS.map(sectionOf))].sort()) {
     const inSection = SKILLS.filter((s) => sectionOf(s) === section);
-    STRAND_ORDER.filter((strand) => inSection.some((s) => s.strand === strand)).forEach((strand, i) => {
-      inSection.filter((s) => s.strand === strand).forEach((s, j) => { codes[s.id] = `${String.fromCharCode(65 + i)}.${j + 1}`; });
-    });
+    const groups = section <= 5
+      ? STRAND_ORDER.map((strand) => ({ title: STRAND_NAMES[strand], nad: "", skills: inSection.filter((s) => s.strand === strand) }))
+      : Object.keys(NAD_TOPICS).filter((code) => code.startsWith(`${section}.`))
+          .map((code) => ({ title: NAD_TOPICS[code], nad: code, skills: inSection.filter((s) => s.nad === code) }));
+    result[section] = groups.filter((g) => g.skills.length).map((g, i) => ({
+      letter: String.fromCharCode(65 + i), title: g.title, nad: g.nad, skillIds: g.skills.map((s) => s.id),
+    }));
   }
-  return codes;
+  return result;
 })();
+
+/** Short skill codes like "C.4": topic letter, then the skill's number within the topic. */
+export const SKILL_CODES: Record<string, string> = Object.fromEntries(
+  Object.values(TOPICS_BY_SECTION).flat().flatMap((t) => t.skillIds.map((id, i) => [id, `${t.letter}.${i + 1}`])),
+);

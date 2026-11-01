@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
+import { useMemo, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle2 } from "lucide-react";
+import { TOPICS_BY_SECTION, type Strand } from "@/lib/quest/skills";
 
 export interface SkillSummary {
   id: string; code: string; name: string; grade: number; section: number; strand: Strand; nad: string; advanced: boolean;
@@ -12,69 +12,100 @@ export interface SkillSummary {
 
 const sectionLabel = (section: number) => (section <= 5 ? "Foundations" : `Grade ${section}`);
 
-/** Score chip: grey until practiced, then amber → blue → green as the score rises; 100 is mastered. */
-function ScoreChip({ skill }: { skill: SkillSummary }) {
-  if (!skill.ready) return <span className="text-xs text-muted-foreground">Soon</span>;
-  if (!skill.practiced && skill.score === 0) return <span className="text-xs text-muted-foreground">—</span>;
-  const style = skill.score >= 100 ? "bg-green-600 text-white"
-    : skill.score >= 80 ? "bg-green-500/20 text-green-700 dark:text-green-400"
-    : skill.score >= 50 ? "bg-blue-500/15 text-blue-700 dark:text-blue-400"
-    : "bg-amber-500/15 text-amber-700 dark:text-amber-400";
-  return <span className={`min-w-9 rounded-md px-1.5 py-0.5 text-center text-xs font-semibold tabular-nums ${style}`}>{skill.score}</span>;
+// Topic header colors (white text) and the matching code color, cycled by topic letter
+const TOPIC_COLORS = [
+  { header: "bg-orange-600", code: "text-orange-700 dark:text-orange-400" },
+  { header: "bg-sky-600", code: "text-sky-700 dark:text-sky-400" },
+  { header: "bg-rose-600", code: "text-rose-700 dark:text-rose-400" },
+  { header: "bg-teal-600", code: "text-teal-700 dark:text-teal-400" },
+  { header: "bg-amber-700", code: "text-amber-700 dark:text-amber-400" },
+  { header: "bg-green-600", code: "text-green-700 dark:text-green-400" },
+  { header: "bg-violet-600", code: "text-violet-700 dark:text-violet-400" },
+  { header: "bg-blue-600", code: "text-blue-700 dark:text-blue-400" },
+  { header: "bg-pink-600", code: "text-pink-700 dark:text-pink-400" },
+  { header: "bg-emerald-700", code: "text-emerald-700 dark:text-emerald-400" },
+  { header: "bg-indigo-600", code: "text-indigo-700 dark:text-indigo-400" },
+  { header: "bg-cyan-700", code: "text-cyan-700 dark:text-cyan-400" },
+  { header: "bg-fuchsia-700", code: "text-fuchsia-700 dark:text-fuchsia-400" },
+];
+
+/** Progress mark: nothing until practiced, then a ring that fills with the score, and a check at 100. */
+function ProgressMark({ skill }: { skill: SkillSummary }) {
+  if (skill.score >= 100) return <CheckCircle2 className="h-[18px] w-[18px] text-green-600" aria-label="Mastered" />;
+  if (!skill.practiced) return <span className="block h-[18px] w-[18px]" />;
+  const color = skill.score >= 80 ? "stroke-green-500" : skill.score >= 50 ? "stroke-sky-500" : "stroke-amber-500";
+  const c = 2 * Math.PI * 7;
+  return (
+    <svg viewBox="0 0 18 18" className="h-[18px] w-[18px] -rotate-90" aria-label={`Score ${skill.score}`}>
+      <circle cx="9" cy="9" r="7" fill="none" strokeWidth="3" className="stroke-muted" />
+      <circle cx="9" cy="9" r="7" fill="none" strokeWidth="3" strokeLinecap="round" className={color}
+        strokeDasharray={`${(skill.score / 100) * c} ${c}`} />
+    </svg>
+  );
 }
 
 /**
- * Every skill for a grade, in lettered sections with numbered skills and a 0–100 score.
- * Students can pick any skill to practice on its own, including other grades.
+ * Every skill for a grade as colored topic cards (one per NAD lesson), with numbered skills and
+ * a progress mark. Students can pick any skill to practice on its own, in any grade.
  */
 export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; grade: number; onPick: (skill: SkillSummary) => void }) {
-  const sections = [...new Set(skills.map((s) => s.section))].sort();
+  const sections = Object.keys(TOPICS_BY_SECTION).map(Number).sort();
   const [section, setSection] = useState(sections.includes(grade) ? grade : sections[0]);
+  const byId = useMemo(() => new Map(skills.map((s) => [s.id, s])), [skills]);
+  const topics = TOPICS_BY_SECTION[section] ?? [];
   const inSection = skills.filter((s) => s.section === section);
-  const strands = STRAND_ORDER.filter((strand) => inSection.some((s) => s.strand === strand));
   const mastered = inSection.filter((s) => s.score >= 100).length;
 
   return (
-    <Card>
-      <CardHeader className="space-y-3">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
         <div>
-          <CardTitle>All skills</CardTitle>
-          <CardDescription>
-            Pick any skill to practice it on its own. Your score goes up to 100 as you get questions right, and the questions
-            get harder as it rises. ★ skills are challenges.
-          </CardDescription>
+          <h2 className="text-xl font-semibold">Math skills</h2>
+          <p className="text-xs text-muted-foreground">
+            Pick any skill to practice. Your score climbs to 100 as you answer correctly, and questions get harder as it rises.
+            {" "}{mastered} of {inSection.length} mastered in {sectionLabel(section)}.
+          </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {sections.map((s) => (
-            <Button key={s} size="sm" variant={s === section ? "default" : "outline"} onClick={() => setSection(s)}>{sectionLabel(s)}</Button>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground">{sectionLabel(section)}: {mastered} of {inSection.length} skills mastered</p>
-      </CardHeader>
-      <CardContent className="grid gap-x-8 gap-y-6 md:grid-cols-2">
-        {strands.map((strand) => {
-          const list = inSection.filter((s) => s.strand === strand);
-          const letter = list[0].code.split(".")[0];
+        <Select value={String(section)} onValueChange={(v) => setSection(Number(v))}>
+          <SelectTrigger className="w-[160px] font-medium text-primary"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {sections.map((s) => <SelectItem key={s} value={String(s)}>{sectionLabel(s)}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+        {topics.map((topic, i) => {
+          const color = TOPIC_COLORS[i % TOPIC_COLORS.length];
           return (
-            <section key={strand}>
-              <h3 className="mb-2 text-sm font-semibold">{letter}. {STRAND_NAMES[strand]}</h3>
-              <ol className="space-y-0.5">
-                {list.map((s) => (
-                  <li key={s.id}>
-                    <button type="button" disabled={!s.ready} onClick={() => onPick(s)}
-                      title={[s.nad && `NAD ${s.nad}`, s.advanced && "Challenge skill", !s.ready && "Questions coming soon"].filter(Boolean).join(" · ") || undefined}
-                      className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-sm hover:bg-muted disabled:cursor-default disabled:opacity-60 disabled:hover:bg-transparent">
-                      <span className="w-9 shrink-0 text-xs tabular-nums text-muted-foreground">{s.code}</span>
-                      <span className="flex-1">{s.name}{s.advanced && <span className="ml-1 text-amber-500">★</span>}</span>
-                      <ScoreChip skill={s} />
-                    </button>
-                  </li>
-                ))}
+            <section key={topic.letter} className="mb-4 break-inside-avoid overflow-hidden rounded-lg border bg-card shadow-sm">
+              <h3 className={`px-3 py-2 text-sm font-semibold text-white ${color.header}`}>{topic.letter}. {topic.title}</h3>
+              <ol className="p-1.5">
+                {topic.skillIds.map((id) => {
+                  const s = byId.get(id);
+                  if (!s) return null;
+                  return (
+                    <li key={id}>
+                      <button type="button" disabled={!s.ready} onClick={() => onPick(s)}
+                        title={[s.practiced && `Score ${s.score}`, s.nad && `NAD ${s.nad}`, s.advanced && "Challenge skill", !s.ready && "Questions coming soon"].filter(Boolean).join(" · ") || undefined}
+                        className="flex w-full items-start gap-2 rounded-md px-1.5 py-1.5 text-left text-sm hover:bg-muted disabled:cursor-default disabled:hover:bg-transparent">
+                        <span className="mt-px shrink-0"><ProgressMark skill={s} /></span>
+                        <span className={`flex-1 ${s.ready ? "" : "text-muted-foreground"}`}>
+                          <span className={`mr-1 font-semibold ${s.ready ? color.code : ""}`}>{s.code}</span>
+                          {s.name}
+                          {s.advanced && <span className="ml-1 text-amber-500" aria-label="Challenge">★</span>}
+                          {!s.ready && <span className="ml-1 text-xs">(soon)</span>}
+                        </span>
+                        {s.practiced && s.score < 100 && <span className="mt-px text-xs tabular-nums text-muted-foreground">{s.score}</span>}
+                      </button>
+                    </li>
+                  );
+                })}
               </ol>
             </section>
           );
         })}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
