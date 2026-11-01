@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Printer } from "lucide-react";
+import { Award, Printer } from "lucide-react";
 import type { QuestClassData } from "./quest-teacher";
 
 const pct = (x: number | null | undefined) => (x === null || x === undefined ? "—" : `${Math.round(x * 100)}%`);
@@ -28,9 +28,15 @@ export function FridayReport({ data, onAgree, onTeacherSurvey }: {
           <h3 className="text-lg font-semibold">Math Quest pilot report: {data.class.name}</h3>
           <p className="text-sm text-muted-foreground">Last 7 days</p>
         </div>
-        <Button variant="outline" size="sm" className="print:hidden" onClick={() => window.print()}>
-          <Printer className="mr-2 h-4 w-4" /> Print
-        </Button>
+        <div className="flex gap-2 print:hidden">
+          <Button variant="outline" size="sm"
+            onClick={() => window.open(`/print/certificate?class_id=${data.class.id}&tz=${new Date().getTimezoneOffset()}`, "_blank")}>
+            <Award className="mr-2 h-4 w-4" /> Print certificates
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Printer className="mr-2 h-4 w-4" /> Print
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">

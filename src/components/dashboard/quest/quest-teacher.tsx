@@ -15,6 +15,8 @@ export interface QuestClassData {
   class: { id: string; name: string };
   focus_skill_ids: string[];
   post_check_open: boolean;
+  weekly_goal: number | null;
+  week_questions: number;
   all_skills: { id: string; code: string; name: string; grade: number; section: number; strand: Strand; nad: string; advanced: boolean }[];
   students: { id: string; name: string; grade: number }[];
   skills: { id: string; code: string; name: string; grade: number }[];
@@ -47,7 +49,7 @@ export function QuestTeacher({ classes }: { classes: { id: string; name: string 
   const load = useCallback(async () => {
     if (!classId) return;
     try {
-      setData(await questFetch<QuestClassData>(`/api/quest/class/${classId}`));
+      setData(await questFetch<QuestClassData>(`/api/quest/class/${classId}?tz=${new Date().getTimezoneOffset()}`));
     } catch (e) {
       toast({ title: "Math Quest", description: e instanceof Error ? e.message : "Couldn't load.", variant: "destructive" });
     }
@@ -99,7 +101,8 @@ export function QuestTeacher({ classes }: { classes: { id: string; name: string 
         <TabsContent value="class" className="mt-4">
           {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>
             : !data ? <Loader2 className="h-5 w-5 animate-spin" />
-            : <ClassOverview data={data} onSaveFocus={(skill_ids) => patch({ skill_ids })} onToggleCheck={(post_check_open) => patch({ post_check_open })} />}
+            : <ClassOverview data={data} onSaveFocus={(skill_ids) => patch({ skill_ids })} onToggleCheck={(post_check_open) => patch({ post_check_open })}
+                onSaveGoal={(weekly_goal) => patch({ weekly_goal })} />}
         </TabsContent>
         <TabsContent value="report" className="mt-4">
           {!classId ? <p className="text-sm text-muted-foreground">Create a class first.</p>

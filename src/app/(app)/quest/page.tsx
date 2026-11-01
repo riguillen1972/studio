@@ -10,6 +10,7 @@ import { AssessmentRunner } from "@/components/quest/assessment-runner";
 import { PracticeRunner } from "@/components/quest/practice-runner";
 import { questFetch } from "@/components/quest/quest-api";
 import { SkillList, type SkillSummary } from "@/components/quest/skill-list";
+import { ProgressCard, type QuestProgress } from "@/components/quest/progress-card";
 import { ClipboardCheck, Compass, Loader2, Play, Target } from "lucide-react";
 
 interface Overview {
@@ -18,6 +19,8 @@ interface Overview {
   diagnostic: { status: string; results: unknown } | null;
   post: { status: string; results: unknown } | null;
   post_check_open: boolean;
+  progress: QuestProgress;
+  class_goal: { goal: number; done: number } | null;
   today: { answered: number; correct: number; minutes: number; goal: number };
   skills: SkillSummary[];
 }
@@ -32,7 +35,7 @@ export default function QuestPage() {
 
   const load = useCallback(async () => {
     try {
-      setOverview(await questFetch<Overview>("/api/quest/me"));
+      setOverview(await questFetch<Overview>(`/api/quest/me?tz=${new Date().getTimezoneOffset()}`));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Couldn't load Math Quest.");
     }
@@ -136,6 +139,9 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
       )}
 
       {postDone && <StudentSurvey />}
+
+      <ProgressCard progress={overview.progress} classGoal={overview.class_goal}
+        onCertificate={() => window.open(`/print/certificate?tz=${new Date().getTimezoneOffset()}`, "_blank")} />
 
       {skillList}
     </div>

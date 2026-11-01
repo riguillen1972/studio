@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAdminClient } from "@/lib/usage";
 import { SKILLS, SKILLS_BY_ID, SKILL_CODES, diagnosticOrder, prerequisiteChain, sectionOf } from "./skills";
 import { MISCONCEPTIONS_BY_ID } from "./misconceptions";
+import { badgesFor, dayStart, newBadges, streakFrom, weekStart, type Badge, type ProgressStats } from "./progress";
 import { checkAnswer, type QuestChoice, type QuestItem } from "./answers";
 import {
   MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, scoreOf, statusOf, updatePKnown, type SkillStatus,
@@ -422,11 +423,14 @@ export interface PracticeFeedback {
   score_before: number;
   score_after: number;
   just_mastered: boolean;
+  /** Badges this answer earned, to celebrate. */
+  new_badges: Badge[];
+  streak: number;
 }
 
 /** Checks a practice answer, updates mastery and review schedule, and returns feedback. */
 export async function answerPractice(
-  studentId: string, itemId: string, response: string, phase: "practice" | "review", seconds: unknown,
+  studentId: string, itemId: string, response: string, phase: "practice" | "review", seconds: unknown, tzOffset = 0,
 ): Promise<PracticeFeedback | { error: string }> {
   const supabase = getAdminClient();
   if (!(await questGradeFor(supabase, studentId))) return { error: "Math Quest is for students in grades 6–8." };
@@ -469,6 +473,12 @@ export async function answerPractice(
     last_practiced: now.toISOString(), updated_at: now.toISOString(),
   }, { onConflict: "student_id,skill_id" });
 
+  // What this answer changed for streaks and badges
+  const { stats, times } = await progressStats(supabase, studentId, tzOffset);
+  const mastered = new Set(stats.mastered);
+  if (justMastered) mastered.delete(item.skill_id);
+  const statsBefore: ProgressStats = { ...stats, answered: stats.answered - 1, streak: streakFrom(times.slice(1), tzOffset), mastered };
+
   const correctText = item.kind === "multiple_choice" ? (item.choices as QuestChoice[]).find((c) => c.correct)?.text ?? item.answer : item.answer;
   const m = misconception ? MISCONCEPTIONS_BY_ID[misconception] : null;
   return {
@@ -482,25 +492,31 @@ export async function answerPractice(
     score_before: row ? scoreOf(before.p_known, before.attempts, before.mastered_at) : 0,
     score_after: scoreOf(pAfter, attempts, mastered_at),
     just_mastered: justMastered,
+    new_badges: newBadges(statsBefore, stats),
+    streak: stats.streak,
   };
 }
 
 // ---------- Student overview ----------
 
-export async function studentOverview(studentId: string) {
+export async function studentOverview(studentId: string, tzOffset = 0) {
   const supabase = getAdminClient();
   const grade = await questGradeFor(supabase, studentId);
   if (!grade) return { eligible: false as const };
   const classId = await currentClassId(supabase, studentId);
-  const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+  const startOfDay = new Date(dayStart(tzOffset));
+  const monday = weekStart(tzOffset);
 
-  const [{ data: assessments }, { data: mastery }, { data: today }, { data: focus }, { data: approved }] = await Promise.all([
+  const [{ data: assessments }, { data: mastery }, { data: today }, { data: focus }, { data: approved }, progress, classDone] = await Promise.all([
     supabase.from("quest_assessments").select("id, kind, status, results, completed_at").eq("student_id", studentId).order("started_at", { ascending: false }),
     supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at").eq("student_id", studentId),
     supabase.from("quest_attempts").select("correct, seconds").eq("student_id", studentId).in("phase", ["practice", "review"]).gte("created_at", startOfDay.toISOString()),
-    classId ? supabase.from("quest_class_focus").select("skill_ids, post_check_open").eq("class_id", classId).maybeSingle() : Promise.resolve({ data: null }),
+    classId ? supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal").eq("class_id", classId).maybeSingle() : Promise.resolve({ data: null }),
     supabase.from("quest_items").select("skill_id").eq("status", "approved"),
+    progressStats(supabase, studentId, tzOffset),
+    classId ? classQuestionsSince(supabase, classId, monday) : Promise.resolve(0),
   ]);
+  const weeklyGoal = (focus as { weekly_goal?: number | null } | null)?.weekly_goal ?? null;
   const ready = new Set((approved ?? []).map((a) => a.skill_id));
   const latest = (kind: string) => (assessments ?? []).find((a) => a.kind === kind) ?? null;
   const masteryById = new Map((mastery ?? []).map((m) => [m.skill_id, m]));
@@ -511,6 +527,15 @@ export async function studentOverview(studentId: string) {
     diagnostic: latest("diagnostic") ? { status: latest("diagnostic")!.status, results: latest("diagnostic")!.results } : null,
     post: latest("post") ? { status: latest("post")!.status, results: latest("post")!.results } : null,
     post_check_open: !!(focus as { post_check_open?: boolean } | null)?.post_check_open,
+    progress: {
+      streak: progress.stats.streak,
+      answered: progress.stats.answered,
+      // Milestones, plus topic badges for Foundations and the student's grade (and any earned elsewhere)
+      badges: badgesFor(progress.stats).filter((b) => b.kind === "milestone" || b.earned || b.section === grade || (b.section ?? 0) <= 5),
+      week_questions: progress.times.filter((t) => t >= monday).length,
+      week_mastered: (mastery ?? []).filter((m) => m.mastered_at && m.mastered_at >= monday).length,
+    },
+    class_goal: classId && weeklyGoal ? { goal: weeklyGoal, done: classDone } : null,
     today: {
       answered: (today ?? []).length,
       correct: (today ?? []).filter((t) => t.correct).length,
@@ -529,4 +554,65 @@ export async function studentOverview(studentId: string) {
       };
     }),
   };
+}
+
+// ---------- Streaks, badges, goals and certificates ----------
+
+/** Everything badges and streaks are computed from, plus recent practice times (newest first). */
+async function progressStats(supabase: SupabaseClient, studentId: string, tzOffset: number): Promise<{ stats: ProgressStats; times: string[] }> {
+  const since = new Date(Date.now() - 120 * 86_400_000).toISOString();
+  const [{ count }, { data: recent }, { data: mastered }, { data: diagnostic }] = await Promise.all([
+    supabase.from("quest_attempts").select("id", { count: "exact", head: true }).eq("student_id", studentId).in("phase", ["practice", "review"]),
+    supabase.from("quest_attempts").select("created_at").eq("student_id", studentId).in("phase", ["practice", "review"])
+      .gte("created_at", since).order("created_at", { ascending: false }).limit(1000),
+    supabase.from("quest_mastery").select("skill_id").eq("student_id", studentId).not("mastered_at", "is", null),
+    supabase.from("quest_assessments").select("results").eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
+      .order("completed_at", { ascending: false }).limit(1).maybeSingle(),
+  ]);
+  const times = (recent ?? []).map((r) => r.created_at as string);
+  return {
+    times,
+    stats: {
+      answered: count ?? 0,
+      streak: streakFrom(times, tzOffset),
+      mastered: new Set((mastered ?? []).map((m) => m.skill_id)),
+      diagnosticGaps: new Set(((diagnostic?.results as { gaps?: string[] } | null)?.gaps) ?? []),
+    },
+  };
+}
+
+/** Practice questions the whole class has answered since a time (for the weekly class goal). */
+export async function classQuestionsSince(supabase: SupabaseClient, classId: string, since: string): Promise<number> {
+  const { count } = await supabase.from("quest_attempts").select("id", { count: "exact", head: true })
+    .eq("class_id", classId).in("phase", ["practice", "review"]).gte("created_at", since);
+  return count ?? 0;
+}
+
+export interface Certificate {
+  student_id: string; name: string; grade: number | null;
+  week_questions: number; week_mastered: string[]; streak: number; badges: number;
+}
+
+/** This week's achievements for certificates, one per student. */
+export async function certificatesFor(studentIds: string[], tzOffset = 0): Promise<Certificate[]> {
+  if (studentIds.length === 0) return [];
+  const supabase = getAdminClient();
+  const monday = weekStart(tzOffset);
+  const { data: profiles } = await supabase.from("profiles").select("id, display_name, grade_level").in("id", studentIds);
+  const certificates = await Promise.all((profiles ?? []).map(async (p) => {
+    const [{ stats, times }, { data: masteredRows }] = await Promise.all([
+      progressStats(supabase, p.id, tzOffset),
+      supabase.from("quest_mastery").select("skill_id").eq("student_id", p.id).gte("mastered_at", monday),
+    ]);
+    return {
+      student_id: p.id,
+      name: p.display_name || "Student",
+      grade: p.grade_level ? Number(p.grade_level) : null,
+      week_questions: times.filter((t) => t >= monday).length,
+      week_mastered: (masteredRows ?? []).map((m) => SKILLS_BY_ID[m.skill_id]?.name).filter((n): n is string => !!n),
+      streak: stats.streak,
+      badges: badgesFor(stats).filter((b) => b.earned).length,
+    };
+  }));
+  return certificates.sort((a, b) => a.name.localeCompare(b.name));
 }

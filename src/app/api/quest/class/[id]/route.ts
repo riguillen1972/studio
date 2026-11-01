@@ -4,6 +4,8 @@ import { getAdminClient } from "@/lib/usage";
 import { SKILLS, SKILLS_BY_ID, SKILL_CODES, sectionOf } from "@/lib/quest/skills";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
 import { GAP_BELOW, scoreOf, statusOf } from "@/lib/quest/mastery";
+import { classQuestionsSince } from "@/lib/quest/engine";
+import { parseTzOffset, weekStart } from "@/lib/quest/progress";
 
 async function ownClass(req: NextRequest, classId: string) {
   const auth = await requireTeacher(req);
@@ -31,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       ids.length ? supabase.from("quest_mastery").select("student_id, skill_id, p_known, attempts, mastered_at").in("student_id", ids) : Promise.resolve(none),
       ids.length ? supabase.from("quest_assessments").select("student_id, kind, status, results, started_at, completed_at").in("student_id", ids).order("started_at", { ascending: false }) : Promise.resolve(none),
       ids.length ? supabase.from("quest_attempts").select("student_id, skill_id, phase, correct, misconception, seconds, created_at").in("student_id", ids).gte("created_at", weekAgo) : Promise.resolve(none),
-      supabase.from("quest_class_focus").select("skill_ids, post_check_open").eq("class_id", classId).maybeSingle(),
+      supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal").eq("class_id", classId).maybeSingle(),
       supabase.from("quest_feedback").select("kind, student_id, rating, answer, comment, created_at").eq("class_id", classId),
     ]);
 
@@ -109,6 +111,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       class: { id: owned.cls.id, name: owned.cls.name },
       focus_skill_ids: focusIds,
       post_check_open: !!focus?.post_check_open,
+      weekly_goal: focus?.weekly_goal ?? null,
+      week_questions: await classQuestionsSince(supabase, classId, weekStart(parseTzOffset(req.nextUrl.searchParams.get("tz")))),
       all_skills: SKILLS.map((s) => ({ id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade, section: sectionOf(s), strand: s.strand, nad: s.nad, advanced: !!s.advanced })),
       students,
       skills,
@@ -144,18 +148,22 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-// Set the week's focus skills and/or open the end-of-week check: { skill_ids?: string[], post_check_open?: boolean }
+// Set the week's focus skills, open the end-of-week check, and/or set the weekly class goal:
+// { skill_ids?: string[], post_check_open?: boolean, weekly_goal?: number | null }
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: classId } = await params;
   const owned = await ownClass(req, classId);
   if (owned.error) return owned.error;
   const body = await req.json().catch(() => ({}));
 
-  const { data: existing } = await getAdminClient().from("quest_class_focus").select("skill_ids, post_check_open").eq("class_id", classId).maybeSingle();
+  const { data: existing } = await getAdminClient().from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal").eq("class_id", classId).maybeSingle();
+  const goal = Number(body.weekly_goal);
   const row = {
     class_id: classId,
     skill_ids: Array.isArray(body.skill_ids) ? body.skill_ids.filter((s: string) => SKILLS_BY_ID[s]).slice(0, 12) : existing?.skill_ids ?? [],
     post_check_open: typeof body.post_check_open === "boolean" ? body.post_check_open : existing?.post_check_open ?? false,
+    weekly_goal: body.weekly_goal === null ? null
+      : Number.isFinite(goal) && goal >= 10 ? Math.min(100000, Math.round(goal)) : existing?.weekly_goal ?? null,
     updated_at: new Date().toISOString(),
   };
   const { error } = await getAdminClient().from("quest_class_focus").upsert(row, { onConflict: "class_id" });

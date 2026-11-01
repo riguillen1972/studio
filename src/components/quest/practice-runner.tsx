@@ -10,6 +10,7 @@ import { CheckCircle2, Flag, Lightbulb, Loader2, Trophy, XCircle } from "lucide-
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
 import type { SkillSummary } from "./skill-list";
+import { BadgeIcon, type QuestBadge } from "./progress-card";
 
 interface Next { question: QuestQuestion; phase: "practice" | "review"; reason: string }
 interface Feedback {
@@ -23,6 +24,8 @@ interface Feedback {
   score_before: number;
   score_after: number;
   just_mastered: boolean;
+  new_badges: QuestBadge[];
+  streak: number;
 }
 
 type RunnerProps =
@@ -64,7 +67,7 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
     try {
       const fb = await questFetch<Feedback>("/api/quest/practice", {
         method: "POST",
-        body: JSON.stringify({ item_id: current.question.id, response, phase: current.phase, seconds }),
+        body: JSON.stringify({ item_id: current.question.id, response, phase: current.phase, seconds, tz: new Date().getTimezoneOffset() }),
       });
       setFeedback(fb);
       setCount((c) => c + 1);
@@ -175,6 +178,17 @@ function FeedbackPanel({ question, feedback, onNext, onExit }: {
           <Progress value={after} />
         </div>
       )}
+
+      {feedback.new_badges.map((b) => (
+        <div key={b.id} className="flex items-center gap-3 rounded-lg border border-amber-400/50 bg-amber-400/10 p-4 animate-in zoom-in-95 fade-in duration-500">
+          <BadgeIcon icon={b.icon} size="lg" />
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-amber-700 dark:text-amber-400">New badge</p>
+            <p className="font-semibold">{b.name}</p>
+            <p className="text-sm text-muted-foreground">{b.description}</p>
+          </div>
+        </div>
+      ))}
 
       <ReportProblem itemId={question.id} />
 

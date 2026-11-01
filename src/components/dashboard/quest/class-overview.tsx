@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { Printer, Users } from "lucide-react";
 import { openWorksheet } from "./question-bank";
@@ -19,11 +21,15 @@ const cellStyle = (cell?: { p: number; score: number; status: string }) => {
   return "bg-red-500/40";
 };
 
-export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
+export function ClassOverview({ data, onSaveFocus, onToggleCheck, onSaveGoal }: {
   data: QuestClassData;
   onSaveFocus: (skillIds: string[]) => Promise<void>;
   onToggleCheck: (open: boolean) => Promise<void>;
+  onSaveGoal: (goal: number | null) => Promise<void>;
 }) {
+  const [goal, setGoal] = useState(data.weekly_goal ? String(data.weekly_goal) : "");
+  // A starting suggestion: a full daily goal (15) for each student on 5 school days
+  const suggestedGoal = Math.max(10, data.summary.students * 15 * 5);
   const [editingFocus, setEditingFocus] = useState(false);
   const [focus, setFocus] = useState<string[]>(data.focus_skill_ids);
   const nameOf = (sid: string) => data.students.find((s) => s.id === sid)?.name ?? "Student";
@@ -88,6 +94,25 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
               <Button size="sm" onClick={async () => { await onSaveFocus(focus); setEditingFocus(false); }}>Save focus</Button>
             </div>
           )}
+          <div className="space-y-2 rounded-md border p-3">
+            <div className="flex flex-wrap items-end gap-2">
+              <div className="grid gap-1">
+                <Label htmlFor="weeklyGoal" className="text-sm">Class goal: practice questions this week</Label>
+                <Input id="weeklyGoal" type="number" min={10} step={10} placeholder={String(suggestedGoal)} value={goal}
+                  onChange={(e) => setGoal(e.target.value)} className="h-8 w-32" />
+              </div>
+              <Button size="sm" variant="outline" disabled={Number(goal) < 10} onClick={() => onSaveGoal(Number(goal))}>Save goal</Button>
+              {data.weekly_goal && <Button size="sm" variant="ghost" onClick={() => { setGoal(""); onSaveGoal(null); }}>Remove</Button>}
+            </div>
+            {data.weekly_goal ? (
+              <div className="space-y-1">
+                <Progress value={Math.min(100, (data.week_questions / data.weekly_goal) * 100)} />
+                <p className="text-xs text-muted-foreground">{data.week_questions} of {data.weekly_goal} so far. Students see this bar on their Math Quest page.</p>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">Students work toward it together and see a shared progress bar. Suggested: {suggestedGoal} (15 a day each).</p>
+            )}
+          </div>
           <div className="flex items-center gap-3">
             <Switch id="postCheck" checked={data.post_check_open} onCheckedChange={onToggleCheck} />
             <Label htmlFor="postCheck" className="text-sm">

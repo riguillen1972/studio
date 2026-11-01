@@ -20,3 +20,6 @@ CREATE INDEX IF NOT EXISTS idx_quest_item_reports_item ON quest_item_reports(ite
 
 -- Only the server (service role) reads and writes reports
 ALTER TABLE quest_item_reports ENABLE ROW LEVEL SECURITY;
+
+-- Weekly class goal: practice questions the whole class aims to answer each week (null = no goal)
+ALTER TABLE quest_class_focus ADD COLUMN IF NOT EXISTS weekly_goal INT CHECK (weekly_goal IS NULL OR weekly_goal BETWEEN 10 AND 100000);

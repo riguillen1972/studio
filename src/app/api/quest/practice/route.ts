@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { answerPractice, nextPractice, nextSkillPractice } from "@/lib/quest/engine";
 import { respond, unauthorized, userIdFrom } from "@/lib/quest/api";
+import { parseTzOffset } from "@/lib/quest/progress";
 
 // Next practice question for the student. ?skill=<id> practices one skill they picked
 // (&last=<item id> avoids repeating the question just answered).
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest) {
   return respond(await nextPractice(userId), 404);
 }
 
-// Answer a practice question: { item_id, response, phase: "practice" | "review", seconds }
+// Answer a practice question: { item_id, response, phase: "practice" | "review", seconds, tz }
 export async function POST(req: NextRequest) {
   const userId = await userIdFrom(req);
   if (!userId) return unauthorized();
@@ -21,5 +22,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing answer" }, { status: 400 });
   }
   const phase = body.phase === "review" ? "review" : "practice";
-  return respond(await answerPractice(userId, body.item_id, body.response, phase, body.seconds));
+  return respond(await answerPractice(userId, body.item_id, body.response, phase, body.seconds, parseTzOffset(body.tz)));
 }
