@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Users } from "lucide-react";
+import { Printer, Users } from "lucide-react";
+import { openWorksheet } from "./question-bank";
 import { TOPICS_BY_SECTION } from "@/lib/quest/skills";
 import type { QuestClassData } from "./quest-teacher";
 
@@ -46,7 +47,14 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
                 ? data.focus_skill_ids.map((id) => data.all_skills.find((s) => s.id === id)?.name).join(", ")
                 : "each student's grade-level skills (no focus set)"}
             </div>
-            <Button size="sm" variant="outline" onClick={() => setEditingFocus((v) => !v)}>{editingFocus ? "Close" : "Choose focus skills"}</Button>
+            <div className="flex flex-wrap gap-2">
+              {data.focus_skill_ids.length > 0 && (
+                <Button size="sm" variant="outline" onClick={() => openWorksheet(data.focus_skill_ids, "This week's practice")}>
+                  <Printer className="mr-2 h-4 w-4" /> Print focus worksheet
+                </Button>
+              )}
+              <Button size="sm" variant="outline" onClick={() => setEditingFocus((v) => !v)}>{editingFocus ? "Close" : "Choose focus skills"}</Button>
+            </div>
           </div>
           {editingFocus && (
             <div className="space-y-3 rounded-md border p-3">

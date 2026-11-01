@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
 import { TOPICS_BY_SECTION, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
-import { Check, Flag, Loader2, Pencil, ShieldCheck, Sparkles, Square, X } from "lucide-react";
+import { Check, Flag, Loader2, Pencil, Printer, ShieldCheck, Sparkles, Square, X } from "lucide-react";
 
 interface BankSkill { id: string; code: string; name: string; grade: number; section: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number; reported: number }
 interface BankItem {
@@ -29,6 +29,11 @@ async function authHeaders(): Promise<Record<string, string>> {
   const { data: { session } } = await createClient().auth.getSession();
   if (!session) throw new Error("Your session has expired. Please sign in again.");
   return { Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" };
+}
+
+/** Opens a printable worksheet (with answer key) for the given skills in a new tab. */
+export function openWorksheet(skillIds: string[], title: string) {
+  window.open(`/print/quest?skills=${encodeURIComponent(skillIds.join(","))}&title=${encodeURIComponent(title)}`, "_blank");
 }
 
 export function QuestionBank() {
@@ -207,7 +212,13 @@ export function QuestionBank() {
             if (!inStrand.length) return null;
             return (
               <div key={topic.letter}>
-                <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">{topic.letter}. {topic.title}</p>
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <p className="text-xs font-semibold uppercase text-muted-foreground">{topic.letter}. {topic.title}</p>
+                  <Button size="icon" variant="ghost" className="h-6 w-6" title={`Print a worksheet for ${topic.letter}. ${topic.title}`}
+                    onClick={() => openWorksheet(topic.skillIds, `${topic.letter}. ${topic.title}`)}>
+                    <Printer className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
                 <ul className="space-y-1">
                   {inStrand.map((s) => (
                     <li key={s.id}>
@@ -250,6 +261,9 @@ export function QuestionBank() {
                 {drafts.length > 1 && (
                   <Button size="sm" variant="outline" onClick={approveAll}>Approve all {drafts.length} drafts</Button>
                 )}
+                <Button size="sm" variant="outline" onClick={() => openWorksheet([selected.id], selected.name)} disabled={selected.approved === 0}>
+                  <Printer className="mr-2 h-4 w-4" /> Print worksheet
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">

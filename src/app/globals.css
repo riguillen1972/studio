@@ -133,3 +133,9 @@ body {
     25% { transform: translateX(-3px) rotate(9deg); }
     75% { transform: translateX(3px) rotate(15deg); }
 }
+
+/* Printed worksheets: comfortable margins, and no dark backgrounds on paper */
+@media print {
+  @page { margin: 0.6in; }
+  html, body { background: white !important; }
+}
