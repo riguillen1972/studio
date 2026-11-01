@@ -12,7 +12,7 @@ import { questFetch } from "@/components/quest/quest-api";
 import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
 import { ClipboardCheck, Compass, Loader2, Play, Target } from "lucide-react";
 
-interface SkillSummary { id: string; name: string; grade: number; strand: Strand; status: string; p_known: number | null }
+interface SkillSummary { id: string; name: string; grade: number; strand: Strand; advanced: boolean; status: string; p_known: number | null }
 interface Overview {
   eligible: boolean;
   grade?: number;
@@ -139,7 +139,7 @@ function Home({ overview, onStart }: { overview: Overview; onStart: (mode: Mode)
       <Card>
         <CardHeader>
           <CardTitle>Your skill map</CardTitle>
-          <CardDescription>Skills turn green as you master them. Mastered skills come back now and then so they stick.</CardDescription>
+          <CardDescription>Skills turn green as you master them. Mastered skills come back now and then so they stick. ★ skills are challenges that open up once you master the skills they build on.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {byGrade.map((g) => (
@@ -155,8 +155,8 @@ function Home({ overview, onStart }: { overview: Overview; onStart: (mode: Mode)
                       {skills.map((s) => {
                         const style = STATUS_STYLE[s.status] ?? STATUS_STYLE.not_started;
                         return (
-                          <span key={s.id} title={style.label} className={`rounded-full border px-3 py-1 text-xs ${style.className}`}>
-                            {s.name}
+                          <span key={s.id} title={s.advanced ? `${style.label} · Challenge` : style.label} className={`rounded-full border px-3 py-1 text-xs ${style.className}`}>
+                            {s.name}{s.advanced && " ★"}
                           </span>
                         );
                       })}

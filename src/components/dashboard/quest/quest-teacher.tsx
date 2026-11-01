@@ -15,7 +15,7 @@ export interface QuestClassData {
   class: { id: string; name: string };
   focus_skill_ids: string[];
   post_check_open: boolean;
-  all_skills: { id: string; name: string; grade: number; strand: Strand; nad: string }[];
+  all_skills: { id: string; name: string; grade: number; strand: Strand; nad: string; advanced: boolean }[];
   students: { id: string; name: string; grade: number }[];
   skills: { id: string; name: string; grade: number }[];
   heat: Record<string, Record<string, { p: number; status: string }>>;

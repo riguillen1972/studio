@@ -14,7 +14,7 @@ import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
 import { Check, Loader2, Pencil, Sparkles, X } from "lucide-react";
 
-interface BankSkill { id: string; name: string; grade: number; strand: Strand; standard: string; nad: string; approved: number; draft: number }
+interface BankSkill { id: string; name: string; grade: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number }
 interface BankItem {
   id: string; skill_id: string; difficulty: number; kind: "multiple_choice" | "numeric";
   stem: string; choices: QuestChoice[] | null; answer: string; explanation: string; status: string;
@@ -141,7 +141,7 @@ export function QuestionBank() {
                         onClick={() => open(s)}
                         className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted ${selected?.id === s.id ? "bg-muted" : ""}`}
                       >
-                        <span className="truncate">{s.name}</span>
+                        <span className="truncate">{s.name}{s.advanced && <span className="ml-1 text-amber-500" title="Challenge skill">★</span>}</span>
                         <span className="flex shrink-0 gap-1">
                           {s.draft > 0 && <Badge variant="outline" className="border-amber-500 text-amber-600">{s.draft} to review</Badge>}
                           <Badge variant={s.approved >= TARGET_PER_SKILL ? "default" : "secondary"}>{s.approved} ready</Badge>
@@ -165,7 +165,7 @@ export function QuestionBank() {
             <CardHeader>
               <CardTitle className="text-lg">{selected.name}</CardTitle>
               <CardDescription>
-                {[selected.nad && `NAD ${selected.nad}`, selected.standard && `Common Core ${selected.standard}`].filter(Boolean).join(" · ")}
+                {[selected.nad && `NAD ${selected.nad}`, selected.standard && `Common Core ${selected.standard}`, selected.advanced && "Challenge skill"].filter(Boolean).join(" · ")}
               </CardDescription>
               <div className="flex flex-wrap gap-2 pt-2">
                 <Button size="sm" onClick={generate} disabled={isGenerating}>

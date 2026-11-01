@@ -107,7 +107,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       class: { id: owned.cls.id, name: owned.cls.name },
       focus_skill_ids: focusIds,
       post_check_open: !!focus?.post_check_open,
-      all_skills: SKILLS.map((s) => ({ id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad })),
+      all_skills: SKILLS.map((s) => ({ id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad, advanced: !!s.advanced })),
       students,
       skills,
       heat,

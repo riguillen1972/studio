@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     skills: SKILLS.map((s) => ({
-      id: s.id, name: s.name, grade: s.grade, strand: s.strand, standard: s.standard, nad: s.nad,
+      id: s.id, name: s.name, grade: s.grade, strand: s.strand, standard: s.standard, nad: s.nad, advanced: !!s.advanced,
       approved: counts.get(s.id)?.approved ?? 0,
       draft: counts.get(s.id)?.draft ?? 0,
     })),

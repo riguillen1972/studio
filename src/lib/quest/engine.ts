@@ -240,7 +240,7 @@ async function finishDiagnostic(supabase: SupabaseClient, studentId: string, sta
   }
   // Grade-level skills and missed skills' foundations we didn't get to
   const untested = [
-    ...SKILLS.filter((s) => s.grade === state.grade).map((s) => s.id),
+    ...SKILLS.filter((s) => s.grade === state.grade && !s.advanced).map((s) => s.id),
     ...state.asked.filter((a) => !a.correct).flatMap((a) => SKILLS_BY_ID[a.skill_id]?.prereqs ?? []),
   ];
   for (const id of untested) if (!result.has(id)) result.set(id, { result: "inferred_unsure", difficulty: 2 });
@@ -346,9 +346,10 @@ export async function nextPractice(studentId: string): Promise<PracticeQuestion 
     return weakPrereq ? { id: weakPrereq, via: id } : { id };
   };
 
+  // No focus set: the grade's core skills, plus challenge skills once their foundations are mastered
   const focusIds: string[] = ((focusRow as { skill_ids?: string[] } | null)?.skill_ids?.length
     ? (focusRow as { skill_ids: string[] }).skill_ids
-    : SKILLS.filter((s) => s.grade === grade).map((s) => s.id));
+    : SKILLS.filter((s) => s.grade === grade && (!s.advanced || s.prereqs.every(isMastered))).map((s) => s.id));
 
   const now = Date.now();
   const buckets: { weight: number; phase: "practice" | "review"; pick: () => { id: string; via?: string; reason: string } | null }[] = [
@@ -496,7 +497,7 @@ export async function studentOverview(studentId: string) {
     skills: relevant.map((s) => {
       const m = masteryById.get(s.id);
       return {
-        id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad,
+        id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad, advanced: !!s.advanced,
         status: m?.mastered_at ? "mastered" : statusOf(m?.p_known, m?.attempts ?? 0),
         p_known: m?.p_known ?? null,
       };

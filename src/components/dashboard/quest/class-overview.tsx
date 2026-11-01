@@ -50,7 +50,7 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
           </div>
           {editingFocus && (
             <div className="space-y-3 rounded-md border p-3">
-              <p className="text-xs text-muted-foreground">Pick what you&apos;re teaching this week (up to 12). About 60% of practice will come from these.</p>
+              <p className="text-xs text-muted-foreground">Pick what you&apos;re teaching this week (up to 12). About 60% of practice will come from these. ★ marks challenge skills for students ready to go further.</p>
               {grades.map((g) => (
                 <div key={g} className="space-y-2">
                   <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? `Foundation (grade ${g})` : `Grade ${g}`}</p>
@@ -64,10 +64,10 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
                           {skills.map((s) => {
                             const on = focus.includes(s.id);
                             return (
-                              <button key={s.id} type="button" title={s.nad ? `NAD ${s.nad}` : undefined}
+                              <button key={s.id} type="button" title={[s.nad && `NAD ${s.nad}`, s.advanced && "Challenge skill"].filter(Boolean).join(" · ") || undefined}
                                 onClick={() => setFocus(on ? focus.filter((f) => f !== s.id) : focus.length < 12 ? [...focus, s.id] : focus)}
                                 className={`rounded-full border px-3 py-1 text-xs ${on ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"}`}>
-                                {s.name}
+                                {s.name}{s.advanced && " ★"}
                               </button>
                             );
                           })}
