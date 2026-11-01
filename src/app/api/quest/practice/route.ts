@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { answerPractice, nextPractice } from "@/lib/quest/engine";
+import { answerPractice, nextPractice, nextSkillPractice } from "@/lib/quest/engine";
 import { respond, unauthorized, userIdFrom } from "@/lib/quest/api";
 
-// Next practice question for the student
+// Next practice question for the student. ?skill=<id> practices one skill they picked
+// (&last=<item id> avoids repeating the question just answered).
 export async function GET(req: NextRequest) {
   const userId = await userIdFrom(req);
   if (!userId) return unauthorized();
+  const skill = req.nextUrl.searchParams.get("skill");
+  if (skill) return respond(await nextSkillPractice(userId, skill, req.nextUrl.searchParams.get("last")), 404);
   return respond(await nextPractice(userId), 404);
 }
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
-import { SKILLS } from "@/lib/quest/skills";
+import { SKILLS, SKILL_CODES, sectionOf } from "@/lib/quest/skills";
 
 // Question bank overview: every skill with how many questions are approved or waiting for review
 export async function GET(req: NextRequest) {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     skills: SKILLS.map((s) => ({
-      id: s.id, name: s.name, grade: s.grade, strand: s.strand, standard: s.standard, nad: s.nad, advanced: !!s.advanced,
+      id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade, section: sectionOf(s), strand: s.strand, standard: s.standard, nad: s.nad, advanced: !!s.advanced,
       approved: counts.get(s.id)?.approved ?? 0,
       draft: counts.get(s.id)?.draft ?? 0,
     })),

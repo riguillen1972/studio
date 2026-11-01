@@ -14,7 +14,7 @@ import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
 import { Check, Loader2, Pencil, Sparkles, X } from "lucide-react";
 
-interface BankSkill { id: string; name: string; grade: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number }
+interface BankSkill { id: string; code: string; name: string; grade: number; section: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number }
 interface BankItem {
   id: string; skill_id: string; difficulty: number; kind: "multiple_choice" | "numeric";
   stem: string; choices: QuestChoice[] | null; answer: string; explanation: string; status: string;
@@ -104,7 +104,7 @@ export function QuestionBank() {
     for (const item of items.filter((i) => i.status === "draft")) await update(item, { status: "approved" });
   };
 
-  const grades = [...new Set(skills.map((s) => s.grade))].sort();
+  const grades = [...new Set(skills.map((s) => s.section))].sort();
   const drafts = items.filter((i) => i.status === "draft");
 
   return (
@@ -119,17 +119,17 @@ export function QuestionBank() {
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-1">
             {grades.map((g) => {
-              const inGrade = skills.filter((s) => s.grade === g);
+              const inGrade = skills.filter((s) => s.section === g);
               return (
                 <Button key={g} size="sm" variant={grade === g ? "default" : "outline"} className="h-7 px-2 text-xs" onClick={() => setGrade(g)}>
-                  {g <= 5 ? `Foundation ${g}` : `Grade ${g}`}
+                  {g <= 5 ? "Foundations" : `Grade ${g}`}
                   <span className="ml-1 opacity-70">{inGrade.filter((s) => s.approved >= TARGET_PER_SKILL).length}/{inGrade.length}</span>
                 </Button>
               );
             })}
           </div>
           {STRAND_ORDER.map((strand) => {
-            const inStrand = skills.filter((s) => s.grade === grade && s.strand === strand);
+            const inStrand = skills.filter((s) => s.section === grade && s.strand === strand);
             if (!inStrand.length) return null;
             return (
               <div key={strand}>
@@ -141,7 +141,7 @@ export function QuestionBank() {
                         onClick={() => open(s)}
                         className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted ${selected?.id === s.id ? "bg-muted" : ""}`}
                       >
-                        <span className="truncate">{s.name}{s.advanced && <span className="ml-1 text-amber-500" title="Challenge skill">★</span>}</span>
+                        <span className="truncate"><span className="mr-1 text-xs tabular-nums text-muted-foreground">{s.code}</span>{s.name}{s.advanced && <span className="ml-1 text-amber-500" title="Challenge skill">★</span>}</span>
                         <span className="flex shrink-0 gap-1">
                           {s.draft > 0 && <Badge variant="outline" className="border-amber-500 text-amber-600">{s.draft} to review</Badge>}
                           <Badge variant={s.approved >= TARGET_PER_SKILL ? "default" : "secondary"}>{s.approved} ready</Badge>
@@ -163,7 +163,7 @@ export function QuestionBank() {
         ) : (
           <>
             <CardHeader>
-              <CardTitle className="text-lg">{selected.name}</CardTitle>
+              <CardTitle className="text-lg"><span className="mr-2 text-muted-foreground">{selected.code}</span>{selected.name}</CardTitle>
               <CardDescription>
                 {[selected.nad && `NAD ${selected.nad}`, selected.standard && `Common Core ${selected.standard}`, selected.advanced && "Challenge skill"].filter(Boolean).join(" · ")}
               </CardDescription>

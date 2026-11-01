@@ -15,10 +15,10 @@ export interface QuestClassData {
   class: { id: string; name: string };
   focus_skill_ids: string[];
   post_check_open: boolean;
-  all_skills: { id: string; name: string; grade: number; strand: Strand; nad: string; advanced: boolean }[];
+  all_skills: { id: string; code: string; name: string; grade: number; section: number; strand: Strand; nad: string; advanced: boolean }[];
   students: { id: string; name: string; grade: number }[];
-  skills: { id: string; name: string; grade: number }[];
-  heat: Record<string, Record<string, { p: number; status: string }>>;
+  skills: { id: string; code: string; name: string; grade: number }[];
+  heat: Record<string, Record<string, { p: number; score: number; status: string }>>;
   groups: { reason: string; students: string[] }[];
   report: {
     student_id: string; name: string; grade: number; diagnostic_done: boolean; diagnostic_gaps: string[];

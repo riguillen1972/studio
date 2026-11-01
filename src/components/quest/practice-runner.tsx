@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Markdown } from "@/components/markdown";
 import { CheckCircle2, Lightbulb, Loader2, Trophy, XCircle } from "lucide-react";
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
+import type { SkillSummary } from "./skill-list";
 
 interface Next { question: QuestQuestion; phase: "practice" | "review"; reason: string }
 interface Feedback {
@@ -19,27 +20,41 @@ interface Feedback {
   status: string;
   p_before: number;
   p_after: number;
+  score_before: number;
+  score_after: number;
   just_mastered: boolean;
 }
 
-/** Daily practice: one question at a time with feedback, mini-lessons and mastery progress. */
-export function PracticeRunner({ answeredToday, goal, onExit }: { answeredToday: number; goal: number; onExit: () => void }) {
+type RunnerProps =
+  | { skill?: undefined; answeredToday: number; goal: number; onExit: () => void }
+  | { skill: SkillSummary; answeredToday?: undefined; goal?: undefined; onExit: () => void };
+
+/**
+ * One question at a time with feedback, mini-lessons and the skill score. Without `skill` it's the
+ * daily mix picked by the engine; with `skill` it practices that one skill the student chose.
+ */
+export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: RunnerProps) {
   const [current, setCurrent] = useState<Next | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [count, setCount] = useState(answeredToday);
+  const [score, setScore] = useState(skill?.score ?? 0);
+  const lastItem = useRef<string | null>(null);
 
   const loadNext = useCallback(async () => {
     setFeedback(null);
     setCurrent(null);
     setError(null);
     try {
-      setCurrent(await questFetch<Next>("/api/quest/practice"));
+      const path = skill
+        ? `/api/quest/practice?skill=${encodeURIComponent(skill.id)}${lastItem.current ? `&last=${encodeURIComponent(lastItem.current)}` : ""}`
+        : "/api/quest/practice";
+      setCurrent(await questFetch<Next>(path));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
     }
-  }, []);
+  }, [skill]);
 
   useEffect(() => { loadNext(); }, [loadNext]);
 
@@ -53,6 +68,8 @@ export function PracticeRunner({ answeredToday, goal, onExit }: { answeredToday:
       });
       setFeedback(fb);
       setCount((c) => c + 1);
+      setScore(fb.score_after);
+      lastItem.current = current.question.id;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -64,15 +81,29 @@ export function PracticeRunner({ answeredToday, goal, onExit }: { answeredToday:
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <div className="flex-1">
-          <Progress value={Math.min(100, (count / goal) * 100)} />
-          <p className="mt-1 text-xs text-muted-foreground">
-            {goalReached ? `Daily goal reached (${count} today). Keep going if you like!` : `${count} of ${goal} for today`}
-          </p>
+      {skill ? (
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <p className="text-xs text-muted-foreground">{skill.code} · {skill.section <= 5 ? "Foundations" : `Grade ${skill.section}`}</p>
+            <p className="font-semibold">{skill.name}{skill.advanced && <span className="ml-1 text-amber-500">★</span>}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-muted-foreground">Score</p>
+            <p className="text-2xl font-bold tabular-nums">{score}</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={onExit}>Back to skills</Button>
         </div>
-        <Button variant="outline" size="sm" onClick={onExit}>Done for now</Button>
-      </div>
+      ) : (
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <Progress value={Math.min(100, (count / goal) * 100)} />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {goalReached ? `Daily goal reached (${count} today). Keep going if you like!` : `${count} of ${goal} for today`}
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={onExit}>Done for now</Button>
+        </div>
+      )}
 
       {error && (
         <Card><CardContent className="space-y-3 py-8 text-center">
@@ -86,17 +117,19 @@ export function PracticeRunner({ answeredToday, goal, onExit }: { answeredToday:
       {current && (
         <Card>
           <CardHeader className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">{current.question.skill_name}</Badge>
-              <span className="text-xs text-muted-foreground">{current.reason}</span>
-            </div>
+            {!skill && (
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">{current.question.skill_name}</Badge>
+                <span className="text-xs text-muted-foreground">{current.reason}</span>
+              </div>
+            )}
             <CardTitle className="sr-only">Practice question</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {!feedback ? (
               <QuestionCard question={current.question} onSubmit={answer} disabled={isSending} />
             ) : (
-              <FeedbackPanel question={current.question} feedback={feedback} onNext={loadNext} />
+              <FeedbackPanel question={current.question} feedback={feedback} onNext={loadNext} onExit={skill && feedback.just_mastered ? onExit : undefined} />
             )}
           </CardContent>
         </Card>
@@ -105,9 +138,11 @@ export function PracticeRunner({ answeredToday, goal, onExit }: { answeredToday:
   );
 }
 
-function FeedbackPanel({ question, feedback, onNext }: { question: QuestQuestion; feedback: Feedback; onNext: () => void }) {
-  const before = Math.round(feedback.p_before * 100);
-  const after = Math.round(feedback.p_after * 100);
+function FeedbackPanel({ question, feedback, onNext, onExit }: {
+  question: QuestQuestion; feedback: Feedback; onNext: () => void; onExit?: () => void;
+}) {
+  const before = feedback.score_before;
+  const after = feedback.score_after;
   return (
     <div className="space-y-4">
       <p className="text-lg whitespace-pre-wrap text-muted-foreground">{question.stem}</p>
@@ -135,13 +170,18 @@ function FeedbackPanel({ question, feedback, onNext }: { question: QuestQuestion
         <div>
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{question.skill_name}</span>
-            <span>{after >= before ? `${before}% → ${after}%` : `${after}%`}</span>
+            <span className="tabular-nums">Score {before} → {after}</span>
           </div>
           <Progress value={after} />
         </div>
       )}
 
-      <Button size="lg" onClick={onNext} autoFocus>Next question</Button>
+      <div className="flex flex-wrap gap-2">
+        {onExit && <Button size="lg" onClick={onExit} autoFocus>Pick another skill</Button>}
+        <Button size="lg" variant={onExit ? "outline" : "default"} onClick={onNext} autoFocus={!onExit}>
+          {onExit ? "Keep practicing" : "Next question"}
+        </Button>
+      </div>
     </div>
   );
 }

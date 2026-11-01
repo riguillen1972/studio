@@ -46,3 +46,15 @@ export function nextReviewDate(step: number, from = new Date()): Date {
   const days = REVIEW_INTERVAL_DAYS[Math.min(step, REVIEW_INTERVAL_DAYS.length - 1)];
   return new Date(from.getTime() + days * 86_400_000);
 }
+
+/**
+ * The 0–100 skill score students see. It follows p_known, but a skill only reaches 100 when it is
+ * mastered, and the first few answers can't push it past 70 / 80 / 90, so a lucky streak can't
+ * look like mastery.
+ */
+export function scoreOf(pKnown: number | null | undefined, attempts = 0, masteredAt: string | null = null): number {
+  if (masteredAt) return 100;
+  if (pKnown === null || pKnown === undefined) return 0;
+  const cap = attempts >= MIN_ATTEMPTS_FOR_MASTERY ? 99 : 70 + attempts * 10;
+  return Math.min(cap, Math.round(pKnown * 100));
+}

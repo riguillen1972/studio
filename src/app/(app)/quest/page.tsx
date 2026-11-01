@@ -9,10 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import { AssessmentRunner } from "@/components/quest/assessment-runner";
 import { PracticeRunner } from "@/components/quest/practice-runner";
 import { questFetch } from "@/components/quest/quest-api";
-import { STRAND_NAMES, STRAND_ORDER, type Strand } from "@/lib/quest/skills";
+import { SkillList, type SkillSummary } from "@/components/quest/skill-list";
 import { ClipboardCheck, Compass, Loader2, Play, Target } from "lucide-react";
 
-interface SkillSummary { id: string; name: string; grade: number; strand: Strand; advanced: boolean; status: string; p_known: number | null }
 interface Overview {
   eligible: boolean;
   grade?: number;
@@ -23,18 +22,12 @@ interface Overview {
   skills: SkillSummary[];
 }
 
-type Mode = "home" | "diagnostic" | "practice" | "post";
-
-const STATUS_STYLE: Record<string, { label: string; className: string }> = {
-  mastered: { label: "Mastered", className: "bg-green-500/15 text-green-700 dark:text-green-400 border-green-500/30" },
-  developing: { label: "Getting there", className: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30" },
-  gap: { label: "Practice this", className: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30" },
-  not_started: { label: "Not started", className: "bg-muted text-muted-foreground border-border" },
-};
+type Mode = "home" | "diagnostic" | "practice" | "post" | "skill";
 
 export default function QuestPage() {
   const [overview, setOverview] = useState<Overview | null>(null);
   const [mode, setMode] = useState<Mode>("home");
+  const [skill, setSkill] = useState<SkillSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -71,35 +64,43 @@ export default function QuestPage() {
         <PracticeRunner answeredToday={overview.today.answered} goal={overview.today.goal} onExit={backHome} />
       )}
 
-      {overview?.eligible && mode === "home" && <Home overview={overview} onStart={setMode} />}
+      {overview?.eligible && mode === "skill" && skill && <PracticeRunner skill={skill} onExit={backHome} />}
+
+      {overview?.eligible && mode === "home" && (
+        <Home overview={overview} onStart={setMode} onPickSkill={(s) => { setSkill(s); setMode("skill"); }} />
+      )}
     </div>
   );
 }
 
-function Home({ overview, onStart }: { overview: Overview; onStart: (mode: Mode) => void }) {
+function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart: (mode: Mode) => void; onPickSkill: (skill: SkillSummary) => void }) {
   const diagnosticDone = overview.diagnostic?.status === "completed";
   const postDone = overview.post?.status === "completed";
 
+  const skillList = <SkillList skills={overview.skills} grade={overview.grade ?? 6} onPick={onPickSkill} />;
+
   if (!diagnosticDone) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" /> Find your starting point</CardTitle>
-          <CardDescription>
-            About 20 questions, around 20 minutes. It isn&apos;t graded. It helps Study Buddy find what you already know and
-            what to practice. Have scratch paper ready.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button size="lg" onClick={() => onStart("diagnostic")}>
-            <Play className="mr-2 h-4 w-4" /> {overview.diagnostic?.status === "in_progress" ? "Continue" : "Start"}
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" /> Find your starting point</CardTitle>
+            <CardDescription>
+              About 20 questions, around 20 minutes. It isn&apos;t graded. It helps Study Buddy find what you already know and
+              what to practice. Have scratch paper ready.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button size="lg" onClick={() => onStart("diagnostic")}>
+              <Play className="mr-2 h-4 w-4" /> {overview.diagnostic?.status === "in_progress" ? "Continue" : "Start"}
+            </Button>
+          </CardContent>
+        </Card>
+        {skillList}
+      </div>
     );
   }
 
-  const byGrade = [...new Set(overview.skills.map((s) => s.grade))].sort();
   const mastered = overview.skills.filter((s) => s.status === "mastered").length;
 
   return (
@@ -136,43 +137,7 @@ function Home({ overview, onStart }: { overview: Overview; onStart: (mode: Mode)
 
       {postDone && <StudentSurvey />}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Your skill map</CardTitle>
-          <CardDescription>Skills turn green as you master them. Mastered skills come back now and then so they stick. ★ skills are challenges that open up once you master the skills they build on.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {byGrade.map((g) => (
-            <div key={g} className="space-y-2">
-              <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? "Foundations" : `Grade ${g}`}</p>
-              {STRAND_ORDER.map((strand) => {
-                const skills = overview.skills.filter((s) => s.grade === g && s.strand === strand);
-                if (!skills.length) return null;
-                return (
-                  <div key={strand}>
-                    <p className="mb-1 text-xs text-muted-foreground">{STRAND_NAMES[strand]}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {skills.map((s) => {
-                        const style = STATUS_STYLE[s.status] ?? STATUS_STYLE.not_started;
-                        return (
-                          <span key={s.id} title={s.advanced ? `${style.label} · Challenge` : style.label} className={`rounded-full border px-3 py-1 text-xs ${style.className}`}>
-                            {s.name}{s.advanced && " ★"}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-          <div className="flex flex-wrap gap-3 pt-2 text-xs text-muted-foreground">
-            {Object.values(STATUS_STYLE).map((s) => (
-              <span key={s.label} className={`rounded-full border px-2 py-0.5 ${s.className}`}>{s.label}</span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {skillList}
     </div>
   );
 }

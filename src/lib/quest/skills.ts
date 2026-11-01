@@ -580,3 +580,21 @@ export function diagnosticOrder(grade: number, focus: string[] = []): string[] {
   const focusFirst = focus.filter((id) => SKILLS_BY_ID[id]);
   return [...new Set([...focusFirst, ...interleaved])];
 }
+
+/** Section a skill is listed under: "Foundations" for grades 4–5, otherwise its grade. */
+export const sectionOf = (skill: Skill) => (skill.grade <= 5 ? 5 : skill.grade);
+
+/**
+ * Short skill codes like "C.4": within each grade section, strands get letters in strand order
+ * and skills are numbered in map order. Codes are for finding a skill quickly in a list.
+ */
+export const SKILL_CODES: Record<string, string> = (() => {
+  const codes: Record<string, string> = {};
+  for (const section of [...new Set(SKILLS.map(sectionOf))]) {
+    const inSection = SKILLS.filter((s) => sectionOf(s) === section);
+    STRAND_ORDER.filter((strand) => inSection.some((s) => s.strand === strand)).forEach((strand, i) => {
+      inSection.filter((s) => s.strand === strand).forEach((s, j) => { codes[s.id] = `${String.fromCharCode(65 + i)}.${j + 1}`; });
+    });
+  }
+  return codes;
+})();

@@ -9,7 +9,7 @@ import { Users } from "lucide-react";
 import { STRAND_NAMES, STRAND_ORDER } from "@/lib/quest/skills";
 import type { QuestClassData } from "./quest-teacher";
 
-const cellStyle = (cell?: { p: number; status: string }) => {
+const cellStyle = (cell?: { p: number; score: number; status: string }) => {
   if (!cell) return "bg-muted/40 text-muted-foreground";
   if (cell.status === "mastered") return "bg-green-500/80 text-white";
   if (cell.p >= 0.75) return "bg-green-500/35";
@@ -26,7 +26,7 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
   const [editingFocus, setEditingFocus] = useState(false);
   const [focus, setFocus] = useState<string[]>(data.focus_skill_ids);
   const nameOf = (sid: string) => data.students.find((s) => s.id === sid)?.name ?? "Student";
-  const grades = [...new Set(data.all_skills.map((s) => s.grade))].sort();
+  const sections = [...new Set(data.all_skills.map((s) => s.section))].sort();
 
   return (
     <div className="space-y-4">
@@ -51,11 +51,11 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
           {editingFocus && (
             <div className="space-y-3 rounded-md border p-3">
               <p className="text-xs text-muted-foreground">Pick what you&apos;re teaching this week (up to 12). About 60% of practice will come from these. ★ marks challenge skills for students ready to go further.</p>
-              {grades.map((g) => (
+              {sections.map((g) => (
                 <div key={g} className="space-y-2">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? `Foundation (grade ${g})` : `Grade ${g}`}</p>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground">{g <= 5 ? "Foundations" : `Grade ${g}`}</p>
                   {STRAND_ORDER.map((strand) => {
-                    const skills = data.all_skills.filter((s) => s.grade === g && s.strand === strand);
+                    const skills = data.all_skills.filter((s) => s.section === g && s.strand === strand);
                     if (!skills.length) return null;
                     return (
                       <div key={strand}>
@@ -67,7 +67,7 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
                               <button key={s.id} type="button" title={[s.nad && `NAD ${s.nad}`, s.advanced && "Challenge skill"].filter(Boolean).join(" · ") || undefined}
                                 onClick={() => setFocus(on ? focus.filter((f) => f !== s.id) : focus.length < 12 ? [...focus, s.id] : focus)}
                                 className={`rounded-full border px-3 py-1 text-xs ${on ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"}`}>
-                                {s.name}{s.advanced && " ★"}
+                                <span className="opacity-60">{s.code}</span> {s.name}{s.advanced && " ★"}
                               </button>
                             );
                           })}
@@ -111,7 +111,7 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
       <Card>
         <CardHeader>
           <CardTitle>Skills heat map</CardTitle>
-          <CardDescription>Each square is one student&apos;s mastery of one skill. Red means a weak spot; green means mastered.</CardDescription>
+          <CardDescription>Each square is one student&apos;s score (0–100) on one skill, the same score students see. Red means a weak spot; 100 means mastered.</CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {data.skills.length === 0 || data.students.length === 0 ? (
@@ -133,15 +133,15 @@ export function ClassOverview({ data, onSaveFocus, onToggleCheck }: {
                 {data.skills.map((sk) => (
                   <tr key={sk.id}>
                     <td className="sticky left-0 bg-card p-1 pr-3 whitespace-nowrap">
-                      {sk.name}{data.focus_skill_ids.includes(sk.id) && <span className="ml-1 text-primary">●</span>}
+                      <span className="text-muted-foreground">{sk.grade <= 5 ? "Found." : `Gr ${sk.grade}`} · {sk.code}</span> {sk.name}{data.focus_skill_ids.includes(sk.id) && <span className="ml-1 text-primary">●</span>}
                     </td>
                     {data.students.map((st) => {
                       const cell = data.heat[st.id]?.[sk.id];
                       return (
                         <td key={st.id} className="p-0.5">
                           <div className={`flex h-7 w-12 items-center justify-center rounded ${cellStyle(cell)}`}
-                            title={`${st.name}: ${sk.name}${cell ? ` (${Math.round(cell.p * 100)}%)` : " (not tested)"}`}>
-                            {cell ? Math.round(cell.p * 100) : ""}
+                            title={`${st.name}: ${sk.name}${cell ? ` (score ${cell.score})` : " (not tested)"}`}>
+                            {cell ? cell.score : ""}
                           </div>
                         </td>
                       );

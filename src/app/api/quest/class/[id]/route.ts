@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
-import { SKILLS, SKILLS_BY_ID } from "@/lib/quest/skills";
+import { SKILLS, SKILLS_BY_ID, SKILL_CODES, sectionOf } from "@/lib/quest/skills";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
-import { GAP_BELOW, statusOf } from "@/lib/quest/mastery";
+import { GAP_BELOW, scoreOf, statusOf } from "@/lib/quest/mastery";
 
 async function ownClass(req: NextRequest, classId: string) {
   const auth = await requireTeacher(req);
@@ -48,10 +48,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     // Heat map: skills that anyone has data on, plus focus skills, in skill-map order
     const focusIds: string[] = focus?.skill_ids ?? [];
     const used = new Set([...(mastery ?? []).map((m) => m.skill_id), ...focusIds]);
-    const skills = SKILLS.filter((s) => used.has(s.id)).map((s) => ({ id: s.id, name: s.name, grade: s.grade }));
-    const heat: Record<string, Record<string, { p: number; status: string }>> = {};
+    const skills = SKILLS.filter((s) => used.has(s.id)).map((s) => ({ id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade }));
+    const heat: Record<string, Record<string, { p: number; score: number; status: string }>> = {};
     for (const m of mastery ?? []) {
-      (heat[m.student_id] ??= {})[m.skill_id] = { p: m.p_known, status: m.mastered_at ? "mastered" : statusOf(m.p_known, m.attempts) };
+      (heat[m.student_id] ??= {})[m.skill_id] = {
+        p: m.p_known, score: scoreOf(m.p_known, m.attempts, m.mastered_at), status: m.mastered_at ? "mastered" : statusOf(m.p_known, m.attempts),
+      };
     }
 
     // Small groups: students who share a weak skill, or keep making the same mistake
@@ -107,7 +109,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       class: { id: owned.cls.id, name: owned.cls.name },
       focus_skill_ids: focusIds,
       post_check_open: !!focus?.post_check_open,
-      all_skills: SKILLS.map((s) => ({ id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad, advanced: !!s.advanced })),
+      all_skills: SKILLS.map((s) => ({ id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade, section: sectionOf(s), strand: s.strand, nad: s.nad, advanced: !!s.advanced })),
       students,
       skills,
       heat,

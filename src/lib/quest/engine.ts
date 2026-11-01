@@ -3,11 +3,11 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAdminClient } from "@/lib/usage";
-import { SKILLS, SKILLS_BY_ID, diagnosticOrder, prerequisiteChain, type Skill } from "./skills";
+import { SKILLS, SKILLS_BY_ID, SKILL_CODES, diagnosticOrder, prerequisiteChain, sectionOf } from "./skills";
 import { MISCONCEPTIONS_BY_ID } from "./misconceptions";
 import { checkAnswer, type QuestChoice, type QuestItem } from "./answers";
 import {
-  MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, statusOf, updatePKnown, type SkillStatus,
+  MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, scoreOf, statusOf, updatePKnown, type SkillStatus,
 } from "./mastery";
 
 export const DIAGNOSTIC_MAX_QUESTIONS = 24;
@@ -393,6 +393,24 @@ export async function nextPractice(studentId: string): Promise<PracticeQuestion 
   return { question: toPublic(item), phase: chosen.phase, reason: chosen.choice!.reason };
 }
 
+/**
+ * Practice one skill the student picked from the skill list (any grade). Questions get harder as
+ * the score rises, and the question just answered isn't repeated right away.
+ */
+export async function nextSkillPractice(studentId: string, skillId: string, lastItemId?: string | null): Promise<PracticeQuestion | { error: string }> {
+  const supabase = getAdminClient();
+  if (!(await questGradeFor(supabase, studentId))) return { error: "Math Quest is for students in grades 6–8." };
+  const skill = SKILLS_BY_ID[skillId];
+  if (!skill) return { error: "Skill not found" };
+  const { data: row } = await supabase.from("quest_mastery").select("p_known").eq("student_id", studentId).eq("skill_id", skillId).maybeSingle();
+  const p = (row as { p_known: number } | null)?.p_known ?? 0.3;
+  const difficulty = p < 0.4 ? 1 : p < 0.75 ? 2 : 3;
+  const item = (lastItemId ? await pickItem(supabase, studentId, skillId, { difficulty, exclude: new Set([lastItemId]) }) : null)
+    ?? await pickItem(supabase, studentId, skillId, { difficulty });
+  if (!item) return { error: "Questions for this skill aren't ready yet. Try another skill, or ask your teacher." };
+  return { question: toPublic(item), phase: "practice", reason: "" };
+}
+
 export interface PracticeFeedback {
   correct: boolean;
   correct_answer: string;
@@ -401,6 +419,8 @@ export interface PracticeFeedback {
   status: SkillStatus;
   p_before: number;
   p_after: number;
+  score_before: number;
+  score_after: number;
   just_mastered: boolean;
 }
 
@@ -459,6 +479,8 @@ export async function answerPractice(
     status: statusOf(pAfter, attempts),
     p_before: before.p_known,
     p_after: pAfter,
+    score_before: row ? scoreOf(before.p_known, before.attempts, before.mastered_at) : 0,
+    score_after: scoreOf(pAfter, attempts, mastered_at),
     just_mastered: justMastered,
   };
 }
@@ -472,15 +494,16 @@ export async function studentOverview(studentId: string) {
   const classId = await currentClassId(supabase, studentId);
   const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
 
-  const [{ data: assessments }, { data: mastery }, { data: today }, { data: focus }] = await Promise.all([
+  const [{ data: assessments }, { data: mastery }, { data: today }, { data: focus }, { data: approved }] = await Promise.all([
     supabase.from("quest_assessments").select("id, kind, status, results, completed_at").eq("student_id", studentId).order("started_at", { ascending: false }),
     supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at").eq("student_id", studentId),
     supabase.from("quest_attempts").select("correct, seconds").eq("student_id", studentId).in("phase", ["practice", "review"]).gte("created_at", startOfDay.toISOString()),
     classId ? supabase.from("quest_class_focus").select("skill_ids, post_check_open").eq("class_id", classId).maybeSingle() : Promise.resolve({ data: null }),
+    supabase.from("quest_items").select("skill_id").eq("status", "approved"),
   ]);
+  const ready = new Set((approved ?? []).map((a) => a.skill_id));
   const latest = (kind: string) => (assessments ?? []).find((a) => a.kind === kind) ?? null;
   const masteryById = new Map((mastery ?? []).map((m) => [m.skill_id, m]));
-  const relevant: Skill[] = SKILLS.filter((s) => s.grade === grade || masteryById.has(s.id));
 
   return {
     eligible: true as const,
@@ -494,12 +517,15 @@ export async function studentOverview(studentId: string) {
       minutes: Math.round((today ?? []).reduce((s, t) => s + (t.seconds ?? 0), 0) / 60),
       goal: DAILY_GOAL,
     },
-    skills: relevant.map((s) => {
+    // Every skill, so students can browse other grades too
+    skills: SKILLS.map((s) => {
       const m = masteryById.get(s.id);
       return {
-        id: s.id, name: s.name, grade: s.grade, strand: s.strand, nad: s.nad, advanced: !!s.advanced,
+        id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade, section: sectionOf(s), strand: s.strand, nad: s.nad, advanced: !!s.advanced,
         status: m?.mastered_at ? "mastered" : statusOf(m?.p_known, m?.attempts ?? 0),
-        p_known: m?.p_known ?? null,
+        score: scoreOf(m?.p_known, m?.attempts ?? 0, m?.mastered_at ?? null),
+        practiced: (m?.attempts ?? 0) > 0,
+        ready: ready.has(s.id),
       };
     }),
   };
