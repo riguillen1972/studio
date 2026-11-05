@@ -13,9 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { MISCONCEPTIONS_BY_ID } from "@/lib/quest/misconceptions";
 import { TOPICS_BY_SECTION, type Strand } from "@/lib/quest/skills";
 import type { QuestChoice } from "@/lib/quest/answers";
-import { Check, Flag, Loader2, Pencil, Printer, ShieldCheck, Sparkles, Square, X } from "lucide-react";
+import { BookOpen, Check, EyeOff, Flag, Loader2, Pencil, Printer, ShieldCheck, Sparkles, Square, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { LessonView } from "@/components/quest/lesson-view";
 
-interface BankSkill { id: string; code: string; name: string; grade: number; section: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number; reported: number }
+interface BankSkill { id: string; code: string; name: string; grade: number; section: number; strand: Strand; standard: string; nad: string; advanced: boolean; approved: number; draft: number; reported: number; lesson: "approved" | "hidden" | null }
 interface BankItem {
   id: string; skill_id: string; difficulty: number; kind: "multiple_choice" | "numeric";
   stem: string; choices: QuestChoice[] | null; answer: string; explanation: string; status: string;
@@ -46,6 +48,8 @@ export function QuestionBank() {
   const [grade, setGrade] = useState(6);
   const [building, setBuilding] = useState<{ done: number; total: number; current: string[] } | null>(null);
   const stopBuilding = useRef(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [lessonBusy, setLessonBusy] = useState(false);
 
   const loadBank = useCallback(async () => {
     try {
@@ -114,7 +118,7 @@ export function QuestionBank() {
    * TARGET_PER_SKILL live questions. The page must stay open while it runs.
    */
   const buildStarter = async (scope: number | "all") => {
-    const queue = skills.filter((s) => (scope === "all" || s.section === scope) && s.approved < TARGET_PER_SKILL);
+    const queue = skills.filter((s) => (scope === "all" || s.section === scope) && (s.approved < TARGET_PER_SKILL || !s.lesson));
     if (queue.length === 0) {
       toast({ title: "Already full", description: "Every skill here has enough ready questions." });
       return;
@@ -130,7 +134,7 @@ export function QuestionBank() {
         const s = queue.shift()!;
         setBuilding((b) => b && { ...b, current: [...b.current, label(s)] });
         // Up to 3 rounds per skill, stopping early when it's full or a round adds nothing
-        for (let round = 0; round < 3 && !stopBuilding.current; round++) {
+        for (let round = 0; round < 3 && s.approved < TARGET_PER_SKILL && !stopBuilding.current; round++) {
           try {
             const res = await fetch("/api/quest/bank/build", { method: "POST", headers: await authHeaders(), body: JSON.stringify({ skill_id: s.id }) });
             const data = await res.json();
@@ -140,6 +144,16 @@ export function QuestionBank() {
           } catch {
             failed++;
             break;
+          }
+        }
+        if (!s.lesson && !stopBuilding.current) {
+          try {
+            const res = await fetch(`/api/quest/lessons/${encodeURIComponent(s.id)}`, { method: "POST", headers: await authHeaders(), body: "{}" });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            setSkills((prev) => prev.map((x) => (x.id === s.id ? { ...x, lesson: data.status } : x)));
+          } catch {
+            failed++;
           }
         }
         done++;
@@ -154,6 +168,39 @@ export function QuestionBank() {
       title: stopBuilding.current ? "Stopped" : "Starter bank built",
       description: `${done} of ${total} skills processed${failed ? `, ${failed} had an error (run it again to retry)` : ""}.`,
     });
+  };
+
+  const [lessonVersion, setLessonVersion] = useState(0);
+  const lessonOf = (s: BankSkill) => skills.find((x) => x.id === s.id)?.lesson ?? null;
+  const setLesson = (id: string, lesson: BankSkill["lesson"]) => setSkills((prev) => prev.map((x) => (x.id === id ? { ...x, lesson } : x)));
+
+  /** Writes (or rewrites) the skill's lesson; it only goes live if it passes the checks. */
+  const writeLesson = async (skill: BankSkill, rewrite: boolean) => {
+    setLessonBusy(true);
+    try {
+      const res = await fetch(`/api/quest/lessons/${encodeURIComponent(skill.id)}`, {
+        method: "POST", headers: await authHeaders(), body: JSON.stringify(rewrite ? { force: true } : {}),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setLesson(skill.id, data.status);
+      setLessonVersion((v) => v + 1);
+      toast({ title: rewrite ? "Lesson rewritten" : "Lesson written", description: "It passed the accuracy check and is live." });
+    } catch (e) {
+      toast({ title: "Couldn't write the lesson", description: e instanceof Error ? e.message : "Please try again.", variant: "destructive" });
+    } finally {
+      setLessonBusy(false);
+    }
+  };
+
+  const setLessonStatus = async (skill: BankSkill, status: "approved" | "hidden") => {
+    try {
+      const res = await fetch(`/api/quest/lessons/${encodeURIComponent(skill.id)}`, { method: "PATCH", headers: await authHeaders(), body: JSON.stringify({ status }) });
+      if (!res.ok) throw new Error((await res.json()).error);
+      setLesson(skill.id, status);
+    } catch (e) {
+      toast({ title: "Couldn't save", description: e instanceof Error ? e.message : "Please try again.", variant: "destructive" });
+    }
   };
 
   const approveAll = async () => {
@@ -176,8 +223,9 @@ export function QuestionBank() {
           <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
             <p className="flex items-center gap-2 font-medium"><ShieldCheck className="h-4 w-4 text-primary" /> Starter bank</p>
             <p className="text-xs text-muted-foreground">
-              Fills skills with up to {TARGET_PER_SKILL} questions each. Every question is solved by two separate AI checkers and only
-              goes live if both agree and find it clear. You can hide any question, and questions students report come back to you for review.
+              Fills skills with up to {TARGET_PER_SKILL} questions each and a short lesson. Every question and every lesson example is
+              solved by separate AI checkers and only goes live if they agree and find it clear. You can hide any question or lesson,
+              and questions students report come back to you for review.
             </p>
             {building ? (
               <div className="space-y-1">
@@ -227,7 +275,8 @@ export function QuestionBank() {
                         className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted ${selected?.id === s.id ? "bg-muted" : ""}`}
                       >
                         <span className="truncate"><span className="mr-1 text-xs tabular-nums text-muted-foreground">{s.code}</span>{s.name}{s.advanced && <span className="ml-1 text-amber-500" title="Challenge skill">★</span>}</span>
-                        <span className="flex shrink-0 gap-1">
+                        <span className="flex shrink-0 items-center gap-1">
+                          {s.lesson && <BookOpen className={`h-3.5 w-3.5 ${s.lesson === "hidden" ? "text-muted-foreground/40" : "text-primary"}`} aria-label={s.lesson === "hidden" ? "Lesson hidden" : "Has a lesson"} />}
                           {s.reported > 0 && <Badge variant="outline" className="border-destructive text-destructive"><Flag className="mr-1 h-3 w-3" />{s.reported}</Badge>}
                           {s.draft > 0 && <Badge variant="outline" className="border-amber-500 text-amber-600">{s.draft} to review</Badge>}
                           <Badge variant={s.approved >= TARGET_PER_SKILL ? "default" : "secondary"}>{s.approved} ready</Badge>
@@ -265,6 +314,28 @@ export function QuestionBank() {
                   <Printer className="mr-2 h-4 w-4" /> Print worksheet
                 </Button>
               </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2 rounded-md border p-2 text-sm">
+                <BookOpen className="h-4 w-4 text-primary" />
+                <span className="mr-auto">
+                  {lessonOf(selected) === "approved" ? "Lesson is live" : lessonOf(selected) === "hidden" ? "Lesson is hidden from students" : "No lesson yet"}
+                </span>
+                {lessonOf(selected) && <Button size="sm" variant="ghost" className="h-7" onClick={() => setPreviewOpen(true)}>Preview</Button>}
+                <Button size="sm" variant="ghost" className="h-7" disabled={lessonBusy} onClick={() => writeLesson(selected, !!lessonOf(selected))}>
+                  {lessonBusy ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Sparkles className="mr-1 h-3.5 w-3.5" />}
+                  {lessonOf(selected) ? "Rewrite" : "Write lesson"}
+                </Button>
+                {lessonOf(selected) && (
+                  <Button size="sm" variant="ghost" className="h-7" onClick={() => setLessonStatus(selected, lessonOf(selected) === "hidden" ? "approved" : "hidden")}>
+                    {lessonOf(selected) === "hidden" ? "Show" : <><EyeOff className="mr-1 h-3.5 w-3.5" /> Hide</>}
+                  </Button>
+                )}
+              </div>
+              <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+                <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+                  <DialogTitle className="sr-only">Lesson preview: {selected.name}</DialogTitle>
+                  {previewOpen && <LessonView key={`${selected.id}-${lessonVersion}`} skillId={selected.id} teacher />}
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent className="space-y-3">
               {items.length === 0 && <p className="text-sm text-muted-foreground">No questions yet. Draft some to get started.</p>}

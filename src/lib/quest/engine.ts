@@ -724,7 +724,7 @@ export async function certificatesFor(studentIds: string[], tzOffset = 0): Promi
 export async function studentReport(studentId: string, tzOffset = 0) {
   const supabase = getAdminClient();
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
-  const [{ data: profile }, { data: mastery }, { data: attempts }, { data: diagnostics }, progress] = await Promise.all([
+  const [{ data: profile }, { data: mastery }, { data: attempts }, { data: diagnostics }, progress, { count: lessonsOpened }] = await Promise.all([
     supabase.from("profiles").select("id, display_name, grade_level").eq("id", studentId).maybeSingle(),
     supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at, last_practiced").eq("student_id", studentId),
     supabase.from("quest_attempts").select("skill_id, phase, correct, misconception, seconds, created_at")
@@ -732,6 +732,7 @@ export async function studentReport(studentId: string, tzOffset = 0) {
     supabase.from("quest_assessments").select("results, completed_at").eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
       .order("completed_at", { ascending: true }),
     progressStats(supabase, studentId, tzOffset),
+    supabase.from("quest_lesson_views").select("skill_id", { count: "exact", head: true }).eq("student_id", studentId).gte("last_viewed_at", since),
   ]);
   const diagnostic = diagnostics?.at(-1) ?? null;
   const rows = (mastery ?? []) as { skill_id: string; p_known: number; attempts: number; mastered_at: string | null; last_practiced: string | null }[];
@@ -764,6 +765,7 @@ export async function studentReport(studentId: string, tzOffset = 0) {
       minutes_30d: Math.round(practice.reduce((t, a) => t + (a.seconds ?? 0), 0) / 60),
       mastered: rows.filter((r) => r.mastered_at).length,
       streak: progress.stats.streak,
+      lessons_30d: lessonsOpened ?? 0,
     },
     badges: badgesFor(progress.stats).filter((b) => b.earned).map((b) => b.name),
     diagnostic: diagnostic ? {

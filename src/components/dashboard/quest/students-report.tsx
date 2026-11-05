@@ -44,9 +44,9 @@ export function StudentsReport({ data }: { data: QuestClassData }) {
       const { reports } = await questFetch<ReportsResponse>(`/api/quest/class/${data.class.id}/reports?tz=${tz()}`);
       downloadCsv(`${fileSlug(data.class.name)}-students.csv`, [
         ["Student", "Grade", "Questions (30 days)", "Accuracy % (30 days)", "Minutes (30 days)", "Skills mastered", "Day streak",
-          "Diagnostic done", "Weak spots from diagnostic", "Strengths", "Focus areas", "Repeated mistakes"],
+          "Lessons opened (30 days)", "Diagnostic done", "Weak spots from diagnostic", "Strengths", "Focus areas", "Repeated mistakes"],
         ...reports.map((r) => [
-          r.student.name, r.student.grade, r.totals.questions_30d, r.totals.accuracy_30d ?? "", r.totals.minutes_30d, r.totals.mastered, r.totals.streak,
+          r.student.name, r.student.grade, r.totals.questions_30d, r.totals.accuracy_30d ?? "", r.totals.minutes_30d, r.totals.mastered, r.totals.streak, r.totals.lessons_30d,
           r.diagnostic ? "yes" : "no", r.diagnostic?.gaps.join("; ") ?? "",
           r.strengths.map((t) => `${t.title} (${t.score})`).join("; "), r.focus.map((t) => `${t.title} (${t.score})`).join("; "),
           r.mistakes.map((m) => `${m.name} ×${m.count}`).join("; "),
@@ -132,11 +132,12 @@ function StudentDetail({ report: r, classId }: { report: StudentReport; classId:
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <Stat value={r.totals.questions_30d} label="questions (30 days)" />
         <Stat value={r.totals.accuracy_30d === null ? "—" : `${r.totals.accuracy_30d}%`} label="correct (30 days)" />
         <Stat value={r.totals.minutes_30d} label="minutes (30 days)" />
         <Stat value={r.totals.mastered} label="skills mastered" />
+        <Stat value={r.totals.lessons_30d} label="lessons opened (30 days)" />
         <Stat value={<span className="flex items-center gap-1"><Flame className={`h-5 w-5 ${r.totals.streak ? "text-orange-500" : "text-muted-foreground"}`} />{r.totals.streak}</span>} label="day streak" />
       </div>
 

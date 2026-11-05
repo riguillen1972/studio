@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Markdown } from "@/components/markdown";
-import { CheckCircle2, Flag, Lightbulb, Loader2, Trophy, XCircle } from "lucide-react";
+import { BookOpen, CheckCircle2, Flag, Lightbulb, Loader2, Trophy, XCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { LessonView } from "./lesson-view";
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
 import type { SkillSummary } from "./skill-list";
@@ -43,6 +45,8 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
   const [isSending, setIsSending] = useState(false);
   const [count, setCount] = useState(answeredToday);
   const [score, setScore] = useState(skill?.score ?? 0);
+  // A skill the student hasn't practiced yet opens with its lesson
+  const [showLesson, setShowLesson] = useState(!!skill && !skill.practiced);
   const lastItem = useRef<string | null>(null);
 
   const loadNext = useCallback(async () => {
@@ -94,6 +98,9 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
             <p className="text-xs text-muted-foreground">Score</p>
             <p className="text-2xl font-bold tabular-nums">{score}</p>
           </div>
+          <Button variant="outline" size="sm" onClick={() => setShowLesson((v) => !v)}>
+            <BookOpen className="mr-1.5 h-4 w-4" /> {showLesson ? "Practice" : "Lesson"}
+          </Button>
           <Button variant="outline" size="sm" onClick={onExit}>Back to skills</Button>
         </div>
       ) : (
@@ -108,16 +115,20 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
         </div>
       )}
 
-      {error && (
+      {skill && showLesson && (
+        <Card><CardContent className="pt-6"><LessonView skillId={skill.id} onPractice={() => setShowLesson(false)} /></CardContent></Card>
+      )}
+
+      {!showLesson && error && (
         <Card><CardContent className="space-y-3 py-8 text-center">
           <p>{error}</p>
           <Button variant="outline" onClick={onExit}>Back</Button>
         </CardContent></Card>
       )}
 
-      {!error && !current && <div className="flex h-40 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>}
+      {!showLesson && !error && !current && <div className="flex h-40 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>}
 
-      {current && (
+      {!showLesson && current && (
         <Card>
           <CardHeader className="space-y-2">
             {!skill && (
@@ -132,7 +143,8 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
             {!feedback ? (
               <QuestionCard question={current.question} onSubmit={answer} disabled={isSending} />
             ) : (
-              <FeedbackPanel question={current.question} feedback={feedback} onNext={loadNext} onExit={skill && feedback.just_mastered ? onExit : undefined} />
+              <FeedbackPanel question={current.question} feedback={feedback} onNext={loadNext} onExit={skill && feedback.just_mastered ? onExit : undefined}
+                onLesson={skill ? () => setShowLesson(true) : undefined} />
             )}
           </CardContent>
         </Card>
@@ -141,9 +153,12 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
   );
 }
 
-function FeedbackPanel({ question, feedback, onNext, onExit }: {
+function FeedbackPanel({ question, feedback, onNext, onExit, onLesson }: {
   question: QuestQuestion; feedback: Feedback; onNext: () => void; onExit?: () => void;
+  /** Opens the skill's lesson in place (single-skill practice); otherwise it opens in a dialog. */
+  onLesson?: () => void;
 }) {
+  const [lessonOpen, setLessonOpen] = useState(false);
   const before = feedback.score_before;
   const after = feedback.score_after;
   return (
@@ -189,6 +204,20 @@ function FeedbackPanel({ question, feedback, onNext, onExit }: {
           </div>
         </div>
       ))}
+
+      {!feedback.correct && (
+        <Button variant="outline" size="sm" onClick={() => (onLesson ? onLesson() : setLessonOpen(true))}>
+          <BookOpen className="mr-1.5 h-4 w-4" /> Review the lesson on {question.skill_name}
+        </Button>
+      )}
+      {!onLesson && (
+        <Dialog open={lessonOpen} onOpenChange={setLessonOpen}>
+          <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+            <DialogTitle className="sr-only">Lesson: {question.skill_name}</DialogTitle>
+            {lessonOpen && <LessonView skillId={question.skill_id} onPractice={() => setLessonOpen(false)} practiceLabel="Back to practice" />}
+          </DialogContent>
+        </Dialog>
+      )}
 
       <ReportProblem itemId={question.id} />
 

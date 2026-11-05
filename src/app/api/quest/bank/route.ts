@@ -3,12 +3,17 @@ import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
 import { SKILLS, SKILL_CODES, sectionOf } from "@/lib/quest/skills";
 
-// Question bank overview: every skill with how many questions are approved or waiting for review
+// Question bank overview: every skill with how many questions are approved or waiting for review,
+// and whether it has a lesson
 export async function GET(req: NextRequest) {
   const auth = await requireTeacher(req);
   if (auth.error) return auth.error;
 
-  const { data, error } = await getAdminClient().from("quest_items").select("skill_id, status, report_count");
+  const [{ data, error }, { data: lessons }] = await Promise.all([
+    getAdminClient().from("quest_items").select("skill_id, status, report_count"),
+    getAdminClient().from("quest_lessons").select("skill_id, status"),
+  ]);
+  const lessonStatus = new Map((lessons ?? []).map((l) => [l.skill_id, l.status as string]));
   if (error) {
     console.error("Question bank query failed:", error);
     return NextResponse.json({ error: "Failed to load the question bank" }, { status: 500 });
@@ -29,6 +34,7 @@ export async function GET(req: NextRequest) {
       approved: counts.get(s.id)?.approved ?? 0,
       draft: counts.get(s.id)?.draft ?? 0,
       reported: counts.get(s.id)?.reported ?? 0,
+      lesson: lessonStatus.get(s.id) ?? null,
     })),
   });
 }
