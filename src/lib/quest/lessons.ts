@@ -112,9 +112,15 @@ const numericMatch = (expected: string, given: string | undefined) => {
   if (given === undefined) return false;
   const matches = (g: string) => checkAnswer({ kind: "numeric", choices: null, answer: expected }, g).correct;
   if (matches(given)) return true;
-  // A checker may add units or words ("17 students", "12 cm"): compare the number they start with
-  const leading = given.replace(/^[a-z]\s*=\s*/i, "").match(/^\s*-?\$?\d[\d,]*(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?/);
-  return !!leading && matches(leading[0]);
+  // A checker may add units or words ("17 students", "12 cm"): compare the number a part starts with.
+  // For a problem with several parts ("k = 2.5; y = 2.5x; 30") the final answer is the last part.
+  const leadingNumber = (part: string) =>
+    part.replace(/^\s*[a-z]\s*=\s*/i, "").match(/^\s*-?\$?\d[\d,]*(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?/)?.[0];
+  const parts = given.split(/[;\n]/).map((p) => p.trim()).filter(Boolean);
+  return [given, parts[parts.length - 1] ?? ""].some((part) => {
+    const n = leadingNumber(part);
+    return !!n && matches(n);
+  });
 };
 
 /** Problems for the blind solve: the two examples, then the quick check. */
@@ -145,7 +151,7 @@ async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; issues
       max_tokens: 4000,
       output_config: { effort: "medium", format: solveFormat },
       system: "You are a careful math checker. Solve each problem and give only the final answer, in the same order.",
-      messages: [{ role: "user", content: `Solve each problem. Give just the final answer for each: when it's numeric, only the number (no units, words or "x =").\n\n${problemList(d)}` }],
+      messages: [{ role: "user", content: `Solve each problem. Give just the final answer for each: when it's numeric, only the number (no units, words or "x ="). If a problem asks for several things, give only the last value it asks for.\n\n${problemList(d)}` }],
     }),
     getClient().messages.parse({
       model: CHECK_MODEL,
