@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +16,7 @@ import {
     AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { User } from "@supabase/supabase-js";
+import { useSearchParams } from "next/navigation";
 
 interface TeacherDashboardProps {
     user: User | null;
@@ -50,7 +51,12 @@ import { StudentsPanel } from "./students-panel";
 import { QuestTeacher } from "./quest/quest-teacher";
 import { TeacherNotifications } from "./teacher-notifications";
 
+/** Dashboard sections, picked from the sidebar as /dashboard?tab=<name>. */
+const TABS = ["classes", "students", "quest", "packs", "worksheets", "avatar", "live"];
+
 export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
+    const requestedTab = useSearchParams().get("tab") ?? "";
+    const tab = TABS.includes(requestedTab) ? requestedTab : "classes";
     // The AI Teacher needs Teacher Max; student Max has the same tier but a cheaper price
     const { billingPlan } = useAppState();
     const avatarTier = tier === "max" && billingPlan === "max" ? "student-max" : tier;
@@ -247,16 +253,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
     return (
         <>
         <TeacherNotifications />
-        <Tabs defaultValue="classes" className="w-full">
-            <TabsList className="mb-4 h-auto flex-wrap">
-                <TabsTrigger value="classes">My Classes</TabsTrigger>
-                <TabsTrigger value="students">Students</TabsTrigger>
-                <TabsTrigger value="quest">Math Quest</TabsTrigger>
-                <TabsTrigger value="packs">Context Packs</TabsTrigger>
-                <TabsTrigger value="worksheets" className="text-purple-600 dark:text-purple-400">Worksheets</TabsTrigger>
-                <TabsTrigger value="avatar" className="text-purple-600 dark:text-purple-400">My AI Teacher</TabsTrigger>
-                <TabsTrigger value="live" className="text-purple-600 dark:text-purple-400">Live Session</TabsTrigger>
-            </TabsList>
+        <Tabs value={tab} className="w-full">
 
             <TabsContent value="classes" className="space-y-4">
                 {classes.length > 0 ? (

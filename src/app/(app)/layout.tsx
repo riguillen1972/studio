@@ -6,6 +6,7 @@ import { FocusProvider } from "@/components/focus-provider";
 import { FocusMiniPlayer } from "@/components/focus-mini-player";
 import { Separator } from "@/components/ui/separator";
 import { Bot } from "lucide-react";
+import { Suspense } from "react";
 
 export const maxDuration = 60; // Extend Vercel function timeout to 60 seconds for AI tasks
 
@@ -19,7 +20,8 @@ export default function AppLayout({
       <RolePickerWrapper>
         <FocusProvider>
         <SidebarProvider>
-          <AppSidebar />
+          {/* The sidebar reads the ?tab= of the teacher dashboard */}
+          <Suspense fallback={null}><AppSidebar /></Suspense>
           <SidebarInset>
             {/* Mobile header with sidebar trigger */}
             <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:hidden">

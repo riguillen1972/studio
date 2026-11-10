@@ -22,9 +22,13 @@ import {
   Compass,
   Headphones,
   BookDashed,
+  Users,
+  Package,
+  FileText,
+  Radio,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +52,14 @@ export function AppSidebar() {
   const { tier, isPremium, role, gradeLevel } = useAppState();
   const { user, signOut } = useAuth();
   const router = useRouter();
-  const isActive = (href: string) => pathname === href;
+  const tab = useSearchParams().get("tab");
+  // Teacher dashboard links look like /dashboard?tab=students; "My Class" is /dashboard with no tab
+  const isActive = (href: string) => {
+    const [path, query] = href.split("?");
+    if (pathname !== path) return false;
+    const wanted = new URLSearchParams(query ?? "").get("tab");
+    return wanted ? tab === wanted : path !== "/dashboard" || !tab || tab === "classes";
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -65,12 +76,13 @@ export function AppSidebar() {
       label: isTeacher ? "My Class" : "AI Tutor",
       visibleTo: ['all'],
     },
-    {
-      href: "/tutor",
-      icon: Bot,
-      label: "AI Tutor",
-      visibleTo: ['teacher'],
-    },
+    // Teachers: the dashboard sections, each one a tab of /dashboard
+    { href: "/dashboard?tab=students", icon: Users, label: "Students", visibleTo: ['teacher'] },
+    { href: "/dashboard?tab=quest", icon: Compass, label: "Math Quest", visibleTo: ['teacher'] },
+    { href: "/dashboard?tab=packs", icon: Package, label: "Context Packs", visibleTo: ['teacher'] },
+    { href: "/dashboard?tab=worksheets", icon: FileText, label: "Worksheets", visibleTo: ['teacher'] },
+    { href: "/dashboard?tab=avatar", icon: Bot, label: "My AI Teacher", visibleTo: ['teacher'] },
+    { href: "/dashboard?tab=live", icon: Radio, label: "Live Session", visibleTo: ['teacher'] },
     {
       href: "/focus",
       icon: Headphones,
@@ -94,7 +106,7 @@ export function AppSidebar() {
       href: "/tools",
       icon: WandSparkles,
       label: "AI Tools",
-      visibleTo: ['student', 'teacher'],
+      visibleTo: ['student'],
     },
     {
       href: "/mini-app-generator",
@@ -114,7 +126,7 @@ export function AppSidebar() {
       href: "/homework",
       icon: BookOpen,
       label: "Homework Help",
-      visibleTo: ['student', 'teacher'],
+      visibleTo: ['student'],
     },
     {
       href: "/scan",
@@ -126,19 +138,19 @@ export function AppSidebar() {
       href: "/summarizer",
       icon: NotebookText,
       label: "Summarizer",
-      visibleTo: ['student', 'teacher'],
+      visibleTo: ['student'],
     },
     {
       href: "/quiz",
       icon: FileQuestion,
       label: "Quiz Generator",
-      visibleTo: ['student', 'teacher'],
+      visibleTo: ['student'],
     },
     {
       href: "/flashcards",
       icon: Layers,
       label: "Flashcards",
-      visibleTo: ['student', 'teacher'],
+      visibleTo: ['student'],
     },
     {
       href: "/progress",

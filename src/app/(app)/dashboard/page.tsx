@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/supabase/auth-provider";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { useAppState } from "@/components/app-state-provider";
 import AdPlaceholder from "@/components/ad-placeholder";
+import { Suspense } from "react";
 
 import { TeacherDashboard } from "@/components/dashboard/teacher-dashboard";
 
@@ -49,7 +50,7 @@ export default function DashboardPage() {
       {tier === 'free' && <AdPlaceholder />}
 
       {currentRole === 'teacher' ? (
-        <TeacherDashboard user={user} tier={tier} />
+        <Suspense fallback={null}><TeacherDashboard user={user} tier={tier} /></Suspense>
       ) : (
         <ErrorBoundary fallbackTitle="AI Tutor encountered an error">
           <AITutor careerField={careerField || undefined} />
