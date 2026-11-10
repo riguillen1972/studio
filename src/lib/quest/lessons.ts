@@ -108,8 +108,14 @@ function draftPrompt(skill: Skill, feedback?: string) {
   );
 }
 
-const numericMatch = (expected: string, given: string | undefined) =>
-  given !== undefined && checkAnswer({ kind: "numeric", choices: null, answer: expected }, given).correct;
+const numericMatch = (expected: string, given: string | undefined) => {
+  if (given === undefined) return false;
+  const matches = (g: string) => checkAnswer({ kind: "numeric", choices: null, answer: expected }, g).correct;
+  if (matches(given)) return true;
+  // A checker may add units or words ("17 students", "12 cm"): compare the number they start with
+  const leading = given.replace(/^[a-z]\s*=\s*/i, "").match(/^\s*-?\$?\d[\d,]*(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?/);
+  return !!leading && matches(leading[0]);
+};
 
 /** Problems for the blind solve: the two examples, then the quick check. */
 const problemList = (d: Draft) =>
@@ -139,7 +145,7 @@ async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; issues
       max_tokens: 4000,
       output_config: { effort: "medium", format: solveFormat },
       system: "You are a careful math checker. Solve each problem and give only the final answer, in the same order.",
-      messages: [{ role: "user", content: `Solve each problem. Give just the final answer for each (a number when it's numeric).\n\n${problemList(d)}` }],
+      messages: [{ role: "user", content: `Solve each problem. Give just the final answer for each: when it's numeric, only the number (no units, words or "x =").\n\n${problemList(d)}` }],
     }),
     getClient().messages.parse({
       model: CHECK_MODEL,

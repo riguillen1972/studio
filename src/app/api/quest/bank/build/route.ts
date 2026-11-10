@@ -29,8 +29,11 @@ export async function POST(req: NextRequest) {
     const before = await liveCount();
     if (before >= STARTER_TARGET) return NextResponse.json({ skill_id: skill.id, live: before, added: 0, dropped: 0, done: true });
 
-    // Ask for a few extra, since some won't pass the checks
-    const { items, totalTokens, dropped } = await generateItems(skill, Math.min(12, STARTER_TARGET - before + 4), { strict: true });
+    // Ask for a few extra, since some won't pass the checks, and show it what's there so it doesn't repeat
+    const { data: existing } = await supabase.from("quest_items").select("stem").eq("skill_id", skill.id).neq("status", "rejected");
+    const { items, totalTokens, dropped } = await generateItems(skill, Math.min(12, STARTER_TARGET - before + 4), {
+      strict: true, avoid: (existing ?? []).map((e) => e.stem),
+    });
     console.log(`Starter bank ${skill.id}: +${items.length}, dropped ${dropped}, ${totalTokens} tokens`);
 
     if (items.length > 0) {

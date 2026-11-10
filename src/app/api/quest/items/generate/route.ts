@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: usageError }, { status: 402 });
     }
 
-    const { items, totalTokens, dropped } = await generateItems(skill, n);
+    const { data: existing } = await getAdminClient().from("quest_items").select("stem").eq("skill_id", skill.id).neq("status", "rejected");
+    const { items, totalTokens, dropped } = await generateItems(skill, n, { avoid: (existing ?? []).map((e) => e.stem) });
     await recordUsage(auth.user.id, "haiku", totalTokens).catch((e) => console.error("Failed to record usage:", e));
 
     if (items.length === 0) {

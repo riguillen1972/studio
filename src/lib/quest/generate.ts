@@ -132,8 +132,11 @@ function agrees(c: DraftItem, given: string | undefined): boolean {
  * Drafts `count` questions for a skill and returns the ones that pass the checks. With `strict`,
  * survivors also need a second independent solve (CHECK_MODEL) that agrees and finds them clear.
  */
+/** Lowercased letters and digits only, so the same question worded with different spacing or punctuation matches. */
+export const stemKey = (stem: string) => stem.toLowerCase().replace(/[^a-z0-9]+/g, "");
+
 export async function generateItems(
-  skill: Skill, count: number, opts: { strict?: boolean } = {},
+  skill: Skill, count: number, opts: { strict?: boolean; avoid?: string[] } = {},
 ): Promise<{ items: DraftItem[]; totalTokens: number; dropped: number }> {
   const misconceptionList = MISCONCEPTIONS.map((m) => `- ${m.id}: ${m.name}`).join("\n");
   const gradeText = skill.grade <= 5 ? `grade ${skill.grade} (foundation skill, but written for middle schoolers)` : `grade ${skill.grade}`;
@@ -164,8 +167,11 @@ export async function generateItems(
         `- If the answer depends on π, rounding, units or time, the stem must say exactly how to answer (for example "Use 3.14 for π ` +
         `and round to the nearest tenth" or "Give your answer in minutes"), so the number alone is unambiguous.\n` +
         `- No pictures: describe any graph, figure, table or data set fully in the text of the stem.\n` +
-        `- explanation: 2–3 short sentences showing how to solve it, for the student to read after answering.\n\n` +
-        `Misconception ids:\n${misconceptionList}`,
+        `- explanation: 2–3 short sentences showing how to solve it, for the student to read after answering. Keep any rounding ` +
+        `in it consistent: don't round a value one way and then round it differently.\n` +
+        `- Every question must be different from the others (different numbers and situations)` +
+        (opts.avoid?.length ? `, and from these existing questions:\n${opts.avoid.slice(0, 40).map((a) => `  • ${a}`).join("\n")}\n` : ".\n") +
+        `\nMisconception ids:\n${misconceptionList}`,
     }],
   });
   let totalTokens = tokensOf(draft.usage);
@@ -187,7 +193,14 @@ export async function generateItems(
           }))
         : null,
     }))
-    .filter(structurallyValid);
+    .filter(structurallyValid)
+    // No repeats of existing questions or of each other
+    .filter(((seen) => (c: DraftItem) => {
+      const key = stemKey(c.stem);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })(new Set((opts.avoid ?? []).map(stemKey))));
 
   if (candidates.length === 0) return { items: [], totalTokens, dropped: raw.length };
 

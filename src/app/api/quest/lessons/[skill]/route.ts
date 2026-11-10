@@ -61,7 +61,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ski
     console.log(`Lesson ${skill.id}: ${lesson ? "written" : "failed checks"}, ${totalTokens} tokens`);
     if (!lesson) {
       if (issues) console.log(`Lesson ${skill.id} issues: ${issues.slice(0, 500)}`);
-      return NextResponse.json({ error: "The lesson didn't pass the accuracy check. Try again in a moment." }, { status: 422 });
+      return NextResponse.json({
+        error: "The lesson didn't pass the accuracy check. Try again in a moment.",
+        ...(who.teacher && issues ? { issues: issues.slice(0, 1000) } : {}),
+      }, { status: 422 });
     }
 
     const supabase = getAdminClient();
