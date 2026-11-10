@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export interface QuestQuestion {
   id: string;
@@ -39,18 +40,23 @@ export function QuestionCard({ question, onSubmit, disabled, submitLabel = "Chec
       <p className="text-lg leading-relaxed whitespace-pre-wrap">{question.stem}</p>
       {question.kind === "multiple_choice" && question.choices ? (
         <div className="grid gap-2 sm:grid-cols-2">
-          {question.choices.map((choice) => (
-            <button
+          {question.choices.map((choice, i) => (
+            <motion.button
               key={choice}
               type="button"
               disabled={disabled}
               onClick={() => setResponse(choice)}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0, scale: response === choice ? 1.02 : 1 }}
+              transition={{ delay: response ? 0 : 0.08 + i * 0.06, type: "spring", stiffness: 380, damping: 24 }}
+              whileHover={disabled ? undefined : { y: -2 }}
+              whileTap={disabled ? undefined : { scale: 0.97 }}
               className={`rounded-lg border-2 p-3 text-left text-base transition-colors ${
-                response === choice ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"
+                response === choice ? "border-primary bg-primary/10 shadow-sm" : "border-border hover:border-primary/50"
               }`}
             >
               {choice}
-            </button>
+            </motion.button>
           ))}
         </div>
       ) : (

@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
 import { PlacementLadder, PlacementSummary } from "./placement-card";
+import { ConfettiBurst, Pop, SlideIn } from "./quest-motion";
 import type { Placement } from "@/lib/quest/placement";
 
 interface Progress {
@@ -61,7 +62,12 @@ export function AssessmentRunner({ kind, grade, onDone }: { kind: "diagnostic" |
   if (!progress) return <div className="flex h-40 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
 
   if (progress.status === "completed") {
-    return <AssessmentDone kind={kind} grade={grade} results={progress.results ?? {}} onDone={onDone} />;
+    return (
+      <Pop>
+        <ConfettiBurst big />
+        <AssessmentDone kind={kind} grade={grade} results={progress.results ?? {}} onDone={onDone} />
+      </Pop>
+    );
   }
 
   return (
@@ -79,7 +85,9 @@ export function AssessmentRunner({ kind, grade, onDone }: { kind: "diagnostic" |
         </div>
       </CardHeader>
       <CardContent>
-        {progress.question && <QuestionCard question={progress.question} onSubmit={answer} disabled={isSending} submitLabel="Next" />}
+        {progress.question && (
+          <SlideIn key={progress.question.id}><QuestionCard question={progress.question} onSubmit={answer} disabled={isSending} submitLabel="Next" /></SlideIn>
+        )}
       </CardContent>
     </Card>
   );

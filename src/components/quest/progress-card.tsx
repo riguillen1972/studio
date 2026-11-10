@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { motion } from "framer-motion";
+import { AnimatedBar, CountUp } from "./quest-motion";
 import {
   Award, Blocks, CheckCircle2, Compass, Flame, Footprints, Hash, Heart, Medal, Milestone, Route, Star, Trophy, Users,
   type LucideIcon,
@@ -48,7 +49,9 @@ export function ProgressCard({ progress, classGoal, onCertificate }: {
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat icon={<Flame className={`h-5 w-5 ${progress.streak ? "text-orange-500" : "text-muted-foreground"}`} />}
+          <Stat icon={progress.streak
+            ? <motion.span className="block origin-bottom" animate={{ scale: [1, 1.18, 0.96, 1.1, 1], rotate: [0, -5, 4, -3, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}><Flame className="h-5 w-5 text-orange-500" /></motion.span>
+            : <Flame className="h-5 w-5 text-muted-foreground" />}
             value={progress.streak} label="day streak" />
           <Stat icon={<Hash className="h-5 w-5 text-sky-500" />} value={progress.week_questions} label="questions this week" />
           <Stat icon={<CheckCircle2 className="h-5 w-5 text-green-600" />} value={progress.week_mastered} label="mastered this week" />
@@ -61,7 +64,7 @@ export function ProgressCard({ progress, classGoal, onCertificate }: {
               <span className="flex items-center gap-2 font-medium"><Users className="h-4 w-4 text-primary" /> Class goal this week</span>
               <span className="tabular-nums text-muted-foreground">{classGoal.done} / {classGoal.goal} questions</span>
             </div>
-            <Progress value={Math.min(100, (classGoal.done / classGoal.goal) * 100)} />
+            <AnimatedBar to={(classGoal.done / classGoal.goal) * 100} />
             <p className="text-xs text-muted-foreground">
               {classGoal.done >= classGoal.goal ? "Your class reached the goal. Well done, everyone!" : "Every question you answer helps your whole class."}
             </p>
@@ -76,14 +79,16 @@ export function ProgressCard({ progress, classGoal, onCertificate }: {
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-            {shown.map((b) => (
-              <div key={b.id} className={`flex items-center gap-2 rounded-md border p-2 ${b.earned ? "" : "opacity-70"}`} title={b.description}>
+            {shown.map((b, i) => (
+              <motion.div key={b.id} className={`flex items-center gap-2 rounded-md border p-2 ${b.earned ? "" : "opacity-70"}`} title={b.description}
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: b.earned ? 1 : 0.7, scale: 1 }} transition={{ delay: Math.min(i, 14) * 0.03 }}
+                whileHover={b.earned ? { y: -2 } : undefined}>
                 <BadgeIcon icon={b.icon} earned={b.earned} />
                 <div className="min-w-0">
                   <p className="truncate text-xs font-medium">{b.name}</p>
                   <p className="line-clamp-2 text-[11px] leading-tight text-muted-foreground">{b.description}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -99,7 +104,7 @@ export function ProgressCard({ progress, classGoal, onCertificate }: {
 function Stat({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
   return (
     <div className="rounded-md bg-muted/50 p-3">
-      <div className="flex items-center gap-2">{icon}<span className="text-2xl font-bold tabular-nums">{value}</span></div>
+      <div className="flex items-center gap-2">{icon}<CountUp from={0} value={value} className="text-2xl font-bold tabular-nums" /></div>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   );

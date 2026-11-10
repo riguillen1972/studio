@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { TOPICS_BY_SECTION, type Strand } from "@/lib/quest/skills";
 
 export interface SkillSummary {
@@ -31,15 +32,20 @@ const TOPIC_COLORS = [
 
 /** Progress mark: nothing until practiced, then a ring that fills with the score, and a check at 100. */
 function ProgressMark({ skill }: { skill: SkillSummary }) {
-  if (skill.score >= 100) return <CheckCircle2 className="h-[18px] w-[18px] text-green-600" aria-label="Mastered" />;
+  if (skill.score >= 100) {
+    return (
+      <motion.span className="block" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400, damping: 14, delay: 0.3 }}>
+        <CheckCircle2 className="h-[18px] w-[18px] text-green-600" aria-label="Mastered" />
+      </motion.span>
+    );
+  }
   if (!skill.practiced) return <span className="block h-[18px] w-[18px]" />;
   const color = skill.score >= 80 ? "stroke-green-500" : skill.score >= 50 ? "stroke-sky-500" : "stroke-amber-500";
-  const c = 2 * Math.PI * 7;
   return (
     <svg viewBox="0 0 18 18" className="h-[18px] w-[18px] -rotate-90" aria-label={`Score ${skill.score}`}>
       <circle cx="9" cy="9" r="7" fill="none" strokeWidth="3" className="stroke-muted" />
-      <circle cx="9" cy="9" r="7" fill="none" strokeWidth="3" strokeLinecap="round" className={color}
-        strokeDasharray={`${(skill.score / 100) * c} ${c}`} />
+      <motion.circle cx="9" cy="9" r="7" fill="none" strokeWidth="3" strokeLinecap="round" className={color}
+        initial={{ pathLength: 0 }} animate={{ pathLength: skill.score / 100 }} transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }} />
     </svg>
   );
 }
@@ -78,7 +84,8 @@ export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; g
         {topics.map((topic, i) => {
           const color = TOPIC_COLORS[i % TOPIC_COLORS.length];
           return (
-            <section key={topic.letter} className="mb-4 break-inside-avoid overflow-hidden rounded-lg border bg-card shadow-sm">
+            <motion.section key={`${section}-${topic.letter}`} className="mb-4 break-inside-avoid overflow-hidden rounded-lg border bg-card shadow-sm"
+              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: Math.min(i, 9) * 0.05, ease: "easeOut" }}>
               <h3 className={`px-3 py-2 text-sm font-semibold text-white ${color.header}`}>{topic.letter}. {topic.title}</h3>
               <ol className="p-1.5">
                 {topic.skillIds.map((id) => {
@@ -88,7 +95,7 @@ export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; g
                     <li key={id}>
                       <button type="button" disabled={!s.ready} onClick={() => onPick(s)}
                         title={[s.practiced && `Score ${s.score}`, s.nad && `NAD ${s.nad}`, s.advanced && "Challenge skill", !s.ready && "Questions coming soon"].filter(Boolean).join(" · ") || undefined}
-                        className="flex w-full items-start gap-2 rounded-md px-1.5 py-1.5 text-left text-sm hover:bg-muted disabled:cursor-default disabled:hover:bg-transparent">
+                        className="flex w-full items-start gap-2 rounded-md px-1.5 py-1.5 text-left text-sm transition-[background-color,transform] duration-150 hover:translate-x-0.5 hover:bg-muted active:scale-[0.99] disabled:cursor-default disabled:hover:translate-x-0 disabled:hover:bg-transparent motion-reduce:transform-none">
                         <span className="mt-px shrink-0"><ProgressMark skill={s} /></span>
                         <span className={`flex-1 ${s.ready ? "" : "text-muted-foreground"}`}>
                           <span className={`mr-1 font-semibold ${s.ready ? color.code : ""}`}>{s.code}</span>
@@ -102,7 +109,7 @@ export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; g
                   );
                 })}
               </ol>
-            </section>
+            </motion.section>
           );
         })}
       </div>

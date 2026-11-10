@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { AssessmentRunner } from "@/components/quest/assessment-runner";
@@ -14,6 +13,8 @@ import { ProgressCard, type QuestProgress } from "@/components/quest/progress-ca
 import { ClipboardCheck, Compass, Loader2, Mountain, Play, Target } from "lucide-react";
 import { PlacementLadder, PlacementSummary } from "@/components/quest/placement-card";
 import type { Placement } from "@/lib/quest/placement";
+import { MotionConfig } from "framer-motion";
+import { AnimatedBar, Stagger } from "@/components/quest/quest-motion";
 
 interface Overview {
   eligible: boolean;
@@ -49,6 +50,7 @@ export default function QuestPage() {
   const backHome = () => { setMode("home"); load(); };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-bold font-headline tracking-tight sm:text-3xl">
@@ -76,6 +78,7 @@ export default function QuestPage() {
         <Home overview={overview} onStart={setMode} onPickSkill={(s) => { setSkill(s); setMode("skill"); }} />
       )}
     </div>
+    </MotionConfig>
   );
 }
 
@@ -87,7 +90,7 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
 
   if (!diagnosticDone) {
     return (
-      <div className="space-y-6">
+      <Stagger className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Target className="h-5 w-5 text-primary" /> Find your starting point</CardTitle>
@@ -103,14 +106,14 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
           </CardContent>
         </Card>
         {skillList}
-      </div>
+      </Stagger>
     );
   }
 
   const mastered = overview.skills.filter((s) => s.status === "mastered").length;
 
   return (
-    <div className="space-y-6">
+    <Stagger className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Today&apos;s practice</CardTitle>
@@ -118,7 +121,7 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Progress value={Math.min(100, (overview.today.answered / overview.today.goal) * 100)} />
+            <AnimatedBar to={(overview.today.answered / overview.today.goal) * 100} />
             <p className="mt-1 text-xs text-muted-foreground">
               {overview.today.answered} of {overview.today.goal} today · {overview.today.minutes} min · {mastered} skills mastered
             </p>
@@ -177,7 +180,7 @@ function Home({ overview, onStart, onPickSkill }: { overview: Overview; onStart:
       )}
 
       {skillList}
-    </div>
+    </Stagger>
   );
 }
 

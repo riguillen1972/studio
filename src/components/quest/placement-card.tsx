@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { motion } from "framer-motion";
 import { HIGHEST_LEVEL, LOWEST_LEVEL, RELATION_LABELS, levelLabel, levelShort, relationOf, type Placement } from "@/lib/quest/placement";
 
 const LEVELS = Array.from({ length: HIGHEST_LEVEL - LOWEST_LEVEL + 1 }, (_, i) => LOWEST_LEVEL + i);
@@ -25,7 +26,7 @@ export function PlacementLadder({ placement, grade, previous, forTeacher = false
         {LEVELS.map((l) => <span key={l} className={l === grade ? "font-semibold text-foreground" : ""}>{l === grade ? `${levelShort(l)} ★` : levelShort(l)}</span>)}
         <span />
       </div>
-      {strands.map((s) => {
+      {strands.map((s, row) => {
         const was = before(s.strand);
         const change = was !== null && s.level !== null ? s.level - was : 0;
         return (
@@ -33,9 +34,15 @@ export function PlacementLadder({ placement, grade, previous, forTeacher = false
             <span className="truncate text-sm">{s.name}</span>
             <span className="text-right text-xs font-medium sm:hidden">{levelLabel(s.level!)}</span>
             <div className="col-span-2 flex gap-1 sm:contents" role="img" aria-label={`${s.name}: ${levelLabel(s.level!)}${was !== null && change ? `, was ${levelLabel(was)}` : ""}`}>
-              {LEVELS.map((l) => (
+              {LEVELS.map((l, i) => (
                 <span key={l} title={levelLabel(l)}
-                  className={`h-4 flex-1 rounded-sm sm:h-5 ${l <= s.level! ? RELATION_STYLES[relationOf(s.level!, grade)] : "bg-muted"} ${l === grade ? "ring-2 ring-foreground/40 ring-offset-1 ring-offset-background" : ""}`} />
+                  className={`relative h-4 flex-1 rounded-sm bg-muted sm:h-5 ${l === grade ? "ring-2 ring-foreground/40 ring-offset-1 ring-offset-background" : ""}`}>
+                  {l <= s.level! && (
+                    <motion.span className={`absolute inset-0 rounded-sm ${RELATION_STYLES[relationOf(s.level!, grade)]}`}
+                      initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 20, delay: 0.2 + row * 0.06 + i * 0.07 }} />
+                  )}
+                </span>
               ))}
             </div>
             <span className="hidden items-center justify-end gap-0.5 text-xs sm:flex">

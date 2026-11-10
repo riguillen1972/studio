@@ -9,6 +9,8 @@ import { Markdown } from "@/components/markdown";
 import { BookOpen, CheckCircle2, Flag, Lightbulb, Loader2, Trophy, XCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { LessonView } from "./lesson-view";
+import { motion } from "framer-motion";
+import { AnimatedBar, ConfettiBurst, CountUp, Pop, Shake, SlideIn } from "./quest-motion";
 import { QuestionCard, type QuestQuestion } from "./question-card";
 import { questFetch } from "./quest-api";
 import type { SkillSummary } from "./skill-list";
@@ -96,7 +98,7 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground">Score</p>
-            <p className="text-2xl font-bold tabular-nums">{score}</p>
+            <p className="text-2xl font-bold tabular-nums"><CountUp value={score} /></p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setShowLesson((v) => !v)}>
             <BookOpen className="mr-1.5 h-4 w-4" /> {showLesson ? "Practice" : "Lesson"}
@@ -141,7 +143,7 @@ export function PracticeRunner({ skill, answeredToday = 0, goal = 0, onExit }: R
           </CardHeader>
           <CardContent className="space-y-4">
             {!feedback ? (
-              <QuestionCard question={current.question} onSubmit={answer} disabled={isSending} />
+              <SlideIn key={current.question.id}><QuestionCard question={current.question} onSubmit={answer} disabled={isSending} /></SlideIn>
             ) : (
               <FeedbackPanel question={current.question} feedback={feedback} onNext={loadNext} onExit={skill && feedback.just_mastered ? onExit : undefined}
                 onLesson={skill ? () => setShowLesson(true) : undefined} />
@@ -161,16 +163,23 @@ function FeedbackPanel({ question, feedback, onNext, onExit, onLesson }: {
   const [lessonOpen, setLessonOpen] = useState(false);
   const before = feedback.score_before;
   const after = feedback.score_after;
+  const Result = feedback.correct ? Pop : Shake;
   return (
     <div className="space-y-4">
       <p className="text-lg whitespace-pre-wrap text-muted-foreground">{question.stem}</p>
-      <div className={`flex items-start gap-3 rounded-lg p-4 ${feedback.correct ? "bg-green-500/10" : "bg-amber-500/10"}`}>
-        {feedback.correct ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" /> : <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />}
-        <div className="space-y-1 text-sm">
-          <p className="font-semibold">{feedback.correct ? "Correct!" : `Not quite. The answer is ${feedback.correct_answer}.`}</p>
-          <Markdown>{feedback.explanation}</Markdown>
+      <Result>
+        <div className={`relative flex items-start gap-3 rounded-lg p-4 ${feedback.correct ? "bg-green-500/10" : "bg-amber-500/10"}`}>
+          {feedback.correct && !feedback.just_mastered && <ConfettiBurst />}
+          <motion.span className="mt-0.5 shrink-0" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 14, delay: 0.1 }}>
+            {feedback.correct ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : <XCircle className="h-5 w-5 text-amber-600" />}
+          </motion.span>
+          <div className="space-y-1 text-sm">
+            <p className="font-semibold">{feedback.correct ? "Correct!" : `Not quite. The answer is ${feedback.correct_answer}.`}</p>
+            <Markdown>{feedback.explanation}</Markdown>
+          </div>
         </div>
-      </div>
+      </Result>
 
       {feedback.mini_lesson && (
         <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
@@ -180,29 +189,45 @@ function FeedbackPanel({ question, feedback, onNext, onExit, onLesson }: {
       )}
 
       {feedback.just_mastered ? (
-        <div className="flex items-center gap-3 rounded-lg bg-primary/10 p-4">
-          <Trophy className="h-6 w-6 text-primary" />
-          <p className="font-semibold">You mastered {question.skill_name}! It&apos;ll come back now and then so it sticks.</p>
-        </div>
+        <Pop delay={0.25}>
+          <div className="flex items-center gap-3 rounded-lg bg-primary/10 p-4">
+            <ConfettiBurst big />
+            <motion.span animate={{ rotate: [0, -16, 16, -10, 10, 0], scale: [1, 1.35, 1] }} transition={{ duration: 0.9, delay: 0.4 }}>
+              <Trophy className="h-6 w-6 text-primary" />
+            </motion.span>
+            <p className="font-semibold">You mastered {question.skill_name}! It&apos;ll come back now and then so it sticks.</p>
+          </div>
+        </Pop>
       ) : (
         <div>
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{question.skill_name}</span>
-            <span className="tabular-nums">Score {before} → {after}</span>
+            <span className="tabular-nums">
+              Score {before} → <CountUp from={before} value={after} className="font-semibold text-foreground" />
+              {after > before && (
+                <motion.span className="ml-1.5 font-semibold text-green-600 dark:text-green-400" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+                  +{after - before}
+                </motion.span>
+              )}
+            </span>
           </div>
-          <Progress value={after} />
+          <AnimatedBar from={before} to={after} />
         </div>
       )}
 
-      {feedback.new_badges.map((b) => (
-        <div key={b.id} className="flex items-center gap-3 rounded-lg border border-amber-400/50 bg-amber-400/10 p-4 animate-in zoom-in-95 fade-in duration-500">
-          <BadgeIcon icon={b.icon} size="lg" />
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-amber-700 dark:text-amber-400">New badge</p>
-            <p className="font-semibold">{b.name}</p>
-            <p className="text-sm text-muted-foreground">{b.description}</p>
+      {feedback.new_badges.map((b, i) => (
+        <Pop key={b.id} delay={0.5 + i * 0.2}>
+          <div className="flex items-center gap-3 rounded-lg border border-amber-400/50 bg-amber-400/10 p-4">
+            <motion.span initial={{ rotate: -180, scale: 0.3 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.6 + i * 0.2 }}>
+              <BadgeIcon icon={b.icon} size="lg" />
+            </motion.span>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-amber-700 dark:text-amber-400">New badge</p>
+              <p className="font-semibold">{b.name}</p>
+              <p className="text-sm text-muted-foreground">{b.description}</p>
+            </div>
           </div>
-        </div>
+        </Pop>
       ))}
 
       {!feedback.correct && (
