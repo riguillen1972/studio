@@ -39,6 +39,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
@@ -52,6 +53,9 @@ export function AppSidebar() {
   const { tier, isPremium, role, gradeLevel } = useAppState();
   const { user, signOut } = useAuth();
   const router = useRouter();
+  // On phones the sidebar slides over the page, so close it once a link is tapped
+  const { isMobile, setOpenMobile } = useSidebar();
+  const closeOnPhone = () => { if (isMobile) setOpenMobile(false); };
   const tab = useSearchParams().get("tab");
   // Teacher dashboard links look like /dashboard?tab=students; "My Class" is /dashboard with no tab
   const isActive = (href: string) => {
@@ -205,7 +209,7 @@ export function AppSidebar() {
                   isActive={isActive(item.href)}
                   tooltip={{ children: item.label }}
                 >
-                  <Link href={item.href}>
+                  <Link href={item.href} onClick={closeOnPhone}>
                     <item.icon />
                     <span>{item.label}</span>
                      {item.tier === 'max' && (
@@ -232,7 +236,7 @@ export function AppSidebar() {
                 isActive={isActive("/profile")}
                 tooltip={{ children: "Profile" }}
               >
-                <Link href="/profile">
+                <Link href="/profile" onClick={closeOnPhone}>
                   <User />
                   <span>Profile</span>
                 </Link>
