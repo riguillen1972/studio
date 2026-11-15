@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -20,22 +20,25 @@ export function SupabaseAuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Startup and every auth event (signed in, token refreshed…) report the same person again.
+    // Keep the same user object unless the person changes, so pages don't reload their data each time.
+    const update = (session: Session | null) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      setUser((prev) => {
+        const next = session?.user ?? null;
+        return prev?.id === next?.id ? prev : next;
+      });
       setIsLoading(false);
-    });
+    };
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => update(session));
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => update(session));
 
     return () => subscription.unsubscribe();
   }, [supabase]);

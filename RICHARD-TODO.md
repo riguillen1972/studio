@@ -204,3 +204,10 @@ prices. Checkout needs the **price** ID.
 - As a free test student, AI Tutor's model menu says **Gemini 2.5 Flash-Lite**, and that's the model that answers.
 - The request still says `model: "gemma3"`: that's the code's old name for the free model (kept so saved
   token usage and the mobile app keep working). The code now says so in `src/ai/genkit.ts` and `src/lib/plans.ts`.
+
+### Task 17: Each thing loads once
+- Run `node scripts/browser-tests/task17-request-count.mjs` while signed in. On one dashboard load, `profiles`,
+  `token_usage` and `/api/classes` should each be asked for **once**.
+- Note: `npm run dev` runs page effects twice on purpose (React's Strict Mode) to catch bugs, so you may see 2
+  there. Check the real count on the deployed site, or with `npm run build && npm start`.
+- Also check nothing broke: the token count on Profile, the plan badge, and (as a student) the Research Mode button.

@@ -106,12 +106,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const loadProfile = async () => {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('tier, display_name, role, grade_level, career_field, class_code')
+        .select('tier, billing_plan, display_name, role, grade_level, career_field, class_code')
         .eq('id', user.id)
         .maybeSingle();
 
       if (profile) {
         if (profile.tier) setTier(profile.tier as SubscriptionTier);
+        setBillingPlan(profile.billing_plan ?? null);
         setDisplayName(profile.display_name);
         setRole(profile.role);
         setGradeLevel(profile.grade_level);
@@ -120,6 +121,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
         // If role is missing or empty, they need to pick one
         setNeedsRolePicker(!profile.role || profile.role.trim() === '');
+        // Research Mode depends on the student's classes; teachers don't need this check
+        if (profile.role !== 'teacher') loadClassSettings();
       } else {
         setNeedsRolePicker(true);
       }
@@ -146,16 +149,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       });
     };
 
-    // Loaded on its own so the profile still loads if the billing_plan column isn't there yet
-    const loadBillingPlan = async () => {
-      const { data } = await supabase.from('profiles').select('billing_plan').eq('id', user.id).maybeSingle();
-      setBillingPlan(data?.billing_plan ?? null);
-    };
-
+    // One profile read (it includes the billing plan) and one token usage read per signed-in user
     loadProfile();
-    loadBillingPlan();
     loadTokenUsage();
-    loadClassSettings();
   }, [user, supabase, loadClassSettings]);
 
   const updateProfile = async (updates: ProfileUpdates): Promise<{ error: string | null }> => {
