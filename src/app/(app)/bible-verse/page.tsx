@@ -21,6 +21,7 @@ import { Heart } from "lucide-react";
 interface BibleVerse {
     verse: string;
     reference: string;
+    translation?: string;
     explanation: string;
 }
 
@@ -59,10 +60,10 @@ export default function BibleVersePage() {
         const result = await getBibleVerseAction({ topic: topic.trim() || undefined, model: modelToUse });
 
         if ('data' in result) {
-            const { totalTokens, verse, reference, explanation } = result.data;
+            const { totalTokens, verse, reference, translation, explanation } = result.data;
             
             consumeTokens(totalTokens, modelToUse);
-            setVerseInfo({ verse, reference, explanation });
+            setVerseInfo({ verse, reference, translation, explanation });
         } else {
             // Because 'data' isn't in the object, TypeScript knows this is the error branch
             setError(result.error);
@@ -144,7 +145,9 @@ export default function BibleVersePage() {
                                 <p className="mb-4">{verseInfo.verse}</p>
                                 <Quote className="absolute bottom-2 right-2 h-6 w-6 text-muted-foreground/50 translate-x-2 translate-y-2" />
                             </blockquote>
-                            <cite className="block font-semibold text-primary not-italic">{verseInfo.reference}</cite>
+                            <cite className="block font-semibold text-primary not-italic">
+                                {verseInfo.reference}{verseInfo.translation ? ` (${verseInfo.translation})` : ""}
+                            </cite>
                             {verseInfo.explanation && (
                                 <p className="text-muted-foreground mt-4 text-sm bg-muted p-4 rounded-md">
                                     {verseInfo.explanation}

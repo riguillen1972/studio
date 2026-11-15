@@ -21,6 +21,7 @@ import { resolveModel } from "@/lib/plans";
 import { checkUsage, recordUsage, getAdminClient, getUserTier } from "@/lib/usage";
 import { logInteraction, promptFrom } from "@/lib/activity";
 import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
+import { UserFacingError } from "@/lib/user-facing-error";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -98,7 +99,8 @@ async function handleAction<T_Input, T_Output>(
 
     return { success: true, data: result };
   } catch (error) {
-    console.error("AI action failed:", error);
+    console.error(`AI action failed (${tool}):`, error);
+    if (error instanceof UserFacingError) return { success: false as const, error: error.message };
     return { success: false as const, error: "An error occurred while processing your request." };
   }
 }

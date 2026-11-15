@@ -112,21 +112,8 @@ export async function smartGenerate<T>(opts: {
       config: claudeConfig,
     });
 
-    let parsed: T | null = null;
-    try {
-      // Strip any markdown code fences if present
-      let text = response.text.trim();
-      if (text.startsWith('```')) {
-        text = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
-      }
-      parsed = JSON.parse(text) as T;
-    } catch {
-      // If JSON parsing fails, return the raw text
-      parsed = null;
-    }
-
     return {
-      output: parsed,
+      output: parseJsonReply<T>(response.text),
       text: response.text,
       usage: { totalTokens: countTokens(response.usage) },
     };
@@ -147,10 +134,27 @@ export async function smartGenerate<T>(opts: {
   });
 
   return {
-    output: response.output ?? null,
+    // If the native structured output didn't come through, try reading JSON from the text
+    output: response.output ?? parseJsonReply<T>(response.text),
     text: response.text,
     usage: { totalTokens: countTokens(response.usage) },
   };
+}
+
+/**
+ * Reads a JSON object from a model's reply, even when it's wrapped in ```json fences or has a
+ * sentence before or after it. Returns null if there's no usable JSON.
+ */
+export function parseJsonReply<T>(text: string | undefined): T | null {
+  if (!text) return null;
+  const unfenced = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+  for (const candidate of [unfenced, unfenced.slice(unfenced.indexOf('{'), unfenced.lastIndexOf('}') + 1)]) {
+    if (!candidate.startsWith('{')) continue;
+    try {
+      return JSON.parse(candidate) as T;
+    } catch { /* try the next candidate */ }
+  }
+  return null;
 }
 
 /**

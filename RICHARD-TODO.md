@@ -144,3 +144,14 @@ prices. Checkout needs the **price** ID.
 2. Sign in as a test student who is allowed to buy (college, or grade 8+) → **Upgrade to Max**: checkout shows **$24.99/month**.
 3. **Upgrade to Pro**: the checkout description is the new real text, not "appears at profile…".
 4. Before ST1 is done, Upgrade to Max should show a red message "We couldn't open checkout…" instead of doing nothing.
+
+### Task 7: Bible Verse
+- As the test student, try each of these on **Bible Verse**:
+  1. "I am nervous about my test"
+  2. "My grandma is sick and I'm scared"
+  3. "gratitude"
+
+  Each should show a verse, the reference, and **(KJV)** after it.
+- Try the same one twice: the wording of a verse should be the same both times (always KJV).
+- If one still fails, it now says "We couldn't find a verse just now…", and the real reason is in
+  Vercel → studio → **Logs** (search for "Bible verse"). Send it to Claude.
