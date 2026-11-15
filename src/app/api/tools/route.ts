@@ -3,7 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { runTool } from "@/ai/flows/run-tool";
 import { resolveModel } from "@/lib/plans";
 import { checkUsage, recordUsage, getUserTier } from "@/lib/usage";
-import { logInteraction } from "@/lib/activity";
+import { logInteraction, promptFrom } from "@/lib/activity";
+import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
 
 // Import all existing flows to route to them
 import { generateExplanation } from "@/ai/flows/generate-explanation";
@@ -208,6 +209,9 @@ export async function POST(req: NextRequest) {
       default:
         return NextResponse.json({ error: `Unknown toolId: ${toolId}` }, { status: 404 });
     }
+
+    // Safety net: a worried message always gets the crisis lines, even if the AI left them out
+    if (detectConcern(promptFrom(input))) result = addCrisisLinesToResult(result);
 
     const totalTokens = (result as { totalTokens?: number } | undefined)?.totalTokens ?? 0;
     await Promise.all([

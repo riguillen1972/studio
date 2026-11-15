@@ -9,7 +9,8 @@ const MAX_RESPONSE = 4000;
 
 const PROMPT_FIELDS = ["concept", "problem", "question", "userInput", "topic", "text", "description", "url"] as const;
 
-function promptFrom(input: Record<string, unknown>): string {
+/** The student's own words in a tool request (what they typed or asked). */
+export function promptFrom(input: Record<string, unknown>): string {
   const parts = PROMPT_FIELDS
     .map((f) => input[f])
     .filter((v): v is string => typeof v === "string" && v.trim().length > 0);

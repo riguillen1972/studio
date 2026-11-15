@@ -12,6 +12,7 @@
 // Editing either later would break Claude Sonnet 5.5's preserved-thinking check.
 
 import Anthropic from "@anthropic-ai/sdk";
+import { SAFETY_INSTRUCTIONS } from "@/lib/safety";
 
 export const LIVE_SESSION_MODEL = "claude-sonnet-5-5";
 export const MONTHLY_INCLUDED_SESSIONS = 20;
@@ -103,6 +104,7 @@ const ADAPTATIONS: Record<string, string> = {
 /** Builds the frozen system prompt for a session. Must be deterministic for caching. */
 export function buildSystemPrompt(avatar: AvatarConfig, cls: ClassInfo, pack: LessonPack | null): string {
   const persona = [
+    SAFETY_INSTRUCTIONS,
     `You are ${avatar.name}${avatar.title ? `, ${avatar.title}` : ""}, an AI co-teacher leading a live lesson for a real class.`,
     avatar.backstory ? `Background: ${avatar.backstory}` : "",
     `Personality: ${scale(avatar.warmth, "Cool and professional", "Warm and encouraging")}; ${scale(avatar.energy, "Calm and measured", "High-energy and exciting")}; ${scale(avatar.strictness, "Laid back", "Firm and demanding")}; ${scale(avatar.humor, "Serious", "Playful and funny")}.`,

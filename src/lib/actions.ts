@@ -19,7 +19,8 @@ import { SupportedModel } from "@/ai/genkit";
 import { createClient } from "@/lib/supabase/server";
 import { resolveModel } from "@/lib/plans";
 import { checkUsage, recordUsage, getAdminClient, getUserTier } from "@/lib/usage";
-import { logInteraction } from "@/lib/activity";
+import { logInteraction, promptFrom } from "@/lib/activity";
+import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -84,7 +85,9 @@ async function handleAction<T_Input, T_Output>(
       return { success: false as const, error: usageError };
     }
 
-    const result = await flow(input);
+    let result = await flow(input);
+    // Safety net: a worried message always gets the crisis lines, even if the AI left them out
+    if (detectConcern(promptFrom(input as Record<string, unknown>))) result = addCrisisLinesToResult(result);
 
     const totalTokens = (result as { totalTokens?: number })?.totalTokens ?? 0;
     await Promise.all([
