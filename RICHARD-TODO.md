@@ -226,3 +226,10 @@ To test it without using up 50,000 real tokens, pretend the test student already
 3. To prove the server blocks it (not just the page): open Homework Help in a second tab that was loaded
    *before* step 1, and submit a problem. The server answers with the same message.
 4. Put it back with the same query, changing `50000` to `0`.
+
+### Task 19: Class code is checked by the database (already in place)
+Claude tested this inside the database on Nov 15 (the test undid itself, no accounts were made):
+grade 6 with no code, a fake code, or no grade at all were **rejected**; grade 6 with a real code was allowed;
+grade 9 with no code was allowed (by design). Nothing to change. To see it yourself:
+- On the sign-up page, pick Elementary to High School, grade 6, and leave the class code empty: the page stops you.
+- Even if someone skips the page, the database refuses with "Students in 7th grade and below must join through a teacher's class code."
