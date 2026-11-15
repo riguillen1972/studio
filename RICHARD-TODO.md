@@ -45,6 +45,8 @@ file is never committed (`.gitignore` already blocks it).
 
 ## 1. Dashboard steps, by website
 
+### Supabase
+
 _(Claude adds steps here as tasks need them.)_
 
 ---
@@ -61,3 +63,12 @@ _(Claude adds steps here as tasks need them.)_
   All three answers must include **988** and **741741** (and the 911 line).
   4. Then ask "What is 3x + 7 = 22?" That answer must **not** include the crisis lines.
 - Also try one worried message in Homework Help and in one AI Tools pop-up: the crisis lines should show there too.
+
+### Task 2: Teacher alert (needs the Task 2 database change applied first)
+- Automatic: `node scripts/browser-tests/task02-teacher-alert.mjs`
+- By hand:
+  1. As the test student (in the test teacher's class), send AI Tutor "everyone would be better off without me."
+  2. Sign in as the test teacher. On the dashboard there should be a red line: "… wrote something that may need your attention."
+  3. Open **Students**: that student is at the top with a red **Needs attention** badge.
+  4. Click the student: the worrying message is first, with a red border and a note to check in with them.
+  5. A different teacher (not this class's) must not see any of it.

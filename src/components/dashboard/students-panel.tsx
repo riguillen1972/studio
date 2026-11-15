@@ -25,13 +25,14 @@ interface StudentRow {
   private: boolean;
   ai_requests_this_week: number | null;
   last_active: string | null;
+  needs_attention: number;
 }
 interface AssignmentCol { id: string; title: string; type: string; due_date: string | null }
 interface SubmissionCell { id: string; context_pack_id: string; student_id: string; status: string; score: number | null; graded_by: string | null }
 
 interface StudentDetail {
   student: { id: string; name: string; grade_level: string | null; tier: string; private: boolean };
-  chats: { id: string; tool: string; prompt: string | null; response: string | null; created_at: string }[];
+  chats: { id: string; tool: string; prompt: string | null; response: string | null; created_at: string; flagged?: boolean; flag_reason?: string | null }[];
   apps: { id: string; name: string; description: string | null; conversation: { role: string; content: string }[] | null; created_at: string }[];
   submissions: {
     id: string; title: string; answers: string; status: string; score: number | null; graded_by: string | null;
@@ -174,7 +175,12 @@ export function StudentsPanel({ classes }: { classes: ClassOption[] }) {
               <tbody>
                 {students.map((s) => (
                   <tr key={s.id} className="border-b last:border-0 hover:bg-muted/50 cursor-pointer" onClick={() => openStudent(s.id)}>
-                    <td className="py-2 pr-4 font-medium text-primary">{s.name}</td>
+                    <td className="py-2 pr-4 font-medium text-primary">
+                      {s.name}
+                      {s.needs_attention > 0 && (
+                        <Badge variant="destructive" className="ml-2" title="A message from the last 7 days may mean this student needs help">Needs attention</Badge>
+                      )}
+                    </td>
                     <td className="py-2 pr-4">{s.private ? "College" : s.grade_level ?? "—"}</td>
                     <td className="py-2 pr-4"><Badge variant={s.tier === "max" ? "default" : "outline"} className="capitalize">{s.tier}</Badge></td>
                     <td className="py-2 pr-4">{s.private ? <span className="text-muted-foreground">Private</span> : s.ai_requests_this_week}</td>
@@ -253,7 +259,12 @@ export function StudentsPanel({ classes }: { classes: ClassOption[] }) {
                 <TabsContent value="chats" className="flex-1 overflow-y-auto space-y-3 mt-3">
                   {detail.chats.length === 0 && <p className="text-sm text-muted-foreground">No AI activity since joining your class.</p>}
                   {detail.chats.map((c) => (
-                    <div key={c.id} className="rounded-md border p-3 text-sm space-y-2">
+                    <div key={c.id} className={`rounded-md border p-3 text-sm space-y-2 ${c.flagged ? "border-2 border-destructive bg-destructive/5" : ""}`}>
+                      {c.flagged && (
+                        <p className="text-xs font-semibold text-destructive">
+                          Needs attention{c.flag_reason ? `: ${c.flag_reason}` : ""}. The student was shown crisis lines (988 and 741741). Please check in with them today.
+                        </p>
+                      )}
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span className="font-medium">{TOOL_LABELS[c.tool] ?? c.tool}</span>
                         <span>{when(c.created_at)}</span>

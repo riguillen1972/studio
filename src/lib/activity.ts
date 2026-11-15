@@ -3,6 +3,7 @@
 // College students are never logged: their teachers only see work they turn in.
 
 import { getAdminClient } from "@/lib/usage";
+import { detectConcern } from "@/lib/safety";
 
 const MAX_PROMPT = 2000;
 const MAX_RESPONSE = 4000;
@@ -44,14 +45,44 @@ export async function logInteraction(userId: string, tool: string, input: unknow
     ]);
     if (!count || profile?.role === "college") return;
 
+    const prompt = promptFrom((input ?? {}) as Record<string, unknown>);
+    const concern = detectConcern(prompt);
     await supabase.from("ai_interactions").insert({
       user_id: userId,
       tool,
-      prompt: promptFrom((input ?? {}) as Record<string, unknown>),
+      prompt,
       response: responseFrom((result ?? {}) as Record<string, unknown>),
       model: model ?? null,
+      flagged: !!concern,
+      flag_reason: concern?.reason ?? null,
     });
+    if (concern) await notifyTeachersOfConcern(userId);
   } catch (e) {
     console.error("Failed to log AI interaction:", e);
+  }
+}
+
+/** Tells the teacher of each of the student's classes that a message may need their attention. */
+async function notifyTeachersOfConcern(studentId: string) {
+  try {
+    const supabase = getAdminClient();
+    const [{ data: enrollments }, { data: profile }] = await Promise.all([
+      supabase.from("enrollments").select("classes(name, teacher_id)").eq("student_id", studentId),
+      supabase.from("profiles").select("display_name").eq("id", studentId).maybeSingle(),
+    ]);
+    const classes = (enrollments ?? [])
+      .map((e) => (Array.isArray(e.classes) ? e.classes[0] : e.classes) as { name: string; teacher_id: string } | null)
+      .filter((c): c is { name: string; teacher_id: string } => !!c);
+    if (!classes.length) return;
+    const { error } = await supabase.from("teacher_notifications").insert(classes.map((c) => ({
+      teacher_id: c.teacher_id,
+      type: "student_concern",
+      student_id: studentId,
+      student_name: profile?.display_name || "A student",
+      class_name: c.name,
+    })));
+    if (error) console.error("Failed to notify teacher of a concern:", error);
+  } catch (e) {
+    console.error("Failed to notify teacher of a concern:", e);
   }
 }

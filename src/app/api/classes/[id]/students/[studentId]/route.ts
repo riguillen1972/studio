@@ -25,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const [{ data: chats }, { data: apps }, { data: submissions }] = await Promise.all([
       // Only chats from since the student joined this class, not from a previous teacher's class
-      isPrivate ? none : supabase.from("ai_interactions").select("id, tool, prompt, response, created_at")
+      isPrivate ? none : supabase.from("ai_interactions").select("id, tool, prompt, response, created_at, flagged, flag_reason")
         .eq("user_id", studentId).gte("created_at", enrollment.joined_at).order("created_at", { ascending: false }).limit(100),
       isPrivate ? none : supabase.from("saved_apps").select("id, name, description, conversation, created_at")
         .eq("user_id", studentId).order("created_at", { ascending: false }).limit(50),
@@ -43,7 +43,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         role: profile?.role ?? null,
         private: isPrivate,
       },
-      chats: chats ?? [],
+      // Worrying messages first, then newest first
+      chats: [...(chats ?? [])].sort((a, b) => Number(!!b.flagged) - Number(!!a.flagged)),
       apps: apps ?? [],
       submissions: (submissions ?? []).map((s) => {
         const pack = Array.isArray(s.context_packs) ? s.context_packs[0] : s.context_packs;

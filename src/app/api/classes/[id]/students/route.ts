@@ -25,18 +25,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         ? supabase.from("profiles").select("id, display_name, grade_level, tier, role").in("id", studentIds)
         : Promise.resolve({ data: [] as { id: string; display_name: string | null; grade_level: string | null; tier: string | null; role: string | null }[] }),
       studentIds.length
-        ? supabase.from("ai_interactions").select("user_id, created_at").in("user_id", studentIds).gte("created_at", weekAgo).limit(5000)
-        : Promise.resolve({ data: [] as { user_id: string; created_at: string }[] }),
+        ? supabase.from("ai_interactions").select("user_id, created_at, flagged").in("user_id", studentIds).gte("created_at", weekAgo).limit(5000)
+        : Promise.resolve({ data: [] as { user_id: string; created_at: string; flagged: boolean }[] }),
       supabase.from("context_packs").select("id, title, type, due_date, created_at")
         .eq("class_id", classId).in("type", ["homework", "quiz"]).order("created_at", { ascending: true }),
       supabase.from("assignment_submissions").select("id, context_pack_id, student_id, status, score, graded_by, submitted_at").eq("class_id", classId),
     ]);
 
-    const activityByStudent = new Map<string, { count: number; last: string }>();
+    const activityByStudent = new Map<string, { count: number; last: string; flagged: number }>();
     // Count only activity since the student joined this class
     for (const a of (activity ?? []).filter((a) => a.created_at >= (joinedAt.get(a.user_id) ?? ""))) {
-      const entry = activityByStudent.get(a.user_id) ?? { count: 0, last: a.created_at };
+      const entry = activityByStudent.get(a.user_id) ?? { count: 0, last: a.created_at, flagged: 0 };
       entry.count += 1;
+      if (a.flagged) entry.flagged += 1;
       if (a.created_at > entry.last) entry.last = a.created_at;
       activityByStudent.set(a.user_id, entry);
     }
@@ -53,9 +54,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           private: isPrivate,
           ai_requests_this_week: isPrivate ? null : activityByStudent.get(p.id)?.count ?? 0,
           last_active: isPrivate ? null : activityByStudent.get(p.id)?.last ?? null,
+          // Messages from the last 7 days that may mean the student needs help
+          needs_attention: isPrivate ? 0 : activityByStudent.get(p.id)?.flagged ?? 0,
         };
       })
-      .sort((a, b) => a.name.localeCompare(b.name));
+      // Students who may need attention come first
+      .sort((a, b) => Number(b.needs_attention > 0) - Number(a.needs_attention > 0) || a.name.localeCompare(b.name));
 
     return NextResponse.json({ students, assignments: packs ?? [], submissions: submissions ?? [] });
   } catch (error) {

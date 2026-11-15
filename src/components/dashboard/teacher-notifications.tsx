@@ -7,7 +7,7 @@ import { Bell } from "lucide-react";
 
 interface TeacherNotification {
   id: string;
-  type: "student_left" | "student_switched" | "student_joined";
+  type: "student_left" | "student_switched" | "student_joined" | "student_concern";
   student_name: string | null;
   class_name: string | null;
   created_at: string;
@@ -18,6 +18,7 @@ const MESSAGES: Record<TeacherNotification["type"], string> = {
   student_left: "removed their class code and left",
   student_switched: "switched to a different class and left",
   student_joined: "joined",
+  student_concern: "wrote something that may need your attention. Open the Students tab to see it.",
 };
 
 /** Unread notices for the teacher, e.g. a student removed their class code. */
@@ -55,9 +56,9 @@ export function TeacherNotifications() {
           <p className="flex items-center gap-2 font-medium"><Bell className="h-4 w-4" /> Class updates</p>
           <ul className="space-y-1">
             {notifications.map((n) => (
-              <li key={n.id}>
+              <li key={n.id} className={n.type === "student_concern" ? "font-medium text-destructive" : undefined}>
                 <span className="font-medium">{n.student_name ?? "A student"}</span> {MESSAGES[n.type]}
-                {n.class_name ? ` ${n.class_name}` : ""}
+                {n.class_name && n.type !== "student_concern" ? ` ${n.class_name}` : ""}
                 <span className="text-muted-foreground"> · {new Date(n.created_at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
               </li>
             ))}
