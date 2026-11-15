@@ -78,6 +78,34 @@ Supabase's built-in email only sends a few emails an hour, which isn't enough fo
 
 _(More Supabase steps are added below as tasks need them.)_
 
+### Google Cloud
+
+**G1 (Task 21): brand the Google sign-in screen as "Study Buddy AI".**
+1. Open https://console.cloud.google.com and pick the project that holds Study Buddy's Google sign-in
+   (the one whose OAuth client ID is in Supabase → Authentication → Sign In / Providers → Google).
+2. Go to **APIs & Services** → **OAuth consent screen** (it may be called **Google Auth Platform** → **Branding**).
+3. Fill in:
+   - **App name:** `Study Buddy AI`
+   - **User support email:** your support email
+   - **App logo:** upload a square PNG, 120×120 pixels (for example the app icon from `public/`)
+   - **Application home page:** `https://studyssbuddyssai.vercel.app`
+   - **Privacy policy link:** `https://studyssbuddyssai.vercel.app/privacy`
+   - **Terms of service link:** `https://studyssbuddyssai.vercel.app/terms`
+   - **Authorized domains:** `studyssbuddyssai.vercel.app` and `feccdhxvyfdogfodglpk.supabase.co`
+   - **Developer contact email:** your email
+4. Click **Save**. Under **Audience**, make sure it's **In production** (not Testing), or only test users can sign in.
+5. Under **Branding** (or **Verification Center**), click **Submit for verification** / request **brand verification**.
+   Google reviews it, usually in a few days. They may email you to prove you own the domains.
+
+What will and won't change, honestly:
+- ✅ After verification, Google shows **"Study Buddy AI"** and your logo on the sign-in screen, and the privacy and terms links.
+- ❌ The address Google sends people back to is still Supabase's, so `feccdhxvyfdogfodglpk.supabase.co` can still show in
+  some places (for example the "to continue to" line before verification, and the browser address bar for a moment).
+- To remove the Supabase address completely you'd need a **custom domain** for Supabase sign-in (for example
+  `auth.your-domain`). That's a paid Supabase add-on and needs a domain you own. Not required for the pilot.
+- Until verification finishes, nothing changes on the screen, and Google may show an "unverified app" warning if you
+  use sensitive permissions (Study Buddy only asks for name and email, which normally don't need it).
+
 ### Stripe
 
 Do these in **test mode** first (the "Test mode" switch at the top right of the Stripe dashboard),
@@ -260,3 +288,7 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 3. Try to sign in before clicking the link: Supabase says the email isn't confirmed.
 4. Open the email (it comes from your own sender, not Supabase), click the link: you land on the dashboard signed in.
 5. Before S3 is done, signing up goes straight to the dashboard with no "check your email" message. That's correct too.
+
+### Task 21: Google sign-in name (after Google Cloud step G1 and Google's review)
+1. Sign out, click **Google** on the sign-in page.
+2. Google's screen shows **Study Buddy AI** and your logo, with links to the privacy policy and terms.
