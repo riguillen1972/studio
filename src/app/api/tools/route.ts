@@ -5,6 +5,8 @@ import { resolveModel } from "@/lib/plans";
 import { checkUsage, recordUsage, getUserTier } from "@/lib/usage";
 import { logInteraction, promptFrom } from "@/lib/activity";
 import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
+import { classInstructionsFor } from "@/lib/class-material";
+import { requestContext } from "@/lib/request-context";
 
 // Import all existing flows to route to them
 import { generateExplanation } from "@/ai/flows/generate-explanation";
@@ -112,8 +114,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const classInstructions = await classInstructionsFor(user.id);
     let result;
-    
+
+    await requestContext.run({ classInstructions }, async () => {
     switch (toolId) {
       // Phase 0/Legacy routing
       case "generateExplanation":
@@ -207,8 +211,10 @@ export async function POST(req: NextRequest) {
         result = await professorMode(input);
         break;
       default:
-        return NextResponse.json({ error: `Unknown toolId: ${toolId}` }, { status: 404 });
+        result = undefined;
     }
+    });
+    if (result === undefined) return NextResponse.json({ error: `Unknown toolId: ${toolId}` }, { status: 404 });
 
     // Safety net: a worried message always gets the crisis lines, even if the AI left them out
     if (detectConcern(promptFrom(input))) result = addCrisisLinesToResult(result);

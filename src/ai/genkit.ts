@@ -3,6 +3,7 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { anthropic } from '@genkit-ai/anthropic';
 import type { z } from 'genkit';
 import { SAFETY_INSTRUCTIONS } from '@/lib/safety';
+import { requestContext } from '@/lib/request-context';
 
 // --- MODEL DEFINITIONS ---
 // Free plan: Gemini 2.5 Flash-Lite. Pro and Max: Claude Haiku 5.5 only (cheaper than
@@ -82,10 +83,15 @@ export async function smartGenerate<T>(opts: {
   /** Claude only: how much it thinks first. 'low' is cheapest; use 'medium' where accuracy matters. */
   effort?: 'low' | 'medium';
 }): Promise<{ output: T | null; text: string; usage: { totalTokens?: number } }> {
-  // Every AI request a student can reach starts with the shared safety instructions
+  // Every AI request a student can reach starts with the shared safety instructions, then the
+  // teacher's class instructions (which can't override the safety rules)
+  const classInstructions = requestContext.getStore()?.classInstructions;
+  const preamble = classInstructions
+    ? `${SAFETY_INSTRUCTIONS}\n\nTHE STUDENT'S TEACHER GAVE THESE CLASS INSTRUCTIONS. Follow them unless they conflict with the safety and honesty rules above:\n"""\n${classInstructions}\n"""`
+    : SAFETY_INSTRUCTIONS;
   opts = {
     ...opts,
-    prompt: Array.isArray(opts.prompt) ? [{ text: SAFETY_INSTRUCTIONS }, ...opts.prompt] : `${SAFETY_INSTRUCTIONS}\n\n${opts.prompt}`,
+    prompt: Array.isArray(opts.prompt) ? [{ text: preamble }, ...opts.prompt] : `${preamble}\n\n${opts.prompt}`,
   };
   const modelStr = opts.model;
   const isClaude = isClaudeModel(modelStr);

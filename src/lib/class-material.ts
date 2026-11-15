@@ -45,3 +45,20 @@ export function lessonMaterialSection(material: string | undefined | null): stri
   if (!material) return "";
   return `\n\nYOUR TEACHER'S LESSON MATERIAL (from the student's class). When the student mentions their class, a lesson, a field trip or an assignment, use these facts and quote numbers and names exactly. Don't add details that aren't here.\n"""\n${material}\n"""\n`;
 }
+
+export const MAX_CLASS_INSTRUCTIONS = 1000;
+
+/** The teacher's "Class instructions for the AI" for the student's classes, or null. */
+export async function classInstructionsFor(userId: string): Promise<string | null> {
+  try {
+    const { data } = await getAdminClient().from("enrollments").select("classes(settings)").eq("student_id", userId);
+    const texts = (data ?? [])
+      .map((row) => (Array.isArray(row.classes) ? row.classes[0] : row.classes) as { settings?: { ai_instructions?: unknown } } | null)
+      .map((c) => c?.settings?.ai_instructions)
+      .filter((t): t is string => typeof t === "string" && t.trim().length > 0);
+    return texts.length ? texts.join("\n\n").slice(0, MAX_CLASS_INSTRUCTIONS * 2) : null;
+  } catch (e) {
+    console.error("Couldn't load class instructions:", e);
+    return null;
+  }
+}

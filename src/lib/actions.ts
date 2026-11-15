@@ -22,7 +22,8 @@ import { checkUsage, recordUsage, getAdminClient, getUserTier } from "@/lib/usag
 import { logInteraction, promptFrom } from "@/lib/activity";
 import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
 import { UserFacingError } from "@/lib/user-facing-error";
-import { lessonMaterialFor } from "@/lib/class-material";
+import { classInstructionsFor, lessonMaterialFor } from "@/lib/class-material";
+import { requestContext } from "@/lib/request-context";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -87,7 +88,9 @@ async function handleAction<T_Input, T_Output>(
       return { success: false as const, error: usageError };
     }
 
-    let result = await flow(input);
+    // The teacher's class instructions reach every AI call made for this request
+    const classInstructions = await classInstructionsFor(auth.userId);
+    let result = await requestContext.run({ classInstructions }, () => flow(input));
     // Safety net: a worried message always gets the crisis lines, even if the AI left them out
     if (detectConcern(promptFrom(input as Record<string, unknown>))) result = addCrisisLinesToResult(result);
 

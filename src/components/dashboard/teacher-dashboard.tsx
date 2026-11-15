@@ -28,7 +28,7 @@ interface ClassModel {
     name: string;
     subject: string | null;
     join_code: string;
-    settings: { allow_research_mode?: boolean } | null;
+    settings: { allow_research_mode?: boolean; ai_instructions?: string } | null;
     created_at: string;
 }
 
@@ -205,6 +205,21 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
         }
     };
 
+    /** Saves class settings like the AI instructions; returns an error message or null. */
+    const saveClassSettings = async (classId: string, settings: Record<string, unknown>): Promise<string | null> => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return "Your session has expired. Please sign in again.";
+        const res = await fetch(`/api/classes/${classId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+            body: JSON.stringify({ settings }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) return data.error || "Couldn't save.";
+        setClasses(prev => prev.map(c => (c.id === classId ? { ...c, settings: data.data?.settings ?? c.settings } : c)));
+        return null;
+    };
+
     const handleCreateContextPack = async () => {
         if (!packTitle || !packClassId || !packContent) return;
         setIsCreatingPack(true);
@@ -332,6 +347,10 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                             <Copy className="h-4 w-4" />
                                         </Button>
                                     </div>
+                                    <ClassInstructions
+                                        initial={cls.settings?.ai_instructions ?? ""}
+                                        onSave={(text) => saveClassSettings(cls.id, { ai_instructions: text })}
+                                    />
                                     <div className="flex items-center justify-between gap-3 pt-4">
                                         <div>
                                             <Label htmlFor={`research-${cls.id}`} className="text-sm">Allow Research Mode</Label>
@@ -535,5 +554,46 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
             </TabsContent>
         </Tabs>
         </>
+    );
+}
+
+const INSTRUCTIONS_MAX = 1000;
+
+/** "Class instructions for the AI": added to every AI request from this class's students. */
+function ClassInstructions({ initial, onSave }: { initial: string; onSave: (text: string) => Promise<string | null> }) {
+    const [text, setText] = useState(initial);
+    const [saved, setSaved] = useState(initial);
+    const [status, setStatus] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const save = async () => {
+        setIsSaving(true);
+        const error = await onSave(text);
+        setIsSaving(false);
+        if (error) return setStatus(error);
+        setSaved(text.trim());
+        setStatus("Saved. Your students' AI will follow these instructions.");
+    };
+
+    return (
+        <div className="space-y-2 pt-4">
+            <Label className="text-sm">Class instructions for the AI</Label>
+            <Textarea
+                value={text}
+                onChange={(e) => { setText(e.target.value); setStatus(null); }}
+                maxLength={INSTRUCTIONS_MAX}
+                rows={3}
+                placeholder="Example: We are a Christian school. When students ask faith questions, answer from a Christian point of view, kindly and respectfully."
+            />
+            <div className="flex items-center justify-between gap-2">
+                <p className="text-xs text-muted-foreground">
+                    {status ?? `Added to every AI answer for this class's students. ${text.length}/${INSTRUCTIONS_MAX}`}
+                </p>
+                <Button size="sm" variant="outline" onClick={save} disabled={isSaving || text.trim() === saved}>
+                    {isSaving && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
+                    Save
+                </Button>
+            </div>
+        </div>
     );
 }

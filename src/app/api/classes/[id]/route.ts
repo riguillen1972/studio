@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { MAX_CLASS_INSTRUCTIONS } from "@/lib/class-material";
 
-// Teachers update a class's settings, e.g. { allow_research_mode: false }
+// Teachers update a class's settings, e.g. { allow_research_mode: false } or { ai_instructions: "..." }
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -42,9 +43,15 @@ export async function PATCH(
     }
 
     // Only known settings are accepted
-    const updates: Record<string, boolean> = {};
+    const updates: Record<string, boolean | string> = {};
     if (typeof settings.allow_research_mode === "boolean") {
       updates.allow_research_mode = settings.allow_research_mode;
+    }
+    if (typeof settings.ai_instructions === "string") {
+      if (settings.ai_instructions.length > MAX_CLASS_INSTRUCTIONS) {
+        return NextResponse.json({ error: `Class instructions can be up to ${MAX_CLASS_INSTRUCTIONS} characters.` }, { status: 400 });
+      }
+      updates.ai_instructions = settings.ai_instructions.trim();
     }
 
     const { data: updated, error } = await supabase
