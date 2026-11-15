@@ -47,7 +47,16 @@ file is never committed (`.gitignore` already blocks it).
 
 ### Supabase
 
-_(Claude adds steps here as tasks need them.)_
+**S1 (Task 5): allow the password-reset link to come back to the site.**
+Until this is done, the reset email link may be refused or land on the wrong page.
+1. Open https://supabase.com/dashboard → your project → **Authentication** → **URL Configuration**.
+2. **Site URL** should be `https://studyssbuddyssai.vercel.app`.
+3. Under **Redirect URLs**, click **Add URL** and add each of these (one at a time):
+   - `https://studyssbuddyssai.vercel.app/**`
+   - `http://localhost:3000/**`
+4. Click **Save**.
+
+_(More Supabase steps are added below as tasks need them.)_
 
 ---
 
@@ -88,3 +97,12 @@ _(Claude adds steps here as tasks need them.)_
 - Ask "Who was George Washington?" It should answer normally.
 - Turn the switch off again: the student sees "Research Mode is off for your class" and gets Help Mode answers.
 - Automatic (with the switch on): `node scripts/browser-tests/task04-research-mode.mjs`
+
+### Task 5: Password reset (after Supabase step S1)
+1. Sign out. On the sign-in page click **Forgot your password?**, type the test student's email, and send.
+2. Open the email and click the link. You should land on **New Password** with two boxes.
+3. Try a 5-letter password: it should say it needs at least 8 characters. Try two different passwords: "The two passwords don't match."
+4. Set a real new password. It says "Your password was changed" and opens the dashboard.
+5. Sign out and sign in with the new password. (Then update TEST_STUDENT_PASSWORD in `.env.local`.)
+6. Click the same email link again: it should say "This link has expired" with a button to get a new one.
+7. Signed in, go to **Profile** → **Change Password**: the New Password form opens right away.

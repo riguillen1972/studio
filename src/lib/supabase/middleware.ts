@@ -33,7 +33,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Public routes that don't require authentication
-  const publicPaths = ['/', '/login', '/auth', '/terms', '/privacy', '/pricing', '/forgot-password'];
+  // /reset-password is open so an expired reset link can say so (the form itself needs the session the link creates)
+  const publicPaths = ['/', '/login', '/auth', '/terms', '/privacy', '/pricing', '/forgot-password', '/reset-password'];
   const isPublicRoute = publicPaths.some(path => 
     request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
   );

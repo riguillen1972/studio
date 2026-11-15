@@ -490,7 +490,7 @@ function ProfileContent() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <Button variant="outline" className="w-full" asChild>
-                        <a href="/forgot-password">Change Password</a>
+                        <a href="/reset-password">Change Password</a>
                     </Button>
                     <Separator/>
                     <Button variant="destructive" className="w-full" onClick={handleDeleteAccount}>Delete Account</Button>
