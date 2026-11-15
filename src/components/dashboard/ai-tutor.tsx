@@ -77,7 +77,7 @@ export default function AITutor({ careerField }: { careerField?: string }) {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
         const usageModel = toUsageModel(modelToUse);
-        setConversation((prev) => [...prev, { role: "ai", content: `You have reached your monthly token limit for the ${usageModel ? MODEL_LABELS[usageModel] : modelToUse} model. Please try again next month.` }]);
+        setConversation((prev) => [...prev, { role: "ai", content: "You've used this month's tokens. They reset on the 1st of next month." }]);
         return;
     }
     setIsLoading(true);

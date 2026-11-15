@@ -119,7 +119,7 @@ export default function FlashcardGenerator() {
   const handleGenerateFlashcards: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
       setError(
-        'You have reached your monthly token limit. Please try again next month.'
+        "You've used this month's tokens. They reset on the 1st of next month."
       );
       return;
     }

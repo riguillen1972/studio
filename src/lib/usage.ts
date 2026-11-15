@@ -47,7 +47,9 @@ export async function checkUsage(userId: string, model: UsageModel): Promise<str
 
   const used = (usage as Record<string, number> | null)?.[column] ?? 0;
   if (used >= limit) {
-    return `You have reached your monthly token limit for ${MODEL_LABELS[model]}. It resets at the start of next month.`;
+    return tier === 'free'
+      ? "You've used this month's tokens. They reset on the 1st of next month. Ask a parent about upgrading if you need more."
+      : `You've used this month's tokens for ${MODEL_LABELS[model]}. They reset on the 1st of next month.`;
   }
   return null;
 }

@@ -133,7 +133,7 @@ export default function HomeworkScanner() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!hasTokens(modelToUse)) {
-        setError("You have reached your monthly token limit. Please try again next month.");
+        setError("You've used this month's tokens. They reset on the 1st of next month.");
         return;
     }
     if (!capturedImage) {
@@ -162,7 +162,7 @@ export default function HomeworkScanner() {
   
   const handleGenerateQuiz = async () => {
     if (!hasTokens(modelToUse)) {
-        setError("You have reached your monthly token limit. Please try again next month.");
+        setError("You've used this month's tokens. They reset on the 1st of next month.");
         return;
     }
     if (!capturedImage) {

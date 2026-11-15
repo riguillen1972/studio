@@ -50,7 +50,7 @@ export default function BibleVersePage() {
         setShowCrisis(false);
 
         if (!hasTokens(modelToUse)) {
-            setError("You have reached your monthly token limit. Please try again next month.");
+            setError("You've used this month's tokens. They reset on the 1st of next month.");
             return;
         }
         

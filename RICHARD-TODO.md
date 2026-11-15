@@ -211,3 +211,18 @@ prices. Checkout needs the **price** ID.
 - Note: `npm run dev` runs page effects twice on purpose (React's Strict Mode) to catch bugs, so you may see 2
   there. Check the real count on the deployed site, or with `npm run build && npm start`.
 - Also check nothing broke: the token count on Profile, the plan badge, and (as a student) the Research Mode button.
+
+### Task 18: The free token limit is enforced
+The server checks the limit before every AI request (AI Tutor, Homework Help, all tools, and the mobile app).
+To test it without using up 50,000 real tokens, pretend the test student already used them:
+1. Supabase → **SQL Editor** → **New query**. Paste this, put the test student's email in, and **Run**:
+   ```sql
+   insert into token_usage (user_id, month, flash_lite_used)
+   select id, to_char(now() at time zone 'utc', 'YYYY-MM'), 50000 from profiles where email = 'TEST-STUDENT-EMAIL'
+   on conflict (user_id, month) do update set flash_lite_used = 50000;
+   ```
+2. As the test student, reload and ask AI Tutor anything. You should see
+   "You've used this month's tokens. They reset on the 1st of next month." and **no** AI answer.
+3. To prove the server blocks it (not just the page): open Homework Help in a second tab that was loaded
+   *before* step 1, and submit a problem. The server answers with the same message.
+4. Put it back with the same query, changing `50000` to `0`.
