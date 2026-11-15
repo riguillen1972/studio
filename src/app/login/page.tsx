@@ -216,11 +216,12 @@ function LoginContent() {
     setIsLoading(false);
   };
 
+  // Back to the role cards (they're shown in sign-up mode, so switch to it)
   const handleBack = () => {
     setSelectedRole(null);
     setError(null);
     setSuccessMessage(null);
-    setIsLogin(true);
+    setIsLogin(false);
   };
 
   const roleData = selectedRole ? roleCards.find(r => r.role === selectedRole) : null;
@@ -329,6 +330,11 @@ function LoginContent() {
                 })}
               </div>
 
+              <p className="text-center text-sm text-muted-foreground mt-6">
+                Already have an account?{' '}
+                <button type="button" onClick={() => setIsLogin(true)} className="font-medium text-primary hover:underline">Sign in</button>
+              </p>
+
               <p className="text-center text-xs text-muted-foreground mt-8">
                 <Bot className="inline h-3 w-3 mr-1" />
                 Powered by Google Gemini AI
@@ -351,7 +357,7 @@ function LoginContent() {
             >
               <div className="w-full max-w-md space-y-6">
                 {/* Back button */}
-                <Button variant="ghost" size="sm" onClick={handleBack} className="gap-2 -ml-2">
+                <Button type="button" variant="ghost" size="sm" onClick={handleBack} className="gap-2 -ml-2">
                   <ArrowLeft className="h-4 w-4" />
                   Choose a different role
                 </Button>

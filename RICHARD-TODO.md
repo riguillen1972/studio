@@ -177,3 +177,7 @@ prices. Checkout needs the **price** ID.
   Homework Help, Quiz Generator, Flashcards, Summarizer, AI Tools library and Bible Verse.
 - Click each one: it opens, and the link you're on is highlighted.
 - As the test student, the sidebar is unchanged (no "AI Tools" heading, no duplicates).
+
+### Task 11: "Choose a different role"
+1. Open http://localhost:3000/login fresh (signed out) and click **Choose a different role**: the three role cards appear.
+2. Under the cards, click **Already have an account? Sign in**: you're back on the sign-in form.
