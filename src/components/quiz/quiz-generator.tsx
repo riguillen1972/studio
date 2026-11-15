@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getQuizAction } from "@/lib/actions";
+import { getQuizAction, saveQuizResultAction } from "@/lib/actions";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { Separator } from "../ui/separator";
@@ -54,6 +54,7 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(!!initialQuiz);
   const [score, setScore] = useState(0);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const { tier, hasTokens, consumeTokens } = useAppState();
   const router = useRouter();
   const [selectedModel, setSelectedModel] = useState<SupportedModel>('haiku');
@@ -119,6 +120,16 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
     });
     setScore(newScore);
     setSubmitted(true);
+
+    // Save it, so it counts on the Progress page and the teacher can see it
+    setSaveError(null);
+    const { topic, subject, gradeLevel } = form.getValues();
+    saveQuizResultAction({
+      topic: topic || initialTopic || "Quiz",
+      subject: subject || "",
+      gradeLevel: gradeLevel || "",
+      answers: result.questions.map((q, i) => ({ question: q.question, answer: userAnswers[i] ?? "", correct_answer: q.answer })),
+    }).then((r) => { if (!r.success) setSaveError(r.error); });
   }
 
   const getOptionState = (question: QuizQuestion, option: string, questionIndex: number): "correct" | "incorrect" | "default" => {
@@ -303,7 +314,10 @@ export default function QuizGenerator({ initialQuiz, initialTopic }: { initialQu
                   colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
                 }} />
                 <AlertTitle className="font-headline">Quiz Complete!</AlertTitle>
-                <AlertDescription>You scored {score} out of {result.questions.length}.</AlertDescription>
+                <AlertDescription>
+                  You scored {score} out of {result.questions.length}.
+                  {saveError && <span className="block text-destructive">{saveError} It won&apos;t show on your Progress page.</span>}
+                </AlertDescription>
               </Alert>
             )}
 

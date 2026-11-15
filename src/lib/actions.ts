@@ -449,3 +449,40 @@ export async function webTutorAction(input: { url: string; question: string; con
   }
 }
 
+
+
+// Saves a finished Quiz Generator quiz so it shows on Progress and in the teacher's Work tab
+const QuizResultSchema = z.object({
+  topic: z.string().max(300),
+  subject: z.string().max(100),
+  gradeLevel: z.string().max(100),
+  answers: z.array(z.object({
+    question: z.string().max(2000),
+    answer: z.string().max(1000),
+    correct_answer: z.string().max(1000),
+  })).min(1).max(50),
+});
+export async function saveQuizResultAction(input: z.infer<typeof QuizResultSchema>) {
+  const parsed = QuizResultSchema.safeParse(input);
+  if (!parsed.success) return { success: false as const, error: "Invalid quiz result." };
+  const auth = await requireAuth();
+  if ('error' in auth) return { success: false as const, error: auth.error };
+
+  const answers = parsed.data.answers.map((a) => ({ ...a, correct: a.answer === a.correct_answer }));
+  // Uses the student's own login, so the quiz_results rule (only your own rows) applies
+  const supabase = await createClient();
+  const { error } = await supabase.from("quiz_results").insert({
+    user_id: auth.userId,
+    topic: parsed.data.topic,
+    subject: parsed.data.subject,
+    grade_level: parsed.data.gradeLevel,
+    score: answers.filter((a) => a.correct).length,
+    total: answers.length,
+    answers,
+  });
+  if (error) {
+    console.error("Saving quiz result failed:", error);
+    return { success: false as const, error: "Your score couldn't be saved." };
+  }
+  return { success: true as const };
+}

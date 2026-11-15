@@ -33,6 +33,10 @@ interface SubmissionCell { id: string; context_pack_id: string; student_id: stri
 interface StudentDetail {
   student: { id: string; name: string; grade_level: string | null; tier: string; private: boolean };
   chats: { id: string; tool: string; prompt: string | null; response: string | null; created_at: string; flagged?: boolean; flag_reason?: string | null }[];
+  quizzes: {
+    id: string; topic: string | null; subject: string | null; grade_level: string | null; score: number | null; total: number | null;
+    answers: { question: string; answer: string; correct_answer: string; correct: boolean }[] | null; created_at: string;
+  }[];
   apps: { id: string; name: string; description: string | null; conversation: { role: string; content: string }[] | null; created_at: string }[];
   submissions: {
     id: string; title: string; answers: string; status: string; score: number | null; graded_by: string | null;
@@ -253,7 +257,7 @@ export function StudentsPanel({ classes }: { classes: ClassOption[] }) {
                 <TabsList className="h-auto flex-wrap">
                   {!detail.student.private && <TabsTrigger value="chats">AI chats ({detail.chats.length})</TabsTrigger>}
                   {!detail.student.private && <TabsTrigger value="apps">Apps ({detail.apps.length})</TabsTrigger>}
-                  <TabsTrigger value="work">Work ({detail.submissions.length})</TabsTrigger>
+                  <TabsTrigger value="work">Work ({detail.submissions.length + (detail.quizzes?.length ?? 0)})</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="chats" className="flex-1 overflow-y-auto space-y-3 mt-3">
@@ -310,8 +314,35 @@ export function StudentsPanel({ classes }: { classes: ClassOption[] }) {
                 </TabsContent>
 
                 <TabsContent value="work" className="flex-1 overflow-y-auto space-y-3 mt-3">
-                  {detail.submissions.length === 0 && <p className="text-sm text-muted-foreground">Nothing turned in yet.</p>}
+                  {detail.submissions.length === 0 && !detail.quizzes?.length && <p className="text-sm text-muted-foreground">Nothing turned in yet.</p>}
                   {detail.submissions.map((s) => <SubmissionCard key={s.id} submission={s} onSave={saveGrade} />)}
+                  {(detail.quizzes?.length ?? 0) > 0 && (
+                    <p className="pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Practice quizzes (Quiz Generator)</p>
+                  )}
+                  {detail.quizzes?.map((q) => (
+                    <div key={q.id} className="rounded-md border p-3 text-sm space-y-2">
+                      <div className="flex justify-between gap-2">
+                        <span className="font-medium">{q.topic || "Quiz"}{q.subject ? ` · ${q.subject}` : ""}{q.grade_level ? ` · ${q.grade_level}` : ""}</span>
+                        <span className="text-xs text-muted-foreground">{when(q.created_at)}</span>
+                      </div>
+                      <p><Badge variant="secondary">{q.score ?? 0} / {q.total ?? 0}</Badge></p>
+                      {(q.answers?.length ?? 0) > 0 && (
+                        <details>
+                          <summary className="cursor-pointer text-muted-foreground">Answers</summary>
+                          <ol className="mt-2 list-decimal space-y-1 pl-5">
+                            {q.answers!.map((a, i) => (
+                              <li key={i}>
+                                <span>{a.question}</span>
+                                <span className={`block text-xs ${a.correct ? "text-green-700 dark:text-green-400" : "text-destructive"}`}>
+                                  {a.correct ? "✓" : "✗"} {a.answer || "(no answer)"}{a.correct ? "" : ` · correct: ${a.correct_answer}`}
+                                </span>
+                              </li>
+                            ))}
+                          </ol>
+                        </details>
+                      )}
+                    </div>
+                  ))}
                 </TabsContent>
               </Tabs>
             </>

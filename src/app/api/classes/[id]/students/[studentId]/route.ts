@@ -23,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const isPrivate = profile?.role === "college";
     const none = Promise.resolve({ data: [] });
 
-    const [{ data: chats }, { data: apps }, { data: submissions }] = await Promise.all([
+    const [{ data: chats }, { data: apps }, { data: submissions }, { data: quizzes }] = await Promise.all([
       // Only chats from since the student joined this class, not from a previous teacher's class
       isPrivate ? none : supabase.from("ai_interactions").select("id, tool, prompt, response, created_at, flagged, flag_reason")
         .eq("user_id", studentId).gte("created_at", enrollment.joined_at).order("created_at", { ascending: false }).limit(100),
@@ -32,6 +32,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       supabase.from("assignment_submissions")
         .select("id, context_pack_id, answers, status, score, ai_feedback, teacher_feedback, graded_by, submitted_at, context_packs(title, type)")
         .eq("class_id", classId).eq("student_id", studentId).order("submitted_at", { ascending: false }),
+      // Quizzes the student took on their own in the Quiz Generator, since joining this class
+      supabase.from("quiz_results").select("id, topic, subject, grade_level, score, total, answers, created_at")
+        .eq("user_id", studentId).gte("created_at", enrollment.joined_at).order("created_at", { ascending: false }).limit(50),
     ]);
 
     return NextResponse.json({
@@ -44,6 +47,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         private: isPrivate,
       },
       // Worrying messages first, then newest first
+      quizzes: quizzes ?? [],
       chats: [...(chats ?? [])].sort((a, b) => Number(!!b.flagged) - Number(!!a.flagged)),
       apps: apps ?? [],
       submissions: (submissions ?? []).map((s) => {

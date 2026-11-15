@@ -155,3 +155,10 @@ prices. Checkout needs the **price** ID.
 - Try the same one twice: the wording of a verse should be the same both times (always KJV).
 - If one still fails, it now says "We couldn't find a verse just now…", and the real reason is in
   Vercel → studio → **Logs** (search for "Bible verse"). Send it to Claude.
+
+### Task 8: Quiz scores are saved (needs the Task 8 database change applied first)
+1. As the test student, open **Quiz Generator**, make a 3-question quiz, and get one wrong on purpose.
+2. It says "You scored 2 out of 3." (with no red "couldn't be saved" line).
+3. Open **Progress**: Quizzes Completed is 1, and the score shows in the chart.
+4. Sign in as the test teacher → **Students** → click the student → **Work**: under "Practice quizzes"
+   you see the quiz, 2 / 3, and the answers (the wrong one in red with the correct answer).
