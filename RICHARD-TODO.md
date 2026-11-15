@@ -56,6 +56,26 @@ Until this is done, the reset email link may be refused or land on the wrong pag
    - `http://localhost:3000/**`
 4. Click **Save**.
 
+**S2 (Task 20): set up a real email sender (do this before S3).**
+Supabase's built-in email only sends a few emails an hour, which isn't enough for a class signing up.
+1. Make a free account at an email service, for example https://resend.com (free for 3,000 emails a month).
+2. In Resend: **Domains** → **Add Domain** → type a domain you own (for example `studybuddyai.app`), then add the
+   DNS records it shows at the company where you bought the domain. Wait until it says **Verified**.
+   (If you don't own a domain yet, ask a parent or Scott: you need one for school email to arrive reliably.)
+3. In Resend: **API Keys** → **Create API Key** → copy it. It's a password: don't paste it in chat or code.
+4. Supabase → **Authentication** → **Emails** → **SMTP Settings** → turn on **Enable custom SMTP** and fill in:
+   - Sender email: `no-reply@your-domain`  · Sender name: `Study Buddy AI`
+   - Host: `smtp.resend.com` · Port: `465` · Username: `resend` · Password: the API key from step 3
+5. Click **Save**. Then **Authentication** → **Rate Limits**: raise "Emails sent per hour" (for example to 100).
+
+**S3 (Task 20): turn on "Confirm email".**
+1. Supabase → **Authentication** → **Sign In / Providers** → **Email**.
+2. Turn on **Confirm email**. Click **Save**.
+3. **Authentication** → **Emails** → **Templates** → **Confirm signup**: change the subject to
+   "Confirm your Study Buddy AI account". Save.
+4. From now on, new accounts must click the link in their email before they can sign in. The sign-up page
+   already says "Check your email to confirm" only when this is on. Accounts made before stay as they are.
+
 _(More Supabase steps are added below as tasks need them.)_
 
 ### Stripe
@@ -233,3 +253,10 @@ grade 6 with no code, a fake code, or no grade at all were **rejected**; grade 6
 grade 9 with no code was allowed (by design). Nothing to change. To see it yourself:
 - On the sign-up page, pick Elementary to High School, grade 6, and leave the class code empty: the page stops you.
 - Even if someone skips the page, the database refuses with "Students in 7th grade and below must join through a teacher's class code."
+
+### Task 20: Email confirmation (after Supabase steps S2 and S3)
+1. Sign up with a new test email address you can open.
+2. The page says "Account created! Check your email to confirm, then log in."
+3. Try to sign in before clicking the link: Supabase says the email isn't confirmed.
+4. Open the email (it comes from your own sender, not Supabase), click the link: you land on the dashboard signed in.
+5. Before S3 is done, signing up goes straight to the dashboard with no "check your email" message. That's correct too.
