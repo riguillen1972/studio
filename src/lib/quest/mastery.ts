@@ -3,9 +3,10 @@
 // After each answer we update it, allowing for lucky guesses and careless slips,
 // then add the chance they learned from the practice itself.
 
-export const P_LEARN = 0.15;   // chance of learning the skill from one practice question
-export const P_SLIP = 0.1;     // chance a student who knows it still gets it wrong
-export const P_GUESS = { multiple_choice: 0.25, numeric: 0.1 } as const;
+// Set gently (Nov 2026): one right answer shouldn't look like mastery, and one slip shouldn't erase it
+export const P_LEARN = 0.1;    // chance of learning the skill from one practice question
+export const P_SLIP = 0.15;    // chance a student who knows it still gets it wrong
+export const P_GUESS = { multiple_choice: 0.25, numeric: 0.2 } as const;
 
 export const MASTERED_AT = 0.95;   // p_known needed to count as mastered
 export const MIN_ATTEMPTS_FOR_MASTERY = 3;
@@ -47,14 +48,18 @@ export function nextReviewDate(step: number, from = new Date()): Date {
   return new Date(from.getTime() + days * 86_400_000);
 }
 
+/** Right answers a skill the diagnostic showed the student knows counts as, for the score cap. */
+export const DIAGNOSTIC_KNOWN_RIGHT_ANSWERS = 3;
+
 /**
  * The 0–100 skill score students see. It follows p_known, but a skill only reaches 100 when it is
- * mastered, and the first few answers can't push it past 70 / 80 / 90, so a lucky streak can't
- * look like mastery.
+ * mastered, and until 5 right answers it can't pass 40 + 12 per right answer (52, 64, 76, 88), so a
+ * lucky answer can't look like mastery. The cap grows only with right answers, so a wrong answer
+ * never raises the score. A diagnostic estimate before any practice is capped at 70.
  */
-export function scoreOf(pKnown: number | null | undefined, attempts = 0, masteredAt: string | null = null): number {
+export function scoreOf(pKnown: number | null | undefined, attempts = 0, masteredAt: string | null = null, correct = 0): number {
   if (masteredAt) return 100;
   if (pKnown === null || pKnown === undefined) return 0;
-  const cap = attempts >= MIN_ATTEMPTS_FOR_MASTERY ? 99 : 70 + attempts * 10;
+  const cap = attempts === 0 ? 70 : correct >= 5 ? 99 : 40 + correct * 12;
   return Math.min(cap, Math.round(pKnown * 100));
 }

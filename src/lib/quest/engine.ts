@@ -13,7 +13,7 @@ import {
 } from "./placement";
 import { checkAnswer, type QuestChoice, type QuestItem } from "./answers";
 import {
-  MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, scoreOf, statusOf, updatePKnown, type SkillStatus,
+  DIAGNOSTIC_KNOWN_RIGHT_ANSWERS, MASTERED_AT, MIN_ATTEMPTS_FOR_MASTERY, diagnosticPrior, nextReviewDate, scoreOf, statusOf, updatePKnown, type SkillStatus,
 } from "./mastery";
 
 export const DIAGNOSTIC_MAX_QUESTIONS = 30;
@@ -316,7 +316,10 @@ async function finishDiagnostic(supabase: SupabaseClient, studentId: string, sta
   const practiced = new Map((existing ?? []).filter((m) => m.attempts > 0).map((m) => [m.skill_id, m]));
   const fresh = toSave.filter(([id]) => !practiced.has(id)).map(([skill_id, r]) => ({
     student_id: studentId, skill_id, p_known: diagnosticPrior(r.result, r.difficulty),
-    attempts: 0, correct: 0, streak: 0, review_step: 0, mastered_at: null, next_review: null, updated_at: now,
+    // A skill the diagnostic showed they know starts its score cap as if answered right 3 times,
+    // so the first practice answer doesn't make the score drop
+    attempts: 0, correct: r.result === "correct" || r.result === "inferred_known" ? DIAGNOSTIC_KNOWN_RIGHT_ANSWERS : 0,
+    streak: 0, review_step: 0, mastered_at: null, next_review: null, updated_at: now,
   }));
   const { error } = fresh.length ? await supabase.from("quest_mastery").upsert(fresh, { onConflict: "student_id,skill_id" }) : { error: null };
   if (error) console.error("Failed to save diagnostic mastery:", error);
@@ -578,8 +581,8 @@ export async function answerPractice(
     status: statusOf(pAfter, attempts),
     p_before: before.p_known,
     p_after: pAfter,
-    score_before: row ? scoreOf(before.p_known, before.attempts, before.mastered_at) : 0,
-    score_after: scoreOf(pAfter, attempts, mastered_at),
+    score_before: row ? scoreOf(before.p_known, before.attempts, before.mastered_at, before.correct) : 0,
+    score_after: scoreOf(pAfter, attempts, mastered_at, before.correct + (correct ? 1 : 0)),
     just_mastered: justMastered,
     new_badges: newBadges(statsBefore, stats),
     streak: stats.streak,
@@ -598,7 +601,7 @@ export async function studentOverview(studentId: string, tzOffset = 0) {
 
   const [{ data: assessments }, { data: mastery }, { data: today }, { data: focus }, { data: approved }, progress, classDone] = await Promise.all([
     supabase.from("quest_assessments").select("id, kind, status, results, completed_at").eq("student_id", studentId).order("started_at", { ascending: false }),
-    supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at").eq("student_id", studentId),
+    supabase.from("quest_mastery").select("skill_id, p_known, attempts, correct, mastered_at").eq("student_id", studentId),
     supabase.from("quest_attempts").select("correct, seconds").eq("student_id", studentId).in("phase", ["practice", "review"]).gte("created_at", startOfDay.toISOString()),
     classId ? supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal, checkin_opened_at").eq("class_id", classId).maybeSingle() : Promise.resolve({ data: null }),
     supabase.from("quest_items").select("skill_id").eq("status", "approved"),
@@ -649,7 +652,7 @@ export async function studentOverview(studentId: string, tzOffset = 0) {
       return {
         id: s.id, code: SKILL_CODES[s.id], name: s.name, grade: s.grade, section: sectionOf(s), strand: s.strand, nad: s.nad, advanced: !!s.advanced,
         status: m?.mastered_at ? "mastered" : statusOf(m?.p_known, m?.attempts ?? 0),
-        score: scoreOf(m?.p_known, m?.attempts ?? 0, m?.mastered_at ?? null),
+        score: scoreOf(m?.p_known, m?.attempts ?? 0, m?.mastered_at ?? null, m?.correct ?? 0),
         practiced: (m?.attempts ?? 0) > 0,
         ready: ready.has(s.id),
       };
@@ -726,7 +729,7 @@ export async function studentReport(studentId: string, tzOffset = 0) {
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
   const [{ data: profile }, { data: mastery }, { data: attempts }, { data: diagnostics }, progress, { count: lessonsOpened }] = await Promise.all([
     supabase.from("profiles").select("id, display_name, grade_level").eq("id", studentId).maybeSingle(),
-    supabase.from("quest_mastery").select("skill_id, p_known, attempts, mastered_at, last_practiced").eq("student_id", studentId),
+    supabase.from("quest_mastery").select("skill_id, p_known, attempts, correct, mastered_at, last_practiced").eq("student_id", studentId),
     supabase.from("quest_attempts").select("skill_id, phase, correct, misconception, seconds, created_at")
       .eq("student_id", studentId).gte("created_at", since).order("created_at", { ascending: false }).limit(1000),
     supabase.from("quest_assessments").select("results, completed_at").eq("student_id", studentId).eq("kind", "diagnostic").eq("status", "completed")
@@ -735,7 +738,7 @@ export async function studentReport(studentId: string, tzOffset = 0) {
     supabase.from("quest_lesson_views").select("skill_id", { count: "exact", head: true }).eq("student_id", studentId).gte("last_viewed_at", since),
   ]);
   const diagnostic = diagnostics?.at(-1) ?? null;
-  const rows = (mastery ?? []) as { skill_id: string; p_known: number; attempts: number; mastered_at: string | null; last_practiced: string | null }[];
+  const rows = (mastery ?? []) as { skill_id: string; p_known: number; attempts: number; correct: number; mastered_at: string | null; last_practiced: string | null }[];
   const practice = (attempts ?? []).filter((a) => a.phase === "practice" || a.phase === "review");
   const topics = topicScores(rows);
 
@@ -780,7 +783,7 @@ export async function studentReport(studentId: string, tzOffset = 0) {
       .filter((r) => SKILLS_BY_ID[r.skill_id])
       .map((r) => ({
         id: r.skill_id, code: SKILL_CODES[r.skill_id], name: SKILLS_BY_ID[r.skill_id].name, section: sectionOf(SKILLS_BY_ID[r.skill_id]),
-        score: scoreOf(r.p_known, r.attempts, r.mastered_at), attempts: r.attempts, mastered: !!r.mastered_at, last_practiced: r.last_practiced,
+        score: scoreOf(r.p_known, r.attempts, r.mastered_at, r.correct), attempts: r.attempts, mastered: !!r.mastered_at, last_practiced: r.last_practiced,
       }))
       .sort((a, b) => a.section - b.section || a.code.localeCompare(b.code, undefined, { numeric: true })),
     mistakes: [...mistakeCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)

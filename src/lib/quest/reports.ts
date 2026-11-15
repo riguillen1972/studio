@@ -4,7 +4,7 @@
 import { SKILLS_BY_ID, TOPICS_BY_SECTION } from "./skills";
 import { scoreOf } from "./mastery";
 
-export interface MasteryLike { skill_id: string; p_known: number; attempts: number; mastered_at: string | null }
+export interface MasteryLike { skill_id: string; p_known: number; attempts: number; mastered_at: string | null; correct?: number }
 
 export type Band = "proficient" | "developing" | "needs_help";
 export const bandOf = (score: number): Band => (score >= 80 ? "proficient" : score >= 50 ? "developing" : "needs_help");
@@ -25,7 +25,7 @@ export function topicScores(mastery: MasteryLike[]): TopicScore[] {
       const core = t.skillIds.filter((id) => !SKILLS_BY_ID[id]?.advanced);
       const withData = core.filter((id) => byId.has(id));
       if (withData.length === 0) continue;
-      const scores = withData.map((id) => { const m = byId.get(id)!; return scoreOf(m.p_known, m.attempts, m.mastered_at); });
+      const scores = withData.map((id) => { const m = byId.get(id)!; return scoreOf(m.p_known, m.attempts, m.mastered_at, m.correct ?? 0); });
       result.push({
         section: Number(section), letter: t.letter, title: t.title, nad: t.nad,
         score: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),

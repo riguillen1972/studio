@@ -315,3 +315,10 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 ### Task 21: Google sign-in name (after Google Cloud step G1 and Google's review)
 1. Sign out, click **Google** on the sign-in page.
 2. Google's screen shows **Study Buddy AI** and your logo, with links to the privacy policy and terms.
+
+### Task 14: Gentler Math Quest score
+1. As a test student, pick a Math Quest skill you've never practiced. Answer one right: the score shows about **52** (not 80).
+2. Answer one wrong next: it drops to about **36** (not 48 or lower).
+3. A wrong answer never makes the score go up.
+4. Three right answers in a row still reach mastery (100) on the third, like before.
+5. A skill the diagnostic showed you know starts at 70, and a right practice answer moves it up, not down.

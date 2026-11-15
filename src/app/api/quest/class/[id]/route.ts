@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const [{ data: profiles }, { data: mastery }, { data: assessments }, { data: attempts }, { data: focus }, { data: feedback }] = await Promise.all([
       ids.length ? supabase.from("profiles").select("id, display_name, role, grade_level").in("id", ids) : Promise.resolve(none),
-      ids.length ? supabase.from("quest_mastery").select("student_id, skill_id, p_known, attempts, mastered_at").in("student_id", ids) : Promise.resolve(none),
+      ids.length ? supabase.from("quest_mastery").select("student_id, skill_id, p_known, attempts, correct, mastered_at").in("student_id", ids) : Promise.resolve(none),
       ids.length ? supabase.from("quest_assessments").select("student_id, kind, status, results, started_at, completed_at").in("student_id", ids).order("started_at", { ascending: false }) : Promise.resolve(none),
       ids.length ? supabase.from("quest_attempts").select("student_id, skill_id, phase, correct, misconception, seconds, created_at").in("student_id", ids).gte("created_at", weekAgo) : Promise.resolve(none),
       supabase.from("quest_class_focus").select("skill_ids, post_check_open, weekly_goal, checkin_opened_at").eq("class_id", classId).maybeSingle(),
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const heat: Record<string, Record<string, { p: number; score: number; status: string }>> = {};
     for (const m of mastery ?? []) {
       (heat[m.student_id] ??= {})[m.skill_id] = {
-        p: m.p_known, score: scoreOf(m.p_known, m.attempts, m.mastered_at), status: m.mastered_at ? "mastered" : statusOf(m.p_known, m.attempts),
+        p: m.p_known, score: scoreOf(m.p_known, m.attempts, m.mastered_at, m.correct ?? 0), status: m.mastered_at ? "mastered" : statusOf(m.p_known, m.attempts),
       };
     }
 
