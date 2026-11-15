@@ -39,6 +39,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -170,12 +172,48 @@ export function AppSidebar() {
     },
   ];
 
+  // Teachers: the AI tools, for planning or showing on the classroom projector
+  const teacherToolItems: typeof baseMenuItems = [
+    { href: "/tutor", icon: Bot, label: "AI Tutor", visibleTo: ['teacher'] },
+    { href: "/homework", icon: BookOpen, label: "Homework Help", visibleTo: ['teacher'] },
+    { href: "/quiz", icon: FileQuestion, label: "Quiz Generator", visibleTo: ['teacher'] },
+    { href: "/flashcards", icon: Layers, label: "Flashcards", visibleTo: ['teacher'] },
+    { href: "/summarizer", icon: NotebookText, label: "Summarizer", visibleTo: ['teacher'] },
+    { href: "/tools", icon: WandSparkles, label: "AI Tools library", visibleTo: ['teacher'] },
+    { href: "/bible-verse", icon: BookMarked, label: "Bible Verse", visibleTo: ['teacher'] },
+  ];
+
   const menuItems = baseMenuItems.filter(item => {
     // Math Quest is for grades 6–8 students
     const gradeNum = parseInt(gradeLevel ?? "", 10);
     if (item.visibleTo.includes('quest')) return userRole === 'k12' && gradeNum >= 6 && gradeNum <= 8;
     return item.visibleTo.includes('all') || item.visibleTo.includes(isTeacher ? 'teacher' : 'student');
   });
+
+  const renderItem = (item: (typeof baseMenuItems)[number]) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(item.href)}
+                  tooltip={{ children: item.label }}
+                >
+                  <Link href={item.href} onClick={closeOnPhone}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                     {item.tier === 'max' && (
+                        <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-purple-500/50 text-purple-500 bg-purple-500/10 group-data-[collapsible=icon]:hidden">
+                            MAX
+                        </Badge>
+                     )}
+                     {item.tier === 'pro' && (
+                        <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-blue-500/50 text-blue-500 bg-blue-500/10 group-data-[collapsible=icon]:hidden">
+                            PRO
+                        </Badge>
+                     )}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+  );
 
   return (
       <Sidebar
@@ -202,31 +240,14 @@ export function AppSidebar() {
         </SidebarHeader>
         <SidebarContent className="p-2">
           <SidebarMenu>
-            {menuItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive(item.href)}
-                  tooltip={{ children: item.label }}
-                >
-                  <Link href={item.href} onClick={closeOnPhone}>
-                    <item.icon />
-                    <span>{item.label}</span>
-                     {item.tier === 'max' && (
-                        <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-purple-500/50 text-purple-500 bg-purple-500/10 group-data-[collapsible=icon]:hidden">
-                            MAX
-                        </Badge>
-                     )}
-                     {item.tier === 'pro' && (
-                        <Badge variant="secondary" className="ml-auto text-xs font-bold tracking-wider border-blue-500/50 text-blue-500 bg-blue-500/10 group-data-[collapsible=icon]:hidden">
-                            PRO
-                        </Badge>
-                     )}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {menuItems.map(renderItem)}
           </SidebarMenu>
+          {isTeacher && (
+            <SidebarGroup className="mt-2 p-0">
+              <SidebarGroupLabel>AI Tools</SidebarGroupLabel>
+              <SidebarMenu>{teacherToolItems.map(renderItem)}</SidebarMenu>
+            </SidebarGroup>
+          )}
         </SidebarContent>
         <SidebarFooter className="p-2">
            <SidebarMenu>

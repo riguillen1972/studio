@@ -171,3 +171,9 @@ prices. Checkout needs the **price** ID.
 4. Ask "What animals did we see on our trip to the zoo?" It should say it doesn't know about that trip and ask you.
 5. Homework Help and Quiz Generator also see the pack: ask Quiz Generator for a quiz on "our pond field trip".
 - Automatic: `node scripts/browser-tests/task09-lesson-material.mjs`
+
+### Task 10: Teacher AI Tools menu
+- As the test teacher, the sidebar shows your class links, then an **AI Tools** heading with AI Tutor,
+  Homework Help, Quiz Generator, Flashcards, Summarizer, AI Tools library and Bible Verse.
+- Click each one: it opens, and the link you're on is highlighted.
+- As the test student, the sidebar is unchanged (no "AI Tools" heading, no duplicates).
