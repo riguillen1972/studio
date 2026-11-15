@@ -56,7 +56,10 @@ export default function QuestPage() {
         <h1 className="flex items-center gap-2 text-2xl font-bold font-headline tracking-tight sm:text-3xl">
           <Compass className="h-7 w-7 text-primary" /> Math Quest
         </h1>
-        <p className="mt-1 text-muted-foreground">Practice that adapts to you, covering all of grades 6–8 math: numbers, ratios, equations, functions, geometry and data.</p>
+        <p className="mt-1 text-muted-foreground">
+          Practice that adapts to you. Math Quest is new: we&apos;re adding questions skill by skill, starting with grade 6,
+          and more grade 6, 7 and 8 skills are on the way.
+        </p>
       </header>
 
       {error && <p className="text-destructive">{error}</p>}

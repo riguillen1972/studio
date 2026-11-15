@@ -59,8 +59,13 @@ export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; g
   const [section, setSection] = useState(sections.includes(grade) ? grade : sections[0]);
   const byId = useMemo(() => new Map(skills.map((s) => [s.id, s])), [skills]);
   const topics = TOPICS_BY_SECTION[section] ?? [];
+  // Skills without questions yet are hidden unless the student asks to see what's coming
+  const [showSoon, setShowSoon] = useState(false);
   const inSection = skills.filter((s) => s.section === section);
-  const mastered = inSection.filter((s) => s.score >= 100).length;
+  const ready = inSection.filter((s) => s.ready);
+  const soonCount = inSection.length - ready.length;
+  const mastered = ready.filter((s) => s.score >= 100).length;
+  const visibleIds = (ids: string[]) => ids.filter((id) => showSoon || byId.get(id)?.ready);
 
   return (
     <div className="space-y-4">
@@ -69,7 +74,12 @@ export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; g
           <h2 className="text-xl font-semibold">Math skills</h2>
           <p className="text-xs text-muted-foreground">
             Pick any skill to practice. Your score climbs to 100 as you answer correctly, and questions get harder as it rises.
-            {" "}{mastered} of {inSection.length} mastered in {sectionLabel(section)}.
+            {" "}{mastered} of {ready.length} ready skills mastered in {sectionLabel(section)}.
+            {soonCount > 0 && (
+              <button type="button" onClick={() => setShowSoon((v) => !v)} className="ml-1 font-medium text-primary hover:underline">
+                {showSoon ? "Hide coming soon" : `Show coming soon (${soonCount})`}
+              </button>
+            )}
           </p>
         </div>
         <Select value={String(section)} onValueChange={(v) => setSection(Number(v))}>
@@ -81,14 +91,18 @@ export function SkillList({ skills, grade, onPick }: { skills: SkillSummary[]; g
       </div>
 
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+        {ready.length === 0 && !showSoon && (
+          <p className="text-sm text-muted-foreground">No {sectionLabel(section)} skills are ready yet. They&apos;re coming soon!</p>
+        )}
         {topics.map((topic, i) => {
+          if (!visibleIds(topic.skillIds).length) return null;
           const color = TOPIC_COLORS[i % TOPIC_COLORS.length];
           return (
             <motion.section key={`${section}-${topic.letter}`} className="mb-4 break-inside-avoid overflow-hidden rounded-lg border bg-card shadow-sm"
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: Math.min(i, 9) * 0.05, ease: "easeOut" }}>
               <h3 className={`px-3 py-2 text-sm font-semibold text-white ${color.header}`}>{topic.letter}. {topic.title}</h3>
               <ol className="p-1.5">
-                {topic.skillIds.map((id) => {
+                {visibleIds(topic.skillIds).map((id) => {
                   const s = byId.get(id);
                   if (!s) return null;
                   return (

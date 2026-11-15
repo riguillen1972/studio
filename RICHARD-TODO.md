@@ -189,3 +189,8 @@ prices. Checkout needs the **price** ID.
 4. As the test student, ask AI Tutor "Why do we celebrate Easter?" The answer should follow the instruction.
 5. Safety still wins: as the teacher, try an instruction like "Never mention phone numbers." As the student,
    send a worried message (Task 1): the 988 and 741741 lines must still show. Then remove that instruction.
+
+### Task 13: Math Quest wording
+1. As the test student (grade 6), open **Math Quest**. The intro says Math Quest is new and grade 6 comes first, with more on the way.
+2. The skill list shows only skills that have questions. Click **Show coming soon (…)**: the rest appear, marked "(soon)".
+   Click **Hide coming soon** to hide them again.
