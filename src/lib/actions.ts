@@ -22,6 +22,7 @@ import { checkUsage, recordUsage, getAdminClient, getUserTier } from "@/lib/usag
 import { logInteraction, promptFrom } from "@/lib/activity";
 import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
 import { UserFacingError } from "@/lib/user-facing-error";
+import { lessonMaterialFor } from "@/lib/class-material";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -125,7 +126,15 @@ export async function getExplanationAction(input: GenerateExplanationInput) {
     const auth = await requireAuth();
     if ('userId' in auth && !(await isResearchModeAllowed(auth.userId))) parsedInput.data.mode = 'help';
   }
-  return handleAction(parsedInput.data, generateExplanation, "generateExplanation");
+  return handleAction(await withLessonMaterial(parsedInput.data), generateExplanation, "generateExplanation");
+}
+
+/** Adds the student's class lesson material to a request (on the server only). */
+async function withLessonMaterial<T extends object>(input: T): Promise<T & { lessonMaterial?: string }> {
+  const auth = await requireAuth();
+  if ('error' in auth) return input;
+  const material = await lessonMaterialFor(auth.userId);
+  return material ? { ...input, lessonMaterial: material } : input;
 }
 
 // Research Mode is allowed only if every class the student is in has it turned on (it starts off).
@@ -153,7 +162,7 @@ export async function getHomeworkHintsAction(input: ProvideHomeworkHintsInput) {
     if (!parsedInput.success) {
       return { success: false as const, error: "Invalid input." };
     }
-  return handleAction(parsedInput.data, provideHomeworkHints, "provideHomeworkHints");
+  return handleAction(await withLessonMaterial(parsedInput.data), provideHomeworkHints, "provideHomeworkHints");
 }
 
 // Schema for getSummaryAction
@@ -198,7 +207,7 @@ export async function getQuizAction(input: GenerateQuizInput) {
     if (!parsedInput.success) {
         return { success: false as const, error: "Invalid input." };
     }
-    return handleAction(parsedInput.data, generateQuiz, "generateQuiz");
+    return handleAction(await withLessonMaterial(parsedInput.data), generateQuiz, "generateQuiz");
 }
 
 // Schema for getQuizFromScanAction

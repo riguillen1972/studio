@@ -162,3 +162,12 @@ prices. Checkout needs the **price** ID.
 3. Open **Progress**: Quizzes Completed is 1, and the score shows in the chart.
 4. Sign in as the test teacher → **Students** → click the student → **Work**: under "Practice quizzes"
    you see the quiz, 2 / 3, and the answers (the wrong one in red with the correct answer).
+
+### Task 9: The tutor uses the teacher's lesson material
+1. As the test teacher, upload a **Lesson/Reading** Context Pack to the test class with a made-up fact, for example
+   "Pond field trip: we counted 37 turtles. Cattails are the producers in our pond."
+2. As the test student, ask AI Tutor "How many turtles did we count on our pond field trip?" The answer should say **37**.
+3. Ask "Explain producers and consumers using the pond from our field trip." It should mention cattails, and nothing made up (no frogs or algae unless they're in the pack).
+4. Ask "What animals did we see on our trip to the zoo?" It should say it doesn't know about that trip and ask you.
+5. Homework Help and Quiz Generator also see the pack: ask Quiz Generator for a quiz on "our pond field trip".
+- Automatic: `node scripts/browser-tests/task09-lesson-material.mjs`

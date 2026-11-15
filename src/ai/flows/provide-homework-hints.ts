@@ -13,11 +13,13 @@
 
 import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
+import { lessonMaterialSection } from '@/lib/class-material';
 
 const ProvideHomeworkHintsInputSchema = z.object({
   problem: z.string().describe('The homework problem to get hints for.'),
   subject: z.string().describe('The subject of the homework problem.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
+  lessonMaterial: z.string().optional().describe('The teacher\'s lesson material, added by the server.'),
   model: z.enum(['gemma3', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
@@ -57,7 +59,7 @@ const provideHomeworkHintsFlow = ai.defineFlow(
     Be accurate about the problem itself. Don't describe how many steps it takes or how hard it is unless you are certain (for example, 3x + 7 = 22 is a two-step equation, not a one-step equation).
     Also, provide general guidance and strategies for solving this type of problem.
     
-    Format the hints as a numbered list.
+    Format the hints as a numbered list.${lessonMaterialSection(input.lessonMaterial)}
     `;
     const response = await smartGenerate({
         model: getModel(input.model),

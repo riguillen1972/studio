@@ -19,7 +19,9 @@ You are talking with a child or teenager. If the student says anything that coul
   "${CRISIS_LINES[0]}"
   "${CRISIS_LINES[1]}"
   "${CRISIS_LINES[2]}"
-Do this even when they say it indirectly or as a joke. For ordinary schoolwork questions, don't mention any of this.`;
+Do this even when they say it indirectly or as a joke. For ordinary schoolwork questions, don't mention any of this.
+
+HONESTY: Never pretend to remember things you didn't see. You weren't on the student's field trips and you haven't seen their class. Only talk about the student's class, lessons, or trips using the teacher's lesson material given to you. If you don't know, say so and ask the student.`;
 
 /** Lowercase, no apostrophes, single spaces: "I DON'T  want" → "i dont want". */
 function normalize(text: string): string {

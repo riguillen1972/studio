@@ -10,6 +10,7 @@
 
 import {ai, smartGenerate, getModel, recentTurns, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
+import { lessonMaterialSection } from '@/lib/class-material';
 
 const ConversationTurnSchema = z.object({
   role: z.enum(['user', 'ai']),
@@ -22,6 +23,7 @@ const GenerateExplanationInputSchema = z.object({
   careerField: z.string().optional().describe('The student\'s college career field for tailored explanations.'),
   conversationHistory: z.array(ConversationTurnSchema).optional().describe('Previous conversation turns for multi-turn context.'),
   mode: z.enum(['help', 'research']).optional().describe('Tutor mode: help (guides without direct answers) or research (factual direct answers).'),
+  lessonMaterial: z.string().optional().describe('The teacher\'s lesson material, added by the server.'),
 });
 export type GenerateExplanationInput = z.infer<typeof GenerateExplanationInputSchema>;
 
@@ -69,7 +71,7 @@ const generateExplanationFlow = ai.defineFlow(
 
     B) A FACT QUESTION about history, science, people, places, definitions, background, or how something works (for example "Who was George Washington?"). For these, answer directly, clearly and completely, citing concepts where useful.
 
-    Please respond to the following question or concept.
+    Please respond to the following question or concept.${lessonMaterialSection(input.lessonMaterial)}
     ${historySection}
     Question/Concept to research:
     ${input.concept}
@@ -77,7 +79,7 @@ const generateExplanationFlow = ai.defineFlow(
     } else {
       prompt = `You are an AI-powered tutor specializing in explaining complex concepts in simple terms. Your goal is to help students understand the underlying principles of a topic without giving them the direct answer to their questions.${careerOptimization}
 
-    Please provide a clear and concise explanation for the following concept or question. Guide the student by explaining the concepts and principles involved. Do not provide the final answer to the question if it's a problem to be solved. Instead, help them understand how to arrive at the solution themselves.
+    Please provide a clear and concise explanation for the following concept or question. Guide the student by explaining the concepts and principles involved. Do not provide the final answer to the question if it's a problem to be solved. Instead, help them understand how to arrive at the solution themselves.${lessonMaterialSection(input.lessonMaterial)}
     ${historySection}
     Concept/Question:
     ${input.concept}

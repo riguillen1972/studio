@@ -13,12 +13,14 @@
 
 import {ai, smartGenerate, getModel, safetySettings, SupportedModel} from '@/ai/genkit';
 import {z} from 'genkit';
+import { lessonMaterialSection } from '@/lib/class-material';
 
 const GenerateQuizInputSchema = z.object({
   topic: z.string().describe('The topic for the quiz.'),
   subject: z.string().describe('The subject of the quiz.'),
   gradeLevel: z.string().describe('The grade level of the student.'),
   numQuestions: z.number().int().min(1).max(10).describe('The number of questions to generate.'),
+  lessonMaterial: z.string().optional().describe('The teacher\'s lesson material, added by the server.'),
   model: z.enum(['gemma3', 'flash', 'pro', 'haiku'] as [SupportedModel, ...SupportedModel[]]).optional(),
 });
 
@@ -59,6 +61,7 @@ const generateQuizFlow = ai.defineFlow(
     Please generate ${input.numQuestions} multiple-choice questions. Each question should have exactly 4 options. One of the options must be the correct answer.
     
     Make sure the questions are appropriate for the specified grade level.
+    If the teacher's lesson material below covers this topic, base the questions on it.${lessonMaterialSection(input.lessonMaterial)}
     `;
     const response = await smartGenerate({
         model: getModel(input.model),
