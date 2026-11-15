@@ -226,13 +226,13 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                         size="sm"
                         className="flex-1"
                         disabled={!researchModeAllowed}
-                        title={researchModeAllowed ? undefined : "Your teacher has turned off Research Mode"}
+                        title={researchModeAllowed ? undefined : "Research Mode is off for your class"}
                     >
                         Research Mode
                     </Button>
                 </div>
                 {!researchModeAllowed && (
-                    <p className="mt-1 text-xs text-muted-foreground">Your teacher has turned off Research Mode.</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Research Mode is off for your class. Your teacher can turn it on.</p>
                 )}
             </div>
             <div className="flex-1">

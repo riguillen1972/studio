@@ -81,7 +81,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : null;
   }, [supabase]);
 
-  // Research Mode is off if a teacher of any of the student's classes turned it off.
+  // Research Mode is on only if every one of the student's classes has it turned on (it starts off).
   const loadClassSettings = useCallback(async () => {
     const headers = await authHeaders();
     if (!headers) return;
@@ -90,7 +90,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       if (!res.ok) return;
       const { data } = await res.json();
       const blocked = (data ?? []).some(
-        (c: { settings?: { allow_research_mode?: boolean } }) => c?.settings?.allow_research_mode === false
+        (c: { settings?: { allow_research_mode?: boolean } }) => c?.settings?.allow_research_mode !== true
       );
       setResearchModeAllowed(!blocked);
     } catch (e) {

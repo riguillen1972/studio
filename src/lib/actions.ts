@@ -118,16 +118,16 @@ export async function getExplanationAction(input: GenerateExplanationInput) {
   if (!parsedInput.success) {
     return { success: false as const, error: "Invalid input." };
   }
+  // Don't trust the browser: if the student's class has Research Mode off, answer in Help Mode
   if (parsedInput.data.mode === 'research') {
     const auth = await requireAuth();
-    if ('userId' in auth && !(await isResearchModeAllowed(auth.userId))) {
-      return { success: false as const, error: "Your teacher has turned off Research Mode for your class." };
-    }
+    if ('userId' in auth && !(await isResearchModeAllowed(auth.userId))) parsedInput.data.mode = 'help';
   }
   return handleAction(parsedInput.data, generateExplanation, "generateExplanation");
 }
 
-// Research Mode is allowed unless a teacher of one of the student's classes turned it off.
+// Research Mode is allowed only if every class the student is in has it turned on (it starts off).
+// Students who aren't in a class can use it.
 async function isResearchModeAllowed(userId: string): Promise<boolean> {
   const { data } = await getAdminClient()
     .from("enrollments")
@@ -135,7 +135,7 @@ async function isResearchModeAllowed(userId: string): Promise<boolean> {
     .eq("student_id", userId);
   return !(data ?? []).some((row) => {
     const cls = Array.isArray(row.classes) ? row.classes[0] : row.classes;
-    return (cls as { settings?: { allow_research_mode?: boolean } } | null)?.settings?.allow_research_mode === false;
+    return (cls as { settings?: { allow_research_mode?: boolean } } | null)?.settings?.allow_research_mode !== true;
   });
 }
 

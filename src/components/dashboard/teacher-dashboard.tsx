@@ -339,7 +339,7 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                         </div>
                                         <Switch
                                             id={`research-${cls.id}`}
-                                            checked={cls.settings?.allow_research_mode !== false}
+                                            checked={cls.settings?.allow_research_mode === true}
                                             onCheckedChange={(checked) => handleResearchModeChange(cls.id, checked)}
                                         />
                                     </div>

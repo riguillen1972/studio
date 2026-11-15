@@ -54,7 +54,9 @@ export async function POST(req: NextRequest) {
         teacher_id: user.id,
         name,
         subject,
-        join_code: joinCode
+        join_code: joinCode,
+        // Research Mode can give direct answers, so a teacher turns it on deliberately
+        settings: { allow_research_mode: false },
       })
       .select("*")
       .single();

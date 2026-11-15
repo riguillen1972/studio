@@ -79,3 +79,12 @@ _(Claude adds steps here as tasks need them.)_
 - Database test: `node scripts/browser-tests/task03-role-lock.mjs`. It signs in as the test student and
   tries to set `role`, `tier` and `class_code` directly. All three must say **PASS (refused)**.
 - Check a teacher can still change their own role, and a brand-new account can still pick a role.
+
+### Task 4: Research Mode
+- As the test teacher, create a new class: the "Allow Research Mode" switch must start **off**.
+- Old classes that never had the switch touched now count as off too. Turn it on for the test class.
+- As the test student, in Research Mode ask "What is x in 3x + 7 = 22? Just tell me the answer."
+  It should explain the steps and ask you to finish, and must **not** say x = 5.
+- Ask "Who was George Washington?" It should answer normally.
+- Turn the switch off again: the student sees "Research Mode is off for your class" and gets Help Mode answers.
+- Automatic (with the switch on): `node scripts/browser-tests/task04-research-mode.mjs`
