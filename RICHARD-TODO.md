@@ -3,6 +3,29 @@
 Things Claude couldn't do from code: clicks in website dashboards, and tests that need you
 signed in. Do them in this order. Each step says which task it belongs to.
 
+## Do it in this order
+
+1. **Set up your computer** (section 0): `.env.local` and the test Chrome.
+2. **Test the safety fixes first** (Tasks 1–4 in section 2). Most important check: ask AI Tutor a normal question
+   like "What is 3x + 7 = 22?" on a **free** account. Every AI request now starts with safety instructions that
+   mention self-harm, and Gemini's safety filter is set to its strictest level. If normal questions start failing,
+   tell Claude so the wording can be changed before you deploy.
+3. **Supabase S1**, then test Task 5 (password reset).
+4. **Stripe ST1 and ST2** (test mode), redeploy, then test Task 6.
+5. Test Tasks 7–19 (section 2).
+6. **Supabase S2 then S3** (email), then test Task 20.
+7. **Google Cloud G1**, wait for Google's review, then test Task 21.
+8. When everything passes on your computer: merge the branch and deploy, then repeat the key tests on the live
+   site with test accounts only.
+
+Good to know before you deploy:
+- The four database changes (flags, profile guard, quiz details) are **already applied** to the live database.
+  They're safe with the current live code.
+- After this branch is deployed, classes whose teacher never touched the Research Mode switch (5 classes right now)
+  count as **off** until the teacher turns it on.
+- The Bible Verse page catches crisis words in the browser and shows help right away, but that message isn't sent
+  to the teacher (Task 2 only covers messages that reach the server). Ask Claude if you want that added.
+
 ---
 
 ## 0. Set up your computer for testing (do this first)
