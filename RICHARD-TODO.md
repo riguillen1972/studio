@@ -194,3 +194,8 @@ prices. Checkout needs the **price** ID.
 1. As the test student (grade 6), open **Math Quest**. The intro says Math Quest is new and grade 6 comes first, with more on the way.
 2. The skill list shows only skills that have questions. Click **Show coming soon (…)**: the rest appear, marked "(soon)".
    Click **Hide coming soon** to hide them again.
+
+### Task 15: Mistake labels
+- As the test teacher, open **Math Quest** → **Students** (or a Friday report) for a student who made mistakes.
+  "Repeated mistakes" should read like a teacher's notes, for example "Multiplied instead of dividing to find the whole."
+- Print a parent summary: the "A pattern to watch" line shows the label in quotes and reads naturally.

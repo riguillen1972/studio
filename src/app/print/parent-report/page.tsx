@@ -149,8 +149,7 @@ function ParentReports() {
               {r.mistakes.length > 0 && (
                 <p>
                   <span className="font-semibold">A pattern to watch: </span>
-                  {first} sometimes {r.mistakes[0].name.charAt(0).toLowerCase() + r.mistakes[0].name.slice(1)}.
-                  Math Quest shows a short lesson on this each time it happens.
+                  &ldquo;{r.mistakes[0].name}.&rdquo; Math Quest shows {first} a short lesson on this each time it happens.
                 </p>
               )}
 
