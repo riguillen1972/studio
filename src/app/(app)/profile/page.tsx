@@ -238,6 +238,12 @@ function ProfileContent() {
         }
       };
       verifyTier();
+    } else if (upgrade === 'failed') {
+      toast({
+        title: "Checkout didn't open",
+        description: "You're signed in on the Free plan. Try Upgrade again below, or contact support if it keeps happening.",
+        variant: "destructive",
+      });
     } else if (upgrade === 'cancelled') {
       toast({
         title: "Upgrade Cancelled",
@@ -262,7 +268,7 @@ function ProfileContent() {
         window.location.href = data.url;
       } else {
         toast({
-          title: "Error",
+          title: "Checkout didn't open",
           description: data.error || "Could not start checkout. Please try again.",
           variant: "destructive",
         });

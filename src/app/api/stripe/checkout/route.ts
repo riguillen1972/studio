@@ -33,9 +33,12 @@ export async function POST(request: NextRequest) {
       ? STRIPE_PLANS.maxTeacher
       : STRIPE_PLANS[plan as 'pro' | 'max'];
 
-    if (!planConfig.priceId) {
-      console.error(`Missing Stripe price ID for ${plan}${profile?.role === 'teacher' ? ' (teacher)' : ''}`);
-      return NextResponse.json({ error: 'This plan is not available yet. Please contact support.' }, { status: 500 });
+    // Checkout needs a Stripe *price* ID (price_...), not the product ID (prod_...)
+    const envName = planConfig === STRIPE_PLANS.maxTeacher ? 'STRIPE_TEACHER_MAX_PRICE_ID'
+      : plan === 'max' ? 'STRIPE_MAX_PRICE_ID' : 'STRIPE_PRO_PRICE_ID';
+    if (!planConfig.priceId?.startsWith('price_')) {
+      console.error(`${envName} must be a Stripe price ID starting with price_ (it is ${planConfig.priceId ? `"${planConfig.priceId.slice(0, 5)}…"` : 'missing'})`);
+      return NextResponse.json({ error: CHECKOUT_UNAVAILABLE }, { status: 500 });
     }
 
     let customerId = profile?.stripe_customer_id;
@@ -121,8 +124,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
+    // Stripe's own message stays in the server log; the user gets a plain one
     console.error('Checkout session creation failed:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: CHECKOUT_UNAVAILABLE }, { status: 500 });
   }
 }
+
+const CHECKOUT_UNAVAILABLE = "We couldn't open checkout for this plan right now. Please try again later, or contact support if it keeps happening.";

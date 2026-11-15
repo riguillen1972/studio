@@ -58,6 +58,37 @@ Until this is done, the reset email link may be refused or land on the wrong pag
 
 _(More Supabase steps are added below as tasks need them.)_
 
+### Stripe
+
+Do these in **test mode** first (the "Test mode" switch at the top right of the Stripe dashboard),
+then repeat them in live mode only when you're ready to take real payments.
+
+**ST1 (Task 6): put the right Max *price* IDs in Vercel.** Until this is done, Upgrade to Max shows
+"We couldn't open checkout for this plan right now."
+
+A *product* is the thing you sell ("Study Buddy AI Max", ID starts with `prod_`). A *price* is one
+way to pay for it ("$24.99 every month", ID starts with `price_`). One product can have several
+prices. Checkout needs the **price** ID.
+
+1. Stripe dashboard → **Product catalog** → open the **Max** product.
+2. Under **Pricing** you should see two monthly prices: **$24.99** (students) and **$39.99** (teachers).
+   If one is missing, click **+ Add another price**, choose **Recurring**, **Monthly**, type the amount, and save.
+3. Click the **$24.99** price. Copy its ID (starts with `price_`).
+4. Click the **$39.99** price. Copy its ID too.
+5. Vercel → **studio** → **Settings** → **Environment Variables**:
+   - Set `STRIPE_MAX_PRICE_ID` to the **$24.99** price ID.
+   - Set `STRIPE_TEACHER_MAX_PRICE_ID` to the **$39.99** price ID. (Right now this one holds a
+     `prod_…` product ID. That's the bug Scott found.)
+   - Check `STRIPE_PRO_PRICE_ID` also starts with `price_`.
+6. Put the same **test mode** IDs in your `.env.local`.
+7. Redeploy on Vercel (Deployments → ⋯ → Redeploy) so the new values are used.
+
+**ST2 (Task 6): replace the placeholder product descriptions.**
+1. **Product catalog** → **Pro** → **Edit product**. Change the description to:
+   "Study Buddy AI Pro: Claude Haiku, 1.5 million tokens a month, all 18 AI tools, no ads." Save.
+2. Open **Max** → **Edit product** and write a matching description of what Max includes. Save.
+3. Do it in both test mode and live mode (they're separate).
+
 ---
 
 ## 2. Tests to run (in task order)
@@ -106,3 +137,10 @@ _(More Supabase steps are added below as tasks need them.)_
 5. Sign out and sign in with the new password. (Then update TEST_STUDENT_PASSWORD in `.env.local`.)
 6. Click the same email link again: it should say "This link has expired" with a button to get a new one.
 7. Signed in, go to **Profile** → **Change Password**: the New Password form opens right away.
+
+### Task 6: Upgrade to Max (after Stripe steps ST1 and ST2, in test mode)
+1. Sign in as the test teacher → **Profile** → **Upgrade to Max**. A Stripe checkout page opens showing **$39.99/month**.
+   Stop there. Don't pay.
+2. Sign in as a test student who is allowed to buy (college, or grade 8+) → **Upgrade to Max**: checkout shows **$24.99/month**.
+3. **Upgrade to Pro**: the checkout description is the new real text, not "appears at profile…".
+4. Before ST1 is done, Upgrade to Max should show a red message "We couldn't open checkout…" instead of doing nothing.

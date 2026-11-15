@@ -135,6 +135,9 @@ function LoginContent() {
           window.location.href = data.url;
           return;
         }
+        // Checkout couldn't open: still sign them in, and say why on the Profile page
+        router.push(`/profile?upgrade=failed`);
+        return;
       } catch (e) {
         console.error('Checkout error:', e);
       }
