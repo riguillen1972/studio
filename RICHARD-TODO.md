@@ -72,3 +72,10 @@ _(Claude adds steps here as tasks need them.)_
   3. Open **Students**: that student is at the top with a red **Needs attention** badge.
   4. Click the student: the worrying message is first, with a red border and a note to check in with them.
   5. A different teacher (not this class's) must not see any of it.
+
+### Task 3: Students can't change their role
+- By hand: sign in as the test student → **Profile**. The "Your Role" dropdown is grey and locked,
+  with "Ask your teacher if your role needs to change." under it.
+- Database test: `node scripts/browser-tests/task03-role-lock.mjs`. It signs in as the test student and
+  tries to set `role`, `tier` and `class_code` directly. All three must say **PASS (refused)**.
+- Check a teacher can still change their own role, and a brand-new account can still pick a role.

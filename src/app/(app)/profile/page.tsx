@@ -346,7 +346,8 @@ function ProfileContent() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="role">Your Role</Label>
-                        <Select value={role ?? undefined} onValueChange={(newRole) => handleProfileChange({ role: newRole })} disabled={isUpdatingRole}>
+                        {/* Students can't change their own role (the database refuses it too) */}
+                        <Select value={role ?? undefined} onValueChange={(newRole) => handleProfileChange({ role: newRole })} disabled={isUpdatingRole || role === 'k12'}>
                             <SelectTrigger id="role">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -357,7 +358,9 @@ function ProfileContent() {
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground pt-1">
-                            Changing your role updates the AI's teaching style and features.
+                            {role === 'k12'
+                                ? 'Ask your teacher if your role needs to change.'
+                                : "Changing your role updates the AI's teaching style and features."}
                         </p>
                     </div>
                     {role === 'k12' && (
