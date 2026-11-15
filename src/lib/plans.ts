@@ -6,6 +6,8 @@
 import toolsData from '@/lib/tools.json';
 
 export type SubscriptionTier = 'free' | 'pro' | 'max';
+// 'gemma3' = the free plan's model, which is Gemini 2.5 Flash-Lite (the old name is kept so saved
+// usage and the mobile app keep working; see src/ai/genkit.ts).
 export type UsageModel = 'gemma3' | 'flash' | 'pro' | 'haiku';
 
 // Monthly token limits per tier and model. 0 means the model is not available on that tier.
@@ -25,6 +27,7 @@ export const USAGE_COLUMNS: Record<UsageModel, 'flash_lite_used' | 'flash_used' 
   haiku: 'haiku_used',
 };
 
+/** The name shown on screen for each model (the one place it's written). */
 export const MODEL_LABELS: Record<UsageModel, string> = {
   gemma3: 'Gemini 2.5 Flash-Lite',
   flash: 'Gemini 2.5 Flash',

@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { SupportedModel } from "@/ai/genkit";
 import { useAppState } from "@/components/app-state-provider";
+import { MODEL_LABELS } from "@/lib/plans";
 
 interface ModelSelectorProps {
   value: SupportedModel;
@@ -22,11 +23,11 @@ export default function ModelSelector({ value, onChange, disabled, className }: 
   const availableModels: { value: SupportedModel; label: string }[] = [];
 
   if (tier === "free") {
-    availableModels.push({ value: "gemma3", label: "Gemini 2.5 Flash-Lite" });
+    availableModels.push({ value: "gemma3", label: MODEL_LABELS.gemma3 });
   }
 
   if (tier === "pro" || tier === "max") {
-    availableModels.push({ value: "haiku", label: "Claude Haiku 5.5" });
+    availableModels.push({ value: "haiku", label: MODEL_LABELS.haiku });
   }
 
   // Determine the correct default for this tier

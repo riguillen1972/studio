@@ -199,3 +199,8 @@ prices. Checkout needs the **price** ID.
 - As the test teacher, open **Math Quest** → **Students** (or a Friday report) for a student who made mistakes.
   "Repeated mistakes" should read like a teacher's notes, for example "Multiplied instead of dividing to find the whole."
 - Print a parent summary: the "A pattern to watch" line shows the label in quotes and reads naturally.
+
+### Task 16: Model name
+- As a free test student, AI Tutor's model menu says **Gemini 2.5 Flash-Lite**, and that's the model that answers.
+- The request still says `model: "gemma3"`: that's the code's old name for the free model (kept so saved
+  token usage and the mobile app keep working). The code now says so in `src/ai/genkit.ts` and `src/lib/plans.ts`.

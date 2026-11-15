@@ -8,9 +8,12 @@ import { requestContext } from '@/lib/request-context';
 // --- MODEL DEFINITIONS ---
 // Free plan: Gemini 2.5 Flash-Lite. Pro and Max: Claude Haiku 5.5 only (cheaper than
 // Gemini Flash, and newer Gemini models cost more still).
-export const gemmaLite    = 'googleai/gemini-2.5-flash-lite';
+export const geminiFlashLite    = 'googleai/gemini-2.5-flash-lite';
 export const claudeHaiku  = 'anthropic/claude-haiku-5-5';
 
+// 'gemma3' is the app's old name for the free model. The free plan really runs Gemini 2.5
+// Flash-Lite (geminiFlashLite above); the name stays because saved usage, the mobile app and
+// every tool's input use it. The screen shows the real model name.
 export type SupportedModel = 'free' | 'pro' | 'max' | 'gemma3' | 'flash' | 'haiku';
 
 /**
@@ -28,7 +31,7 @@ export function getModel(model: SupportedModel = 'free'): string {
     case 'gemma3':
     case 'free':
     default:
-      return gemmaLite;
+      return geminiFlashLite;
   }
 }
 
@@ -64,7 +67,7 @@ export const safetySettings: Array<{ category: string; threshold: string }> = [
 // --- CONFIGURATION ---
 export const ai = genkit({
   plugins: [googleAI(), anthropic()],
-  model: gemmaLite,
+  model: geminiFlashLite,
 });
 
 /**

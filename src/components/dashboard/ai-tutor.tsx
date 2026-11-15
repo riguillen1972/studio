@@ -242,8 +242,9 @@ export default function AITutor({ careerField }: { careerField?: string }) {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        {(tier !== 'free') && <SelectItem value="haiku">Claude Haiku 5.5</SelectItem>}
-                        {(tier === 'free') && <SelectItem value="gemma3">Gemini 2.5 Flash-Lite</SelectItem>}
+                        {(tier !== 'free') && <SelectItem value="haiku">{MODEL_LABELS.haiku}</SelectItem>}
+                        {/* "gemma3" is the free plan's model id; it runs Gemini 2.5 Flash-Lite (see src/ai/genkit.ts) */}
+                        {(tier === 'free') && <SelectItem value="gemma3">{MODEL_LABELS.gemma3}</SelectItem>}
                     </SelectContent>
                 </Select>
             </div>
