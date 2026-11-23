@@ -47,6 +47,16 @@ export default function QuestPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  // /quest?skill=<id> (from the textbook's Practice button) opens that skill's practice
+  const [openedFromLink, setOpenedFromLink] = useState(false);
+  useEffect(() => {
+    if (openedFromLink || !overview?.eligible) return;
+    const wanted = new URLSearchParams(window.location.search).get("skill");
+    const match = wanted ? overview.skills.find((s) => s.id === wanted) : undefined;
+    setOpenedFromLink(true);
+    if (match?.ready) { setSkill(match); setMode("skill"); }
+  }, [overview, openedFromLink]);
+
   const backHome = () => { setMode("home"); load(); };
 
   return (

@@ -209,7 +209,7 @@ function Lesson({ lesson: l, voice, practiceButton }: {
   );
 }
 
-function QuickCheck({ check }: { check: LessonContent["check"] }) {
+export function QuickCheck({ check, onResult }: { check: LessonContent["check"]; onResult?: (right: boolean) => void }) {
   const [value, setValue] = useState("");
   const [tries, setTries] = useState(0);
   const [result, setResult] = useState<"right" | "wrong" | null>(null);
@@ -221,6 +221,7 @@ function QuickCheck({ check }: { check: LessonContent["check"] }) {
     const right = checkAnswer({ kind: "numeric", choices: null, answer: check.answer }, value).correct;
     setResult(right ? "right" : "wrong");
     setTries((t) => t + 1);
+    onResult?.(right);
     if (!right) setShowHint(true);
   };
 

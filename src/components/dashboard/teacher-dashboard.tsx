@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { User } from "@supabase/supabase-js";
 import { useSearchParams } from "next/navigation";
+import { TEACHING_MODES, type TeachingMode } from "@/lib/mentors";
 
 interface TeacherDashboardProps {
     user: User | null;
@@ -28,7 +29,7 @@ interface ClassModel {
     name: string;
     subject: string | null;
     join_code: string;
-    settings: { allow_research_mode?: boolean; ai_instructions?: string } | null;
+    settings: { allow_research_mode?: boolean; ai_instructions?: string; teaching_mode?: TeachingMode } | null;
     created_at: string;
 }
 
@@ -347,6 +348,10 @@ export function TeacherDashboard({ user, tier }: TeacherDashboardProps) {
                                             <Copy className="h-4 w-4" />
                                         </Button>
                                     </div>
+                                    <TeachingModePicker
+                                        value={cls.settings?.teaching_mode ?? "mentor"}
+                                        onChange={(mode) => saveClassSettings(cls.id, { teaching_mode: mode })}
+                                    />
                                     <ClassInstructions
                                         initial={cls.settings?.ai_instructions ?? ""}
                                         onSave={(text) => saveClassSettings(cls.id, { ai_instructions: text })}
@@ -594,6 +599,34 @@ function ClassInstructions({ initial, onSave }: { initial: string; onSave: (text
                     Save
                 </Button>
             </div>
+        </div>
+    );
+}
+
+/** How this class learns textbook lessons: personal mentors, the teacher, or the AI Teacher. */
+function TeachingModePicker({ value, onChange }: { value: TeachingMode; onChange: (mode: TeachingMode) => Promise<string | null> }) {
+    const [mode, setMode] = useState<TeachingMode>(value);
+    const [error, setError] = useState<string | null>(null);
+    const choose = async (next: TeachingMode) => {
+        const before = mode;
+        setMode(next);
+        setError(null);
+        const err = await onChange(next);
+        if (err) { setMode(before); setError(err); }
+    };
+    return (
+        <div className="space-y-2 pt-4">
+            <Label className="text-sm">Who teaches textbook lessons?</Label>
+            <div className="grid gap-2">
+                {TEACHING_MODES.map((m) => (
+                    <button key={m.id} type="button" onClick={() => choose(m.id)}
+                        className={`rounded-lg border-2 p-2 text-left text-sm transition-colors ${mode === m.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}>
+                        <span className="font-medium">{m.label}</span>
+                        <span className="block text-xs text-muted-foreground">{m.description}</span>
+                    </button>
+                ))}
+            </div>
+            {error && <p className="text-xs text-destructive">{error}</p>}
         </div>
     );
 }

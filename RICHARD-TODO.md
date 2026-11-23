@@ -322,3 +322,30 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 3. A wrong answer never makes the score go up.
 4. Three right answers in a row still reach mastery (100) on the third, like before.
 5. A skill the diagnostic showed you know starts at 70, and a right practice answer moves it up, not down.
+
+---
+
+## Math Textbook and personal mentors (branch feature/etextbook-mentor)
+
+### As a student (grade 6–8, in the test class)
+1. The sidebar has **Math Textbook**. It opens a table of contents: Grade 6 / 7 / 8, a colored chapter per NAD topic, a lesson per skill.
+2. Open a lesson. The first time, **Choose your mentor** opens: Pip (fox), Bolt (robot), Shelly (turtle), Nova (dragon). Pick one.
+3. The lesson is a book: Next / Back (or the arrow keys), page dots, "Read it to me". While it reads, the mentor's mouth moves.
+4. On an example page, **Next step** reveals one step at a time.
+5. On "Your turn", answer right: the mentor cheers. Answer wrong: it encourages you to look back or ask for a hint.
+6. Ask the mentor a question in the box (for example "Why do we change the percent to a decimal?"). It answers in its own
+   personality, about this page. Ask it for the "Your turn" answer: it should give a hint, not the answer.
+7. **Practice** on the last page opens that skill in Math Quest.
+8. A lesson nobody has opened yet says "Writing this lesson…" for about half a minute, then opens.
+
+### As the teacher
+1. On **My Class**, the class card has **Who teaches textbook lessons?** with three choices.
+2. **I'll teach**: the student's textbook shows "Your teacher is teaching this lesson in class" and no mentor.
+3. **AI Teacher teaches the class**: students see a note instead of the mentor. In **Live Session**, choose a grade and a
+   **Math Textbook lesson** and start the session: the AI Teacher teaches that lesson (open the lesson in the textbook first so it's written).
+4. **Personal mentor**: students get their mentor again.
+5. In the Students tab, mentor questions show up in the student's AI chats as "Textbook mentor".
+
+Notes:
+- The mentor choice is remembered on each device (a student on a new Chromebook picks again).
+- The mentor goes through the same checks as every AI tool: token limit, safety lines for worried messages, teacher alerts.

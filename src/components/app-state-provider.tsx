@@ -6,6 +6,7 @@ import { SupportedModel } from '@/ai/genkit';
 import { useAuth } from '@/lib/supabase/auth-provider';
 import { createClient } from '@/lib/supabase/client';
 import { TOKEN_LIMITS, toUsageModel, type SubscriptionTier, type UsageModel } from '@/lib/plans';
+import { isTeachingMode, type TeachingMode } from '@/lib/mentors';
 
 export type { SubscriptionTier } from '@/lib/plans';
 
@@ -39,6 +40,8 @@ interface AppState {
   classCode: string | null;
   needsRolePicker: boolean;
   researchModeAllowed: boolean;
+  /** How the student's class learns textbook lessons (set by the teacher; mentor if not set). */
+  teachingMode: TeachingMode;
   updateProfile: (updates: ProfileUpdates) => Promise<{ error: string | null }>;
   joinClass: (code: string) => Promise<{ error: string | null }>;
   leaveClass: () => Promise<{ error: string | null }>;
@@ -73,6 +76,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [classCode, setClassCode] = useState<string | null>(null);
   const [needsRolePicker, setNeedsRolePicker] = useState<boolean>(false);
   const [researchModeAllowed, setResearchModeAllowed] = useState<boolean>(true);
+  const [teachingMode, setTeachingMode] = useState<TeachingMode>('mentor');
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ used: emptyUsage(), date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
@@ -93,6 +97,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         (c: { settings?: { allow_research_mode?: boolean } }) => c?.settings?.allow_research_mode !== true
       );
       setResearchModeAllowed(!blocked);
+      const mode = (data ?? []).map((c: { settings?: { teaching_mode?: unknown } }) => c?.settings?.teaching_mode).find(isTeachingMode);
+      setTeachingMode(mode ?? 'mentor');
     } catch (e) {
       console.error('Failed to load class settings:', e);
     }
@@ -264,6 +270,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     classCode: isMounted ? classCode : null,
     needsRolePicker: isMounted ? needsRolePicker : false,
     researchModeAllowed,
+    teachingMode,
     updateProfile,
     joinClass,
     leaveClass,

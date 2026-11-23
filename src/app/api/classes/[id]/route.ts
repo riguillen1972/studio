@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { MAX_CLASS_INSTRUCTIONS } from "@/lib/class-material";
+import { isTeachingMode } from "@/lib/mentors";
 
 // Teachers update a class's settings, e.g. { allow_research_mode: false } or { ai_instructions: "..." }
 export async function PATCH(
@@ -47,6 +48,7 @@ export async function PATCH(
     if (typeof settings.allow_research_mode === "boolean") {
       updates.allow_research_mode = settings.allow_research_mode;
     }
+    if (isTeachingMode(settings.teaching_mode)) updates.teaching_mode = settings.teaching_mode;
     if (typeof settings.ai_instructions === "string") {
       if (settings.ai_instructions.length > MAX_CLASS_INSTRUCTIONS) {
         return NextResponse.json({ error: `Class instructions can be up to ${MAX_CLASS_INSTRUCTIONS} characters.` }, { status: 400 });

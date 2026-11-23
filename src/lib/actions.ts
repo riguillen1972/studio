@@ -15,6 +15,10 @@ import { generateMiniApp, GenerateMiniAppInput } from "@/ai/flows/generate-mini-
 import { interactWithMiniApp, InteractWithMiniAppInput } from "@/ai/flows/interact-with-mini-app";
 import { runTool, RunToolInput } from "@/ai/flows/run-tool";
 import { webTutor, WebTutorInput } from "@/ai/flows/web-tutor";
+import { mentorChat } from "@/ai/flows/mentor-chat";
+import { MENTORS_BY_ID, isMentorId } from "@/lib/mentors";
+import { getSkill } from "@/lib/quest/skills";
+import type { LessonContent } from "@/lib/quest/lesson-types";
 import { SupportedModel } from "@/ai/genkit";
 import { createClient } from "@/lib/supabase/server";
 import { resolveModel } from "@/lib/plans";
@@ -497,4 +501,56 @@ export async function saveQuizResultAction(input: z.infer<typeof QuizResultSchem
     return { success: false as const, error: "Your score couldn't be saved." };
   }
   return { success: true as const };
+}
+
+
+// The student's mentor answers a question about the textbook page they're on. The lesson is
+// loaded on the server (the browser only says which skill), so the mentor can't be fed other text.
+const MentorChatActionSchema = z.object({
+  skillId: z.string().max(100),
+  mentorId: z.string(),
+  question: z.string().min(1).max(1000),
+  pageText: z.string().max(3000).optional(),
+  conversationHistory: z.array(z.object({ role: z.enum(['user', 'ai']), content: z.string().max(2000) })).max(12).optional(),
+  model: modelSchema,
+});
+export async function askMentorAction(input: z.infer<typeof MentorChatActionSchema>) {
+  const parsed = MentorChatActionSchema.safeParse(input);
+  if (!parsed.success) return { success: false as const, error: "Invalid input." };
+  const skill = getSkill(parsed.data.skillId);
+  if (!skill) return { success: false as const, error: "That lesson wasn't found." };
+  const mentor = MENTORS_BY_ID[isMentorId(parsed.data.mentorId) ? parsed.data.mentorId : "pip"];
+
+  const auth = await requireAuth();
+  if ('error' in auth) return { success: false as const, error: auth.error };
+  const admin = getAdminClient();
+  const [{ data: lesson }, { data: profile }] = await Promise.all([
+    admin.from("quest_lessons").select("content, status").eq("skill_id", skill.id).maybeSingle(),
+    admin.from("profiles").select("grade_level").eq("id", auth.userId).maybeSingle(),
+  ]);
+  if (!lesson || lesson.status !== "approved") return { success: false as const, error: "This lesson isn't ready yet." };
+
+  return handleAction({
+    question: parsed.data.question,
+    mentorName: mentor.name,
+    mentorAnimal: mentor.animal,
+    mentorVoice: mentor.voice,
+    skillName: skill.name,
+    gradeLevel: profile?.grade_level ?? undefined,
+    lessonText: lessonAsText(lesson.content as LessonContent),
+    pageText: parsed.data.pageText,
+    conversationHistory: parsed.data.conversationHistory,
+    model: parsed.data.model,
+  }, mentorChat, "mentorChat");
+}
+
+function lessonAsText(l: LessonContent): string {
+  return [
+    l.title, l.why,
+    l.vocabulary.map((v) => `${v.term}: ${v.meaning}`).join("\n"),
+    ...l.explain,
+    ...l.examples.map((e, i) => `Example ${i + 1}: ${e.problem}\n${e.steps.map((s, j) => `${j + 1}. ${s}`).join("\n")}\nAnswer: ${e.answer}`),
+    `Watch out: ${l.watch_out}`,
+    `Your turn (don't give this answer away): ${l.check.question}`,
+  ].filter(Boolean).join("\n\n").slice(0, 8000);
 }

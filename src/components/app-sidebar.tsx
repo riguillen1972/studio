@@ -103,6 +103,12 @@ export function AppSidebar() {
       visibleTo: ['quest'],
     },
     {
+      href: "/textbook",
+      icon: Library,
+      label: "Math Textbook",
+      visibleTo: ['quest'],
+    },
+    {
       href: "/assignments",
       icon: BookDashed,
       label: "My Assignments",
@@ -174,6 +180,7 @@ export function AppSidebar() {
 
   // Teachers: the AI tools, for planning or showing on the classroom projector
   const teacherToolItems: typeof baseMenuItems = [
+    { href: "/textbook", icon: Library, label: "Math Textbook", visibleTo: ['teacher'] },
     { href: "/tutor", icon: Bot, label: "AI Tutor", visibleTo: ['teacher'] },
     { href: "/homework", icon: BookOpen, label: "Homework Help", visibleTo: ['teacher'] },
     { href: "/quiz", icon: FileQuestion, label: "Quiz Generator", visibleTo: ['teacher'] },

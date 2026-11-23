@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
+import { getSkill } from "@/lib/quest/skills";
+import type { LessonContent } from "@/lib/quest/lesson-types";
 import {
   MONTHLY_INCLUDED_SESSIONS,
   addUsage,
@@ -55,7 +57,7 @@ export async function POST(req: NextRequest) {
     const teacherId = auth.user.id;
     const supabase = getAdminClient();
 
-    const { class_id, context_pack_id } = await req.json().catch(() => ({}));
+    const { class_id, context_pack_id, textbook_skill_id } = await req.json().catch(() => ({}));
     if (!class_id) {
       return NextResponse.json({ error: "Choose a class" }, { status: 400 });
     }
@@ -80,6 +82,18 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Lesson material not found for this class" }, { status: 404 });
       }
       pack = data;
+    }
+
+    // A Math Textbook lesson as the material: the AI Teacher teaches it to the whole class
+    if (!pack && typeof textbook_skill_id === "string") {
+      const skill = getSkill(textbook_skill_id);
+      const { data: lesson } = skill
+        ? await supabase.from("quest_lessons").select("content, status").eq("skill_id", skill.id).maybeSingle()
+        : { data: null };
+      if (!skill || !lesson || lesson.status !== "approved") {
+        return NextResponse.json({ error: "That textbook lesson isn't written yet. Open it in the Math Textbook first, then start the session." }, { status: 400 });
+      }
+      pack = textbookLessonPack(skill.name, lesson.content as LessonContent);
     }
 
     const { data: avatar } = await supabase
@@ -165,4 +179,25 @@ export async function POST(req: NextRequest) {
     console.error("Session start error:", error);
     return NextResponse.json({ error: "Failed to start the session" }, { status: 500 });
   }
+}
+
+/** A textbook lesson in the shape the AI Teacher's lesson material uses. */
+function textbookLessonPack(skillName: string, l: LessonContent): LessonPack {
+  return {
+    title: `Math Textbook: ${l.title || skillName}`,
+    type: "lesson",
+    subject: "Math",
+    content_parsed: [
+      `# ${l.title || skillName}`,
+      `Why it matters: ${l.why}`,
+      l.vocabulary.length ? `Words to know:\n${l.vocabulary.map((v) => `- ${v.term}: ${v.meaning}`).join("\n")}` : "",
+      ...l.explain,
+      ...l.examples.map((e, i) => `Example ${i + 1}: ${e.problem}\n${e.steps.map((s, j) => `${j + 1}. ${s}`).join("\n")}\nAnswer: ${e.answer}`),
+      `Common mistake: ${l.watch_out}`,
+      `Check for understanding: ${l.check.question}`,
+    ].filter(Boolean).join("\n\n"),
+    content_raw: null,
+    rubric: null,
+    answer_key: `Check for understanding answer: ${l.check.answer}`,
+  };
 }

@@ -47,6 +47,7 @@ interface StudentDetail {
 
 const TOOL_LABELS: Record<string, string> = {
   generateExplanation: "AI Tutor",
+  mentorChat: "Textbook mentor",
   provideHomeworkHints: "Homework Help",
   summarizeText: "Summarizer",
   scanHomework: "Scan Homework",

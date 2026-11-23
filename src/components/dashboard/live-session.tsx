@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SKILLS_BY_ID, SKILL_CODES, TOPICS_BY_SECTION } from "@/lib/quest/skills";
 import { Markdown } from "@/components/markdown";
 import { useToast } from "@/hooks/use-toast";
 import { Bot, Loader2, Lock, Mic, MicOff, Play, Send, Square, Users, Volume2, VolumeX } from "lucide-react";
@@ -47,6 +48,9 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
   const [recent, setRecent] = useState<RecentSession[]>([]);
   const [classId, setClassId] = useState("");
   const [packId, setPackId] = useState(NO_PACK);
+  // Or a textbook lesson for the AI Teacher to teach ("AI Teacher teaches the class" mode)
+  const [bookGrade, setBookGrade] = useState("6");
+  const [bookSkill, setBookSkill] = useState(NO_PACK);
   const [session, setSession] = useState<ActiveSession | null>(null);
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState("");
@@ -112,7 +116,11 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
     try {
       const data = await api("/api/sessions", {
         method: "POST",
-        body: JSON.stringify({ class_id: classId, context_pack_id: packId === NO_PACK ? null : packId }),
+        body: JSON.stringify({
+          class_id: classId,
+          context_pack_id: packId === NO_PACK ? null : packId,
+          textbook_skill_id: bookSkill === NO_PACK ? null : bookSkill,
+        }),
       });
       speakNextRef.current = true;
       setSession(data.session);
@@ -355,13 +363,32 @@ export function LiveSession({ tier, classes, contextPacks }: LiveSessionProps) {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="livePack">Lesson material</Label>
-            <Select value={packId} onValueChange={setPackId} disabled={!classId}>
+            <Select value={packId} onValueChange={(v) => { setPackId(v); if (v !== NO_PACK) setBookSkill(NO_PACK); }} disabled={!classId}>
               <SelectTrigger id="livePack"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value={NO_PACK}>No material (ask the class)</SelectItem>
                 {packsForClass.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid gap-2 sm:col-span-2">
+            <Label>Or a Math Textbook lesson</Label>
+            <div className="flex flex-wrap gap-2">
+              <Select value={bookGrade} onValueChange={(v) => { setBookGrade(v); setBookSkill(NO_PACK); }}>
+                <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
+                <SelectContent>{["6", "7", "8"].map((g) => <SelectItem key={g} value={g}>Grade {g}</SelectItem>)}</SelectContent>
+              </Select>
+              <Select value={bookSkill} onValueChange={(v) => { setBookSkill(v); if (v !== NO_PACK) setPackId(NO_PACK); }} disabled={!classId}>
+                <SelectTrigger className="min-w-[240px] flex-1"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_PACK}>No textbook lesson</SelectItem>
+                  {(TOPICS_BY_SECTION[Number(bookGrade)] ?? []).flatMap((t) => t.skillIds).map((id) => (
+                    <SelectItem key={id} value={id}>{SKILL_CODES[id]} {SKILLS_BY_ID[id]?.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-xs text-muted-foreground">Your AI Teacher teaches the lesson to the whole class, using the textbook page and its examples.</p>
           </div>
         </CardContent>
         <CardFooter className="flex flex-wrap items-center gap-3">
