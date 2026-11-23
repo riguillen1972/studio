@@ -1,9 +1,10 @@
 // Server-only: writes a short lesson for a skill with Claude Haiku 5.5, then checks it.
 // 1. Draft: structured output (explanation, two worked examples, a common mistake, a quick check).
 // 2. Check, with CHECK_MODEL: one call solves the examples and the quick check without seeing the
-//    answers, another reviews the whole lesson for accuracy and clarity. A lesson is kept only if
-//    the solved answers match and the review passes; otherwise it is redrafted once with the
-//    reviewer's notes.
+//    answers, another reviews the whole lesson. The reviewer lists only real math errors, each
+//    quoting the false words, so wording preferences can't block a lesson. A lesson is kept when
+//    the solved answers match and no math error is found; otherwise it is redrafted (up to 3 times)
+//    with the notes.
 
 import Anthropic from "@anthropic-ai/sdk";
 import { jsonSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/json-schema";
@@ -60,11 +61,24 @@ const solveFormat = jsonSchemaOutputFormat({
 const reviewFormat = jsonSchemaOutputFormat({
   type: "object",
   additionalProperties: false,
-  required: ["accurate", "clear", "issues"],
+  required: ["math_errors", "clear", "notes"],
   properties: {
-    accurate: { type: "boolean", description: "true only if every statement, step and answer in the lesson is mathematically correct" },
-    clear: { type: "boolean", description: "true only if a typical student in this grade could follow it, it teaches this skill, and any faith connection is brief, respectful and accurate" },
-    issues: { type: "string", description: "What must be fixed, or an empty string" },
+    math_errors: {
+      type: "array",
+      description: "Only real mathematical errors: a wrong computation, a wrong answer, or a false math statement. Not wording, style, or ways it could be explained better. Empty if there are none.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["quote", "why_wrong", "correct"],
+        properties: {
+          quote: { type: "string", description: "The exact wrong words from the lesson" },
+          why_wrong: { type: "string", description: "Why it is mathematically false, with the computation" },
+          correct: { type: "string", description: "The corrected statement" },
+        },
+      },
+    },
+    clear: { type: "boolean", description: "true if a typical student in this grade could follow it, it teaches this skill, and any faith connection is brief, respectful and accurate" },
+    notes: { type: "string", description: "Short suggestions to make it clearer, or an empty string" },
   },
 });
 
@@ -80,7 +94,10 @@ const SYSTEM =
   "You write short, warm, accurate math lessons for middle school students (grades 6–8) in Christian (Seventh-day Adventist) " +
   "schools. Students may read them on their own or listen to them read aloud, so write in plain, friendly sentences a 12-year-old " +
   "understands, and double-check every computation. Use plain text only (no images, no LaTeX, no tables); write fractions with a " +
-  "slash like 3/4, powers with ^ like 5^2, and negatives with a minus sign like -5. You may use **bold** for key words.";
+  "slash like 3/4, powers with ^ like 5^2, and negatives with a minus sign like -5. You may use **bold** for key words. " +
+  "Teach a method with the plain steps students actually do (for long division: divide, multiply, subtract, bring down, and " +
+  "write a 0 in the answer when the divisor doesn't fit). Leave out extra claims you don't need, such as place-value commentary " +
+  "on each step, since every extra statement is one more thing that can be wrong or confusing.";
 
 function draftPrompt(skill: Skill, feedback?: string) {
   const builds = skill.prereqs.map((p) => SKILLS_BY_ID[p]?.name).filter(Boolean).join(", ");
@@ -104,7 +121,7 @@ function draftPrompt(skill: Skill, feedback?: string) {
     `with money and percents, order and design in creation with patterns and geometry, honesty with data). Don't preach and don't ` +
     `force it; most skills should get an empty string. If you mention Scripture, give the reference rather than quoting at length.\n` +
     `- check: one quick question like the examples, whose answer is just a number, with a one-sentence hint.\n` +
-    (feedback ? `\nA reviewer found problems in the last draft. Fix them:\n${feedback}\n` : "")
+    (feedback ? `\nA reviewer found problems in the last draft. Fix them, and keep everything else simple:\n${feedback}\n` : "")
   );
 }
 
@@ -157,11 +174,13 @@ async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; mathOk
       model: CHECK_MODEL,
       max_tokens: 4000,
       output_config: { effort: "medium", format: reviewFormat },
-      system: "You are a careful middle school math teacher reviewing a lesson before students see it.",
+      system: "You are a careful middle school math teacher reviewing a lesson before students see it. A math error is only something " +
+        "false: a wrong number, a wrong step, or an untrue statement. Before you list one, recompute it yourself; if the statement is " +
+        "actually true (even if you'd word it differently), it is not an error; put wording ideas in notes instead.",
       messages: [{
         role: "user",
         content: `Review this lesson for the grade ${skill.grade <= 5 ? "6–8 review" : skill.grade} skill "${skill.name}" (${skill.description}). ` +
-          `Check every statement, step and answer, and whether students can follow it.\n\n${lessonText(d)}`,
+          `Check every number, step and statement for math errors, and whether students can follow it.\n\n${lessonText(d)}`,
       }],
     }),
   ]);
@@ -172,10 +191,16 @@ async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; mathOk
     if (e.answer_number.trim() && !numericMatch(e.answer_number, answers[i])) mismatches.push(`Example ${i + 1}: a checker got ${answers[i] ?? "no answer"}, not ${e.answer_number}.`);
   });
   if (!numericMatch(d.check.answer, answers[2])) mismatches.push(`Quick check: a checker got ${answers[2] ?? "no answer"}, not ${d.check.answer}.`);
-  const r = review.parsed_output as { accurate: boolean; clear: boolean; issues: string } | null;
-  // mathOk: the answers matched and the reviewer found no math errors (only wording notes, if any)
-  const mathOk = mismatches.length === 0 && !!r?.accurate;
-  return { ok: mathOk && !!r?.clear, mathOk, issues: [...mismatches, r?.issues ?? ""].filter(Boolean).join("\n"), tokens };
+  const r = review.parsed_output as { math_errors: { quote: string; why_wrong: string; correct: string }[]; clear: boolean; notes: string } | null;
+  const errors = (r?.math_errors ?? []).filter((e) => e.quote.trim());
+  // mathOk: the blind solve matched every answer and the reviewer quoted no false statement
+  const mathOk = !!r && mismatches.length === 0 && errors.length === 0;
+  const issues = [
+    ...mismatches,
+    ...errors.map((e) => `Wrong: "${e.quote}". ${e.why_wrong} Correct: ${e.correct}`),
+    r && !r.clear && r.notes ? `To make it clearer: ${r.notes}` : "",
+  ].filter(Boolean).join("\n");
+  return { ok: mathOk && !!r?.clear, mathOk, issues, tokens };
 }
 
 const ATTEMPTS = 3;
