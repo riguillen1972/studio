@@ -5,7 +5,8 @@ import { generateLesson } from "@/lib/quest/lessons";
 import { QUEST_MODEL } from "@/lib/quest/generate";
 import { unauthorized, userIdFrom } from "@/lib/quest/api";
 
-export const maxDuration = 120;
+// Up to 3 drafts, each checked by two calls
+export const maxDuration = 300;
 
 async function caller(req: NextRequest) {
   const userId = await userIdFrom(req);

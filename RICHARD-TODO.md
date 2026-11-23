@@ -328,7 +328,8 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 ## Math Textbook and personal mentors (branch feature/etextbook-mentor)
 
 ### As a student (grade 6–8, in the test class)
-1. The sidebar has **Math Textbook**. It opens a table of contents: Grade 6 / 7 / 8, a colored chapter per NAD topic, a lesson per skill.
+1. The sidebar has **Math Textbook**. It opens a table of contents: Grade 6 / 7 / 8, a colored **unit** per NAD topic,
+   split into **chapters of up to 4 lessons** (numbered like Lesson 2.3). ★ challenge lessons come at the end of each unit.
 2. Open a lesson. The first time, **Choose your mentor** opens: Professor Rivera, Dr. Okafor, Professor Chen and Professor Hughes. Pick one.
 3. The lesson is a book: Next / Back (or the arrow keys), page dots, "Read it to me". While it reads, the mentor's mouth moves.
 4. On an example page, **Next step** reveals one step at a time.
@@ -353,3 +354,4 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 Notes:
 - The mentor choice is remembered on each device (a student on a new Chromebook picks again).
 - The mentor goes through the same checks as every AI tool: token limit, safety lines for worried messages, teacher alerts.
+- If a new lesson doesn't pass its accuracy check after 3 tries, the page says so and offers **Try again** (it writes a fresh one).

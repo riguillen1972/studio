@@ -144,7 +144,7 @@ function structurallyValid(d: Draft | null): d is Draft {
     && !!d.watch_out.trim() && !!d.check.question.trim() && numericMatch(d.check.answer, d.check.answer);
 }
 
-async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; issues: string; tokens: number }> {
+async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; mathOk: boolean; issues: string; tokens: number }> {
   const [solve, review] = await Promise.all([
     getClient().messages.parse({
       model: CHECK_MODEL,
@@ -173,15 +173,36 @@ async function checkDraft(skill: Skill, d: Draft): Promise<{ ok: boolean; issues
   });
   if (!numericMatch(d.check.answer, answers[2])) mismatches.push(`Quick check: a checker got ${answers[2] ?? "no answer"}, not ${d.check.answer}.`);
   const r = review.parsed_output as { accurate: boolean; clear: boolean; issues: string } | null;
-  const ok = mismatches.length === 0 && !!r?.accurate && !!r?.clear;
-  return { ok, issues: [...mismatches, r?.issues ?? ""].filter(Boolean).join("\n"), tokens };
+  // mathOk: the answers matched and the reviewer found no math errors (only wording notes, if any)
+  const mathOk = mismatches.length === 0 && !!r?.accurate;
+  return { ok: mathOk && !!r?.clear, mathOk, issues: [...mismatches, r?.issues ?? ""].filter(Boolean).join("\n"), tokens };
 }
 
-/** Writes and checks a lesson for a skill. Returns null if no draft passes the checks in two tries. */
+const ATTEMPTS = 3;
+
+function cleanLesson(d: Draft): LessonContent {
+  const clean = (s: string) => s.trim();
+  return {
+    title: clean(d.title), why: clean(d.why),
+    vocabulary: d.vocabulary.filter((v) => v.term.trim() && v.meaning.trim()).slice(0, 4),
+    explain: d.explain.map(clean).filter(Boolean),
+    examples: d.examples.map((e) => ({ problem: clean(e.problem), steps: e.steps.map(clean).filter(Boolean), answer: clean(e.answer) })),
+    watch_out: clean(d.watch_out),
+    faith: d.faith.trim() || null,
+    check: { question: clean(d.check.question), answer: clean(d.check.answer), hint: clean(d.check.hint) },
+  };
+}
+
+/**
+ * Writes and checks a lesson for a skill, redrafting with the reviewer's notes up to 3 times.
+ * If no draft is judged both accurate and clear, the first draft whose math and answers passed
+ * (the reviewer only wanted clearer wording) is used. Returns null if no draft's math passed.
+ */
 export async function generateLesson(skill: Skill): Promise<{ lesson: LessonContent | null; totalTokens: number; issues: string }> {
   let totalTokens = 0;
   let feedback: string | undefined;
-  for (let attempt = 0; attempt < 2; attempt++) {
+  let mathOkDraft: Draft | null = null;
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
     const draft = await getClient().messages.parse({
       model: QUEST_MODEL,
       max_tokens: 6000,
@@ -197,22 +218,10 @@ export async function generateLesson(skill: Skill): Promise<{ lesson: LessonCont
     }
     const check = await checkDraft(skill, d);
     totalTokens += check.tokens;
-    if (check.ok) {
-      const clean = (s: string) => s.trim();
-      return {
-        totalTokens, issues: "",
-        lesson: {
-          title: clean(d.title), why: clean(d.why),
-          vocabulary: d.vocabulary.filter((v) => v.term.trim() && v.meaning.trim()).slice(0, 4),
-          explain: d.explain.map(clean).filter(Boolean),
-          examples: d.examples.map((e) => ({ problem: clean(e.problem), steps: e.steps.map(clean).filter(Boolean), answer: clean(e.answer) })),
-          watch_out: clean(d.watch_out),
-          faith: d.faith.trim() || null,
-          check: { question: clean(d.check.question), answer: clean(d.check.answer), hint: clean(d.check.hint) },
-        },
-      };
-    }
+    if (check.ok) return { totalTokens, issues: "", lesson: cleanLesson(d) };
+    if (check.mathOk && !mathOkDraft) mathOkDraft = d;
     feedback = check.issues || "The checker didn't agree with the answers. Recheck every computation.";
   }
+  if (mathOkDraft) return { totalTokens, issues: feedback ?? "", lesson: cleanLesson(mathOkDraft) };
   return { lesson: null, totalTokens, issues: feedback ?? "" };
 }

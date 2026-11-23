@@ -8,12 +8,13 @@ import { useAppState } from "@/components/app-state-provider";
 import { questFetch } from "@/components/quest/quest-api";
 import { MentorAvatar } from "@/components/mentor/mentor-avatar";
 import { useMentorChoice } from "@/hooks/use-mentor";
-import { SKILLS_BY_ID, SKILL_CODES, TOPICS_BY_SECTION } from "@/lib/quest/skills";
+import { SKILLS_BY_ID } from "@/lib/quest/skills";
+import { textbookUnits } from "@/lib/textbook";
 
 const GRADES = [6, 7, 8];
 const CHAPTER_COLORS = ["bg-orange-600", "bg-sky-600", "bg-rose-600", "bg-teal-600", "bg-amber-700", "bg-green-600", "bg-violet-600", "bg-blue-600", "bg-pink-600", "bg-emerald-700", "bg-indigo-600", "bg-cyan-700", "bg-fuchsia-700"];
 
-/** The textbook's table of contents: one book per grade, a chapter per NAD topic, a lesson per skill. */
+/** The textbook's table of contents: one book per grade, a unit per NAD topic, chapters of up to 4 lessons. */
 export default function TextbookPage() {
   const { role, gradeLevel, teachingMode } = useAppState();
   const { mentorId } = useMentorChoice();
@@ -56,30 +57,40 @@ export default function TextbookPage() {
         </div>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {(TOPICS_BY_SECTION[grade] ?? []).map((topic, i) => (
-          <motion.section key={`${grade}-${topic.letter}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      <div className="space-y-5">
+        {textbookUnits(grade).map((unit, i) => (
+          <motion.section key={`${grade}-${unit.letter}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: Math.min(i, 8) * 0.04 }} className="overflow-hidden rounded-xl border bg-card shadow-sm">
             <div className={`px-4 py-3 text-white ${CHAPTER_COLORS[i % CHAPTER_COLORS.length]}`}>
-              <p className="text-xs font-semibold uppercase tracking-wide opacity-80">Chapter {topic.letter}</p>
-              <h2 className="font-semibold">{topic.title}</h2>
+              <p className="text-xs font-semibold uppercase tracking-wide opacity-80">Unit {unit.letter} · NAD {unit.nad}</p>
+              <h2 className="font-semibold">{unit.title}</h2>
             </div>
-            <ol className="divide-y">
-              {topic.skillIds.map((id) => {
-                const s = SKILLS_BY_ID[id];
-                const score = scores[id];
-                return (
-                  <li key={id}>
-                    <Link href={`/textbook/${id}`} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted">
-                      <span className="w-10 shrink-0 font-semibold text-muted-foreground">{SKILL_CODES[id]}</span>
-                      <span className="flex-1">{s.name}{s.advanced && <span className="ml-1 text-amber-500" aria-label="Challenge">★</span>}</span>
-                      {score === 100 ? <CheckCircle2 className="h-4 w-4 text-green-600" aria-label="Mastered" />
-                        : score !== undefined ? <span className="text-xs tabular-nums text-muted-foreground">{score}</span> : null}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ol>
+            <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+              {unit.chapters.map((chapter) => (
+                <div key={chapter.number} className="bg-card p-3">
+                  <p className="mb-1 text-sm font-semibold">
+                    Chapter {chapter.number}
+                    {chapter.parts > 1 && <span className="font-normal text-muted-foreground"> · part {chapter.part} of {chapter.parts}</span>}
+                  </p>
+                  <ol>
+                    {chapter.skillIds.map((id, n) => {
+                      const s = SKILLS_BY_ID[id];
+                      const score = scores[id];
+                      return (
+                        <li key={id}>
+                          <Link href={`/textbook/${id}`} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted">
+                            <span className="w-9 shrink-0 text-xs font-semibold text-muted-foreground">{chapter.number}.{n + 1}</span>
+                            <span className="flex-1">{s.name}{s.advanced && <span className="ml-1 text-amber-500" aria-label="Challenge">★</span>}</span>
+                            {score === 100 ? <CheckCircle2 className="h-4 w-4 text-green-600" aria-label="Mastered" />
+                              : score !== undefined ? <span className="text-xs tabular-nums text-muted-foreground">{score}</span> : null}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              ))}
+            </div>
           </motion.section>
         ))}
       </div>

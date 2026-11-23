@@ -142,6 +142,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
   const [pickerOpen, setPickerOpen] = useState(false);
   const [lesson, setLesson] = useState<LessonContent | null>(null);
   const [status, setStatus] = useState<"loading" | "writing" | "ready" | "missing" | "error">("loading");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(1);
   const [shownSteps, setShownSteps] = useState<number[]>([]);
@@ -164,7 +165,11 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
       const w = await questFetch<{ lesson: LessonContent }>(`/api/quest/lessons/${encodeURIComponent(skillId)}`, { method: "POST", body: "{}" });
       setLesson(w.lesson);
       setStatus("ready");
-    } catch {
+    } catch (e) {
+      // Usually the new lesson didn't pass its accuracy check; trying again writes a fresh one
+      setLoadError(e instanceof Error && /accuracy/i.test(e.message)
+        ? "This lesson didn't pass our accuracy check yet, so we didn't show it. Tap Try again and we'll write a fresh one."
+        : "This lesson couldn't be loaded. Please check your connection and try again.");
       setStatus("error");
     }
   }, [skillId, preloaded]);
@@ -216,7 +221,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
   if (status !== "ready" || !current) {
     return (
       <div className="space-y-3 py-16 text-center">
-        <p className="text-muted-foreground">{status === "missing" ? "Your teacher has hidden this lesson for now." : "This lesson couldn't be loaded. Please try again."}</p>
+        <p className="text-muted-foreground">{status === "missing" ? "Your teacher has hidden this lesson for now." : loadError}</p>
         {status === "error" && <Button variant="outline" onClick={load}>Try again</Button>}
       </div>
     );
