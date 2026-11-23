@@ -519,7 +519,7 @@ export async function askMentorAction(input: z.infer<typeof MentorChatActionSche
   if (!parsed.success) return { success: false as const, error: "Invalid input." };
   const skill = getSkill(parsed.data.skillId);
   if (!skill) return { success: false as const, error: "That lesson wasn't found." };
-  const mentor = MENTORS_BY_ID[isMentorId(parsed.data.mentorId) ? parsed.data.mentorId : "maya"];
+  const mentor = MENTORS_BY_ID[isMentorId(parsed.data.mentorId) ? parsed.data.mentorId : "rivera"];
 
   const auth = await requireAuth();
   if ('error' in auth) return { success: false as const, error: auth.error };

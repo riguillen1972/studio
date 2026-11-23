@@ -33,7 +33,7 @@ function pagesFor(l: LessonContent): Page[] {
   const pages: Page[] = [{
     id: "intro",
     text: `${l.title}. ${l.why} ${l.vocabulary.map((v) => `${v.term}: ${v.meaning}.`).join(" ")}`,
-    line: `Hi! Today we're learning ${l.title.toLowerCase()}. First, here's why it matters.`,
+    line: `Welcome! Today we're learning ${l.title.toLowerCase()}. Let's start with why it matters.`,
     render: () => (
       <div className="space-y-5">
         <p className="text-lg leading-relaxed">{l.why}</p>
@@ -55,7 +55,7 @@ function pagesFor(l: LessonContent): Page[] {
     pages.push({
       id: `explain-${i}`,
       text: paras.join(" "),
-      line: i === 0 ? "Here's the big idea. Read it with me, or tap Read it to me." : "Nice! Here's the next part of the idea.",
+      line: i === 0 ? "Here's the big idea. Let's read it together. Tap Read it to me if you'd like me to read." : "You're doing great. Here's the next part of the idea.",
       render: () => <div className="space-y-4 text-lg leading-relaxed">{paras.map((p, j) => <Markdown key={j}>{p}</Markdown>)}</div>,
     });
   }
@@ -64,7 +64,7 @@ function pagesFor(l: LessonContent): Page[] {
     pages.push({
       id: `example-${i}`,
       text: `Example ${i + 1}. ${e.problem} ${e.steps.map((s, j) => `Step ${j + 1}. ${s}`).join(" ")} Answer: ${e.answer}`,
-      line: i === 0 ? "Let's work through an example together. Tap Next step when you're ready." : "This one is a little harder. Take it one step at a time!",
+      line: i === 0 ? "Let's work through an example together. Tap Next step when you're ready." : "This one is a little harder, which means your brain is growing. One step at a time.",
       render: ({ shownSteps, showStep }) => (
         <div className="space-y-4">
           <p className="text-sm font-bold uppercase tracking-wide text-primary">Example {i + 1}</p>
@@ -96,7 +96,7 @@ function pagesFor(l: LessonContent): Page[] {
   pages.push({
     id: "watch",
     text: `Watch out. ${l.watch_out} ${l.faith ?? ""}`,
-    line: "Watch out for this one. It trips up lots of students, but now you'll spot it!",
+    line: "Here's a mistake lots of students make. Knowing it helps you catch it.",
     render: () => (
       <div className="space-y-4">
         <div className="flex gap-3 rounded-xl border-2 border-amber-500/40 bg-amber-500/10 p-4">
@@ -116,7 +116,7 @@ function pagesFor(l: LessonContent): Page[] {
   pages.push({
     id: "check",
     text: `Your turn. ${l.check.question}`,
-    line: "Your turn! Give it a try. If you get stuck, ask me for a hint.",
+    line: "Your turn! Give it your best try. If you get stuck, ask me for a hint.",
     render: ({ onCheck }) => <div className="text-lg"><QuickCheck check={l.check} onResult={onCheck} /></div>,
   });
   return pages;
@@ -200,9 +200,12 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
   const ctx: PageContext = {
     shownSteps,
     showStep: (i, all) => setShownSteps((s) => s.map((n, k) => (k === i ? (all ? lesson!.examples[i].steps.length : n + 1) : n))),
+    // Growth-mindset feedback: praise the strategy, and treat a mistake as "not yet"
     onCheck: (right) => {
-      setMood(right ? "cheering" : "thinking");
-      setLine(right ? "You got it! That's exactly right. Ready to practice?" : "Not quite, and that's okay! Look back at the examples, or ask me for a hint.");
+      setMood(right ? "cheering" : "encouraging");
+      setLine(right
+        ? "Yes! You used the same steps as the examples, and that's exactly how mathematicians work. Ready to practice?"
+        : "Not yet, and that's okay. Mistakes are how your brain learns. Look back at the examples, or ask me for a hint.");
     },
   };
 
@@ -235,7 +238,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
               ? <Button size="sm" variant="outline" onClick={voice.pause}><Pause className="mr-1.5 h-4 w-4" /> Pause</Button>
               : voice.paused
                 ? <Button size="sm" variant="outline" onClick={voice.resume}><Play className="mr-1.5 h-4 w-4" /> Resume</Button>
-                : <Button size="sm" variant="outline" onClick={() => voice.play([current.text])}><Volume2 className="mr-1.5 h-4 w-4" /> Read it to me</Button>}
+                : <Button size="sm" variant="outline" onClick={() => voice.play([current.text], 0, mentorId ? MENTORS_BY_ID[mentorId].voiceHint : undefined)}><Volume2 className="mr-1.5 h-4 w-4" /> Read it to me</Button>}
             {(voice.speaking || voice.paused) && <Button size="icon" variant="ghost" className="h-8 w-8" onClick={voice.stop} aria-label="Stop reading"><Square className="h-3.5 w-3.5" /></Button>}
           </div>
         )}
@@ -302,7 +305,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
             <DialogTitle>Choose your mentor</DialogTitle>
             <DialogDescription>Your mentor reads with you, explains each page, and answers your questions. You can change anytime.</DialogDescription>
           </DialogHeader>
-          <MentorPicker current={mentorId} onPick={(id) => { setMentorId(id); setPickerOpen(false); setLine(`Hi, I'm ${MENTORS_BY_ID[id].name}! Let's learn together.`); setMood("cheering"); }} />
+          <MentorPicker current={mentorId} onPick={(id) => { setMentorId(id); setPickerOpen(false); setLine(`Hello, I'm ${MENTORS_BY_ID[id].name}. I'm glad to learn with you!`); setMood("cheering"); }} />
         </DialogContent>
       </Dialog>
     </div>

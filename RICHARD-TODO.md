@@ -329,10 +329,14 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 
 ### As a student (grade 6–8, in the test class)
 1. The sidebar has **Math Textbook**. It opens a table of contents: Grade 6 / 7 / 8, a colored chapter per NAD topic, a lesson per skill.
-2. Open a lesson. The first time, **Choose your mentor** opens: Maya, Leo, Sam and Zoe. Pick one.
+2. Open a lesson. The first time, **Choose your mentor** opens: Professor Rivera, Dr. Okafor, Professor Chen and Professor Hughes. Pick one.
 3. The lesson is a book: Next / Back (or the arrow keys), page dots, "Read it to me". While it reads, the mentor's mouth moves.
 4. On an example page, **Next step** reveals one step at a time.
-5. On "Your turn", answer right: the mentor cheers. Answer wrong: it encourages you to look back or ask for a hint.
+5. On "Your turn", answer right: the professor nods proudly and praises the steps you used (not "you're smart").
+   Answer wrong: the professor tilts their head with a warm smile and says "Not yet, and that's okay."
+5b. Tap **Read it to me**: while reading, the professor looks at the page and points to it, and stays still otherwise.
+   The voice matches the professor (a woman's voice for Professor Rivera and Professor Chen, a man's for Dr. Okafor
+   and Professor Hughes) when the device has one.
 6. Ask the mentor a question in the box (for example "Why do we change the percent to a decimal?"). It answers in its own
    personality, about this page. Ask it for the "Your turn" answer: it should give a hint, not the answer.
 7. **Practice** on the last page opens that skill in Math Quest.

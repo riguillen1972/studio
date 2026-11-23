@@ -11,9 +11,15 @@ function sentences(text: string): string[] {
   }).filter((s) => s.trim());
 }
 
-function pickVoice(): SpeechSynthesisVoice | null {
+// Natural-sounding English voices by kind, best first (names differ by device and browser)
+const VOICES_BY_HINT = {
+  female: ["Samantha", "Google US English", "Microsoft Aria", "Microsoft Jenny", "Karen", "Moira", "Google UK English Female"],
+  male: ["Daniel", "Alex", "Microsoft Guy", "Microsoft Davis", "Google UK English Male", "Fred"],
+} as const;
+
+function pickVoice(hint?: "female" | "male"): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith("en"));
-  const preferred = ["Google US English", "Samantha", "Microsoft Aria", "Microsoft Jenny", "Alex"];
+  const preferred = hint ? [...VOICES_BY_HINT[hint], ...VOICES_BY_HINT[hint === "male" ? "female" : "male"]] : VOICES_BY_HINT.female;
   return preferred.map((n) => voices.find((v) => v.name.includes(n))).find(Boolean)
     ?? voices.find((v) => v.lang === "en-US") ?? voices[0] ?? null;
 }
@@ -31,6 +37,7 @@ export function useReadAloud() {
   const position = useRef(0);
   const run = useRef(0);
   const rateRef = useRef(1);
+  const hintRef = useRef<"female" | "male" | undefined>(undefined);
 
   useEffect(() => {
     setSupported(typeof window !== "undefined" && "speechSynthesis" in window);
@@ -48,7 +55,7 @@ export function useReadAloud() {
       if (!item) { setSection(null); return; }
       setSection(item.section);
       const u = new SpeechSynthesisUtterance(item.text);
-      const voice = pickVoice();
+      const voice = pickVoice(hintRef.current);
       if (voice) u.voice = voice;
       u.lang = voice?.lang ?? "en-US";
       u.rate = rateRef.current;
@@ -60,8 +67,9 @@ export function useReadAloud() {
     next(index);
   }, []);
 
-  /** Starts reading the sections from `from`. */
-  const play = useCallback((texts: string[], from = 0) => {
+  /** Starts reading the sections from `from`, in a voice of the given kind if the device has one. */
+  const play = useCallback((texts: string[], from = 0, voiceHint?: "female" | "male") => {
+    hintRef.current = voiceHint;
     queue.current = texts.flatMap((t, s) => (s < from ? [] : sentences(t).map((text) => ({ section: s, text }))));
     speakFrom(0);
   }, [speakFrom]);
