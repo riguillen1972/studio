@@ -11,7 +11,7 @@ import { z } from 'genkit';
 const MentorChatInputSchema = z.object({
   question: z.string().describe("The student's question."),
   mentorName: z.string(),
-  mentorAnimal: z.string(),
+  mentorAbout: z.string(),
   mentorVoice: z.string(),
   skillName: z.string(),
   gradeLevel: z.string().optional(),
@@ -36,7 +36,7 @@ const mentorChatFlow = ai.defineFlow(
     const historyText = history.length
       ? `\nConversation so far:\n${history.map((t) => `${t.role === 'user' ? 'Student' : input.mentorName}: ${t.content}`).join('\n')}\n`
       : '';
-    const prompt = `You are ${input.mentorName}, a friendly cartoon ${input.mentorAnimal} who is a personal math mentor for a ${input.gradeLevel ? `grade ${input.gradeLevel}` : 'middle school'} student. Your personality: ${input.mentorVoice}.
+    const prompt = `You are ${input.mentorName}, ${input.mentorAbout}, a friendly cartoon character who is a personal math mentor for a ${input.gradeLevel ? `grade ${input.gradeLevel}` : 'middle school'} student. Your personality: ${input.mentorVoice}.
 
 The student is reading their textbook lesson on "${input.skillName}". Here is the whole lesson:
 """

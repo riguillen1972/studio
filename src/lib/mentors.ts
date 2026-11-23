@@ -1,12 +1,13 @@
-// The Study Buddy mentors: original characters a student picks to guide them through the
+// The Study Buddy mentors: original cartoon tutors a student picks to guide them through the
 // textbook. Shared by the browser (drawing, picker) and the server (the mentor's voice in prompts).
 
-export type MentorId = "pip" | "bolt" | "shelly" | "nova";
+export type MentorId = "maya" | "leo" | "sam" | "zoe";
 
 export interface Mentor {
   id: MentorId;
   name: string;
-  animal: string;
+  /** Who they are, for the AI ("a friendly cartoon tutor who ..."). */
+  about: string;
   /** One line for the picker. */
   tagline: string;
   /** How the mentor talks, for the AI. */
@@ -18,23 +19,27 @@ export interface Mentor {
 
 export const MENTORS: Mentor[] = [
   {
-    id: "pip", name: "Pip", animal: "fox", color: "#F97316", accent: "#FDBA74",
-    tagline: "A quick, curious fox who loves a good puzzle.",
+    id: "maya", name: "Maya", color: "#F97316", accent: "#FED7AA",
+    about: "a curious tutor who loves puzzles",
+    tagline: "Curious and quick. She loves a good puzzle.",
     voice: "upbeat and curious, uses short sentences, sometimes says \"Let's figure it out!\"",
   },
   {
-    id: "bolt", name: "Bolt", animal: "robot", color: "#14B8A6", accent: "#99F6E4",
-    tagline: "A friendly robot who explains things step by step.",
+    id: "leo", name: "Leo", color: "#14B8A6", accent: "#CCFBF1",
+    about: "a calm tutor who explains things step by step",
+    tagline: "Calm and clear. He explains things step by step.",
     voice: "calm and clear, likes numbered steps, sometimes says \"Step by step, we've got this.\"",
   },
   {
-    id: "shelly", name: "Shelly", animal: "turtle", color: "#22C55E", accent: "#BBF7D0",
-    tagline: "A patient turtle. Slow and steady wins!",
+    id: "sam", name: "Sam", color: "#22C55E", accent: "#DCFCE7",
+    about: "a patient tutor who never rushes",
+    tagline: "Patient and kind. Slow and steady wins!",
     voice: "gentle and patient, never rushes, reminds students that mistakes help them learn",
   },
   {
-    id: "nova", name: "Nova", animal: "little dragon", color: "#8B5CF6", accent: "#DDD6FE",
-    tagline: "A cheerful little dragon who gets excited about math.",
+    id: "zoe", name: "Zoe", color: "#8B5CF6", accent: "#EDE9FE",
+    about: "a cheerful tutor who gets excited about math",
+    tagline: "Cheerful and excited about math. She celebrates every win.",
     voice: "enthusiastic and encouraging, celebrates every bit of progress",
   },
 ];

@@ -1,7 +1,7 @@
 "use client";
 
-// The four Study Buddy mentors, drawn as simple SVGs (round shapes, big eyes, bright colors) so
-// they're crisp at any size and can change mood: happy, talking, thinking or cheering.
+// The four Study Buddy mentors, cartoon kid tutors drawn as simple SVGs (round shapes, big eyes,
+// bright colors) so they're crisp at any size and can change mood: happy, talking, thinking or cheering.
 
 import { motion, useReducedMotion } from "framer-motion";
 import { MENTORS_BY_ID, type MentorId } from "@/lib/mentors";
@@ -71,93 +71,103 @@ function Face({ mood, cx = 60, eyeY = 60, mouthY = 78, eyeGap = 15, light = fals
   );
 }
 
-function Pip({ mood }: { mood: MentorMood }) {
-  const { color, accent } = MENTORS_BY_ID.pip;
+/** Shoulders, neck, ears and head: the parts every mentor shares. */
+function Person({ skin, shirt, collar, children, behind }: {
+  skin: string; shirt: string; collar?: string; children: React.ReactNode; behind?: React.ReactNode;
+}) {
   return (
     <g>
+      {behind}
+      {/* Shoulders and shirt */}
+      <path d="M12 120 Q14 96 42 91 L78 91 Q106 96 108 120 Z" fill={shirt} />
+      {collar && <path d="M44 91 Q60 104 76 91 Q60 98 44 91 Z" fill={collar} />}
+      {/* Neck */}
+      <rect x={52} y={78} width={16} height={16} rx={6} fill={skin} />
       {/* Ears */}
-      <path d="M22 44 L30 8 L52 32 Z" fill={color} />
-      <path d="M98 44 L90 8 L68 32 Z" fill={color} />
-      <path d="M29 30 L32 16 L42 28 Z" fill={INK} opacity={0.8} />
-      <path d="M91 30 L88 16 L78 28 Z" fill={INK} opacity={0.8} />
+      <circle cx={26} cy={56} r={7} fill={skin} />
+      <circle cx={94} cy={56} r={7} fill={skin} />
       {/* Head */}
-      <ellipse cx={60} cy={64} rx={42} ry={38} fill={color} />
-      {/* White cheeks and muzzle */}
-      <path d="M20 70 Q40 66 60 88 Q80 66 100 70 Q90 100 60 102 Q30 100 20 70 Z" fill="#FFF7ED" />
-      <circle cx={34} cy={78} r={5} fill={accent} opacity={0.9} />
-      <circle cx={86} cy={78} r={5} fill={accent} opacity={0.9} />
-      <Face mood={mood} eyeY={58} mouthY={86} />
-      <ellipse cx={60} cy={75} rx={5} ry={3.5} fill={INK} />
+      <circle cx={60} cy={52} r={34} fill={skin} />
+      {/* Rosy cheeks */}
+      <circle cx={38} cy={66} r={5} fill="#F472B6" opacity={0.35} />
+      <circle cx={82} cy={66} r={5} fill="#F472B6" opacity={0.35} />
+      {children}
     </g>
   );
 }
 
-function Bolt({ mood }: { mood: MentorMood }) {
-  const { color, accent } = MENTORS_BY_ID.bolt;
+function Maya({ mood }: { mood: MentorMood }) {
+  const hair = "#2B1B12";
   return (
-    <g>
-      {/* Antenna */}
-      <line x1={60} y1={22} x2={60} y2={8} stroke={INK} strokeWidth={4} strokeLinecap="round" />
-      <circle cx={60} cy={8} r={6} fill={mood === "cheering" ? "#FACC15" : accent} stroke={INK} strokeWidth={2} />
-      {/* Ears */}
-      <rect x={6} y={52} width={12} height={24} rx={5} fill={accent} stroke={INK} strokeWidth={2} />
-      <rect x={102} y={52} width={12} height={24} rx={5} fill={accent} stroke={INK} strokeWidth={2} />
-      {/* Head */}
-      <rect x={16} y={22} width={88} height={84} rx={26} fill={color} stroke={INK} strokeWidth={2.5} />
-      {/* Screen face */}
-      <rect x={26} y={36} width={68} height={58} rx={18} fill="#134E4A" />
-      <Face mood={mood} eyeY={60} mouthY={80} eyeGap={14} light />
-    </g>
+    <Person skin="#8D5524" shirt={MENTORS_BY_ID.maya.color} collar="#FED7AA"
+      behind={<><circle cx={30} cy={26} r={15} fill={hair} /><circle cx={90} cy={26} r={15} fill={hair} /></>}>
+      {/* Curly hair across the top */}
+      <path d="M25 50 Q22 16 60 15 Q98 16 95 50 Q88 30 72 29 Q64 34 56 29 Q40 28 25 50 Z" fill={hair} />
+      <circle cx={42} cy={22} r={7} fill={hair} />
+      <circle cx={60} cy={17} r={8} fill={hair} />
+      <circle cx={78} cy={22} r={7} fill={hair} />
+      <Face mood={mood} eyeY={54} mouthY={71} />
+    </Person>
   );
 }
 
-function Shelly({ mood }: { mood: MentorMood }) {
-  const { color, accent } = MENTORS_BY_ID.shelly;
+function Leo({ mood }: { mood: MentorMood }) {
   return (
-    <g>
-      {/* Shell peeking out behind the head */}
-      <ellipse cx={60} cy={86} rx={56} ry={30} fill="#A16207" />
-      <ellipse cx={60} cy={84} rx={48} ry={24} fill="#CA8A04" />
-      <path d="M30 84 L45 72 L60 84 L75 72 L90 84" stroke="#A16207" strokeWidth={4} fill="none" strokeLinejoin="round" />
-      {/* Head */}
-      <ellipse cx={60} cy={58} rx={38} ry={36} fill={color} />
-      <ellipse cx={60} cy={70} rx={26} ry={16} fill={accent} />
-      <circle cx={30} cy={70} r={5} fill="#F9A8D4" opacity={0.8} />
-      <circle cx={90} cy={70} r={5} fill="#F9A8D4" opacity={0.8} />
-      <Face mood={mood} eyeY={52} mouthY={72} eyeGap={14} />
-    </g>
+    <Person skin="#F1C27D" shirt={MENTORS_BY_ID.leo.color} collar="#CCFBF1">
+      {/* Swoopy hair */}
+      <path d="M25 52 Q19 18 58 15 Q94 13 96 46 Q86 30 72 31 Q78 23 64 23 Q48 25 40 35 Q30 40 25 52 Z" fill="#6B4226" />
+      <Face mood={mood} eyeY={55} mouthY={72} />
+      {/* Glasses */}
+      <g stroke="#1F2937" strokeWidth={2.5} fill="none">
+        <rect x={34} y={45} width={22} height={19} rx={8} />
+        <rect x={64} y={45} width={22} height={19} rx={8} />
+        <path d="M56 53 Q60 50 64 53" />
+      </g>
+    </Person>
   );
 }
 
-function Nova({ mood }: { mood: MentorMood }) {
-  const { color, accent } = MENTORS_BY_ID.nova;
+function Sam({ mood }: { mood: MentorMood }) {
+  const hoodie = MENTORS_BY_ID.sam.color;
   return (
-    <g>
-      {/* Wings */}
-      <path d="M14 70 Q0 44 18 30 Q20 52 34 58 Z" fill={accent} stroke={color} strokeWidth={3} strokeLinejoin="round" />
-      <path d="M106 70 Q120 44 102 30 Q100 52 86 58 Z" fill={accent} stroke={color} strokeWidth={3} strokeLinejoin="round" />
-      {/* Horns */}
-      <path d="M38 30 Q34 14 44 8 Q44 20 50 26 Z" fill="#FDE68A" />
-      <path d="M82 30 Q86 14 76 8 Q76 20 70 26 Z" fill="#FDE68A" />
-      {/* Head */}
-      <ellipse cx={60} cy={62} rx={40} ry={38} fill={color} />
-      {/* Snout */}
-      <ellipse cx={60} cy={80} rx={24} ry={16} fill={accent} />
-      <circle cx={53} cy={78} r={2} fill={INK} opacity={0.6} />
-      <circle cx={67} cy={78} r={2} fill={INK} opacity={0.6} />
-      <Face mood={mood} eyeY={56} mouthY={88} eyeGap={15} />
-    </g>
+    <Person skin="#C68642" shirt={hoodie}
+      behind={<path d="M30 96 Q28 80 44 84 L76 84 Q92 80 90 96 Z" fill="#15803D" />}>
+      {/* Short hair */}
+      <path d="M26 48 Q25 17 60 17 Q95 17 94 48 Q90 31 80 28 L74 34 L68 27 L60 33 L52 27 L46 34 L40 28 Q30 31 26 48 Z" fill="#1C1917" />
+      {/* Hoodie strings */}
+      <line x1={52} y1={96} x2={51} y2={108} stroke="#F0FDF4" strokeWidth={2.5} strokeLinecap="round" />
+      <line x1={68} y1={96} x2={69} y2={108} stroke="#F0FDF4" strokeWidth={2.5} strokeLinecap="round" />
+      <Face mood={mood} eyeY={54} mouthY={71} />
+    </Person>
   );
 }
 
-const DRAWINGS: Record<MentorId, (p: { mood: MentorMood }) => React.ReactElement> = { pip: Pip, bolt: Bolt, shelly: Shelly, nova: Nova };
+function Zoe({ mood }: { mood: MentorMood }) {
+  const hair = "#C2410C";
+  return (
+    <Person skin="#FFDBAC" shirt={MENTORS_BY_ID.zoe.color} collar="#EDE9FE"
+      behind={<ellipse cx={100} cy={46} rx={11} ry={22} fill={hair} transform="rotate(20 100 46)" />}>
+      {/* Hair with side bangs, ponytail tie */}
+      <path d="M25 54 Q20 17 60 16 Q100 17 95 50 Q84 26 62 28 Q50 38 34 36 Q28 44 25 54 Z" fill={hair} />
+      <circle cx={92} cy={28} r={5} fill="#FACC15" />
+      {/* Freckles */}
+      <g fill="#B45309" opacity={0.55}>
+        <circle cx={40} cy={63} r={1.3} /><circle cx={44} cy={66} r={1.3} /><circle cx={36} cy={66} r={1.3} />
+        <circle cx={80} cy={63} r={1.3} /><circle cx={76} cy={66} r={1.3} /><circle cx={84} cy={66} r={1.3} />
+      </g>
+      <Face mood={mood} eyeY={54} mouthY={72} />
+    </Person>
+  );
+}
+
+const DRAWINGS: Record<MentorId, (p: { mood: MentorMood }) => React.ReactElement> = { maya: Maya, leo: Leo, sam: Sam, zoe: Zoe };
 
 /** A mentor at the given size; it bobs gently and jumps when cheering. */
 export function MentorAvatar({ mentorId, mood = "happy", size = 96, className }: {
   mentorId: MentorId; mood?: MentorMood; size?: number; className?: string;
 }) {
   const reduce = useReducedMotion();
-  const Drawing = DRAWINGS[mentorId] ?? Pip;
+  const Drawing = DRAWINGS[mentorId] ?? Maya;
   const motionProps = reduce ? {} : mood === "cheering"
     ? { animate: { y: [0, -14, 0, -8, 0], rotate: [0, -6, 6, -3, 0] }, transition: { duration: 0.9 } }
     : { animate: { y: [0, -3, 0] }, transition: { duration: 3, repeat: Infinity, ease: "easeInOut" as const } };

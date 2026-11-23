@@ -329,7 +329,7 @@ grade 9 with no code was allowed (by design). Nothing to change. To see it yours
 
 ### As a student (grade 6–8, in the test class)
 1. The sidebar has **Math Textbook**. It opens a table of contents: Grade 6 / 7 / 8, a colored chapter per NAD topic, a lesson per skill.
-2. Open a lesson. The first time, **Choose your mentor** opens: Pip (fox), Bolt (robot), Shelly (turtle), Nova (dragon). Pick one.
+2. Open a lesson. The first time, **Choose your mentor** opens: Maya, Leo, Sam and Zoe. Pick one.
 3. The lesson is a book: Next / Back (or the arrow keys), page dots, "Read it to me". While it reads, the mentor's mouth moves.
 4. On an example page, **Next step** reveals one step at a time.
 5. On "Your turn", answer right: the mentor cheers. Answer wrong: it encourages you to look back or ask for a hint.
