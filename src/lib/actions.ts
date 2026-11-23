@@ -28,6 +28,8 @@ import { addCrisisLinesToResult, detectConcern } from "@/lib/safety";
 import { UserFacingError } from "@/lib/user-facing-error";
 import { classInstructionsFor, lessonMaterialFor } from "@/lib/class-material";
 import { requestContext } from "@/lib/request-context";
+import { prewrittenLesson } from "@/lib/textbook-content";
+import { bookAsText } from "@/lib/textbook-lesson";
 
 // Simple in-memory rate limiter (per-user, per-minute)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -528,7 +530,8 @@ export async function askMentorAction(input: z.infer<typeof MentorChatActionSche
     admin.from("quest_lessons").select("content, status").eq("skill_id", skill.id).maybeSingle(),
     admin.from("profiles").select("grade_level").eq("id", auth.userId).maybeSingle(),
   ]);
-  if (!lesson || lesson.status !== "approved") return { success: false as const, error: "This lesson isn't ready yet." };
+  const book = await prewrittenLesson(skill.id);
+  if (lesson?.status === "hidden" || (!book && lesson?.status !== "approved")) return { success: false as const, error: "This lesson isn't ready yet." };
 
   return handleAction({
     question: parsed.data.question,
@@ -537,7 +540,7 @@ export async function askMentorAction(input: z.infer<typeof MentorChatActionSche
     mentorVoice: mentor.voice,
     skillName: skill.name,
     gradeLevel: profile?.grade_level ?? undefined,
-    lessonText: lessonAsText(lesson.content as LessonContent),
+    lessonText: book ? bookAsText(book) : lessonAsText(lesson!.content as LessonContent),
     pageText: parsed.data.pageText,
     conversationHistory: parsed.data.conversationHistory,
     model: parsed.data.model,

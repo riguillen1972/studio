@@ -1,0 +1,337 @@
+{
+  "version": 2,
+  "skill_id": "6.long-division",
+  "title": "Dividing Multi-Digit Numbers",
+  "hook": "The robotics club raised $1,248 and wants to split it equally among its 16 teams. How much does each team get? That's 1,248 ÷ 16. No calculator? No problem. Today you'll learn a method that breaks a big division into small steps you already know how to do.",
+  "goal": "I can divide multi-digit numbers with long division, and decide what to do with a remainder in a word problem.",
+  "vocabulary": [
+    { "term": "dividend", "meaning": "the number being divided", "example": "In 1,248 ÷ 16, the dividend is 1,248." },
+    { "term": "divisor", "meaning": "the number you divide by", "example": "In 1,248 ÷ 16, the divisor is 16." },
+    { "term": "quotient", "meaning": "the answer to a division problem", "example": "1,248 ÷ 16 = 78, so the quotient is 78." },
+    { "term": "remainder", "meaning": "what's left over when a number doesn't divide evenly", "example": "17 ÷ 5 = 3 R 2, so the remainder is 2." }
+  ],
+  "warm_up": [
+    {
+      "question": "What is 7 × 36?",
+      "kind": "numeric",
+      "answer": "252",
+      "hints": ["Break 36 into 30 + 6 and multiply each part by 7.", "7 × 30 = 210 and 7 × 6 = 42. Now add them."],
+      "solution": ["7 × 30 = 210", "7 × 6 = 42", "210 + 42 = 252"],
+      "wrong": [
+        { "answer": "242", "feedback": "Close! Check 7 × 6 again, then add it to 7 × 30 = 210." },
+        { "answer": "216", "feedback": "It looks like you added 210 + 6. Multiply the 6 by 7 too: 7 × 6 = 42." }
+      ]
+    },
+    {
+      "question": "What is 84 ÷ 4?",
+      "kind": "numeric",
+      "answer": "21",
+      "hints": ["How many 4s are in 8? Then how many 4s are in 4?", "8 ÷ 4 = 2 and 4 ÷ 4 = 1. Put them in order."],
+      "solution": ["8 tens ÷ 4 = 2 tens", "4 ones ÷ 4 = 1 one", "So 84 ÷ 4 = 21. Check: 4 × 21 = 84."],
+      "wrong": [
+        { "answer": "12", "feedback": "The digits are switched. Start with the 8: 8 ÷ 4 = 2, so the answer starts with 2." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Four steps that repeat",
+      "read": [
+        "Long division turns one big problem into a few small ones. You work from left to right, one chunk of the dividend at a time.",
+        "For each chunk you do the same four steps: **Divide**, **Multiply**, **Subtract**, **Bring down**. Then you repeat until there are no digits left to bring down. A memory trick: **D**ad, **M**om, **S**ister, **B**rother.",
+        "Always start with the smallest front part of the dividend that the divisor fits into. If the divisor doesn't fit into the first digit, use the first two digits."
+      ],
+      "model": {
+        "caption": "The four steps",
+        "rows": [
+          ["Step", "Ask yourself"],
+          ["Divide", "How many times does the divisor fit into this chunk?"],
+          ["Multiply", "Divisor × that number = ?"],
+          ["Subtract", "Chunk − that product = leftover (it must be smaller than the divisor)"],
+          ["Bring down", "Move the next digit down next to the leftover"]
+        ]
+      },
+      "example": {
+        "problem": "Find 5,376 ÷ 7.",
+        "steps": [
+          { "say": "7 doesn't fit into 5, so use 53. The biggest fit is 7 × 7 = 49. Write 7 above the 3.", "why": "Start with the smallest front part the divisor fits into." },
+          { "say": "Subtract: 53 − 49 = 4. Bring down the 7 to make 47.", "why": "The leftover joins the next digit to make the next chunk." },
+          { "say": "47 ÷ 7: 7 × 6 = 42 fits. Write 6. Subtract: 47 − 42 = 5. Bring down the 6 to make 56.", "why": "Same four steps again: divide, multiply, subtract, bring down." },
+          { "say": "56 ÷ 7 = 8 exactly. Write 8. Subtract: 56 − 56 = 0. No digits are left.", "why": "When nothing is left to bring down, you're done." },
+          { "say": "Check by multiplying: 768 × 7 = 5,376. ✓", "why": "Multiplication undoes division, so it's a quick way to catch mistakes." }
+        ],
+        "answer": "5,376 ÷ 7 = 768"
+      },
+      "try_it": [
+        {
+          "question": "Find 2,736 ÷ 8.",
+          "kind": "numeric",
+          "answer": "342",
+          "hints": ["8 doesn't fit into 2, so start with 27.", "27 ÷ 8 is 3, because 8 × 3 = 24. Subtract to get 3, then bring down the 3 to make 33."],
+          "solution": ["27 ÷ 8 = 3 (8 × 3 = 24). 27 − 24 = 3. Bring down 3 → 33.", "33 ÷ 8 = 4 (8 × 4 = 32). 33 − 32 = 1. Bring down 6 → 16.", "16 ÷ 8 = 2. 16 − 16 = 0.", "Answer: 342. Check: 342 × 8 = 2,736."],
+          "wrong": [
+            { "answer": "34", "feedback": "You stopped one step early. There's still a 6 to bring down. Every digit of the dividend gets brought down." },
+            { "answer": "352", "feedback": "Check the middle step: 33 ÷ 8 is 4, because 8 × 4 = 32 and 8 × 5 = 40 is too big." }
+          ]
+        },
+        {
+          "question": "Find 4,215 ÷ 5.",
+          "kind": "numeric",
+          "answer": "843",
+          "hints": ["5 doesn't fit into 4, so start with 42.", "42 ÷ 5 is 8 (5 × 8 = 40). The leftover is 2, so bring down the 1 to make 21."],
+          "solution": ["42 ÷ 5 = 8 (5 × 8 = 40). 42 − 40 = 2. Bring down 1 → 21.", "21 ÷ 5 = 4 (5 × 4 = 20). 21 − 20 = 1. Bring down 5 → 15.", "15 ÷ 5 = 3. 15 − 15 = 0.", "Answer: 843. Check: 843 × 5 = 4,215."],
+          "wrong": [
+            { "answer": "84", "feedback": "Almost there! You still have the 5 to bring down. Keep going until every digit has been used." },
+            { "answer": "833", "feedback": "Check 21 ÷ 5: it's 4, because 5 × 4 = 20. The middle digit is 4." }
+          ]
+        }
+      ],
+      "mentor": "Here's a secret: long division is just the same four little steps, over and over. Let's watch them in action."
+    },
+    {
+      "heading": "Dividing by a two-digit number",
+      "read": [
+        "With a two-digit divisor, the steps are exactly the same. The only new part is the Divide step: it's harder to see how many times 16 fits into 124.",
+        "Two tricks help. First, **list the multiples** of the divisor before you start (16, 32, 48, …). Then you can just look them up. Second, **estimate with friendly numbers**: 16 is close to 15 or 20, so you can make a good first guess.",
+        "If your product is bigger than the chunk, your guess was too big, so go down by one. If your leftover is as big as the divisor or bigger, your guess was too small, so go up by one."
+      ],
+      "model": {
+        "caption": "Multiples of 16, ready to look up",
+        "rows": [
+          ["16 × 1", "16 × 2", "16 × 3", "16 × 4", "16 × 5", "16 × 6", "16 × 7", "16 × 8", "16 × 9"],
+          ["16", "32", "48", "64", "80", "96", "112", "128", "144"]
+        ]
+      },
+      "example": {
+        "problem": "The robotics club splits $1,248 equally among 16 teams. How much does each team get?",
+        "steps": [
+          { "say": "16 doesn't fit into 1 or 12, so use 124.", "why": "Start with the smallest front part the divisor fits into." },
+          { "say": "From the list, 16 × 8 = 128 is too big, and 16 × 7 = 112 fits. Write 7 above the 4.", "why": "Pick the biggest multiple that isn't more than the chunk." },
+          { "say": "Subtract: 124 − 112 = 12. Bring down the 8 to make 128.", "why": "12 is less than 16, so 7 was the right choice." },
+          { "say": "16 × 8 = 128 exactly. Write 8. Subtract: 128 − 128 = 0.", "why": "No leftover and no digits left, so the division is finished." },
+          { "say": "Check: 78 × 16 = 1,248. ✓", "why": "Multiplying back proves the answer." }
+        ],
+        "answer": "Each team gets $78."
+      },
+      "try_it": [
+        {
+          "question": "Find 2,064 ÷ 24.",
+          "kind": "numeric",
+          "answer": "86",
+          "hints": ["24 doesn't fit into 2 or 20, so use 206. 24 is close to 25, and 25 × 8 = 200.", "24 × 8 = 192. Subtract: 206 − 192 = 14. Bring down the 4 to make 144."],
+          "solution": ["Use 206. 24 × 8 = 192. 206 − 192 = 14. Bring down 4 → 144.", "144 ÷ 24 = 6 (24 × 6 = 144). 144 − 144 = 0.", "Answer: 86. Check: 86 × 24 = 2,064."],
+          "wrong": [
+            { "answer": "96", "feedback": "Your first digit is too big: 24 × 9 = 216, which is more than 206. Go down one, to 8." },
+            { "answer": "806", "feedback": "There's no zero here. After 206, you bring down the 4 to make 144, and 24 fits into 144 six times." }
+          ]
+        },
+        {
+          "question": "Find 3,312 ÷ 46.",
+          "kind": "numeric",
+          "answer": "72",
+          "hints": ["Use 331. 46 is close to 50, and 331 ÷ 50 is a bit more than 6. Try 7.", "46 × 7 = 322. Subtract to get 9, then bring down the 2 to make 92."],
+          "solution": ["Use 331. 46 × 7 = 322. 331 − 322 = 9. Bring down 2 → 92.", "92 ÷ 46 = 2 (46 × 2 = 92). 92 − 92 = 0.", "Answer: 72. Check: 72 × 46 = 3,312."],
+          "wrong": [
+            { "answer": "62", "feedback": "46 × 6 = 276 leaves 55, and 55 is bigger than 46, so 46 fits one more time. When the leftover is too big, go up by one: 7." }
+          ]
+        }
+      ],
+      "mentor": "Two-digit divisors look scary, but the steps don't change. Making a list of multiples first does a lot of the hard work for you."
+    },
+    {
+      "heading": "Zeros and remainders",
+      "read": [
+        "Sometimes you bring down a digit and the divisor doesn't fit. Then you **write 0 in the quotient** and bring down the next digit. Every digit you bring down needs a digit above it.",
+        "Sometimes the last subtraction doesn't give 0. What's left is the **remainder**, written like 201 R 18.",
+        "In a word problem, think about what the remainder means. **Round up** if everyone or everything must fit (buses, boxes). **Drop it** if the question asks for full groups. **The remainder is the answer** if the question asks how many are left over."
+      ],
+      "model": {
+        "caption": "185 students, 42 per bus: 185 ÷ 42 = 4 R 17",
+        "rows": [
+          ["Question", "Answer", "Why"],
+          ["How many buses are needed?", "5", "17 students still need a seat, so round up"],
+          ["How many buses are full?", "4", "Only full groups count, so drop the remainder"],
+          ["How many students ride in the last bus?", "17", "The remainder is the answer"]
+        ]
+      },
+      "example": {
+        "problem": "Find 6,450 ÷ 32.",
+        "steps": [
+          { "say": "32 doesn't fit into 6, so use 64. 32 × 2 = 64. Write 2 above the 4. Subtract: 64 − 64 = 0.", "why": "Start with the smallest front part the divisor fits into." },
+          { "say": "Bring down the 5. 32 doesn't fit into 5, so write 0 above the 5.", "why": "Skipping this 0 would turn 201 into 21, a completely different number." },
+          { "say": "Bring down the 0 to make 50. 32 × 1 = 32. Write 1. Subtract: 50 − 32 = 18.", "why": "Back to the four steps." },
+          { "say": "No digits are left, so 18 is the remainder.", "why": "18 is smaller than 32, so it can't make another group." },
+          { "say": "Check: 32 × 201 + 18 = 6,432 + 18 = 6,450. ✓", "why": "To check, multiply, then add the remainder back." }
+        ],
+        "answer": "6,450 ÷ 32 = 201 R 18"
+      },
+      "try_it": [
+        {
+          "question": "Find 3,627 ÷ 9.",
+          "kind": "numeric",
+          "answer": "403",
+          "hints": ["Start with 36 ÷ 9 = 4. Then bring down the 2. Does 9 fit into 2?", "9 doesn't fit into 2, so write 0 in the quotient. Then bring down the 7 to make 27."],
+          "solution": ["36 ÷ 9 = 4. 36 − 36 = 0.", "Bring down 2. 9 doesn't fit, so write 0.", "Bring down 7 → 27. 27 ÷ 9 = 3.", "Answer: 403. Check: 403 × 9 = 3,627."],
+          "wrong": [
+            { "answer": "43", "feedback": "You skipped a zero. When 9 didn't fit into 2, the quotient needed a 0 in that place. Check: 43 × 9 is only 387." }
+          ]
+        },
+        {
+          "question": "185 students are going on a field trip. Each bus holds 42 students. How many buses are needed?",
+          "kind": "numeric",
+          "answer": "5",
+          "hints": ["Divide 185 by 42. Is there a remainder?", "185 ÷ 42 = 4 R 17. Those 17 students still need a seat!"],
+          "solution": ["42 × 4 = 168, and 185 − 168 = 17, so 185 ÷ 42 = 4 R 17.", "Four buses hold 168 students, and 17 students are left.", "Every student must ride, so round up: 5 buses."],
+          "wrong": [
+            { "answer": "4", "feedback": "Four buses hold only 168 students, so 17 would be left behind. When everyone must fit, round up." },
+            { "answer": "17", "feedback": "17 is how many students are left over after 4 full buses. The question asks how many buses." }
+          ]
+        }
+      ],
+      "mentor": "This is where lots of people slip, so you're learning the tricky part right now. When the divisor doesn't fit, write a 0 and keep going."
+    }
+  ],
+  "mistake": {
+    "problem": "Jordan found 4,832 ÷ 16.",
+    "work": ["48 ÷ 16 = 3. Write 3. 48 − 48 = 0.", "Bring down the 3. 16 doesn't fit, so skip it.", "Bring down the 2 to make 32. 32 ÷ 16 = 2. Write 2.", "Answer: 32"],
+    "what_went_wrong": "When 16 didn't fit into 3, Jordan skipped it instead of writing a 0 in the quotient. That made the answer 32 instead of 302.",
+    "fix": "Write 0 above the 3, then bring down the 2. The answer is 302. Estimating first catches this: 4,832 ÷ 16 is about 4,800 ÷ 16 = 300, so 32 is far too small."
+  },
+  "summary": [
+    "Repeat Divide, Multiply, Subtract, Bring down until every digit has been brought down.",
+    "When the divisor doesn't fit, write 0 in the quotient. Every digit you bring down needs a digit above it.",
+    "In word problems, decide whether to round up, drop the remainder, or use the remainder as the answer. Then check by multiplying."
+  ],
+  "faith": "Division is about sharing fairly. The early believers shared what they had so that no one was in need (Acts 4:34–35).",
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find 1,512 ÷ 6.",
+      "kind": "numeric",
+      "answer": "252",
+      "hints": ["6 doesn't fit into 1, so start with 15.", "15 ÷ 6 = 2 with 3 left over. Bring down the 1 to make 31."],
+      "solution": ["15 ÷ 6 = 2. 15 − 12 = 3. Bring down 1 → 31.", "31 ÷ 6 = 5. 31 − 30 = 1. Bring down 2 → 12.", "12 ÷ 6 = 2.", "Answer: 252."],
+      "wrong": [
+        { "answer": "25", "feedback": "One more step! The 2 at the end still needs to be brought down." },
+        { "answer": "242", "feedback": "Check 31 ÷ 6: it's 5, because 6 × 5 = 30." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 7,280 ÷ 8.",
+      "kind": "numeric",
+      "answer": "910",
+      "hints": ["Start with 72 ÷ 8.", "After 72 ÷ 8 = 9 and 8 ÷ 8 = 1, bring down the 0. How many times does 8 fit into 0?"],
+      "solution": ["72 ÷ 8 = 9. 72 − 72 = 0. Bring down 8.", "8 ÷ 8 = 1. 8 − 8 = 0. Bring down 0.", "0 ÷ 8 = 0, so write 0.", "Answer: 910."],
+      "wrong": [
+        { "answer": "91", "feedback": "The last 0 still needs a digit in the quotient. How many times does 8 go into 0?" }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 1,656 ÷ 23.",
+      "kind": "numeric",
+      "answer": "72",
+      "hints": ["Use 165. 23 is close to 20, and 20 × 8 = 160, so try 8 first.", "23 × 8 = 184 is too big, so go down one: 23 × 7 = 161. 165 − 161 = 4. Bring down the 6 to make 46."],
+      "solution": ["Use 165. 23 × 7 = 161. 165 − 161 = 4. Bring down 6 → 46.", "46 ÷ 23 = 2.", "Answer: 72. Check: 72 × 23 = 1,656."],
+      "wrong": [
+        { "answer": "62", "feedback": "23 × 6 = 138 leaves 27, which is more than 23. The leftover is too big, so go up by one: 7." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 9,906 ÷ 39.",
+      "kind": "numeric",
+      "answer": "254",
+      "hints": ["Use 99. 39 is close to 40, and 40 fits into 99 two times.", "39 × 2 = 78, so 99 − 78 = 21. Bring down 0 → 210. 39 is about 40, and 40 × 5 = 200."],
+      "solution": ["99 ÷ 39 = 2. 99 − 78 = 21. Bring down 0 → 210.", "210 ÷ 39 = 5. 210 − 195 = 15. Bring down 6 → 156.", "156 ÷ 39 = 4 (39 × 4 = 156).", "Answer: 254."],
+      "wrong": [
+        { "answer": "244", "feedback": "Check 210 ÷ 39. 39 × 5 = 195 still fits, so the middle digit is 5, not 4." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A farmer packs 1,350 eggs into cartons of 12. How many cartons can she fill completely?",
+      "kind": "numeric",
+      "answer": "112",
+      "hints": ["Divide 1,350 by 12 and look at the remainder.", "1,350 ÷ 12 = 112 R 6. Can 6 eggs fill a carton?"],
+      "solution": ["1,350 ÷ 12 = 112 R 6 (12 × 112 = 1,344).", "The question asks for full cartons, so drop the remainder.", "She can fill 112 cartons, with 6 eggs left over."],
+      "wrong": [
+        { "answer": "113", "feedback": "113 cartons would need 1,356 eggs, but she only has 1,350. The leftover eggs don't fill a whole carton." },
+        { "answer": "6", "feedback": "6 is the number of eggs left over. The question asks how many full cartons." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A class of 28 students shares 1,000 stickers equally. Each student gets as many as possible. How many stickers are left over?",
+      "kind": "numeric",
+      "answer": "20",
+      "hints": ["Divide 1,000 by 28. The question is about the remainder.", "28 × 35 = 980. How many are left from 1,000?"],
+      "solution": ["1,000 ÷ 28 = 35 R 20, because 28 × 35 = 980.", "Each student gets 35 stickers.", "1,000 − 980 = 20 stickers are left over."],
+      "wrong": [
+        { "answer": "35", "feedback": "35 is how many stickers each student gets. The question asks how many are left over." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A school buys 15 tablets for $3,600 in all. Each tablet also needs a case that costs $18. What is the cost of one tablet with its case, in dollars?",
+      "kind": "numeric",
+      "answer": "258",
+      "hints": ["First find the cost of one tablet: 3,600 ÷ 15.", "One tablet costs $240. Now add the case."],
+      "solution": ["3,600 ÷ 15 = 240, so one tablet costs $240.", "240 + 18 = 258.", "One tablet with its case costs $258."],
+      "wrong": [
+        { "answer": "240", "feedback": "That's the tablet by itself. Add the $18 case." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which is the best estimate for 2,500 ÷ 48?",
+      "kind": "multiple_choice",
+      "choices": ["About 5", "About 50", "About 500", "About 5,000"],
+      "answer": "About 50",
+      "hints": ["Round 48 to a friendly number.", "48 is close to 50. How many 50s are in 2,500?"],
+      "solution": ["48 is close to 50.", "2,500 ÷ 50 = 50.", "So 2,500 ÷ 48 is about 50."],
+      "wrong": [
+        { "answer": "About 500", "feedback": "48 × 500 = 24,000, which is way more than 2,500. Think 2,500 ÷ 50." },
+        { "answer": "About 5", "feedback": "48 × 5 = 240, much less than 2,500. Think 2,500 ÷ 50." },
+        { "answer": "About 5,000", "feedback": "A quotient bigger than the dividend can't be right when you divide by a number bigger than 1." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Maya found 652 ÷ 31 = 21 R 1. How can she check her answer?",
+      "kind": "multiple_choice",
+      "choices": ["Multiply 31 × 21, then add 1", "Multiply 21 × 1, then add 31", "Divide 652 by 1", "Add 31 + 21 + 1"],
+      "answer": "Multiply 31 × 21, then add 1",
+      "hints": ["Multiplication undoes division.", "Divisor × quotient + remainder should give the dividend."],
+      "solution": ["Divisor × quotient + remainder = dividend.", "31 × 21 = 651, and 651 + 1 = 652. ✓"],
+      "wrong": [
+        { "answer": "Multiply 21 × 1, then add 31", "feedback": "The remainder isn't multiplied. Multiply the divisor by the quotient, then add the remainder." },
+        { "answer": "Add 31 + 21 + 1", "feedback": "Adding doesn't undo division. Multiply the divisor by the quotient, then add the remainder." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "What is 304 × 26?",
+      "kind": "numeric",
+      "answer": "7904",
+      "hints": ["Multiply 304 × 6 and 304 × 20, then add.", "304 × 6 = 1,824 and 304 × 20 = 6,080."],
+      "solution": ["304 × 6 = 1,824", "304 × 20 = 6,080", "1,824 + 6,080 = 7,904"],
+      "wrong": [
+        { "answer": "2432", "feedback": "It looks like the tens row wasn't shifted. 304 × 20 is 6,080, not 608." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "A theater has 1,248 seats in rows of 26. Tonight 9 rows are closed for repairs. How many seats are open?",
+      "kind": "numeric",
+      "answer": "1014",
+      "hints": ["How many seats are in the 9 closed rows?", "9 × 26 = 234 seats are closed. Subtract from 1,248. (Or find the number of rows first: 1,248 ÷ 26.)"],
+      "solution": ["1,248 ÷ 26 = 48 rows in all.", "48 − 9 = 39 open rows.", "39 × 26 = 1,014 open seats. (Check: 1,248 − 9 × 26 = 1,248 − 234 = 1,014.)"],
+      "wrong": [
+        { "answer": "39", "feedback": "39 is the number of open rows. Multiply by the 26 seats in each row." },
+        { "answer": "1239", "feedback": "You subtracted 9 seats, but 9 whole rows are closed: 9 × 26 = 234 seats." }
+      ]
+    }
+  ]
+}

@@ -17,7 +17,7 @@ interface Turn { role: "user" | "ai"; content: string }
  * The mentor beside the textbook: says something about each page, reacts to the student, and
  * answers questions about the page they're on.
  */
-export function MentorPanel({ mentorId, skillId, line, pageText, mood: outsideMood, onChangeMentor }: {
+export function MentorPanel({ mentorId, skillId, line, pageText, mood: outsideMood, onChangeMentor, request }: {
   mentorId: MentorId;
   skillId: string;
   /** What the mentor says about the current page. */
@@ -26,6 +26,8 @@ export function MentorPanel({ mentorId, skillId, line, pageText, mood: outsideMo
   /** A mood set by the page (talking while reading aloud, cheering after a right answer). */
   mood?: MentorMood | null;
   onChangeMentor: () => void;
+  /** A question sent from the page (like "Help me with worksheet problem 3"); a new id sends it. */
+  request?: { id: number; text: string; pageText: string } | null;
 }) {
   const mentor = MENTORS_BY_ID[mentorId];
   const { tier, hasTokens, consumeTokens } = useAppState();
@@ -40,17 +42,14 @@ export function MentorPanel({ mentorId, skillId, line, pageText, mood: outsideMo
   useEffect(() => { setTurns([]); setError(null); }, [skillId]);
   useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }, [turns, thinking]);
 
-  const ask = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = question.trim();
+  const send = async (q: string, aboutPage = pageText) => {
     if (!q || thinking) return;
     if (!hasTokens(model)) return setError("You've used this month's tokens. They reset on the 1st of next month.");
-    setQuestion("");
     setError(null);
     const history = turns;
     setTurns([...history, { role: "user", content: q }]);
     setThinking(true);
-    const result = await askMentorAction({ skillId, mentorId, question: q, pageText: pageText.slice(0, 3000), conversationHistory: history.slice(-8), model });
+    const result = await askMentorAction({ skillId, mentorId, question: q, pageText: aboutPage.slice(0, 3000), conversationHistory: history.slice(-8), model });
     setThinking(false);
     if (result.success) {
       consumeTokens(result.data.totalTokens, model);
@@ -59,6 +58,24 @@ export function MentorPanel({ mentorId, skillId, line, pageText, mood: outsideMo
       setError(result.error);
     }
   };
+
+  const ask = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = question.trim();
+    if (!q || thinking) return;
+    setQuestion("");
+    send(q);
+  };
+
+  // A help request from the page
+  const lastRequest = useRef<number | null>(null);
+  useEffect(() => {
+    if (!request || request.id === lastRequest.current) return;
+    lastRequest.current = request.id;
+    send(request.text, request.pageText);
+    endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request]);
 
   const mood: MentorMood = thinking ? "thinking" : outsideMood ?? "happy";
 

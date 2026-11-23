@@ -4,6 +4,7 @@ import { getSkill } from "@/lib/quest/skills";
 import { generateLesson } from "@/lib/quest/lessons";
 import { QUEST_MODEL } from "@/lib/quest/generate";
 import { unauthorized, userIdFrom } from "@/lib/quest/api";
+import { prewrittenLesson } from "@/lib/textbook-content";
 
 // Up to 3 drafts, each checked by two calls
 export const maxDuration = 300;
@@ -20,7 +21,8 @@ async function lessonRow(skillId: string) {
   return data;
 }
 
-// A skill's lesson. Students get it only when it's live (and the view is recorded for their
+// A skill's lesson: the pre-written textbook lesson when there is one, otherwise the shorter
+// generated lesson. Students get it only when it isn't hidden (and the view is recorded for their
 // teacher); teachers also see hidden lessons. `missing` means none has been written yet.
 export async function GET(req: NextRequest, { params }: { params: Promise<{ skill: string }> }) {
   const who = await caller(req);
@@ -28,9 +30,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ skil
   const skill = getSkill((await params).skill);
   if (!skill) return NextResponse.json({ error: "Unknown skill" }, { status: 404 });
 
-  const row = await lessonRow(skill.id);
-  if (!row) return NextResponse.json({ lesson: null, status: null, missing: true });
-  if (row.status !== "approved" && !who.teacher) return NextResponse.json({ lesson: null, status: "hidden", missing: false });
+  const [row, book] = await Promise.all([lessonRow(skill.id), prewrittenLesson(skill.id)]);
+  // A teacher can hide any lesson, including a pre-written one
+  if (row?.status === "hidden" && !who.teacher) return NextResponse.json({ lesson: null, book: null, status: "hidden", missing: false });
+  if (!row && !book) return NextResponse.json({ lesson: null, book: null, status: null, missing: true });
 
   if (!who.teacher) {
     const supabase = getAdminClient();
@@ -40,7 +43,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ skil
       ? supabase.from("quest_lesson_views").update({ views: seen.views + 1, last_viewed_at: now }).eq("student_id", who.userId).eq("skill_id", skill.id)
       : supabase.from("quest_lesson_views").insert({ student_id: who.userId, skill_id: skill.id }));
   }
-  return NextResponse.json({ lesson: row.content, status: row.status, missing: false, updated_at: row.updated_at });
+  // `book` is the full pre-written lesson; `lesson` is the shorter generated one
+  return NextResponse.json({ lesson: book ? null : row!.content, book, status: row?.status ?? "approved", missing: false, updated_at: row?.updated_at ?? null });
 }
 
 // Writes the lesson: { force?: true } rewrites an existing one (teachers only). Anyone signed in
