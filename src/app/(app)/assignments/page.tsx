@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { SKILLS_BY_ID } from "@/lib/quest/skills";
+import { lessonPlace } from "@/lib/textbook";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/supabase/auth-provider";
 import { createClient } from "@/lib/supabase/client";
 import { useAppState } from "@/components/app-state-provider";
-import { BookDashed, CalendarClock, CheckCircle2, ChevronRight, FileQuestion, Folder, Lightbulb, Loader2, Send } from "lucide-react";
+import { BookDashed, BookOpen, CalendarClock, CheckCircle2, ChevronRight, FileQuestion, Folder, Lightbulb, Loader2, Send } from "lucide-react";
 
 interface Assignment {
   id: string;
@@ -44,7 +47,11 @@ const resultStyles: Record<string, string> = {
 const typeColors: Record<string, string> = {
   homework: "bg-purple-500/20 text-purple-600",
   quiz: "bg-pink-500/20 text-pink-600",
+  textbook: "bg-sky-500/20 text-sky-600",
 };
+
+/** A YYYY-MM-DD date (a textbook lesson's due date) as a local date, so it doesn't shift a day by time zone. */
+const localDate = (ymd: string) => { const [y, m, d] = ymd.split("-").map(Number); return new Date(y, m - 1, d).toISOString(); };
 
 function formatDue(due: string | null) {
   if (!due) return null;
@@ -59,7 +66,7 @@ function formatDue(due: string | null) {
 
 export default function AssignmentsPage() {
   const { user } = useAuth();
-  const { classCode } = useAppState();
+  const { classCode, assignedLessons } = useAppState();
   const router = useRouter();
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [selected, setSelected] = useState<Assignment | null>(null);
@@ -151,7 +158,7 @@ export default function AssignmentsPage() {
         <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
           <p className="text-destructive font-medium">{error}</p>
         </div>
-      ) : assignments.length === 0 ? (
+      ) : assignments.length === 0 && assignedLessons.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
           <CheckCircle2 className="w-16 h-16 text-green-500/80 mb-4" />
           <h3 className="text-xl font-medium text-foreground">You&apos;re all caught up!</h3>
@@ -161,6 +168,37 @@ export default function AssignmentsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Textbook lessons the teacher assigned: they open in the Math Textbook */}
+          {assignedLessons.map((lesson) => {
+            const due = formatDue(lesson.due ? localDate(lesson.due) : null);
+            const place = lessonPlace(lesson.skill_id);
+            return (
+              <Link key={`${lesson.class_name}-${lesson.skill_id}`} href={`/textbook/${lesson.skill_id}`}>
+                <Card className="h-full hover:border-primary/50 transition-colors group">
+                  <CardContent className="p-6 flex h-full flex-col gap-4">
+                    <div className="flex justify-between items-start">
+                      <Badge variant="outline" className={`uppercase font-bold tracking-wider ${typeColors.textbook} border-none`}>
+                        <BookOpen className="mr-1 h-3 w-3" /> Textbook lesson
+                      </Badge>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <h3 className="font-semibold text-lg leading-tight line-clamp-2">
+                      {place && <span className="text-muted-foreground">Lesson {place.chapter.number}.{place.lessonInChapter} </span>}
+                      {SKILLS_BY_ID[lesson.skill_id]?.name}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-auto">
+                      <span className="flex items-center gap-2"><Folder className="w-4 h-4" />{lesson.class_name}</span>
+                      {due && (
+                        <span className={`flex items-center gap-1 ${due.overdue ? "text-destructive" : ""}`}>
+                          <CalendarClock className="w-4 h-4" />{due.text}
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
           {assignments.map((assignment) => {
             const due = formatDue(assignment.due_date);
             return (
