@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { MAX_CLASS_INSTRUCTIONS } from "@/lib/class-material";
 import { isTeachingMode } from "@/lib/mentors";
+import { cleanAssignments } from "@/lib/textbook-assign";
 
-// Teachers update a class's settings, e.g. { allow_research_mode: false } or { ai_instructions: "..." }
+// Teachers update a class's settings, e.g. { allow_research_mode: false }, { ai_instructions: "..." }
+// or { assigned_lessons: [{ skill_id, due }] } (the textbook lessons assigned to the class)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -44,11 +46,16 @@ export async function PATCH(
     }
 
     // Only known settings are accepted
-    const updates: Record<string, boolean | string> = {};
+    const updates: Record<string, unknown> = {};
     if (typeof settings.allow_research_mode === "boolean") {
       updates.allow_research_mode = settings.allow_research_mode;
     }
     if (isTeachingMode(settings.teaching_mode)) updates.teaching_mode = settings.teaching_mode;
+    if (settings.assigned_lessons !== undefined) {
+      const lessons = cleanAssignments(settings.assigned_lessons);
+      if (!lessons) return NextResponse.json({ error: "assigned_lessons must be a list" }, { status: 400 });
+      updates.assigned_lessons = lessons;
+    }
     if (typeof settings.ai_instructions === "string") {
       if (settings.ai_instructions.length > MAX_CLASS_INSTRUCTIONS) {
         return NextResponse.json({ error: `Class instructions can be up to ${MAX_CLASS_INSTRUCTIONS} characters.` }, { status: 400 });

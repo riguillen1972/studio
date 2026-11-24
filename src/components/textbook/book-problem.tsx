@@ -26,8 +26,10 @@ const MAX_TRIES = 3;
  * know it, otherwise the next hint; after 3 tries, the worked solution. Research on feedback:
  * explaining why helps far more than just marking it wrong.
  */
-export function BookProblemCard({ problem, label, onResult, onAskMentor, mentorName }: {
+export function BookProblemCard({ problem, label, onResult, onAskMentor, mentorName, answerKey }: {
   problem: BookProblem;
+  /** Teacher preview: show the answer, solution and common wrong answers instead of an answer box. */
+  answerKey?: boolean;
   label?: string;
   onResult?: (e: ProblemEvent) => void;
   /** Shows "Ask <mentor>" for help with this problem. */
@@ -61,6 +63,26 @@ export function BookProblemCard({ problem, label, onResult, onAskMentor, mentorN
     setMessage(msg);
     onResult?.({ right: false, tries: t, message: msg, done: t >= MAX_TRIES });
   };
+
+  if (answerKey) {
+    return (
+      <div className="space-y-3 rounded-xl border-2 border-black/10 bg-white/60 p-4 dark:border-white/10 dark:bg-white/5">
+        {label && <p className="text-xs font-bold uppercase tracking-wide text-primary">{label}</p>}
+        <div className="text-lg font-medium"><Markdown>{problem.question}</Markdown></div>
+        {problem.choices && <ul className="grid gap-1 text-sm sm:grid-cols-2">{problem.choices.map((c) => <li key={c} className={`rounded-md border px-2 py-1 ${c === problem.answer ? "border-green-500 bg-green-500/10 font-medium" : "border-black/10 dark:border-white/15"}`}>{c}</li>)}</ul>}
+        <details className="rounded-lg bg-black/[0.03] p-3 text-sm dark:bg-white/5">
+          <summary className="cursor-pointer font-semibold">Answer key: {problem.answer}</summary>
+          <ol className="mt-2 list-decimal space-y-0.5 pl-5">{problem.solution.map((s, i) => <li key={i}><Markdown>{s}</Markdown></li>)}</ol>
+          {problem.wrong.length > 0 && (
+            <div className="mt-2">
+              <p className="font-semibold">Common wrong answers</p>
+              <ul className="space-y-0.5">{problem.wrong.map((w) => <li key={w.answer}><b>{w.answer}</b>: {w.feedback}</li>)}</ul>
+            </div>
+          )}
+        </details>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3 rounded-xl border-2 border-black/10 bg-white/60 p-4 dark:border-white/10 dark:bg-white/5">

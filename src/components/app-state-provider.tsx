@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/supabase/auth-provider';
 import { createClient } from '@/lib/supabase/client';
 import { TOKEN_LIMITS, toUsageModel, type SubscriptionTier, type UsageModel } from '@/lib/plans';
 import { isTeachingMode, type TeachingMode } from '@/lib/mentors';
+import { cleanAssignments, type AssignedLesson } from '@/lib/textbook-assign';
 
 export type { SubscriptionTier } from '@/lib/plans';
 
@@ -42,6 +43,8 @@ interface AppState {
   researchModeAllowed: boolean;
   /** How the student's class learns textbook lessons (set by the teacher; mentor if not set). */
   teachingMode: TeachingMode;
+  /** Textbook lessons the student's teachers assigned (students only). */
+  assignedLessons: (AssignedLesson & { class_name: string })[];
   updateProfile: (updates: ProfileUpdates) => Promise<{ error: string | null }>;
   joinClass: (code: string) => Promise<{ error: string | null }>;
   leaveClass: () => Promise<{ error: string | null }>;
@@ -77,6 +80,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [needsRolePicker, setNeedsRolePicker] = useState<boolean>(false);
   const [researchModeAllowed, setResearchModeAllowed] = useState<boolean>(true);
   const [teachingMode, setTeachingMode] = useState<TeachingMode>('mentor');
+  const [assignedLessons, setAssignedLessons] = useState<(AssignedLesson & { class_name: string })[]>([]);
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ used: emptyUsage(), date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
@@ -99,6 +103,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setResearchModeAllowed(!blocked);
       const mode = (data ?? []).map((c: { settings?: { teaching_mode?: unknown } }) => c?.settings?.teaching_mode).find(isTeachingMode);
       setTeachingMode(mode ?? 'mentor');
+      // Students: every class's assigned lessons, soonest due first (teachers' own classes are skipped)
+      const lessons = (data ?? []).flatMap((c: { name?: string; settings?: { assigned_lessons?: unknown } }) =>
+        (cleanAssignments(c?.settings?.assigned_lessons) ?? []).map((a) => ({ ...a, class_name: c?.name ?? 'Class' })));
+      lessons.sort((a: AssignedLesson, b: AssignedLesson) => (a.due ?? '9999').localeCompare(b.due ?? '9999') || b.assigned_at.localeCompare(a.assigned_at));
+      setAssignedLessons(lessons);
     } catch (e) {
       console.error('Failed to load class settings:', e);
     }
@@ -271,6 +280,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     needsRolePicker: isMounted ? needsRolePicker : false,
     researchModeAllowed,
     teachingMode,
+    assignedLessons: role === 'teacher' ? [] : assignedLessons,
     updateProfile,
     joinClass,
     leaveClass,

@@ -178,16 +178,9 @@ export function AppSidebar() {
     },
   ];
 
-  // Teachers: the AI tools, for planning or showing on the classroom projector
-  const teacherToolItems: typeof baseMenuItems = [
+  // Teachers: the Math Textbook, where they assign lessons to their class
+  const teacherItems: typeof baseMenuItems = [
     { href: "/textbook", icon: Library, label: "Math Textbook", visibleTo: ['teacher'] },
-    { href: "/tutor", icon: Bot, label: "AI Tutor", visibleTo: ['teacher'] },
-    { href: "/homework", icon: BookOpen, label: "Homework Help", visibleTo: ['teacher'] },
-    { href: "/quiz", icon: FileQuestion, label: "Quiz Generator", visibleTo: ['teacher'] },
-    { href: "/flashcards", icon: Layers, label: "Flashcards", visibleTo: ['teacher'] },
-    { href: "/summarizer", icon: NotebookText, label: "Summarizer", visibleTo: ['teacher'] },
-    { href: "/tools", icon: WandSparkles, label: "AI Tools library", visibleTo: ['teacher'] },
-    { href: "/bible-verse", icon: BookMarked, label: "Bible Verse", visibleTo: ['teacher'] },
   ];
 
   const menuItems = baseMenuItems.filter(item => {
@@ -248,13 +241,8 @@ export function AppSidebar() {
         <SidebarContent className="p-2">
           <SidebarMenu>
             {menuItems.map(renderItem)}
+            {isTeacher && teacherItems.map(renderItem)}
           </SidebarMenu>
-          {isTeacher && (
-            <SidebarGroup className="mt-2 p-0">
-              <SidebarGroupLabel>AI Tools</SidebarGroupLabel>
-              <SidebarMenu>{teacherToolItems.map(renderItem)}</SidebarMenu>
-            </SidebarGroup>
-          )}
         </SidebarContent>
         <SidebarFooter className="p-2">
            <SidebarMenu>

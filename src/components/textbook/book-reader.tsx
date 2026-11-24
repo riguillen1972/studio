@@ -27,6 +27,8 @@ interface PageContext {
   /** Ask the mentor for help with a problem. */
   askMentor: ((p: BookProblem, label: string, response: string | null) => void) | null;
   mentorName?: string;
+  /** Teacher preview: answer keys instead of answer boxes. */
+  answerKey: boolean;
   worksheetScore: { right: number; done: number };
 }
 
@@ -157,7 +159,7 @@ function pagesFor(l: TextbookLesson): Page[] {
         <div className="space-y-4">
           <p className="text-lg">Two quick questions from earlier lessons to get your brain ready.</p>
           {l.warm_up.map((p, i) => (
-            <BookProblemCard key={i} problem={p} label={`Warm-up ${i + 1}`} mentorName={ctx.mentorName}
+            <BookProblemCard key={i} problem={p} label={`Warm-up ${i + 1}`} mentorName={ctx.mentorName} answerKey={ctx.answerKey}
               onResult={(e) => ctx.onProblem(e, `warm-${i}`)} />
           ))}
         </div>
@@ -191,7 +193,7 @@ function pagesFor(l: TextbookLesson): Page[] {
           <div className="space-y-4">
             <p className="text-sm font-bold uppercase tracking-wide text-primary">Try it</p>
             {part.try_it.map((p, j) => (
-              <BookProblemCard key={j} problem={p} label={part.try_it.length > 1 ? `Try it ${n}.${j + 1}` : undefined} mentorName={ctx.mentorName}
+              <BookProblemCard key={j} problem={p} label={part.try_it.length > 1 ? `Try it ${n}.${j + 1}` : undefined} mentorName={ctx.mentorName} answerKey={ctx.answerKey}
                 onResult={(e) => ctx.onProblem(e, `try-${i}-${j}`)} />
             ))}
           </div>
@@ -244,10 +246,10 @@ function pagesFor(l: TextbookLesson): Page[] {
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-base">Show what you know. Tap Hint or ask for help anytime.</p>
-            <p className="text-sm tabular-nums text-muted-foreground">{ctx.worksheetScore.done} of {l.worksheet.length} done · {ctx.worksheetScore.right} right</p>
+            {!ctx.answerKey && <p className="text-sm tabular-nums text-muted-foreground">{ctx.worksheetScore.done} of {l.worksheet.length} done · {ctx.worksheetScore.right} right</p>}
           </div>
           {l.worksheet.map((p, i) => (
-            <BookProblemCard key={i} problem={p} label={`${i + 1} · ${WORKSHEET_LEVELS[p.level]}`} mentorName={ctx.mentorName}
+            <BookProblemCard key={i} problem={p} label={`${i + 1} · ${WORKSHEET_LEVELS[p.level]}`} mentorName={ctx.mentorName} answerKey={ctx.answerKey}
               onResult={(e) => ctx.onProblem(e, `ws-${i}`)}
               onAskMentor={ctx.askMentor ? (r) => ctx.askMentor!(p, `worksheet problem ${i + 1}`, r) : undefined} />
           ))}
@@ -296,8 +298,10 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
   const voice = useReadAloud();
   const { stop } = voice;
 
-  // Teachers preview the book with the mentor; students see it unless their teacher teaches the lesson
-  const showMentor = role === "teacher" || teachingMode === "mentor";
+  // Teachers assign lessons rather than do them, so they see a preview with answer keys and no
+  // mentor. Students have their mentor unless their teacher teaches the lesson.
+  const isTeacher = role === "teacher";
+  const showMentor = !isTeacher && teachingMode === "mentor";
   const mentor = showMentor && mentorId ? MENTORS_BY_ID[mentorId] : null;
 
   const load = useCallback(async () => {
@@ -381,6 +385,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
         }
       : null,
     mentorName: mentor?.name,
+    answerKey: isTeacher,
     worksheetScore,
   };
 
@@ -419,7 +424,14 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
         )}
       </div>
 
-      {teachingMode !== "mentor" && role !== "teacher" && (
+      {isTeacher && (
+        <p className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+          <b>Teacher preview.</b> This is what your students see. They read it with their mentor, answer each Try It and do the worksheet; you see the answer keys.{" "}
+          <Link href="/textbook" className="font-medium text-primary hover:underline">Assign lessons from the table of contents</Link>
+        </p>
+      )}
+
+      {teachingMode !== "mentor" && !isTeacher && (
         <p className="rounded-lg border bg-muted/40 p-3 text-sm">
           {teachingMode === "teacher"
             ? "Your teacher is teaching this lesson in class. You can read the textbook here anytime."

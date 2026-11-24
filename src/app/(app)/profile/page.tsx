@@ -18,6 +18,7 @@ import { useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PLANS, TEACHER_MAX, TEACHER_AVATAR_FEATURE, AI_TOOL_COUNT, requiresSchoolConsent } from "@/lib/plans";
 import { createClient } from "@/lib/supabase/client";
+import { TeacherMonth } from "@/components/profile/teacher-month";
 
 interface TierPlan {
     name: string;
@@ -71,6 +72,29 @@ const tierPlans: Record<SubscriptionTier, TierPlan> = {
             PLANS.max.tokenSummary,
             "AI Mini-App Generator",
             "Create & save custom learning apps",
+        ],
+    },
+};
+
+// Teachers choose between Free and Teacher Max (there's no teacher Pro plan)
+const TEACHER_PLAN_KEYS: SubscriptionTier[] = ['free', 'max'];
+const teacherPlans: Record<'free' | 'max', Pick<TierPlan, 'description' | 'features'>> = {
+    free: {
+        description: "Everything you need to run your class.",
+        features: [
+            "Create classes with a class code",
+            "Assign Math Textbook lessons with due dates",
+            "See each student's Math Quest progress",
+            "Share lesson materials, homework and quizzes",
+        ],
+    },
+    max: {
+        description: "Maximum power for teachers, with a live AI co-teacher.",
+        features: [
+            "Everything in Free, plus:",
+            TEACHER_AVATAR_FEATURE,
+            "Build your own AI Teacher",
+            "Worksheet Generator",
         ],
     },
 };
@@ -444,7 +468,7 @@ function ProfileContent() {
                     <h2 className="text-xl font-semibold font-headline">{displayName}</h2>
                     <p className="text-muted-foreground text-sm">{displayEmail}</p>
                       <Badge className="mt-2" variant={tier === 'max' ? 'default' : tier === 'pro' ? 'secondary' : 'outline'}>
-                        {tierPlans[tier].name} Plan
+                        {isTeacher && tier === 'max' && billingPlan !== 'max' ? 'Teacher Max' : tierPlans[tier].name} Plan
                       </Badge>
                     {isPremium && (
                       <Button 
@@ -461,7 +485,8 @@ function ProfileContent() {
                 </CardContent>
              </Card>
 
-             {/* Monthly Usage */}
+             {/* Monthly usage: AI tokens for students; live sessions, classes and assigned lessons for teachers */}
+             {isTeacher ? <TeacherMonth hasTeacherMax={tier === 'max' && billingPlan !== 'max'} /> : (
                  <Card>
                     <CardHeader>
                         <CardTitle className="font-headline flex items-center gap-2">
@@ -489,6 +514,7 @@ function ProfileContent() {
                          <p className="text-xs text-center text-muted-foreground pt-1">Your token count resets monthly.</p>
                     </CardContent>
                 </Card>
+             )}
 
             <Card>
                 <CardHeader>
@@ -510,16 +536,20 @@ function ProfileContent() {
             <h2 className="text-xl sm:text-2xl font-bold font-headline tracking-tight mb-2 flex items-center gap-2">
                 <Gem className="text-primary" /> Subscription Plans
             </h2>
-            <p className="text-muted-foreground mb-6">Choose the plan that fits your learning needs.</p>
-            <div className="grid gap-6 md:grid-cols-3">
-            {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][]).map(([planKey, basePlan]) => {
-            // Teachers pay the teacher Max price, which includes the AI Teacher Avatar
-            const plan: TierPlan = planKey === 'max' && isTeacher
+            <p className="text-muted-foreground mb-6">{isTeacher ? "Choose the plan that fits your classroom." : "Choose the plan that fits your learning needs."}</p>
+            <div className={cn("grid gap-6", isTeacher ? "md:grid-cols-2 max-w-4xl" : "md:grid-cols-3")}>
+            {(Object.entries(tierPlans) as [SubscriptionTier, TierPlan][])
+              .filter(([planKey]) => !isTeacher || TEACHER_PLAN_KEYS.includes(planKey))
+              .map(([planKey, basePlan]) => {
+            // Teachers see teacher plans: Free, and Teacher Max at its own price (includes the AI Teacher)
+            const plan: TierPlan = isTeacher && (planKey === 'free' || planKey === 'max')
               ? {
                   ...basePlan,
-                  priceLabel: TEACHER_MAX.priceLabel,
-                  description: "Maximum power for teachers, with a live AI co-teacher.",
-                  features: [...basePlan.features.slice(0, 3), TEACHER_AVATAR_FEATURE, ...basePlan.features.slice(3)],
+                  ...teacherPlans[planKey],
+                  name: planKey === 'max' ? 'Teacher Max' : basePlan.name,
+                  priceLabel: planKey === 'max' ? TEACHER_MAX.priceLabel : basePlan.priceLabel,
+                  highlighted: planKey === 'max',
+                  badge: undefined,
                 }
               : basePlan;
             const Icon = plan.icon;
