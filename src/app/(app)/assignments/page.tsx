@@ -66,7 +66,7 @@ function formatDue(due: string | null) {
 
 export default function AssignmentsPage() {
   const { user } = useAuth();
-  const { classCode, assignedLessons } = useAppState();
+  const { classCode, assignedLessons, textbookResults } = useAppState();
   const router = useRouter();
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [selected, setSelected] = useState<Assignment | null>(null);
@@ -158,83 +158,125 @@ export default function AssignmentsPage() {
         <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
           <p className="text-destructive font-medium">{error}</p>
         </div>
-      ) : assignments.length === 0 && assignedLessons.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
-          <CheckCircle2 className="w-16 h-16 text-green-500/80 mb-4" />
-          <h3 className="text-xl font-medium text-foreground">You&apos;re all caught up!</h3>
-          <p className="text-sm mt-2">
-            {classCode ? "No active assignments from your teachers." : "Join your teacher's class from your Profile to see assignments here."}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Textbook lessons the teacher assigned: they open in the Math Textbook */}
-          {assignedLessons.map((lesson) => {
-            const due = formatDue(lesson.due ? localDate(lesson.due) : null);
-            const place = lessonPlace(lesson.skill_id);
-            return (
-              <Link key={`${lesson.class_name}-${lesson.skill_id}`} href={`/textbook/${lesson.skill_id}`}>
-                <Card className="h-full hover:border-primary/50 transition-colors group">
-                  <CardContent className="p-6 flex h-full flex-col gap-4">
-                    <div className="flex justify-between items-start">
-                      <Badge variant="outline" className={`uppercase font-bold tracking-wider ${typeColors.textbook} border-none`}>
-                        <BookOpen className="mr-1 h-3 w-3" /> Textbook lesson
-                      </Badge>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                    <h3 className="font-semibold text-lg leading-tight line-clamp-2">
-                      {place && <span className="text-muted-foreground">Lesson {place.chapter.number}.{place.lessonInChapter} </span>}
-                      {SKILLS_BY_ID[lesson.skill_id]?.name}
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-auto">
-                      <span className="flex items-center gap-2"><Folder className="w-4 h-4" />{lesson.class_name}</span>
-                      {due && (
-                        <span className={`flex items-center gap-1 ${due.overdue ? "text-destructive" : ""}`}>
-                          <CalendarClock className="w-4 h-4" />{due.text}
-                        </span>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-          {assignments.map((assignment) => {
-            const due = formatDue(assignment.due_date);
-            return (
-              <Card
-                key={assignment.id}
-                className="hover:border-primary/50 transition-colors cursor-pointer group"
-                onClick={() => setSelected(assignment)}
-              >
-                <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <Badge variant="outline" className={`uppercase font-bold tracking-wider ${typeColors[assignment.type]} border-none`}>
-                      {assignment.type}
-                    </Badge>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <h3 className="font-semibold text-lg leading-tight line-clamp-2">{assignment.title}</h3>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-auto">
-                    <span className="flex items-center gap-2"><Folder className="w-4 h-4" />{assignment.class_name}</span>
-                    {assignment.submission ? (
-                      <span className="flex items-center gap-1 text-green-600">
-                        <CheckCircle2 className="w-4 h-4" />
-                        {assignment.submission.status === "graded" && assignment.submission.score !== null
-                          ? `Graded: ${assignment.submission.score}%` : "Turned in"}
-                      </span>
-                    ) : due && (
-                      <span className={`flex items-center gap-1 ${due.overdue ? "text-destructive" : ""}`}>
-                        <CalendarClock className="w-4 h-4" />{due.text}
-                      </span>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+      ) : (() => {
+        const todoLessons = assignedLessons.filter((l) => !textbookResults[l.skill_id]);
+        const doneLessons = assignedLessons.filter((l) => textbookResults[l.skill_id]);
+        return (
+          <>
+            {assignments.length === 0 && todoLessons.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-muted-foreground">
+                <CheckCircle2 className="w-16 h-16 text-green-500/80 mb-4" />
+                <h3 className="text-xl font-medium text-foreground">You&apos;re all caught up!</h3>
+                <p className="text-sm mt-2">
+                  {classCode ? "No active assignments from your teachers." : "Join your teacher's class from your Profile to see assignments here."}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Textbook lessons the teacher assigned: they open in the Math Textbook */}
+                {todoLessons.map((lesson) => {
+                  const due = formatDue(lesson.due ? localDate(lesson.due) : null);
+                  const place = lessonPlace(lesson.skill_id);
+                  return (
+                    <Link key={`${lesson.class_name}-${lesson.skill_id}`} href={`/textbook/${lesson.skill_id}`}>
+                      <Card className="h-full hover:border-primary/50 transition-colors group">
+                        <CardContent className="p-6 flex h-full flex-col gap-4">
+                          <div className="flex justify-between items-start">
+                            <Badge variant="outline" className={`uppercase font-bold tracking-wider ${typeColors.textbook} border-none`}>
+                              <BookOpen className="mr-1 h-3 w-3" /> Textbook lesson
+                            </Badge>
+                            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                          </div>
+                          <h3 className="font-semibold text-lg leading-tight line-clamp-2">
+                            {place && <span className="text-muted-foreground">Lesson {place.chapter.number}.{place.lessonInChapter} </span>}
+                            {SKILLS_BY_ID[lesson.skill_id]?.name}
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-auto">
+                            <span className="flex items-center gap-2"><Folder className="w-4 h-4" />{lesson.class_name}</span>
+                            {due && (
+                              <span className={`flex items-center gap-1 ${due.overdue ? "text-destructive" : ""}`}>
+                                <CalendarClock className="w-4 h-4" />{due.text}
+                              </span>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })}
+                {assignments.map((assignment) => {
+                  const due = formatDue(assignment.due_date);
+                  return (
+                    <Card
+                      key={assignment.id}
+                      className="hover:border-primary/50 transition-colors cursor-pointer group"
+                      onClick={() => setSelected(assignment)}
+                    >
+                      <CardContent className="p-6 flex flex-col gap-4">
+                        <div className="flex justify-between items-start">
+                          <Badge variant="outline" className={`uppercase font-bold tracking-wider ${typeColors[assignment.type]} border-none`}>
+                            {assignment.type}
+                          </Badge>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </div>
+                        <h3 className="font-semibold text-lg leading-tight line-clamp-2">{assignment.title}</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-auto">
+                          <span className="flex items-center gap-2"><Folder className="w-4 h-4" />{assignment.class_name}</span>
+                          {assignment.submission ? (
+                            <span className="flex items-center gap-1 text-green-600">
+                              <CheckCircle2 className="w-4 h-4" />
+                              {assignment.submission.status === "graded" && assignment.submission.score !== null
+                                ? `Graded: ${assignment.submission.score}%` : "Turned in"}
+                            </span>
+                          ) : due && (
+                            <span className={`flex items-center gap-1 ${due.overdue ? "text-destructive" : ""}`}>
+                              <CalendarClock className="w-4 h-4" />{due.text}
+                            </span>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+
+            {doneLessons.length > 0 && (
+              <section className="space-y-3">
+                <h2 className="text-lg font-semibold">Done</h2>
+                <div className="space-y-2">
+                  {doneLessons.map((lesson) => {
+                    const result = textbookResults[lesson.skill_id];
+                    const place = lessonPlace(lesson.skill_id);
+                    return (
+                      <Link key={`${lesson.class_name}-${lesson.skill_id}`} href={`/textbook/${lesson.skill_id}`} className="block">
+                        <Card className="hover:border-primary/50 transition-colors group">
+                          <CardContent className="p-4 flex flex-wrap items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">
+                                {place && <span className="text-muted-foreground">Lesson {place.chapter.number}.{place.lessonInChapter} </span>}
+                                {SKILLS_BY_ID[lesson.skill_id]?.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                                <Folder className="w-3.5 h-3.5" />{lesson.class_name}
+                              </p>
+                            </div>
+                            <Badge variant="outline" className="bg-green-500/15 text-green-700 dark:text-green-400 border-none">
+                              Score: {result.best_score}%
+                            </Badge>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+          </>
+        );
+      })()}
 
       <Dialog open={!!selected} onOpenChange={(open) => { if (!open) { setSelected(null); setAnswers(""); } }}>
         {selected && (
