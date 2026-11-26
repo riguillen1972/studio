@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Markdown } from "@/components/markdown";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, ArrowRight, BookOpen, Heart, HelpCircle, Loader2, Pause, Play, Search, Square, Star, Target, Volume2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Heart, HelpCircle, Loader2, NotebookPen, Pause, Play, Search, Square, Star, Target, Volume2 } from "lucide-react";
 import { useReadAloud } from "@/hooks/use-read-aloud";
 import { useMentorChoice } from "@/hooks/use-mentor";
 import { useAppState } from "@/components/app-state-provider";
@@ -462,10 +462,15 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
       </div>
 
       {isTeacher && (
-        <p className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
-          <b>Teacher preview.</b> This is what your students see. They read it with their mentor, answer each Try It and do the worksheet; you see the answer keys.{" "}
-          <Link href="/textbook" className="font-medium text-primary hover:underline">Assign lessons from the table of contents</Link>
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+          <p>
+            <b>Teacher preview.</b> This is what your students see. They read it with their mentor, answer each Try It and do the worksheet; you see the answer keys.{" "}
+            <Link href="/textbook" className="font-medium text-primary hover:underline">Assign lessons from the table of contents</Link>
+          </p>
+          <Button asChild size="sm" variant="outline" className="shrink-0">
+            <Link href={`/textbook/${skillId}/guide`}><NotebookPen className="mr-1.5 h-4 w-4" /> Teacher guide</Link>
+          </Button>
+        </div>
       )}
 
       {teachingMode !== "mentor" && !isTeacher && (

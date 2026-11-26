@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CalendarDays, CheckCircle2, ChevronDown, ClipboardList, Eye, Library, Loader2, Plus, X } from "lucide-react";
+import { CalendarDays, CheckCircle2, ChevronDown, ClipboardList, Eye, Library, Loader2, NotebookPen, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -337,6 +337,12 @@ export default function TextbookPage() {
                               ) : score === 100 ? <CheckCircle2 className="h-4 w-4 text-green-600" aria-label="Mastered" />
                                 : score !== undefined ? <span className="text-xs tabular-nums text-muted-foreground">{score}</span> : null}
                             </Link>
+                            {isTeacher && (
+                              <Link href={`/textbook/${id}/guide`} aria-label={`Teacher guide for ${s.name}`} title="Teacher guide"
+                                className="rounded p-1.5 text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                                <NotebookPen className="h-3.5 w-3.5" />
+                              </Link>
+                            )}
                             {isTeacher && teacher.classId && !a && (
                               <button type="button" onClick={() => openAssign([id], s.name)} aria-label={`Assign ${s.name}`}
                                 className="mr-1 flex items-center gap-0.5 rounded px-1.5 py-1 text-xs font-medium text-primary hover:bg-primary/10">

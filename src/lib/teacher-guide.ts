@@ -4,7 +4,7 @@
 // Live Session.
 
 import { SKILLS_BY_ID } from "./quest/skills";
-import { allProblems, WORKSHEET_LEVELS, type BookProblem, type TextbookLesson, type WorksheetProblem } from "./textbook-lesson";
+import { allProblems, type BookProblem, type TextbookLesson, type WorksheetProblem } from "./textbook-lesson";
 
 export interface GuideQuestion { q: string; a: string }
 export interface GuideSection {
@@ -54,16 +54,20 @@ const keyItem = (label: string, p: BookProblem): AnswerKeyItem => ({
   solution: p.solution.map(plain),
 });
 
-/** The exit ticket: up to 3 worksheet problems (the hardest practice one, the first apply and think ones). */
+/**
+ * The exit ticket: up to 3 worksheet problems (the hardest practice one, the first apply and think
+ * ones), or the last Try Its when there's no worksheet. Labels match the answer key's.
+ */
 function exitTicketProblems(l: TextbookLesson): { label: string; problem: BookProblem }[] {
-  if (!l.worksheet.length) return l.parts.flatMap((p, i) => p.try_it.map((problem, j) => ({ label: `Try It ${i + 1}.${j + 1}`, problem }))).slice(-3);
+  const all = allProblems(l);
+  if (!l.worksheet.length) return all.filter((x) => x.label.includes("Try It")).slice(-3);
   const at = (level: WorksheetProblem["level"], last = false) => {
     const list = l.worksheet.map((problem, i) => ({ problem, i })).filter((x) => x.problem.level === level);
     return last ? list[list.length - 1] : list[0];
   };
   return [at("practice", true), at("apply"), at("think")]
     .filter((x): x is { problem: WorksheetProblem; i: number } => !!x)
-    .map(({ problem, i }) => ({ label: `Worksheet ${i + 1} (${WORKSHEET_LEVELS[problem.level]})`, problem }));
+    .map(({ problem, i }) => ({ label: `Worksheet ${i + 1}`, problem }));
 }
 
 export function buildTeacherGuide(l: TextbookLesson): TeacherGuide {
