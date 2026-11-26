@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Markdown } from "@/components/markdown";
 import { CheckCircle2, Lightbulb, MessageCircle, XCircle } from "lucide-react";
 import { feedbackFor, isRight, type BookProblem } from "@/lib/textbook-lesson";
+import { MAX_TRIES } from "@/lib/textbook-grade";
 
 /** What happened when the student checked an answer, so the mentor can react. */
 export interface ProblemEvent {
@@ -17,9 +18,10 @@ export interface ProblemEvent {
   message: string;
   /** True once the solution is showing (right, or after 3 tries). */
   done: boolean;
+  /** What the student answered this time. */
+  response: string;
 }
 
-const MAX_TRIES = 3;
 
 /**
  * One problem the student answers. A wrong answer gets feedback that names the mistake when we
@@ -51,7 +53,7 @@ export function BookProblemCard({ problem, label, onResult, onAskMentor, mentorN
       setRight(true);
       const msg = t === 1 ? "That's right!" : "You stuck with it and got it. That's how learning works!";
       setMessage(msg);
-      onResult?.({ right: true, tries: t, message: msg, done: true });
+      onResult?.({ right: true, tries: t, message: msg, done: true, response: value.trim() });
       return;
     }
     const known = feedbackFor(problem, value);
@@ -61,7 +63,7 @@ export function BookProblemCard({ problem, label, onResult, onAskMentor, mentorN
       : `Not yet. ${known ?? `Hint: ${hint}`}`;
     if (!known) setHintsShown((h) => Math.max(h, Math.min(t, problem.hints.length)));
     setMessage(msg);
-    onResult?.({ right: false, tries: t, message: msg, done: t >= MAX_TRIES });
+    onResult?.({ right: false, tries: t, message: msg, done: t >= MAX_TRIES, response: value.trim() });
   };
 
   if (answerKey) {

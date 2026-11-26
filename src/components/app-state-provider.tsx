@@ -9,6 +9,8 @@ import { TOKEN_LIMITS, toUsageModel, type SubscriptionTier, type UsageModel } fr
 import { isTeachingMode, type TeachingMode } from '@/lib/mentors';
 import { cleanAssignments, type AssignedLesson } from '@/lib/textbook-assign';
 
+export interface TextbookResult { skill_id: string; score: number; best_score: number; attempts: number; completed_at: string }
+
 export type { SubscriptionTier } from '@/lib/plans';
 
 type UsedTokens = Record<UsageModel, number>;
@@ -45,6 +47,10 @@ interface AppState {
   teachingMode: TeachingMode;
   /** Textbook lessons the student's teachers assigned (students only). */
   assignedLessons: (AssignedLesson & { class_name: string })[];
+  /** The student's graded textbook lessons, by skill id. A finished lesson is no longer "to do". */
+  textbookResults: Record<string, TextbookResult>;
+  /** Called after a lesson is graded, so lists update without reloading. */
+  recordTextbookResult: (r: TextbookResult) => void;
   updateProfile: (updates: ProfileUpdates) => Promise<{ error: string | null }>;
   joinClass: (code: string) => Promise<{ error: string | null }>;
   leaveClass: () => Promise<{ error: string | null }>;
@@ -81,6 +87,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [researchModeAllowed, setResearchModeAllowed] = useState<boolean>(true);
   const [teachingMode, setTeachingMode] = useState<TeachingMode>('mentor');
   const [assignedLessons, setAssignedLessons] = useState<(AssignedLesson & { class_name: string })[]>([]);
+  const [textbookResults, setTextbookResults] = useState<Record<string, TextbookResult>>({});
+  const recordTextbookResult = useCallback((r: TextbookResult) => setTextbookResults((all) => ({ ...all, [r.skill_id]: r })), []);
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>({ used: emptyUsage(), date: '' });
   const [isMounted, setIsMounted] = useState(false);
 
@@ -112,6 +120,23 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       console.error('Failed to load class settings:', e);
     }
   }, [authHeaders]);
+
+  // Students: their graded textbook lessons
+  useEffect(() => {
+    if (!user || role !== 'k12') return;
+    (async () => {
+      const headers = await authHeaders();
+      if (!headers) return;
+      try {
+        const res = await fetch('/api/textbook/results', { headers });
+        if (!res.ok) return;
+        const { results } = await res.json();
+        setTextbookResults(Object.fromEntries((results ?? []).map((r: TextbookResult) => [r.skill_id, r])));
+      } catch (e) {
+        console.error('Failed to load textbook results:', e);
+      }
+    })();
+  }, [user, role, authHeaders]);
 
   // Load user profile & token usage from Supabase
   useEffect(() => {
@@ -281,6 +306,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     researchModeAllowed,
     teachingMode,
     assignedLessons: role === 'teacher' ? [] : assignedLessons,
+    textbookResults,
+    recordTextbookResult,
     updateProfile,
     joinClass,
     leaveClass,

@@ -18,6 +18,8 @@ import type { MentorMood } from "@/components/mentor/mentor-avatar";
 import type { LessonContent } from "@/lib/quest/lesson-types";
 import { fromShortLesson, WORKSHEET_LEVELS, type BookPart, type BookProblem, type TextbookLesson } from "@/lib/textbook-lesson";
 import { MENTORS_BY_ID } from "@/lib/mentors";
+import { gradesWorksheet } from "@/lib/textbook-grade";
+import type { TextbookResult } from "@/components/app-state-provider";
 
 interface PageContext {
   shownSteps: Record<number, number>;
@@ -282,7 +284,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
   /** A lesson that's already loaded (skips fetching it). */
   preloaded?: TextbookLesson;
 }) {
-  const { teachingMode, role } = useAppState();
+  const { teachingMode, role, recordTextbookResult } = useAppState();
   const { mentorId, setMentorId, loaded } = useMentorChoice();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [lesson, setLesson] = useState<TextbookLesson | null>(null);
@@ -293,6 +295,9 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
   const [mood, setMood] = useState<MentorMood | null>(null);
   const [line, setLine] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, ProblemEvent>>({});
+  // Every answer tried, per problem, for grading
+  const [tries, setTries] = useState<Record<string, string[]>>({});
+  const [grade, setGrade] = useState<{ status: "saving" | "saved" | "error"; result?: TextbookResult & { points: number; total: number }; error?: string } | null>(null);
   const [request, setRequest] = useState<{ id: number; text: string; pageText: string } | null>(null);
   const requestId = useRef(0);
   const voice = useReadAloud();
@@ -325,7 +330,7 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
     }
   }, [skillId, preloaded]);
 
-  useEffect(() => { load(); setPage(0); setResults({}); setShownSteps({}); return () => stop(); }, [load, stop]);
+  useEffect(() => { load(); setPage(0); setResults({}); setTries({}); setGrade(null); setShownSteps({}); return () => stop(); }, [load, stop]);
   // First visit: choose a mentor
   useEffect(() => { if (loaded && !mentorId && showMentor && status === "ready") setPickerOpen(true); }, [loaded, mentorId, showMentor, status]);
 
@@ -363,12 +368,44 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
     try { localStorage.setItem(`studybuddy.worksheet.${skillId}`, JSON.stringify({ ...worksheetScore, total: lesson.worksheet.length })); } catch { /* storage unavailable */ }
   }, [worksheetScore, lesson, skillId]);
 
+  // The problems the lesson is graded on: the worksheet, or the Try Its when there's no worksheet
+  const gradedKeys = useMemo(() => {
+    if (!lesson) return [];
+    return gradesWorksheet(lesson)
+      ? lesson.worksheet.map((_, i) => `ws-${i}`)
+      : lesson.parts.flatMap((p, i) => p.try_it.map((_, j) => `try-${i}-${j}`));
+  }, [lesson]);
+  const allDone = gradedKeys.length > 0 && gradedKeys.every((k) => results[k]?.done);
+
+  // When a student finishes every graded problem, the server grades the answers and saves the grade
+  const submit = useCallback(async () => {
+    setGrade({ status: "saving" });
+    try {
+      const r = await questFetch<{ result: TextbookResult & { points: number; total: number } }>("/api/textbook/results", {
+        method: "POST",
+        body: JSON.stringify({ skill_id: skillId, responses: gradedKeys.map((k) => tries[k] ?? []) }),
+      });
+      setGrade({ status: "saved", result: r.result });
+      recordTextbookResult(r.result);
+      setMood("cheering");
+      setLine(r.result.score >= 80
+        ? `You finished the lesson with ${r.result.score}%! Your hard work really shows.`
+        : `You finished the lesson with ${r.result.score}%. Every problem you worked through made your brain stronger. You can try the lesson again anytime.`);
+    } catch (e) {
+      setGrade({ status: "error", error: e instanceof Error ? e.message : "Couldn't save your grade." });
+    }
+  }, [skillId, gradedKeys, tries, recordTextbookResult]);
+  useEffect(() => {
+    if (allDone && !grade && role === "k12" && !preloaded) submit();
+  }, [allDone, grade, role, preloaded, submit]);
+
   const ctx: PageContext = {
     shownSteps,
     showStep: (i, all) => setShownSteps((s) => ({ ...s, [i]: all ? lesson!.parts[i].example.steps.length : (s[i] ?? 1) + 1 })),
     // Growth-mindset feedback: praise the strategy, and treat a mistake as "not yet"
     onProblem: (e, key) => {
       setResults((r) => ({ ...r, [key]: e }));
+      setTries((t) => ({ ...t, [key]: [...(t[key] ?? []), e.response] }));
       setMood(e.right ? "cheering" : "encouraging");
       setLine(e.right
         ? e.tries === 1 ? "Yes! You followed the steps just like the example. That's exactly how mathematicians work." : "You stuck with it and figured it out. That kind of effort is what makes your brain stronger!"
@@ -437,6 +474,24 @@ export function BookReader({ skillId, skillName, chapterLabel, lessonLabel, next
             ? "Your teacher is teaching this lesson in class. You can read the textbook here anytime."
             : "Your class will learn this lesson with the AI Teacher. You can read ahead here."}
         </p>
+      )}
+
+      {grade && (
+        <div role="status" className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 p-3 ${grade.status === "error" ? "border-destructive/40 bg-destructive/5" : "border-green-500/40 bg-green-500/10"}`}>
+          {grade.status === "saving" && <p className="flex items-center gap-2 text-sm"><Loader2 className="h-4 w-4 animate-spin" /> Grading your lesson…</p>}
+          {grade.status === "saved" && grade.result && (
+            <p className="text-sm sm:text-base">
+              <b className="text-lg">Lesson complete: {grade.result.score}%</b>
+              <span className="text-muted-foreground"> · {grade.result.points} of {grade.result.total} points · saved for your teacher</span>
+            </p>
+          )}
+          {grade.status === "error" && (
+            <>
+              <p className="text-sm text-destructive">{grade.error}</p>
+              <Button size="sm" variant="outline" onClick={submit}>Try again</Button>
+            </>
+          )}
+        </div>
       )}
 
       <div className={`grid gap-4 ${mentor ? "lg:grid-cols-[minmax(0,1fr)_320px]" : ""}`}>
