@@ -1,0 +1,360 @@
+{
+  "version": 2,
+  "skill_id": "6.decimal-quotients",
+  "title": "Division with Decimal Answers",
+  "hook": "You and 3 friends run a weekend dog-walking crew and earn $54 in all. You want to split the money equally—down to the exact cent, not '13 dollars with 2 left over.' How do you keep dividing past the decimal point, and what do you do when the divisor is a decimal too?",
+  "goal": "I can divide whole numbers and decimals past the decimal point by annexing zeros, including dividing by a decimal and rounding quotients.",
+  "vocabulary": [
+    { "term": "annex a zero", "meaning": "add a zero at the right end after the decimal point so you can keep dividing", "example": "Write 54 as 54.00 to divide 54 ÷ 4 = 13.50." },
+    { "term": "terminating decimal", "meaning": "a decimal that ends with a remainder of 0", "example": "15 ÷ 8 = 1.875 is a terminating decimal." },
+    { "term": "power of 10", "meaning": "10, 100, 1,000, and so on—numbers made by multiplying 10s", "example": "Multiplying both numbers in 7.5 ÷ 0.25 by 100 turns it into 750 ÷ 25." },
+    { "term": "round", "meaning": "replace a number with its nearest value at a chosen place", "example": "3.333... rounded to the nearest hundredth is 3.33." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 1,344 ÷ 16.",
+      "kind": "numeric",
+      "answer": "84",
+      "hints": ["16 doesn't fit into 1 or 13, so start with 134.", "16 × 8 = 128 fits into 134. Subtract to get 6, then bring down the 4 to make 64."],
+      "solution": ["134 ÷ 16 = 8 (16 × 8 = 128). 134 − 128 = 6.", "Bring down 4 → 64. 64 ÷ 16 = 4 (16 × 4 = 64).", "Answer: 84. Check: 84 × 16 = 1,344."],
+      "wrong": [
+        { "answer": "74", "feedback": "16 × 7 = 112 leaves 22, which is bigger than 16. Try 8 for the first digit." },
+        { "answer": "804", "feedback": "No zero is needed here—after 134 − 128 = 6, bring down the 4 to get 64, and 16 fits into 64 four times." }
+      ]
+    },
+    {
+      "question": "Find 19.2 ÷ 6.",
+      "kind": "numeric",
+      "answer": "3.2",
+      "hints": ["Bring the decimal point straight up above 19.2, then divide 19 by 6.", "6 × 3 = 18 leaves 1. Bring down the 2 to make 12."],
+      "solution": ["Bring the decimal point straight up.", "19 ÷ 6 = 3 (6 × 3 = 18). 19 − 18 = 1. Bring down 2 → 12.", "12 ÷ 6 = 2. Answer: 3.2. Check: 3.2 × 6 = 19.2."],
+      "wrong": [
+        { "answer": "32", "feedback": "Remember to bring the decimal point straight up from 19.2 into the quotient." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Keep dividing past the decimal point",
+      "read": [
+        "When you share $54 among 4 friends, stopping at 13 R 2 leaves $2 sitting on the table. You can split those $2 too by turning them into dimes and pennies.",
+        "In long division, put a **decimal point after the whole-number dividend** (54 becomes 54.) and bring it straight up into the quotient. Then **annex zeros** after the decimal point—54.0, 54.00, 54.000—which never changes the value of 54.",
+        "Bring down one zero at a time and repeat Divide, Multiply, Subtract, Bring down until the subtraction gives 0."
+      ],
+      "model": {
+        "caption": "Annexing zeros to finish 54 ÷ 4",
+        "rows": [
+          ["Step", "Dividend shown", "Quotient so far", "Leftover"],
+          ["Divide whole dollars", "54", "13", "2 ones"],
+          ["Add decimal point & .0", "54.0", "13.", "20 tenths"],
+          ["20 tenths ÷ 4 = 5 tenths", "54.0", "13.5", "0 (done!)"]
+        ]
+      },
+      "example": {
+        "problem": "Four friends split $54 equally. How much does each friend get?",
+        "steps": [
+          { "say": "Divide 54 by 4 as usual: 5 ÷ 4 = 1 (leftover 1), bring down 4 → 14. 14 ÷ 4 = 3 (4 × 3 = 12), leaving 2.", "why": "So far each friend gets $13, with $2 left." },
+          { "say": "Write a decimal point after 54 and put a decimal point straight up after 13.", "why": "Now you are ready to split the leftover $2 into tenths (dimes)." },
+          { "say": "Annex a zero after the decimal point (54.0) and bring it down next to the 2 to make 20.", "why": "2 ones equals 20 tenths, and 54.0 has the exact same value as 54." },
+          { "say": "Divide: 20 ÷ 4 = 5. Write 5 after the decimal point. 20 − 20 = 0.", "why": "The remainder is 0, so the division terminates at 13.5 (which is $13.50)." },
+          { "say": "Check: 13.5 × 4 = 54. ✓", "why": "Multiplying back proves each friend's share adds up to $54." }
+        ],
+        "answer": "Each friend gets $13.50 (13.5)."
+      },
+      "try_it": [
+        {
+          "question": "Find 35 ÷ 4. Write your answer as a decimal.",
+          "kind": "numeric",
+          "answer": "8.75",
+          "hints": ["35 ÷ 4 = 8 with 3 left over. Put a decimal point after 35 and bring it straight up.", "Annex zeros (35.00): bring down 0 to make 30, then keep dividing until the remainder is 0."],
+          "solution": ["35 ÷ 4 = 8 (4 × 8 = 32), leaving 3.", "Add decimal point and annex 0 → 30. 30 ÷ 4 = 7 (4 × 7 = 28), leaving 2.", "Annex another 0 → 20. 20 ÷ 4 = 5. 20 − 20 = 0.", "Answer: 8.75. Check: 8.75 × 4 = 35."],
+          "wrong": [
+            { "answer": "8.3", "feedback": "The remainder 3 does not go right after the decimal point. Annex a zero to make 30 and divide 30 by 4." },
+            { "answer": "8.7", "feedback": "There is still a remainder of 2 after 30 − 28. Annex one more zero to finish dividing." }
+          ]
+        },
+        {
+          "question": "Find 15 ÷ 8. Write your answer as a decimal.",
+          "kind": "numeric",
+          "answer": "1.875",
+          "hints": ["15 ÷ 8 = 1 with 7 left over. Put a decimal point after 15, bring it straight up, and annex zeros.", "Bring down a zero to make 70 (70 ÷ 8 = 8, leftover 6), then keep annexing zeros."],
+          "solution": ["15 ÷ 8 = 1, leftover 7. Annex 0 → 70.", "70 ÷ 8 = 8 (8 × 8 = 64), leftover 6. Annex 0 → 60.", "60 ÷ 8 = 7 (8 × 7 = 56), leftover 4. Annex 0 → 40.", "40 ÷ 8 = 5, leftover 0. Answer: 1.875."],
+          "wrong": [
+            { "answer": "1.7", "feedback": "7 is the remainder, not the tenths digit. Annex a zero to turn 7 into 70 and divide by 8." },
+            { "answer": "1.87", "feedback": "Keep going one more place! After 60 − 56 = 4, annex another zero to divide 40 by 8." }
+          ]
+        }
+      ],
+      "mentor": "A remainder doesn't stop us anymore. Put a decimal point at the end of the dividend, annex a zero, and keep bringing down until you hit 0."
+    },
+    {
+      "heading": "Dividing by a decimal",
+      "read": [
+        "What if the **divisor** is a decimal, like 7.5 ÷ 0.25? Long division works cleanly when the divisor is a whole number—so let's turn the divisor into a whole number first!",
+        "Here is the trick: multiply **both** the divisor and the dividend by the same **power of 10** (10, 100, or 1,000) until the divisor is a whole number. On paper, that means **moving both decimal points the same number of places to the right** (annexing zeros to the dividend if you run out of digits).",
+        "Why doesn't this change the answer? Think of 7.5 ÷ 0.25 as how many quarters ($0.25) fit into $7.50. Changing dollars into cents multiplies both by 100: how many 25-cent coins fit into 750 cents? The answer—30—is identical!"
+      ],
+      "model": {
+        "caption": "Move both decimal points the same number of places right",
+        "rows": [
+          ["Original problem", "Multiply both by", "Equivalent whole-divisor problem", "Quotient"],
+          ["4.8 ÷ 0.6", "10 (1 place right)", "48 ÷ 6", "8"],
+          ["7.5 ÷ 0.25", "100 (2 places right)", "750 ÷ 25", "30"],
+          ["0.54 ÷ 0.09", "100 (2 places right)", "54 ÷ 9", "6"]
+        ]
+      },
+      "example": {
+        "problem": "A hiker pours 7.5 liters of water into 0.25-liter bottles. How many bottles can she fill?",
+        "steps": [
+          { "say": "Look at the divisor, 0.25. Move its decimal point 2 places right to make it the whole number 25.", "why": "Multiplying 0.25 by 100 clears its decimal point." },
+          { "say": "Move the decimal point in 7.5 the exact same 2 places right, annexing a zero to get 750.", "why": "Both numbers must be multiplied by 100 so the quotient stays the same." },
+          { "say": "Now divide 750 ÷ 25: 75 ÷ 25 = 3, and bring down 0 → 0 ÷ 25 = 0. The quotient is 30.", "why": "With a whole-number divisor, ordinary long division works cleanly." },
+          { "say": "Check by multiplying: 30 × 0.25 = 7.5. ✓", "why": "30 bottles of 0.25 L hold 7.5 L total." }
+        ],
+        "answer": "She can fill 30 bottles."
+      },
+      "try_it": [
+        {
+          "question": "Find 9.6 ÷ 0.16.",
+          "kind": "numeric",
+          "answer": "60",
+          "hints": ["0.16 needs 2 places right to become 16. Move 9.6 two places right too (annex a zero).", "Now divide 960 ÷ 16."],
+          "solution": ["Multiply both numbers by 100 (move 2 places right): 0.16 → 16 and 9.6 → 960.", "Divide 960 ÷ 16: 96 ÷ 16 = 6, and 0 ÷ 16 = 0.", "Answer: 60. Check: 60 × 0.16 = 9.6."],
+          "wrong": [
+            { "answer": "6", "feedback": "Make sure you moved 9.6 two places right to match 0.16—that gives 960 ÷ 16, not 96 ÷ 16." },
+            { "answer": "600", "feedback": "Count carefully: 0.16 only needs 2 places right (so 9.6 becomes 960, not 9,600)." }
+          ]
+        },
+        {
+          "question": "Find 5.04 ÷ 0.7.",
+          "kind": "numeric",
+          "answer": "7.2",
+          "hints": ["0.7 needs only 1 place right to become 7. Move the decimal point 1 place right in 5.04 too.", "Now divide 50.4 ÷ 7, bringing the new decimal point straight up."],
+          "solution": ["Move both decimal points 1 place right (× 10): 5.04 ÷ 0.7 becomes 50.4 ÷ 7.", "Bring the decimal point straight up. 50 ÷ 7 = 7 (7 × 7 = 49), leftover 1.", "Bring down 4 → 14. 14 ÷ 7 = 2. Answer: 7.2."],
+          "wrong": [
+            { "answer": "72", "feedback": "0.7 only moves 1 place right to become 7, so 5.04 moves 1 place right to become 50.4 (not 504)." },
+            { "answer": "0.72", "feedback": "When 0.7 moves 1 place right, 5.04 must also move 1 place right to 50.4." }
+          ]
+        }
+      ],
+      "mentor": "Count how many places it takes to make the divisor whole, then move the dividend's decimal point that exact same number of places."
+    },
+    {
+      "heading": "When a decimal keeps going: rounding quotients",
+      "read": [
+        "Some divisions never reach a remainder of 0. Try 10 ÷ 3: you get 3.3333... forever. When a quotient doesn't end, the question tells you where to **round** (like the nearest tenth or nearest hundredth).",
+        "Here is the rule: **divide one place farther** than the place you are rounding to. If rounding to the **nearest tenth**, divide to the **hundredths** place. If rounding to the **nearest hundredth** (like money to the nearest cent), divide to the **thousandths** place.",
+        "Then look at that extra digit: if it is **5 or more**, round up by 1; if it is **4 or less**, keep the rounding digit the same."
+      ],
+      "model": {
+        "caption": "How far to divide before rounding",
+        "rows": [
+          ["Question asks to round to", "Divide as far as", "Example"],
+          ["Nearest whole number", "Tenths place", "17 ÷ 3 = 5.6... → 6"],
+          ["Nearest tenth", "Hundredths place", "22 ÷ 7 = 3.14... → 3.1"],
+          ["Nearest hundredth (cent)", "Thousandths place", "5 ÷ 6 = 0.833... → 0.83"]
+        ]
+      },
+      "example": {
+        "problem": "Three pounds of trail mix cost $10.00. What is the cost of 1 pound, rounded to the nearest hundredth (cent)?",
+        "steps": [
+          { "say": "We need the nearest hundredth, so plan to divide to the thousandths place (3 decimal places).", "why": "You always need one extra digit to the right to decide how to round." },
+          { "say": "Divide 10.000 ÷ 3: 10 ÷ 3 = 3 (leftover 1). Bring down 0 → 10 ÷ 3 = 3, and the same again → 3.333.", "why": "Each leftover 1 with a zero gives 10 ÷ 3 = 3." },
+          { "say": "Look at the thousandths digit: it is 3.", "why": "The thousandths digit tells us whether 3.333 is closer to 3.33 or 3.34." },
+          { "say": "Since 3 is less than 5, keep the hundredths digit as 3. Round to $3.33.", "why": "4 or less stays put; 5 or more rounds up." }
+        ],
+        "answer": "One pound costs $3.33."
+      },
+      "try_it": [
+        {
+          "question": "Find 25 ÷ 6. Round your answer to the nearest tenth.",
+          "kind": "numeric",
+          "answer": "4.2",
+          "hints": ["To round to the nearest tenth, divide to the hundredths place.", "25.00 ÷ 6 = 4.16... Now look at the hundredths digit (6) to round."],
+          "solution": ["25 ÷ 6 = 4 (leftover 1). Annex 0 → 10 ÷ 6 = 1 (leftover 4).", "Annex 0 → 40 ÷ 6 = 6 (leftover 4). So 25 ÷ 6 = 4.16...", "The hundredths digit is 6 (5 or more), so round the tenths digit 1 up to 2: 4.2."],
+          "wrong": [
+            { "answer": "4.1", "feedback": "Don't just chop off the extra digits! Look at the hundredths digit (6)—since 6 is 5 or more, round up." },
+            { "answer": "4.17", "feedback": "The question asks for the nearest tenth (one decimal place), not the nearest hundredth." }
+          ]
+        },
+        {
+          "question": "Find 8.5 ÷ 0.7. Round your answer to the nearest hundredth.",
+          "kind": "numeric",
+          "answer": "12.14",
+          "hints": ["First shift both decimal points 1 place right so you divide 85 ÷ 7.", "To round to the nearest hundredth, divide to the thousandths place: 85.000 ÷ 7 = 12.142..."],
+          "solution": ["Move both decimal points 1 place right: 85 ÷ 7.", "85 ÷ 7 = 12 with leftover 1. Annex zeros: 10 ÷ 7 = 1 (leftover 3), 30 ÷ 7 = 4 (leftover 2), 20 ÷ 7 = 2.", "So 85 ÷ 7 = 12.142... The thousandths digit is 2 (4 or less), so round to 12.14."],
+          "wrong": [
+            { "answer": "12.15", "feedback": "Check the thousandths digit: 20 ÷ 7 = 2, and 2 is less than 5, so do not round up." },
+            { "answer": "12.1", "feedback": "The question asks for the nearest hundredth (two decimal places), not the nearest tenth." },
+            { "answer": "1.21", "feedback": "Remember to move the decimal point 1 place right in 8.5 to match 0.7, making 85 ÷ 7." }
+          ]
+        }
+      ],
+      "mentor": "Divide just one place past where you need to round. That extra digit does all the deciding for you."
+    }
+  ],
+  "mistake": {
+    "problem": "Noah found 6.4 ÷ 0.08.",
+    "work": [
+      "Move the decimal point in 0.08 two places right to get 8.",
+      "Move the decimal point in 6.4 one place right to get 64.",
+      "Divide: 64 ÷ 8 = 8.",
+      "Answer: 8"
+    ],
+    "what_went_wrong": "Noah moved the decimal point 2 places in the divisor (0.08 → 8) but only 1 place in the dividend (6.4 → 64). Moving them different distances changes the value of the quotient.",
+    "fix": "Move both decimal points the exact same number of places (2 places right, which multiplies both by 100). Annex a zero to 6.4 so it becomes 640, then divide: 640 ÷ 8 = 80."
+  },
+  "summary": [
+    "When whole-number division has a remainder, put a decimal point after the dividend, annex zeros, and keep dividing.",
+    "To divide by a decimal, move both decimal points the same number of places right until the divisor is a whole number.",
+    "When a quotient keeps going, divide one place farther than the requested rounding place, then round."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find 45 ÷ 4. Write your answer as a decimal.",
+      "kind": "numeric",
+      "answer": "11.25",
+      "hints": ["45 ÷ 4 = 11 with 1 left over. Put a decimal point after 45 and annex zeros.", "Bring down 0 → 10 ÷ 4 = 2 (leftover 2), then bring down another 0 → 20 ÷ 4."],
+      "solution": ["45 ÷ 4 = 11 (4 × 11 = 44), leftover 1.", "Annex 0 → 10 ÷ 4 = 2 (leftover 2). Annex 0 → 20 ÷ 4 = 5.", "Answer: 11.25. Check: 11.25 × 4 = 45."],
+      "wrong": [
+        { "answer": "11.1", "feedback": "1 is the remainder, not the tenths digit. Annex a zero to divide 10 by 4." },
+        { "answer": "11.2", "feedback": "After 10 − 8 = 2, annex one more zero to finish dividing 20 by 4." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 8.4 ÷ 0.12.",
+      "kind": "numeric",
+      "answer": "70",
+      "hints": ["0.12 needs 2 places right to become 12. Move 8.4 two places right too (annex a zero).", "Divide 840 ÷ 12."],
+      "solution": ["Move both decimal points 2 places right (× 100): 840 ÷ 12.", "84 ÷ 12 = 7, and 0 ÷ 12 = 0.", "Answer: 70. Check: 70 × 0.12 = 8.4."],
+      "wrong": [
+        { "answer": "7", "feedback": "Make sure 8.4 moves 2 places right to match 0.12: 8.4 becomes 840, not 84." },
+        { "answer": "700", "feedback": "0.12 only needs 2 places right, so 8.4 becomes 840 (annex one zero, not two)." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 2.88 ÷ 0.9.",
+      "kind": "numeric",
+      "answer": "3.2",
+      "hints": ["Move both decimal points 1 place right so 0.9 becomes 9.", "Divide 28.8 ÷ 9, bringing the new decimal point straight up."],
+      "solution": ["Move both decimal points 1 place right (× 10): 28.8 ÷ 9.", "Bring decimal point straight up. 28 ÷ 9 = 3 (leftover 1).", "Bring down 8 → 18. 18 ÷ 9 = 2. Answer: 3.2."],
+      "wrong": [
+        { "answer": "32", "feedback": "Move both decimal points 1 place right (not 2), giving 28.8 ÷ 9." },
+        { "answer": "0.32", "feedback": "Remember to move 2.88 one place right to 28.8 when 0.9 becomes 9." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 19 ÷ 7. Round your answer to the nearest tenth.",
+      "kind": "numeric",
+      "answer": "2.7",
+      "hints": ["To round to the nearest tenth, divide to the hundredths place.", "19.00 ÷ 7 = 2.71... Look at the hundredths digit to round."],
+      "solution": ["19 ÷ 7 = 2 (leftover 5). Annex 0 → 50 ÷ 7 = 7 (leftover 1).", "Annex 0 → 10 ÷ 7 = 1. So 19 ÷ 7 = 2.71...", "The hundredths digit is 1 (4 or less), so round to 2.7."],
+      "wrong": [
+        { "answer": "2.8", "feedback": "Check the hundredths digit: 10 ÷ 7 = 1, and 1 is less than 5, so do not round up." },
+        { "answer": "2.71", "feedback": "The question asks for the nearest tenth (one decimal place), not the nearest hundredth." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A 0.75-pound bag of almonds costs $6.00. What is the price for 1 pound, in dollars?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": ["Divide the total cost by the weight: 6.00 ÷ 0.75.", "Move both decimal points 2 places right so you divide 600 ÷ 75."],
+      "solution": ["Divide cost by pounds: 6.00 ÷ 0.75.", "Move both decimal points 2 places right: 600 ÷ 75.", "75 × 8 = 600, so 1 pound costs $8."],
+      "wrong": [
+        { "answer": "4.5", "feedback": "You multiplied 6 × 0.75 instead of dividing. Since 0.75 pound is less than 1 pound, 1 full pound must cost MORE than $6." },
+        { "answer": "0.8", "feedback": "Move the decimal point 2 places right in 6.00 as well, giving 600 ÷ 75." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "An athlete runs 18.9 kilometers in 1.5 hours. What is her average speed in kilometers per hour?",
+      "kind": "numeric",
+      "answer": "12.6",
+      "hints": ["Speed is distance ÷ time: 18.9 ÷ 1.5.", "Move both decimal points 1 place right to divide 189 ÷ 15, annexing a zero after 189 if needed."],
+      "solution": ["18.9 ÷ 1.5 → move both decimal points 1 place right → 189 ÷ 15.", "18 ÷ 15 = 1 (leftover 3). Bring down 9 → 39 ÷ 15 = 2 (leftover 9).", "Annex 0 after decimal point → 90 ÷ 15 = 6. Answer: 12.6 km per hour."],
+      "wrong": [
+        { "answer": "1.26", "feedback": "Check your decimal point. Both 18.9 and 1.5 move 1 place right to make 189 ÷ 15." },
+        { "answer": "126", "feedback": "189 ÷ 15 is between 10 and 20, not 126. Make sure the decimal point goes before the 6." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Six friends share a $49.75 dinner bill equally, plus they leave a $7.50 tip. How much does each friend pay, in dollars, rounded to the nearest hundredth?",
+      "kind": "numeric",
+      "answer": "9.54",
+      "hints": ["First add the dinner bill and the tip: 49.75 + 7.50.", "Divide the total ($57.25) by 6, going out to the thousandths place before rounding."],
+      "solution": ["Total cost: 49.75 + 7.50 = 57.25.", "Divide by 6 to thousandths: 57.250 ÷ 6 = 9.541...", "The thousandths digit is 1 (4 or less), so round to $9.54."],
+      "wrong": [
+        { "answer": "9.55", "feedback": "Check the thousandths digit when dividing 57.250 by 6: it is 1, so round down, not up." },
+        { "answer": "8.29", "feedback": "Don't forget to add the $7.50 tip before dividing among the 6 friends." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which division problem has the exact same quotient as 3.6 ÷ 0.04?",
+      "kind": "multiple_choice",
+      "choices": [
+        "360 ÷ 4",
+        "36 ÷ 4",
+        "3.6 ÷ 4",
+        "3,600 ÷ 4"
+      ],
+      "answer": "360 ÷ 4",
+      "hints": ["How many places right must the decimal point move to turn 0.04 into 4?", "Move the decimal point in 3.6 that exact same number of places right."],
+      "solution": ["To make 0.04 into 4, multiply by 100 (move 2 places right).", "Do the same to 3.6: 3.6 × 100 = 360.", "So 3.6 ÷ 0.04 = 360 ÷ 4 = 90."],
+      "wrong": [
+        { "answer": "36 ÷ 4", "feedback": "3.6 was moved only 1 place right, while 0.04 was moved 2 places right. Both must move the same number of places." },
+        { "answer": "3.6 ÷ 4", "feedback": "Only the divisor was multiplied by 100 here; the dividend must also be multiplied by 100." },
+        { "answer": "3,600 ÷ 4", "feedback": "Moving 3.6 two places right gives 360, not 3,600." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "You need to find 50 ÷ 7 and round the answer to the nearest hundredth. What is the farthest decimal place you need to divide to?",
+      "kind": "multiple_choice",
+      "choices": [
+        "The thousandths place",
+        "The hundredths place",
+        "The tenths place",
+        "The ones place"
+      ],
+      "answer": "The thousandths place",
+      "hints": ["To round to a place, you must look at the digit one place to its right.", "Which place sits immediately to the right of hundredths?"],
+      "solution": ["Rounding to the nearest hundredth depends on the digit in the thousandths place.", "So you divide to the thousandths place, then use that digit to round."],
+      "wrong": [
+        { "answer": "The hundredths place", "feedback": "If you stop at the hundredths place, you won't see the next digit to know whether to round up or stay put." },
+        { "answer": "The tenths place", "feedback": "Tenths isn't far enough—you haven't even found the hundredths digit yet." },
+        { "answer": "The ones place", "feedback": "You need at least one place past the hundredths place." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 14.3 − 6.78.",
+      "kind": "numeric",
+      "answer": "7.52",
+      "hints": ["Line up the decimal points and write 14.3 as 14.30.", "Regroup 1 tenth from 3 before subtracting 8 in the hundredths column."],
+      "solution": ["Write 14.30 − 6.78.", "Hundredths: 10 − 8 = 2. Tenths: 12 − 7 = 5.", "Ones: 13 − 6 = 7. Answer: 7.52."],
+      "wrong": [
+        { "answer": "8.48", "feedback": "Write 14.3 as 14.30 and regroup whenever the top digit is smaller than the bottom digit." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "A juice stand makes 18.45 liters of lemonade. They pour it into 0.45-liter cups and sell every cup for $1.85. How much money do they collect in all, in dollars?",
+      "kind": "numeric",
+      "answer": "75.85",
+      "hints": ["First divide 18.45 by 0.45 to find how many cups they fill (move both decimal points 2 places right).", "Multiply the number of cups (41) by $1.85."],
+      "solution": ["Number of cups: 18.45 ÷ 0.45 = 1,845 ÷ 45 = 41 cups.", "Money collected: 41 × 1.85 = 75.85.", "They collect $75.85 in all."],
+      "wrong": [
+        { "answer": "41", "feedback": "41 is the number of cups. Multiply 41 cups by $1.85 per cup." },
+        { "answer": "34.13", "feedback": "To find how many 0.45-liter cups fit in 18.45 liters, divide 18.45 ÷ 0.45 (don't multiply)." }
+      ]
+    }
+  ]
+}
