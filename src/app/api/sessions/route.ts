@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/api-auth";
 import { getAdminClient } from "@/lib/usage";
 import { getSkill } from "@/lib/quest/skills";
-import type { LessonContent } from "@/lib/quest/lesson-types";
+import { lessonForStudent } from "@/lib/textbook-load";
+import { buildTeacherGuide, guideAsText } from "@/lib/teacher-guide";
+import type { TextbookLesson } from "@/lib/textbook-lesson";
 import {
   MONTHLY_INCLUDED_SESSIONS,
   addUsage,
@@ -84,16 +86,15 @@ export async function POST(req: NextRequest) {
       pack = data;
     }
 
-    // A Math Textbook lesson as the material: the AI Teacher teaches it to the whole class
+    // A Math Textbook lesson as the material: the AI Teacher teaches it to the whole class,
+    // following the lesson's teacher guide (plan, questions to ask, mistakes to watch for)
     if (!pack && typeof textbook_skill_id === "string") {
       const skill = getSkill(textbook_skill_id);
-      const { data: lesson } = skill
-        ? await supabase.from("quest_lessons").select("content, status").eq("skill_id", skill.id).maybeSingle()
-        : { data: null };
-      if (!skill || !lesson || lesson.status !== "approved") {
+      const lesson = skill ? await lessonForStudent(skill.id) : null;
+      if (!skill || !lesson) {
         return NextResponse.json({ error: "That textbook lesson isn't written yet. Open it in the Math Textbook first, then start the session." }, { status: 400 });
       }
-      pack = textbookLessonPack(skill.name, lesson.content as LessonContent);
+      pack = textbookLessonPack(lesson);
     }
 
     const { data: avatar } = await supabase
@@ -182,22 +183,15 @@ export async function POST(req: NextRequest) {
 }
 
 /** A textbook lesson in the shape the AI Teacher's lesson material uses. */
-function textbookLessonPack(skillName: string, l: LessonContent): LessonPack {
+function textbookLessonPack(l: TextbookLesson): LessonPack {
+  const guide = guideAsText(buildTeacherGuide(l));
   return {
-    title: `Math Textbook: ${l.title || skillName}`,
+    title: `Math Textbook: ${l.title}`,
     type: "lesson",
     subject: "Math",
-    content_parsed: [
-      `# ${l.title || skillName}`,
-      `Why it matters: ${l.why}`,
-      l.vocabulary.length ? `Words to know:\n${l.vocabulary.map((v) => `- ${v.term}: ${v.meaning}`).join("\n")}` : "",
-      ...l.explain,
-      ...l.examples.map((e, i) => `Example ${i + 1}: ${e.problem}\n${e.steps.map((s, j) => `${j + 1}. ${s}`).join("\n")}\nAnswer: ${e.answer}`),
-      `Common mistake: ${l.watch_out}`,
-      `Check for understanding: ${l.check.question}`,
-    ].filter(Boolean).join("\n\n"),
+    content_parsed: guide.lesson,
     content_raw: null,
     rubric: null,
-    answer_key: `Check for understanding answer: ${l.check.answer}`,
+    answer_key: guide.answerKey,
   };
 }
