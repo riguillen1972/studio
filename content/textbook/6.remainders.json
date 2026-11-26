@@ -1,0 +1,369 @@
+{
+  "version": 2,
+  "skill_id": "6.remainders",
+  "title": "Interpret Remainders",
+  "hook": "185 sixth-graders are heading to science camp, and each cabin holds 16 students. When you divide 185 by 16, you get 11 with a remainder of 9. Do you book 11 cabins, 12 cabins, or 9 cabins—and when should a remainder become a fraction or decimal instead?",
+  "goal": "I can solve division word problems and decide whether to round up, drop the remainder, report the remainder, or write it as a fraction or decimal.",
+  "vocabulary": [
+    { "term": "remainder", "meaning": "the amount left over when a dividend does not divide evenly", "example": "In 53 ÷ 8 = 6 R 5, the remainder is 5." },
+    { "term": "round up", "meaning": "increase the whole-number quotient by 1 so nothing or no one is left out", "example": "11 R 9 cabins becomes 12 cabins so all 9 extra campers have a bed." },
+    { "term": "drop the remainder", "meaning": "keep only the whole-number quotient when only complete groups or items count", "example": "If 18 R 2 bars fill 18 full tins, drop the 2 extra bars." },
+    { "term": "mixed number", "meaning": "a whole number and a fraction combined", "example": "53 ÷ 8 can be written as 6 5/8." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 864 ÷ 18.",
+      "kind": "numeric",
+      "answer": "48",
+      "hints": ["18 doesn't fit into 8, so start with 86.", "18 × 4 = 72 fits into 86. Subtract to get 14, then bring down the 4 to make 144."],
+      "solution": ["86 ÷ 18 = 4 (18 × 4 = 72). 86 − 72 = 14.", "Bring down 4 → 144. 144 ÷ 18 = 8 (18 × 8 = 144).", "Answer: 48. Check: 48 × 18 = 864."],
+      "wrong": [
+        { "answer": "38", "feedback": "18 × 3 = 54 leaves 32, which is larger than 18. Try 4 for the first digit." },
+        { "answer": "46", "feedback": "Check the last step: 18 × 8 = 144, so the ones digit is 8." }
+      ]
+    },
+    {
+      "question": "Write 5 ÷ 8 as a fraction.",
+      "kind": "numeric",
+      "answer": "5/8",
+      "hints": ["A fraction bar means division: top number divided by bottom number.", "Put the dividend (5) in the numerator and the divisor (8) in the denominator."],
+      "solution": ["The dividend 5 becomes the numerator, and the divisor 8 becomes the denominator.", "5 ÷ 8 = 5/8."],
+      "wrong": [
+        { "answer": "8/5", "feedback": "The numbers are flipped. In 5 ÷ 8, the 5 is being divided into 8 parts, so 5 goes on top." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Round up, drop it, or use what's left",
+      "read": [
+        "When you divide whole numbers in a story, the math only gets you halfway there. Next you have to read the question carefully and decide what the **remainder** means in real life.",
+        "There are three whole-number choices. **Round up** by 1 when every person or item must fit (buses, vans, boxes, shelves). **Drop the remainder** when only full groups or whole items count (full cartons, how many tickets you can afford).",
+        "**Use the remainder as the answer** when the question asks how many are left over, how much change remains, or how many go in the last partial group."
+      ],
+      "model": {
+        "caption": "263 campers, 18 per cabin: 263 ÷ 18 = 14 R 11",
+        "rows": [
+          ["Question", "What to do", "Answer", "Why"],
+          ["How many cabins are needed for everyone?", "Round up", "15", "14 cabins hold 252; 11 campers still need beds"],
+          ["How many cabins will be completely full?", "Drop it", "14", "Only full cabins count"],
+          ["How many campers stay in the last cabin?", "Report the remainder", "11", "The leftover campers fill the 15th cabin"]
+        ]
+      },
+      "example": {
+        "problem": "A school robotics fair packs 315 trophy medals into display boxes that hold 24 medals each. How many boxes are needed to pack all 315 medals?",
+        "steps": [
+          { "say": "Divide 315 by 24: 24 fits into 31 once (31 − 24 = 7). Bring down 5 to make 75.", "why": "Start with long division to find the quotient and remainder." },
+          { "say": "75 ÷ 24 = 3 because 24 × 3 = 72. Subtract: 75 − 72 = 3. So 315 ÷ 24 = 13 R 3.", "why": "13 boxes hold 312 medals, and 3 medals remain." },
+          { "say": "Re-read the question: all 315 medals must be packed.", "why": "If we stopped at 13 boxes, 3 medals would be left out." },
+          { "say": "Round up from 13 to 14 boxes.", "why": "The 14th box holds the final 3 medals." }
+        ],
+        "answer": "14 boxes are needed."
+      },
+      "try_it": [
+        {
+          "question": "412 students are going to the science museum. Each shuttle bus seats 36 students. How many buses are needed so every student gets a seat?",
+          "kind": "numeric",
+          "answer": "12",
+          "hints": ["Divide 412 by 36 to find how many full buses and how many students are left.", "412 ÷ 36 = 11 R 16. What should happen to those 16 leftover students?"],
+          "solution": ["41 ÷ 36 = 1 (41 − 36 = 5). Bring down 2 → 52.", "52 ÷ 36 = 1 (52 − 36 = 16). So 412 ÷ 36 = 11 R 16.", "11 buses hold 396 students, leaving 16 students who still need a seat, so round up to 12 buses."],
+          "wrong": [
+            { "answer": "11", "feedback": "11 buses only seat 396 students, leaving 16 students behind. Round up so everyone can ride." },
+            { "answer": "16", "feedback": "16 is the number of leftover students after 11 full buses. The question asks how many buses are needed." }
+          ]
+        },
+        {
+          "question": "A baker makes 290 granola bars and puts 16 bars in each gift tin. How many full tins can she pack?",
+          "kind": "numeric",
+          "answer": "18",
+          "hints": ["Divide 290 by 16 first.", "After you find the quotient and remainder, decide whether the leftover bars can make another full gift tin."],
+          "solution": ["29 ÷ 16 = 1 (29 − 16 = 13). Bring down 0 → 130.", "130 ÷ 16 = 8 (16 × 8 = 128), with 2 left over.", "Because only full tins count, drop the remainder of 2. She can pack 18 full tins."],
+          "wrong": [
+            { "answer": "19", "feedback": "19 full tins would require 304 bars, and she only has 290. Drop the 2 extra bars." },
+            { "answer": "2", "feedback": "2 is the number of leftover granola bars. The question asks for the number of full tins." }
+          ]
+        }
+      ],
+      "mentor": "Never stop at 'R something' in a word problem. Re-read the last sentence of the question—it tells you whether to round up, drop the extra, or report the leftover."
+    },
+    {
+      "heading": "Share the remainder as a fraction",
+      "read": [
+        "You can't cut a school bus in half—but you **can** cut a pizza, a board, or a ribbon! When the leftover item can be split into equal pieces, turn the remainder into a **fraction**.",
+        "If the dividend is smaller than the divisor, like 3 pizzas shared equally by 4 friends, each friend gets **3/4** of a pizza (`dividend / divisor`).",
+        "If there is a whole-number quotient too, like 53 ÷ 8 = 6 R 5, put the remainder over the divisor to make a **mixed number**: `6 5/8`. When you can, simplify the fraction part (for example, `4 2/8` simplifies to `4 1/4`)."
+      ],
+      "model": {
+        "caption": "Turning remainders into fractions when sharing",
+        "rows": [
+          ["Situation", "Division", "Quotient & remainder", "Fraction or mixed number"],
+          ["3 pizzas shared by 4 friends", "3 ÷ 4", "0 R 3", "3/4 pizza each"],
+          ["17 m of rope cut into 4 equal pieces", "17 ÷ 4", "4 R 1", "4 1/4 m each"],
+          ["26 lb of apples split into 8 bags", "26 ÷ 8", "3 R 2", "3 2/8 = 3 1/4 lb each"]
+        ]
+      },
+      "example": {
+        "problem": "A woodworker cuts a 53-inch board into 8 equal shelves. How many inches long is each shelf?",
+        "steps": [
+          { "say": "Divide 53 by 8: 8 × 6 = 48, and 53 − 48 = 5. So 53 ÷ 8 = 6 R 5.", "why": "Each shelf gets 6 whole inches, with 5 inches of board remaining." },
+          { "say": "Because wood can be cut into smaller parts, share the remaining 5 inches equally across the 8 shelves: 5 ÷ 8 = 5/8.", "why": "The remainder becomes the numerator, and the divisor becomes the denominator." },
+          { "say": "Combine the whole number and fraction: 6 + 5/8 = 6 5/8.", "why": "5 and 8 share no common factor other than 1, so 5/8 is already in lowest terms." },
+          { "say": "Check: 8 × 6 = 48 and 8 × 5/8 = 5, and 48 + 5 = 53 inches. ✓", "why": "Eight shelves of 6 5/8 inches add right back to the 53-inch board." }
+        ],
+        "answer": "Each shelf is 6 5/8 inches long."
+      },
+      "try_it": [
+        {
+          "question": "Four teammates share 3 giant pretzels equally after practice. How much of one pretzel does each teammate get? Write your answer as a fraction.",
+          "kind": "numeric",
+          "answer": "3/4",
+          "hints": ["Think: 3 pretzels divided among 4 teammates is 3 ÷ 4.", "The number being shared (3) is the numerator, and the number of people (4) is the denominator."],
+          "solution": ["Divide 3 pretzels by 4 teammates: 3 ÷ 4 = 3/4.", "Each teammate gets 3/4 of a pretzel."],
+          "wrong": [
+            { "answer": "4/3", "feedback": "Wait—4/3 is more than 1 whole pretzel each! With 3 pretzels for 4 people, each gets less than 1 whole." },
+            { "answer": "1/4", "feedback": "1/4 would be each person's share of 1 pretzel. Here they are sharing 3 pretzels." }
+          ]
+        },
+        {
+          "question": "Coach Vega cuts 94 feet of jump rope into 8 equal pieces for conditioning stations. How many feet long is each piece? Write your answer as a mixed number or fraction.",
+          "kind": "numeric",
+          "answer": "11 3/4",
+          "hints": ["Divide 94 by 8 first to get the whole number and remainder.", "94 ÷ 8 = 11 R 6. Write the remainder 6 over the divisor 8, then simplify."],
+          "solution": ["94 ÷ 8 = 11 R 6 (because 8 × 11 = 88 and 94 − 88 = 6).", "Write the remainder as a fraction: 11 6/8.", "Simplify 6/8 by dividing top and bottom by 2: 11 3/4 feet."],
+          "wrong": [
+            { "answer": "11", "feedback": "Don't drop the 6 leftover feet! Rope can be cut, so write the remainder over 8." },
+            { "answer": "12", "feedback": "12 feet per piece would need 96 feet of rope, not 94. Write the remainder as a fraction." }
+          ]
+        }
+      ],
+      "mentor": "Whenever you're sharing food, length, or time, nothing has to go to waste—put the remainder over the divisor to turn it into a neat fraction."
+    },
+    {
+      "heading": "Write the remainder as a decimal",
+      "read": [
+        "Sometimes a decimal fits better than a fraction—especially with **money**, **metric measurements**, or **averages**. When you split $147 among 6 people, nobody writes '$24 1/2' on a receipt; you write '$24.50'.",
+        "You have two ways to turn a remainder into a decimal. First, you can put a **decimal point and annex zeros** on the dividend (`147.00`) and keep dividing past the decimal point.",
+        "Second, if you already wrote the remainder as a friendly fraction like `1/4`, `1/2`, `3/4`, or `1/5`, you can match it to its decimal (`0.25`, `0.5`, `0.75`, `0.2`) right away."
+      ],
+      "model": {
+        "caption": "Friendly remainder fractions as decimals",
+        "rows": [
+          ["Fraction", "1/2", "1/4", "3/4", "1/5", "2/5", "1/8"],
+          ["Decimal", "0.5", "0.25", "0.75", "0.2", "0.4", "0.125"]
+        ]
+      },
+      "example": {
+        "problem": "Six band members earn $147 washing cars and split the money equally. How much does each member get?",
+        "steps": [
+          { "say": "Divide 147 by 6: 14 ÷ 6 = 2 (6 × 2 = 12), leaving 2. Bring down 7 → 27.", "why": "Divide the whole dollars first." },
+          { "say": "27 ÷ 6 = 4 (6 × 4 = 24), leaving 3. So 147 ÷ 6 = 24 R 3.", "why": "Each member gets $24 so far, with $3 left to split." },
+          { "say": "Put a decimal point after 147 and bring it straight up after 24. Annex a zero (147.0) and bring it down next to 3 to make 30.", "why": "3 dollars equals 30 dimes (tenths)." },
+          { "say": "Divide: 30 ÷ 6 = 5. Write 5 after the decimal point. 30 − 30 = 0.", "why": "The remainder is now 0, giving 24.5, which in money is $24.50." },
+          { "say": "Check with fractions: 24 3/6 = 24 1/2 = 24.5. And 24.5 × 6 = 147. ✓", "why": "Both the fraction shortcut and multiplying back agree." }
+        ],
+        "answer": "Each band member gets $24.50."
+      },
+      "try_it": [
+        {
+          "question": "Four neighbors split a $95 bag of lawn fertilizer equally. How many dollars does each neighbor pay?",
+          "kind": "numeric",
+          "answer": "23.75",
+          "hints": ["Divide 95 by 4. How many whole dollars and how many dollars remain?", "95 ÷ 4 = 23 R 3. Annex zeros (95.00) or convert 23 3/4 to a decimal."],
+          "solution": ["95 ÷ 4 = 23 (4 × 23 = 92), with 3 left over.", "Annex zeros: 30 ÷ 4 = 7 (leaving 2), then 20 ÷ 4 = 5.", "Or use 23 3/4 = 23.75. Each neighbor pays $23.75."],
+          "wrong": [
+            { "answer": "23.3", "feedback": "The remainder 3 does not go straight after the decimal point. Annex a zero to divide 30 by 4, or write 3/4 as a decimal." },
+            { "answer": "23.7", "feedback": "After 30 − 28 = 2, keep going one more step by annexing another zero to divide 20 by 4." }
+          ]
+        },
+        {
+          "question": "A 103-kilometer bike relay is split into 8 equal legs. How many kilometers long is each leg? Write your answer as a decimal.",
+          "kind": "numeric",
+          "answer": "12.875",
+          "hints": ["Divide 103 by 8: 8 × 12 = 96, leaving 7.", "Put a decimal point after 103, annex zeros, and keep dividing 70, then 60, then 40 by 8."],
+          "solution": ["103 ÷ 8 = 12 R 7 (8 × 12 = 96).", "Annex zeros: 70 ÷ 8 = 8 (6 left), 60 ÷ 8 = 7 (4 left), 40 ÷ 8 = 5.", "Answer: 12.875 kilometers. (Check: 12 7/8 = 12.875.)"],
+          "wrong": [
+            { "answer": "12.7", "feedback": "7 is the remainder, not the tenths digit. Annex a zero to make 70 and divide by 8." },
+            { "answer": "12.87", "feedback": "There is still 4 left after 60 − 56. Annex one more zero to finish 40 ÷ 8." }
+          ]
+        }
+      ],
+      "mentor": "Money and metric problems almost always ask for a decimal. Keep annexing zeros—or match a fraction like 3/4 to 0.75—until you hit zero."
+    }
+  ],
+  "mistake": {
+    "problem": "Noah solved: \"152 campers are going canoeing. Each canoe holds 6 campers. How many canoes are needed?\"",
+    "work": [
+      "152 ÷ 6 = 25 R 2.",
+      "Drop the remainder of 2.",
+      "Answer: 25 canoes."
+    ],
+    "what_went_wrong": "Noah dropped the remainder instead of rounding up. Twenty-five canoes hold 25 × 6 = 150 campers, leaving 2 campers stranded on the dock.",
+    "fix": "Because every camper must fit in a canoe, round up from 25 to 26 canoes. The 26th canoe carries the remaining 2 campers."
+  },
+  "summary": [
+    "In whole-number word problems, round up when everyone or everything must fit, drop the remainder when only full groups count, and report the remainder when asked what is left over.",
+    "When the leftover can be shared or cut (food, rope, wood), write the remainder over the divisor as a fraction or mixed number.",
+    "For money or metric units, annex zeros after the decimal point and keep dividing (or convert the fraction remainder) to write a decimal."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "A gardener has 230 flower bulbs and plants 14 bulbs in each row. How many full rows can she plant?",
+      "kind": "numeric",
+      "answer": "16",
+      "hints": ["Divide 230 by 14.", "Start with 23 ÷ 14 = 1 (leaving 9), then bring down 0 to make 90. When you finish, decide whether to drop or round up the remainder."],
+      "solution": ["23 ÷ 14 = 1 (23 − 14 = 9). Bring down 0 → 90.", "90 ÷ 14 = 6 (14 × 6 = 84), leaving 6.", "Only full rows count, so drop the remainder: 16 full rows."],
+      "wrong": [
+        { "answer": "17", "feedback": "17 full rows would need 238 bulbs, and she only has 230. Drop the 6 leftover bulbs." },
+        { "answer": "6", "feedback": "6 is how many bulbs are left over. The question asks for the number of full rows." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A library receives 340 new books. Each shelf holds 28 books. How many shelves are needed to hold all 340 books?",
+      "kind": "numeric",
+      "answer": "13",
+      "hints": ["Divide 340 by 28.", "340 ÷ 28 = 12 R 4. Where do those last 4 books go?"],
+      "solution": ["34 ÷ 28 = 1 (34 − 28 = 6). Bring down 0 → 60.", "60 ÷ 28 = 2 (28 × 2 = 56), leaving 4.", "All 340 books need a shelf, so round up to 13 shelves."],
+      "wrong": [
+        { "answer": "12", "feedback": "12 shelves only hold 336 books, leaving 4 books on the floor. Round up so all books fit." },
+        { "answer": "4", "feedback": "4 is the number of extra books after filling 12 shelves. The question asks how many shelves are needed." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "An art teacher has 195 markers and divides them equally into packs of 12. How many markers are left over?",
+      "kind": "numeric",
+      "answer": "3",
+      "hints": ["Divide 195 by 12 and pay attention to the remainder.", "12 × 16 = 192. How many markers are left from 195?"],
+      "solution": ["19 ÷ 12 = 1 (19 − 12 = 7). Bring down 5 → 75.", "75 ÷ 12 = 6 (12 × 6 = 72), leaving 3.", "There are 3 markers left over."],
+      "wrong": [
+        { "answer": "16", "feedback": "16 is the number of full packs. The question asks how many markers are left over." },
+        { "answer": "17", "feedback": "17 is what you'd get if you rounded up for packs, not the leftover markers." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Nine hikers share 6 liters of water equally. How many liters of water does each hiker get? Write your answer as a fraction.",
+      "kind": "numeric",
+      "answer": "2/3",
+      "hints": ["Divide 6 liters by 9 hikers: 6 ÷ 9.", "Put 6 in the numerator and 9 in the denominator, then simplify."],
+      "solution": ["6 ÷ 9 = 6/9.", "Divide numerator and denominator by 3: 6/9 = 2/3 liters each."],
+      "wrong": [
+        { "answer": "1 1/2", "feedback": "That comes from 9 ÷ 6 instead of 6 ÷ 9. Since 6 liters are shared by 9 hikers, each gets less than 1 liter." },
+        { "answer": "1/3", "feedback": "Check your division of 6 and 9 by 3: 6 ÷ 3 is 2, not 1." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Tickets to the school talent show cost $14 each. Maya has $120. After buying as many tickets as she can, how many dollars does she have left?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": ["Divide 120 by 14 to see how many whole tickets Maya can buy.", "Find the greatest multiple of 14 that fits into 120, then subtract that cost from 120 to see how many dollars remain."],
+      "solution": ["120 ÷ 14 = 8 R 8, because 14 × 8 = 112.", "Maya can buy 8 tickets for $112.", "120 − 112 = $8 left over."],
+      "wrong": [
+        { "answer": "9", "feedback": "9 tickets would cost $126, which is more than $120. Find how many $14 tickets Maya can buy, then subtract their cost from $120." },
+        { "answer": "6", "feedback": "Check the subtraction: 120 − 112." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A 75-inch strip of felt is cut into 12 equal banners for a parade. How many inches long is each banner? Write your answer as a mixed number or decimal.",
+      "kind": "numeric",
+      "answer": "6 1/4",
+      "hints": ["Divide 75 by 12: 12 × 6 = 72.", "The remainder is 3 out of 12. Write 6 3/12 in simplest form (or as a decimal)."],
+      "solution": ["75 ÷ 12 = 6 R 3 (12 × 6 = 72).", "Write the remainder over 12: 6 3/12.", "Simplify 3/12 = 1/4, so each banner is 6 1/4 inches (or 6.25 inches)."],
+      "wrong": [
+        { "answer": "6", "feedback": "3 inches of felt remain! You can cut felt, so write the remainder as a fraction or decimal." },
+        { "answer": "6.3", "feedback": "The remainder 3 doesn't go straight after the decimal point—divide 3 by 12 (or write 3/12 = 1/4 as a decimal)." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A farm packs 438 peaches into crates that hold 18 peaches each. Only full crates are shipped to the store, and each shipped crate sells for $25. How many dollars does the farm earn from the shipped crates?",
+      "kind": "numeric",
+      "answer": "600",
+      "hints": ["First divide 438 by 18 to find how many full crates are shipped.", "438 ÷ 18 = 24 R 6, so 24 full crates ship. Now multiply by $25."],
+      "solution": ["438 ÷ 18 = 24 R 6 (18 × 24 = 432).", "Only full crates are shipped, so drop the 6 extra peaches → 24 crates.", "24 × $25 = $600."],
+      "wrong": [
+        { "answer": "625", "feedback": "Only full crates ship! 25 crates would need 450 peaches, so drop the remainder before multiplying by $25." },
+        { "answer": "24", "feedback": "24 is the number of shipped crates. Multiply by $25 per crate to find the earnings." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "In which situation should you round the quotient UP because of the remainder?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Finding how many 15-person vans are needed to take 110 band students to a festival",
+        "Finding how many $12 movie tickets you can buy with $110",
+        "Finding how many full 15-card packs can be made from 110 trading cards",
+        "Finding how many cards are left over after making full 15-card packs from 110 cards"
+      ],
+      "answer": "Finding how many 15-person vans are needed to take 110 band students to a festival",
+      "hints": ["Rounding up happens when every single person or item must be included.", "Which situation would leave people behind if you dropped the remainder?"],
+      "solution": ["110 ÷ 15 = 7 R 5. Seven vans only hold 105 students, so you must round up to 8 vans so the remaining 5 students can ride.", "In the ticket and full-pack problems you drop the remainder, and in the last problem you report the remainder."],
+      "wrong": [
+        { "answer": "Finding how many $12 movie tickets you can buy with $110", "feedback": "You can't buy an extra ticket without enough money, so you drop the remainder there." },
+        { "answer": "Finding how many full 15-card packs can be made from 110 trading cards", "feedback": "Only complete 15-card packs count, so you drop the leftover cards." },
+        { "answer": "Finding how many cards are left over after making full 15-card packs from 110 cards", "feedback": "That asks directly for the remainder itself, not the rounded-up quotient." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "A chef splits 29 pounds of blueberries equally into 8 bowls. Which answer makes the most sense, and why?",
+      "kind": "multiple_choice",
+      "choices": [
+        "3 5/8 pounds, because blueberries can be split into parts of a pound so nothing is wasted",
+        "4 pounds, because you always round remainders up in cooking",
+        "3 pounds, because you must drop the remainder in every division problem",
+        "5 pounds, because the remainder is always the final answer"
+      ],
+      "answer": "3 5/8 pounds, because blueberries can be split into parts of a pound so nothing is wasted",
+      "hints": ["29 ÷ 8 = 3 R 5. Can those 5 remaining pounds of blueberries be divided among the 8 bowls?", "Weight can be split into fractions of a pound."],
+      "solution": ["29 ÷ 8 = 3 R 5.", "Because blueberries are weighed and can be split evenly across all 8 bowls, each bowl gets 3 5/8 pounds (3.625 pounds)."],
+      "wrong": [
+        { "answer": "4 pounds, because you always round remainders up in cooking", "feedback": "Putting 4 pounds in each of 8 bowls would take 32 pounds of blueberries, more than the chef has." },
+        { "answer": "3 pounds, because you must drop the remainder in every division problem", "feedback": "Dropping the remainder would leave 5 pounds of blueberries sitting unused." },
+        { "answer": "5 pounds, because the remainder is always the final answer", "feedback": "5 is the total pounds left after putting 3 pounds in each bowl, not the amount per bowl." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 4,104 ÷ 19.",
+      "kind": "numeric",
+      "answer": "216",
+      "hints": ["Start with 41 ÷ 19: 19 × 2 = 38.", "41 − 38 = 3. Bring down 0 → 30 (30 ÷ 19 = 1, leaving 11). Bring down 4 → 114."],
+      "solution": ["41 ÷ 19 = 2 (19 × 2 = 38). 41 − 38 = 3. Bring down 0 → 30.", "30 ÷ 19 = 1 (19 × 1 = 19). 30 − 19 = 11. Bring down 4 → 114.", "114 ÷ 19 = 6 (19 × 6 = 114). Answer: 216."],
+      "wrong": [
+        { "answer": "206", "feedback": "Check the middle digit: 19 fits into 30 once, so the tens digit is 1, not 0." },
+        { "answer": "214", "feedback": "Check 114 ÷ 19: 19 × 6 = 114, so the last digit is 6." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 14.25 − 6.8.",
+      "kind": "numeric",
+      "answer": "7.45",
+      "hints": ["Line up the decimal points and write 6.8 as 6.80.", "5 − 0 = 5, then regroup 14 ones into 13 ones and 12 tenths to subtract 8 tenths."],
+      "solution": ["Write 14.25 − 6.80 with decimal points aligned.", "5 − 0 = 5. Regroup: 12 − 8 = 4 tenths. 13 − 6 = 7 ones.", "Answer: 7.45."],
+      "wrong": [
+        { "answer": "8.45", "feedback": "Remember that you borrowed 1 from the 4 in 14 to get 12 tenths." },
+        { "answer": "13.57", "feedback": "Line up the decimal points so the 6 is under the 4 in 14.25, not under the 2." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "A school club orders 148 cupcakes for a family night. Cupcakes come in boxes of 12, and every box costs $16.50. How many dollars does the club spend to have enough cupcakes for everyone?",
+      "kind": "numeric",
+      "answer": "214.5",
+      "hints": ["First divide 148 by 12 to find how many boxes are needed—watch the remainder!", "148 ÷ 12 = 12 R 4, so the club must round up to 13 boxes. Now multiply 13 × 16.50."],
+      "solution": ["148 ÷ 12 = 12 R 4 (12 × 12 = 144).", "To have enough cupcakes for all 148 guests, round up to 13 boxes.", "13 × $16.50 = $214.50 (214.5)."],
+      "wrong": [
+        { "answer": "198", "feedback": "12 boxes only hold 144 cupcakes, which leaves 4 people without one. Round up to 13 boxes first." },
+        { "answer": "13", "feedback": "13 is the number of boxes needed. Multiply 13 by $16.50 to find the total cost in dollars." }
+      ]
+    }
+  ]
+}

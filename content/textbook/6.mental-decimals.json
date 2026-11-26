@@ -1,0 +1,364 @@
+{
+  "version": 2,
+  "skill_id": "6.mental-decimals",
+  "title": "Mental Math with Decimals",
+  "hook": "You're organizing prizes for the school carnival and need to know how many $0.25 raffle tickets you can buy with $18.50, or what half of $64.80 is—without grabbing a pencil or calculator. How can place value and friendly fraction partners let you solve decimal problems in your head?",
+  "goal": "I can multiply and divide by 0.1, 0.01, 0.5, and 0.25 using place value and fraction reasoning, and use compatible numbers to compute mentally.",
+  "vocabulary": [
+    { "term": "power of ten", "meaning": "a number like 10, 100, 0.1, or 0.01 based on multiplying or dividing by 10s", "example": "Multiplying by 0.1 is the same as dividing by 10." },
+    { "term": "compatible numbers", "meaning": "numbers that pair together cleanly in your head to make whole numbers or round tens", "example": "3.75 + 6.25 = 10, and 4 × 0.25 = 1." },
+    { "term": "break apart", "meaning": "split a decimal into whole-number and decimal pieces to multiply or add mentally", "example": "4 × 3.25 = (4 × 3) + (4 × 0.25) = 12 + 1 = 13." },
+    { "term": "compensation", "meaning": "round a number to a friendly value, compute, then adjust by the tiny difference", "example": "7.6 + 1.99 = 7.6 + 2 − 0.01 = 9.59." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 4.7 × 100.",
+      "kind": "numeric",
+      "answer": "470",
+      "hints": ["Multiplying by 100 makes every digit 100 times larger.", "Shift the digits two places to the left (decimal point moves two places right), annexing a zero."],
+      "solution": ["4.7 × 10 = 47, and 47 × 10 = 470.", "Answer: 470."],
+      "wrong": [
+        { "answer": "47", "feedback": "That is 4.7 × 10. Multiplying by 100 shifts two places, not one." },
+        { "answer": "4.700", "feedback": "Annexing zeros at the right end of a decimal doesn't multiply it by 100. Move the digits two places left." }
+      ]
+    },
+    {
+      "question": "What is 1/4 of 48?",
+      "kind": "numeric",
+      "answer": "12",
+      "hints": ["Finding 1/4 of a number is the same as dividing by 4.", "Divide 48 by 4 (or take half of 48, then take half again)."],
+      "solution": ["48 ÷ 4 = 12 (half of 48 is 24, and half of 24 is 12)."],
+      "wrong": [
+        { "answer": "24", "feedback": "24 is half (1/2) of 48. Take half one more time to get 1/4." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Multiply and divide by 0.1 and 0.01",
+      "read": [
+        "Since `0.1` means **one tenth (1/10)**, multiplying a number by `0.1` gives one tenth of that number—the exact same result as **dividing by 10**. Every digit shifts **one place to the right** (smaller), so the decimal point appears one place to the left. Likewise, `× 0.01` is dividing by `100` (two places smaller).",
+        "Dividing works in reverse! What does `4.8 ÷ 0.1` ask? It asks how many `0.1`s fit inside `4.8`. Because there are **10** tenths in every `1`, dividing by `0.1` is the same as **multiplying by 10**—digits shift **one place left** (larger).",
+        "In the same way, because there are **100** hundredths (`0.01`s) in every `1`, dividing by `0.01` is the same as **multiplying by 100** (two places larger)!"
+      ],
+      "model": {
+        "caption": "Place-value shifts with 0.1 and 0.01 (shown on 42.5)",
+        "rows": [
+          ["Operation", "Same as...", "Direction digits move", "Example with 42.5"],
+          ["× 0.1", "÷ 10", "1 place right (smaller)", "42.5 × 0.1 = 4.25"],
+          ["× 0.01", "÷ 100", "2 places right (smaller)", "42.5 × 0.01 = 0.425"],
+          ["÷ 0.1", "× 10", "1 place left (larger)", "42.5 ÷ 0.1 = 425"],
+          ["÷ 0.01", "× 100", "2 places left (larger)", "42.5 ÷ 0.01 = 4,250"]
+        ]
+      },
+      "example": {
+        "problem": "A cooler holds 4.8 liters of sports drink. How many 0.1-liter sample cups can it fill?",
+        "steps": [
+          { "say": "Write the division: 4.8 ÷ 0.1.", "why": "We want to know how many 0.1-liter cups fit into 4.8 liters." },
+          { "say": "Every 1 liter holds ten 0.1-liter cups, so dividing by 0.1 is the same as multiplying by 10.", "why": "1 ÷ 0.1 = 10." },
+          { "say": "Compute 4.8 × 10 = 48.", "why": "Shifting one place larger turns 4 ones 8 tenths into 4 tens 8 ones." }
+        ],
+        "answer": "48 sample cups."
+      },
+      "try_it": [
+        {
+          "question": "Find 64.5 × 0.1.",
+          "kind": "numeric",
+          "answer": "6.45",
+          "hints": ["Multiplying by 0.1 finds one tenth of 64.5 (same as dividing by 10).", "Shift the digits one place smaller, so the decimal point moves one place left."],
+          "solution": ["64.5 × 0.1 = 64.5 ÷ 10 = 6.45."],
+          "wrong": [
+            { "answer": "645", "feedback": "645 is 64.5 ÷ 0.1 (ten times larger). Multiplying by 0.1 makes a positive number smaller, not larger." },
+            { "answer": "0.645", "feedback": "You shifted two places (which is × 0.01). For × 0.1, shift only one place." }
+          ]
+        },
+        {
+          "question": "Find 3.7 ÷ 0.01.",
+          "kind": "numeric",
+          "answer": "370",
+          "hints": ["How many 0.01s (pennies) are in 1 whole dollar?", "There are 100 hundredths in 1, so dividing by 0.01 is the same as multiplying by 100."],
+          "solution": ["3.7 ÷ 0.01 = 3.7 × 100 = 370."],
+          "wrong": [
+            { "answer": "0.037", "feedback": "Dividing by 0.01 asks how many tiny hundredths fit inside 3.7, so the answer gets bigger, not smaller." },
+            { "answer": "37", "feedback": "37 is 3.7 ÷ 0.1 (× 10). Since you are dividing by 0.01, multiply by 100." }
+          ]
+        }
+      ],
+      "mentor": "Stop and ask: should the answer get bigger or smaller? Multiplying by 0.1 or 0.01 shrinks a number; dividing by 0.1 or 0.01 counts lots of tiny pieces, so it grows!"
+    },
+    {
+      "heading": "Shortcuts with 0.5 and 0.25",
+      "read": [
+        "`0.5` is **one-half (1/2)**, and `0.25` is **one-fourth (1/4)**—the same way 50 cents is half a dollar and 25 cents is a quarter of a dollar.",
+        "To **multiply by 0.5**, take **half** (`÷ 2`). To **multiply by 0.25**, take **one-fourth** (`÷ 4`, or cut in half twice).",
+        "To **divide by 0.5**, ask how many halves fit inside: 2 halves make 1, so **double the number (`× 2`)**. To **divide by 0.25**, ask how many quarters fit inside: 4 quarters make 1, so **multiply by 4 (`× 4`)**!"
+      ],
+      "model": {
+        "caption": "Mental shortcuts for 0.5 and 0.25",
+        "rows": [
+          ["Expression", "Think of it as...", "Mental example"],
+          ["Number × 0.5", "Half of the number (÷ 2)", "46 × 0.5 = 23"],
+          ["Number ÷ 0.5", "Double the number (× 2)", "14 ÷ 0.5 = 28"],
+          ["Number × 0.25", "One-fourth of the number (÷ 4)", "36 × 0.25 = 9"],
+          ["Number ÷ 0.25", "Four times the number (× 4)", "12 ÷ 0.25 = 48"]
+        ]
+      },
+      "example": {
+        "problem": "Find 18.5 ÷ 0.25 mentally.",
+        "steps": [
+          { "say": "Notice we are dividing by 0.25—that asks how many quarters ($0.25) are in $18.50.", "why": "Four 0.25s make 1 whole." },
+          { "say": "Turn ÷ 0.25 into × 4: 18.5 × 4.", "why": "Every 1 holds 4 groups of 0.25." },
+          { "say": "Break apart 18.5 into 18 + 0.5: 18 × 4 = 72 and 0.5 × 4 = 2.", "why": "Breaking into friendly parts lets you multiply in your head." },
+          { "say": "Add the parts: 72 + 2 = 74.", "why": "So 74 quarters make $18.50." }
+        ],
+        "answer": "74"
+      },
+      "try_it": [
+        {
+          "question": "Find 84 × 0.5.",
+          "kind": "numeric",
+          "answer": "42",
+          "hints": ["0.5 is equal to 1/2.", "What is half of 84?"],
+          "solution": ["84 × 0.5 = 84 ÷ 2 = 42."],
+          "wrong": [
+            { "answer": "168", "feedback": "168 is 84 ÷ 0.5 (doubling). Multiplying by 0.5 means taking half." },
+            { "answer": "4.2", "feedback": "You aren't dividing by 10 here—0.5 is one-half, so take half of 84." }
+          ]
+        },
+        {
+          "question": "Find 13 ÷ 0.5.",
+          "kind": "numeric",
+          "answer": "26",
+          "hints": ["How many halves (0.5s) are in 1 whole?", "Each 1 whole holds two halves, so multiply 13 by 2."],
+          "solution": ["13 ÷ 0.5 = 13 × 2 = 26."],
+          "wrong": [
+            { "answer": "6.5", "feedback": "6.5 is 13 × 0.5 (half of 13). Dividing by 0.5 counts how many halves fit into 13, so double it." }
+          ]
+        }
+      ],
+      "mentor": "Think in dollars and quarters! Half of $84 is $42, and how many half-dollars fit in $13? Twenty-six!"
+    },
+    {
+      "heading": "Compatible numbers and breaking numbers apart",
+      "read": [
+        "When you see three or more numbers to add or multiply, look for **compatible numbers**—partners that snap together to make a whole number like `1`, `10`, or `100`.",
+        "For addition, pair decimals whose fractional parts add to `1.00`, like `0.25 + 0.75 = 1` or `0.4 + 0.6 = 1`. For multiplication, pair `4 × 0.25 = 1`, `2 × 0.5 = 1`, or `8 × 0.125 = 1`.",
+        "You can also **break apart** a decimal (`6 × 4.25 = 6 × 4 + 6 × 0.25 = 24 + 1.5 = 25.5`) or use **compensation** when a decimal is one cent or tenth away from a whole number (`7.6 + 1.99 = 7.6 + 2 − 0.01 = 9.59`)."
+      ],
+      "model": {
+        "caption": "Four mental-math moves",
+        "rows": [
+          ["Strategy", "Example", "Mental step"],
+          ["Compatible sum", "3.75 + 4.9 + 6.25", "(3.75 + 6.25) + 4.9 = 10 + 4.9 = 14.9"],
+          ["Compatible product", "0.25 × 17 × 4", "(0.25 × 4) × 17 = 1 × 17 = 17"],
+          ["Break apart", "6 × 4.25", "(6 × 4) + (6 × 0.25) = 24 + 1.5 = 25.5"],
+          ["Compensation", "8.4 − 2.98", "8.4 − 3.00 + 0.02 = 5.42"]
+        ]
+      },
+      "example": {
+        "problem": "Compute 3.75 + 4.9 + 6.25 mentally.",
+        "steps": [
+          { "say": "Scan for decimals whose cents make a full dollar: .75 and .25.", "why": "0.75 + 0.25 = 1.00, so 3.75 and 6.25 are compatible." },
+          { "say": "Add the compatible pair first: 3.75 + 6.25 = 10.", "why": "3 + 6 = 9 and 0.75 + 0.25 = 1, giving 10." },
+          { "say": "Add the remaining number: 10 + 4.9 = 14.9.", "why": "Adding to 10 happens in a single glance." }
+        ],
+        "answer": "14.9"
+      },
+      "try_it": [
+        {
+          "question": "Compute 2.4 + 5.85 + 7.6 mentally.",
+          "kind": "numeric",
+          "answer": "15.85",
+          "hints": ["Look at the tenths digits: .4 and .6 add to 1 whole.", "Add 2.4 + 7.6 first, then add 5.85."],
+          "solution": ["Pair compatible numbers: 2.4 + 7.6 = 10.", "Add the remaining number: 10 + 5.85 = 15.85."],
+          "wrong": [
+            { "answer": "14.85", "feedback": "Check 2.4 + 7.6: 2 + 7 = 9, plus 0.4 + 0.6 = 1, which makes 10—not 9." }
+          ]
+        },
+        {
+          "question": "Compute 0.25 × 19 × 4 mentally.",
+          "kind": "numeric",
+          "answer": "19",
+          "hints": ["Which two numbers multiply to make 1?", "Pair 0.25 × 4 first, then multiply by 19."],
+          "solution": ["Pair compatible factors: 0.25 × 4 = 1.", "1 × 19 = 19."],
+          "wrong": [
+            { "answer": "76", "feedback": "You multiplied 19 × 4 and forgot the 0.25. Pair 0.25 × 4 = 1 first!" }
+          ]
+        }
+      ],
+      "mentor": "Order doesn't matter when all the signs are + or all the signs are ×. Rearrange to pair friendly partners first!"
+    }
+  ],
+  "mistake": {
+    "problem": "Leo computed 14 ÷ 0.5 in his head.",
+    "work": [
+      "0.5 is half, so cut 14 in half.",
+      "Half of 14 is 7.",
+      "Answer: 7"
+    ],
+    "what_went_wrong": "Leo mixed up multiplying by 0.5 and dividing by 0.5. Cutting 14 in half computes 14 × 0.5, not 14 ÷ 0.5.",
+    "fix": "14 ÷ 0.5 asks how many halves (0.5s) fit inside 14. Since each whole has 2 halves, double 14: 14 × 2 = 28."
+  },
+  "summary": [
+    "Multiplying by 0.1 or 0.01 shrinks a number (same as ÷ 10 or ÷ 100); dividing by 0.1 or 0.01 grows a number (same as × 10 or × 100).",
+    "Use fraction partners: × 0.5 is half (÷ 2), ÷ 0.5 is double (× 2), × 0.25 is one-fourth (÷ 4), and ÷ 0.25 is four times (× 4).",
+    "Rearrange addition or multiplication to pair compatible numbers that make 1 or 10, or break decimals apart before computing."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find 52.8 × 0.01.",
+      "kind": "numeric",
+      "answer": "0.528",
+      "hints": ["0.01 is 1/100, so multiplying by 0.01 is the same as dividing by 100.", "Shift the digits two places smaller (decimal point moves two places left)."],
+      "solution": ["52.8 × 0.01 = 52.8 ÷ 100 = 0.528."],
+      "wrong": [
+        { "answer": "5.28", "feedback": "That is 52.8 × 0.1 (one place). For 0.01, shift two places smaller." },
+        { "answer": "5280", "feedback": "5,280 is 52.8 ÷ 0.01 (× 100). Multiplying by 0.01 makes the number smaller." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 6.4 ÷ 0.1.",
+      "kind": "numeric",
+      "answer": "64",
+      "hints": ["How many tenths (0.1s) are in 1 whole?", "There are 10 tenths in 1, so dividing by 0.1 is the same as multiplying by 10."],
+      "solution": ["6.4 ÷ 0.1 = 6.4 × 10 = 64."],
+      "wrong": [
+        { "answer": "0.64", "feedback": "0.64 is 6.4 × 0.1. Dividing by 0.1 counts how many tenths fit into 6.4, so multiply by 10." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 68 × 0.25.",
+      "kind": "numeric",
+      "answer": "17",
+      "hints": ["0.25 is equal to 1/4.", "Divide 68 by 4 (take half, then take half again)."],
+      "solution": ["68 × 0.25 = 68 ÷ 4.", "Half of 68 is 34, and half of 34 is 17."],
+      "wrong": [
+        { "answer": "34", "feedback": "34 is 68 × 0.5 (half). Take half one more time to find one-fourth." },
+        { "answer": "272", "feedback": "272 is 68 ÷ 0.25 (× 4). Multiplying by 0.25 divides by 4." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 1.85 + 4.7 + 3.15 mentally.",
+      "kind": "numeric",
+      "answer": "9.7",
+      "hints": ["Look for two numbers whose cents add up to $1.00.", "Add 1.85 + 3.15 first, then add 4.7."],
+      "solution": ["1.85 + 3.15 = 5.00.", "5 + 4.7 = 9.7."],
+      "wrong": [
+        { "answer": "8.7", "feedback": "Check 1.85 + 3.15: 1 + 3 = 4, and 0.85 + 0.15 = 1, so their sum is 5—not 4." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A baker pours 9.5 kilograms of honey into jars that hold 0.25 kilograms each. How many jars can she fill?",
+      "kind": "numeric",
+      "answer": "38",
+      "hints": ["You need to find 9.5 ÷ 0.25.", "Dividing by 0.25 is the same as multiplying by 4. Break 9.5 into 9 + 0.5."],
+      "solution": ["9.5 ÷ 0.25 = 9.5 × 4.", "9 × 4 = 36 and 0.5 × 4 = 2.", "36 + 2 = 38 jars."],
+      "wrong": [
+        { "answer": "36", "feedback": "Don't forget the 0.5 kg part: 0.5 × 4 = 2 more jars!" },
+        { "answer": "2.375", "feedback": "You divided 9.5 by 4 instead of dividing by 0.25. Since each jar holds 1/4 kg, 4 jars fit in every 1 kg." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A hardware store sells washers for $0.01 each. How many washers can Sam buy with $4.75?",
+      "kind": "numeric",
+      "answer": "475",
+      "hints": ["Find 4.75 ÷ 0.01.", "Think: how many pennies ($0.01) are in $4.75?"],
+      "solution": ["4.75 ÷ 0.01 = 4.75 × 100 = 475 washers."],
+      "wrong": [
+        { "answer": "47.5", "feedback": "47.5 is 4.75 ÷ 0.1 (ten-cent pieces). Each washer is 1 cent ($0.01), so multiply by 100." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A runner buys 4 packs of sports chews at $2.25 each and 0.5 pounds of almonds at $9.40 per pound. What is the total cost in dollars?",
+      "kind": "numeric",
+      "answer": "13.7",
+      "hints": ["Use mental shortcuts for both parts: 4 × 2.25 (break apart 2 + 0.25) and 0.5 × 9.40 (half of 9.40).", "Add the two amounts together."],
+      "solution": ["Chews: 4 × 2.25 = (4 × 2) + (4 × 0.25) = 8 + 1 = $9.00.", "Almonds: 0.5 × 9.40 = 9.40 ÷ 2 = $4.70.", "Total: 9.00 + 4.70 = $13.70 (13.7)."],
+      "wrong": [
+        { "answer": "11.65", "feedback": "Remember the runner bought 4 packs of chews at $2.25 each, not 1 pack." },
+        { "answer": "27.8", "feedback": "0.5 pounds is half a pound, so multiply $9.40 by 0.5 (divide by 2), don't double it." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why does multiplying a number by 0.1 give the same answer as dividing that number by 10?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Because 0.1 equals 1/10, so multiplying by 0.1 finds one tenth of the number, which is the same as splitting it into 10 equal parts.",
+        "Because 0.1 is ten times larger than 1, so it adds a zero to the end.",
+        "Because dividing by 10 makes a number ten times bigger.",
+        "Because 0.1 has one zero in front of the decimal point, so you subtract 1."
+      ],
+      "answer": "Because 0.1 equals 1/10, so multiplying by 0.1 finds one tenth of the number, which is the same as splitting it into 10 equal parts.",
+      "hints": ["Think about what fraction 0.1 stands for.", "What does taking 1/10 of something mean?"],
+      "solution": ["0.1 = 1/10.", "Multiplying by 1/10 takes one out of 10 equal parts of the number, which is the exact definition of dividing by 10."],
+      "wrong": [
+        { "answer": "Because 0.1 is ten times larger than 1, so it adds a zero to the end.", "feedback": "0.1 is ten times smaller than 1, not ten times larger." },
+        { "answer": "Because dividing by 10 makes a number ten times bigger.", "feedback": "Dividing a positive number by 10 makes it ten times smaller, not bigger." },
+        { "answer": "Because 0.1 has one zero in front of the decimal point, so you subtract 1.", "feedback": "Multiplying by 0.1 scales by place value (one tenth), it does not subtract 1." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why does dividing a number by 0.25 give the same answer as multiplying that number by 4?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Because four 0.25s make 1 whole, so every 1 whole in the dividend holds 4 groups of 0.25.",
+        "Because 0.25 is equal to 4, so dividing by 0.25 is the same as dividing by 4.",
+        "Because 0.25 has two decimal places, so you always multiply by 2 twice.",
+        "Because dividing by any decimal smaller than 1 makes the answer smaller."
+      ],
+      "answer": "Because four 0.25s make 1 whole, so every 1 whole in the dividend holds 4 groups of 0.25.",
+      "hints": ["Think of 0.25 as a quarter ($0.25).", "How many quarters fit inside $1? So how many fit inside $N?"],
+      "solution": ["Division asks 'how many groups of 0.25 fit in this number?'", "Since four 0.25s make 1 whole, each whole gives 4 groups—so multiplying the number by 4 counts all the 0.25s."],
+      "wrong": [
+        { "answer": "Because 0.25 is equal to 4, so dividing by 0.25 is the same as dividing by 4.", "feedback": "0.25 equals 1/4, not 4." },
+        { "answer": "Because 0.25 has two decimal places, so you always multiply by 2 twice.", "feedback": "Having two decimal places isn't why—for example, ÷ 0.01 multiplies by 100, not 4. It's because 0.25 = 1/4." },
+        { "answer": "Because dividing by any decimal smaller than 1 makes the answer smaller.", "feedback": "Dividing a positive number by a decimal smaller than 1 actually makes the quotient LARGER." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Which decimal is greater: 0.72 or 0.709?",
+      "kind": "numeric",
+      "answer": "0.72",
+      "hints": ["Compare tenths first (both are 7), then compare hundredths.", "Or annex a zero: 0.72 = 0.720."],
+      "solution": ["0.72 = 0.720.", "In the hundredths place, 2 > 0 (or 720 thousandths > 709 thousandths).", "0.72 is greater."],
+      "wrong": [
+        { "answer": "0.709", "feedback": "Line up the decimal places and compare the hundredths digit of each number." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 5.4 × 0.35.",
+      "kind": "numeric",
+      "answer": "1.89",
+      "hints": ["Multiply 54 × 35 as whole numbers first.", "54 × 35 = 1,890. Count the total decimal places in 5.4 and 0.35."],
+      "solution": ["54 × 35 = 1,890.", "Total decimal places: 1 in 5.4 + 2 in 0.35 = 3 places.", "Count 3 places from the right → 1.890, or 1.89."],
+      "wrong": [
+        { "answer": "18.9", "feedback": "Count decimal places from BOTH numbers: 1 in 5.4 plus 2 in 0.35 = 3 places." },
+        { "answer": "0.189", "feedback": "Estimate first: 5 × 0.35 is between 1 and 2, so 0.189 is ten times too small." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Compute 0.25 × 3.6 + 4.8 ÷ 0.5 − 1.99 mentally.",
+      "kind": "numeric",
+      "answer": "8.51",
+      "hints": ["Do multiplication and division first: 0.25 × 3.6 (one-fourth of 3.6) and 4.8 ÷ 0.5 (double 4.8).", "You get 0.9 + 9.6 − 1.99. Add 0.9 + 9.6, then use compensation to subtract 1.99 (subtract 2 and add 0.01)."],
+      "solution": ["0.25 × 3.6 = 3.6 ÷ 4 = 0.9.", "4.8 ÷ 0.5 = 4.8 × 2 = 9.6.", "0.9 + 9.6 = 10.5.", "10.5 − 1.99 = 10.5 − 2 + 0.01 = 8.51."],
+      "wrong": [
+        { "answer": "8.49", "feedback": "Watch the compensation at the end: subtracting 1.99 is subtracting 2 and ADDING 0.01 back, not subtracting 0.01." },
+        { "answer": "3.31", "feedback": "Remember 4.8 ÷ 0.5 means doubling 4.8 (9.6), not cutting it in half." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,368 @@
+{
+  "version": 2,
+  "skill_id": "6.decimal-word-problems",
+  "title": "Multi-Step Decimal Word Problems",
+  "hook": "Your garden club is buying 2.4 kg of wildflower seeds at $14.50 per kg and 1.8 kg of clover seeds at $11.25 per kg, using a $10 off coupon, and splitting the remaining bill among 6 classrooms. How do you untangle a multi-step decimal story without losing track of which operation comes next?",
+  "goal": "I can plan and solve multi-step decimal word problems—including change, shared bills, unit prices, and rounding—and check if my answer is reasonable.",
+  "vocabulary": [
+    { "term": "multi-step problem", "meaning": "a word problem that takes two or more operations in the right order to solve", "example": "Finding a total cost (multiply and add) and then subtracting from $30 for change." },
+    { "term": "unit price", "meaning": "the cost of one single unit (one ounce, one kilogram, or one item)", "example": "If 6 balls cost $11.34, the unit price is 11.34 ÷ 6 = $1.89 per ball." },
+    { "term": "estimate", "meaning": "a quick calculation with rounded numbers to check whether an exact answer makes sense", "example": "3 × $5 + 2 × $3.50 = $22 tells you a $21.05 subtotal is reasonable." },
+    { "term": "nearest cent", "meaning": "rounding a money amount to two decimal places (hundredths)", "example": "$6.6875 rounds to $6.69 because the thousandths digit is 7." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 2.35 × 6.",
+      "kind": "numeric",
+      "answer": "14.1",
+      "hints": ["Multiply 235 × 6 first, then count the decimal places.", "235 × 6 = 1,410. With 2 decimal places in 2.35, where does the dot go?"],
+      "solution": ["235 × 6 = 1,410.", "2.35 has 2 decimal places, so count 2 places from the right → 14.10, or 14.1."],
+      "wrong": [
+        { "answer": "141", "feedback": "Remember to place the 2 decimal places from 2.35 into your product." },
+        { "answer": "1.41", "feedback": "Estimate first: 2 × 6 = 12, so the product must be around 14, not 1.4." }
+      ]
+    },
+    {
+      "question": "Find 27.2 ÷ 8.",
+      "kind": "numeric",
+      "answer": "3.4",
+      "hints": ["Bring the decimal point straight up above 27.2, then start with 27 ÷ 8.", "8 × 3 = 24 leaves 3. Bring down the 2 to make 32."],
+      "solution": ["Bring the decimal point straight up.", "27 ÷ 8 = 3 (8 × 3 = 24). 27 − 24 = 3. Bring down 2 → 32.", "32 ÷ 8 = 4. Answer: 3.4."],
+      "wrong": [
+        { "answer": "34", "feedback": "Bring the decimal point straight up from 27.2 into the quotient." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Use a four-question plan (buying and change)",
+      "read": [
+        "When a story has three or four numbers, rushing straight into arithmetic leads to mixing up steps. Use a **four-question plan** every time before you calculate:",
+        "1. **What is it asking?** (Name the final answer and its unit.)\n2. **What do I know?** (List each quantity and price.)\n3. **Which steps, in what order?** (For example: multiply price × count for each item, add for the subtotal, then subtract from the money paid.)\n4. **Is the answer reasonable?** (Do a fast whole-number estimate to verify the size and decimal point!)"
+      ],
+      "model": {
+        "caption": "The four-question plan in action",
+        "rows": [
+          ["Plan question", "What you write down"],
+          ["1. What is it asking?", "Change from $30 in dollars"],
+          ["2. What do I know?", "3 sketchbooks @ $4.75; 2 pencil packs @ $3.40; paid $30"],
+          ["3. Which steps, in what order?", "Step 1: 3 × 4.75 and 2 × 3.40. Step 2: add. Step 3: 30 − total."],
+          ["4. Is the answer reasonable?", "Estimate: 3 × 5 + 2 × 3 = 21; 30 − 21 = $9 (close!)"]
+        ]
+      },
+      "example": {
+        "problem": "Elena buys 3 sketchbooks at $4.75 each and 2 packs of colored pencils at $3.40 each. She pays with a $30 bill. How much change does she get?",
+        "steps": [
+          { "say": "Plan: find the cost of each item, add for the total spent, then subtract from $30.00.", "why": "You can't find the change until you know the full bill." },
+          { "say": "Multiply each item: 3 × 4.75 = 14.25 and 2 × 3.40 = 6.80.", "why": "Multiply quantity by price for each type of item." },
+          { "say": "Add the subtotals: 14.25 + 6.80 = 21.05.", "why": "Line up the decimal points to combine matching place values." },
+          { "say": "Subtract from $30.00: 30.00 − 21.05 = 8.95.", "why": "Annex zeros to 30 so you can regroup cleanly." },
+          { "say": "Reasonable check: 3 × $5 + 2 × $3.50 = $22 spent, and $30 − $22 = $8 change. $8.95 is right near $8. ✓", "why": "Estimating catches missing items or misplaced decimal points." }
+        ],
+        "answer": "Elena gets $8.95 in change."
+      },
+      "try_it": [
+        {
+          "question": "Marcus buys 4 notebooks at $2.85 each and a backpack for $18.95. He pays with two $20 bills ($40.00). How much change does he receive, in dollars?",
+          "kind": "numeric",
+          "answer": "9.65",
+          "hints": ["First find the cost of the 4 notebooks: 4 × 2.85.", "Add $18.95 to get the total spent ($30.35), then subtract from $40.00."],
+          "solution": ["4 notebooks: 4 × 2.85 = 11.40.", "Total spent: 11.40 + 18.95 = 30.35.", "Change: 40.00 − 30.35 = 9.65. (Estimate: 4 × 3 + 19 = 31; 40 − 31 = 9. ✓)"],
+          "wrong": [
+            { "answer": "30.35", "feedback": "That is the total Marcus spent. Subtract it from $40.00 to find his change." },
+            { "answer": "18.2", "feedback": "Marcus bought 4 notebooks, not 1. Multiply $2.85 by 4 before adding the backpack." }
+          ]
+        },
+        {
+          "question": "A swim team buys 6 kickboards at $11.45 each and pays $8.75 for shipping. If the team already raised $50.00, how many more dollars do they need?",
+          "kind": "numeric",
+          "answer": "27.45",
+          "hints": ["First find the total bill: 6 × 11.45 + 8.75.", "Once you have the total bill ($77.45), subtract the $50.00 they already raised."],
+          "solution": ["6 kickboards: 6 × 11.45 = 68.70.", "Total with shipping: 68.70 + 8.75 = 77.45.", "Amount still needed: 77.45 − 50.00 = 27.45."],
+          "wrong": [
+            { "answer": "77.45", "feedback": "77.45 is the total cost of the order. Subtract the $50.00 the team already raised." },
+            { "answer": "18.7", "feedback": "Wait—don't forget the $8.75 shipping charge when adding up the total cost." }
+          ]
+        }
+      ],
+      "mentor": "Take five seconds to list the steps in order and make a rough estimate before multiplying. That habit prevents almost every multi-step slip!"
+    },
+    {
+      "heading": "Share totals, combine rates, and round cleanly",
+      "read": [
+        "Some problems ask you to **add or subtract first, then divide**—like splitting a group restaurant bill after adding tax or tip, or splitting the remaining balance after a discount.",
+        "Other problems ask you to **divide first, then compare or subtract**—like finding a weekly average and comparing it to a goal.",
+        "When division does not end evenly, divide **one place past** the place you are rounding to. For the **nearest cent** (hundredths), divide to **thousandths** (three decimal places), check if that third digit is 5 or more, and round."
+      ],
+      "model": {
+        "caption": "Picking the right order and rounding rule",
+        "rows": [
+          ["Story pattern", "Step order", "Rounding tip"],
+          ["Split a combined bill", "Multiply/add to get total → divide by people", "Divide to thousandths to round to nearest cent"],
+          ["Compare average rate to a goal", "Divide total by time → subtract from goal", "Keep decimal point aligned when subtracting"],
+          ["Subtract a coupon before splitting", "Total − coupon → divide by group", "Check whether coupon is off the whole bill or per item"]
+        ]
+      },
+      "example": {
+        "problem": "Four friends buy a $14.50 pizza, $5.25 garlic knots, and 4 drinks at $1.75 each. They split the entire bill equally. How much does each friend pay, rounded to the nearest cent?",
+        "steps": [
+          { "say": "Find the cost of the 4 drinks: 4 × 1.75 = 7.00.", "why": "We need the total of everything before dividing." },
+          { "say": "Add all items: 14.50 + 5.25 + 7.00 = 26.75.", "why": "The whole group bill is $26.75." },
+          { "say": "Divide $26.75 by 4, annexing zeros past hundredths to reach thousandths: 26.750 ÷ 4 = 6.6875.", "why": "Because 26.75 ÷ 4 doesn't end at hundredths, we need the thousandths digit to round." },
+          { "say": "Round 6.6875 to the nearest cent (hundredth): the thousandths digit is 7 (5 or more), so round up to $6.69.", "why": "Each friend pays $6.69. (Estimate: $27 ÷ 4 ≈ $7. ✓)" }
+        ],
+        "answer": "Each friend pays $6.69."
+      },
+      "try_it": [
+        {
+          "question": "Three neighbors share the cost of a $34.90 bag of grass seed and a $14.85 spreader equally. How much does each neighbor pay, in dollars? Round to the nearest cent.",
+          "kind": "numeric",
+          "answer": "16.58",
+          "hints": ["First add 34.90 + 14.85 to get the total cost.", "Divide $49.75 by 3 to the thousandths place (16.583...), then round to the nearest cent."],
+          "solution": ["Total cost: 34.90 + 14.85 = 49.75.", "Divide by 3: 49.750 ÷ 3 = 16.583...", "The thousandths digit is 3 (4 or less), so round to $16.58."],
+          "wrong": [
+            { "answer": "16.59", "feedback": "Check the thousandths digit of 49.750 ÷ 3: it is 3, which is 4 or less, so do not round up." },
+            { "answer": "49.75", "feedback": "49.75 is the total for all three neighbors. Divide by 3 to find one neighbor's share." }
+          ]
+        },
+        {
+          "question": "A trail crew builds 36.4 kilometers of path in 8 weeks. They hope to build 5.28 kilometers per week next month. How many more kilometers per week is their goal than their past average?",
+          "kind": "numeric",
+          "answer": "0.73",
+          "hints": ["First divide 36.4 by 8 to find their past weekly average (annex a zero to 36.40).", "Subtract that average (4.55) from their goal of 5.28."],
+          "solution": ["Past average: 36.40 ÷ 8 = 4.55 km per week.", "Difference from goal: 5.28 − 4.55 = 0.73 km per week."],
+          "wrong": [
+            { "answer": "4.55", "feedback": "4.55 is their past weekly average. Now subtract it from 5.28 to find how much more their goal is." },
+            { "answer": "1.73", "feedback": "Check the ones place when subtracting 5.28 − 4.55: you borrowed 1 one from 5 to subtract 5 tenths from 12 tenths." }
+          ]
+        }
+      ],
+      "mentor": "Remember: to round money to the nearest cent, you always need to peek at the thousandths digit—divide one extra spot before rounding."
+    },
+    {
+      "heading": "Compare unit prices to find the better deal",
+      "read": [
+        "At the store, a bigger package has a higher sticker price, yet each single item inside might cost less! To see which package is the better deal, find the **unit price** of each option.",
+        "Divide **total price ÷ number of units** (pounds, ounces, kilograms, or items). Keep the money on top—dollars divided by units gives **dollars per unit**.",
+        "Once you have both unit prices, subtract the smaller unit price from the larger one to see **how much you save per unit**."
+      ],
+      "model": {
+        "caption": "Comparing juice box packs by unit price",
+        "rows": [
+          ["Pack", "Calculation (price ÷ count)", "Unit price", "Better deal?"],
+          ["12-pack for $7.56", "7.56 ÷ 12", "$0.63 per box", "Yes ($0.05 less per box)"],
+          ["8-pack for $5.44", "5.44 ÷ 8", "$0.68 per box", "Costs more per box"]
+        ]
+      },
+      "example": {
+        "problem": "A 6-pack of tennis balls costs $11.34. A 4-pack of the same balls costs $7.96. How much less does one tennis ball cost in the 6-pack than in the 4-pack?",
+        "steps": [
+          { "say": "Find the unit price of the 6-pack: 11.34 ÷ 6 = 1.89 ($1.89 per ball).", "why": "Divide total price by 6 balls." },
+          { "say": "Find the unit price of the 4-pack: 7.96 ÷ 4 = 1.99 ($1.99 per ball).", "why": "Divide total price by 4 balls." },
+          { "say": "Subtract to compare: 1.99 − 1.89 = 0.10 ($0.10 per ball).", "why": "Subtract the lower unit price from the higher unit price." }
+        ],
+        "answer": "One ball costs $0.10 less in the 6-pack."
+      },
+      "try_it": [
+        {
+          "question": "Store A sells a 1.5-kilogram bag of cherries for $7.38. Store B sells a 2.5-kilogram bag for $11.70. What is the lower unit price, in dollars per kilogram?",
+          "kind": "numeric",
+          "answer": "4.68",
+          "hints": ["Find both unit prices by dividing price ÷ kilograms: 7.38 ÷ 1.5 and 11.70 ÷ 2.5.", "Move both decimal points right to make the divisors whole numbers: 73.8 ÷ 15 and 117 ÷ 25."],
+          "solution": ["Store A: 7.38 ÷ 1.5 = 73.8 ÷ 15 = $4.92 per kg.", "Store B: 11.70 ÷ 2.5 = 117 ÷ 25 = $4.68 per kg.", "The lower unit price is $4.68 per kilogram."],
+          "wrong": [
+            { "answer": "4.92", "feedback": "4.92 is Store A's unit price. Check Store B (11.70 ÷ 2.5)—the question asks for the LOWER unit price." },
+            { "answer": "0.24", "feedback": "0.24 is the difference between the two prices. The question asks for the lower unit price itself." }
+          ]
+        },
+        {
+          "question": "A 16-ounce jar of peanut butter costs $4.99, and a 24-ounce jar costs $6.99. Round each unit price to the nearest cent first. How much cheaper per ounce is the 24-ounce jar, in dollars?",
+          "kind": "numeric",
+          "answer": "0.02",
+          "hints": ["Divide 4.99 ÷ 16 and 6.99 ÷ 24 to the thousandths place so you can round each to the nearest cent.", "4.99 ÷ 16 = 0.311... → $0.31, and 6.99 ÷ 24 = 0.291... → $0.29. Now subtract."],
+          "solution": ["16-oz jar: 4.990 ÷ 16 = 0.3118... → $0.31 per oz.", "24-oz jar: 6.990 ÷ 24 = 0.2912... → $0.29 per oz.", "Difference: 0.31 − 0.29 = $0.02 per ounce cheaper."],
+          "wrong": [
+            { "answer": "0.29", "feedback": "0.29 is the unit price of the 24-ounce jar. Subtract it from $0.31 to find how much cheaper it is per ounce." },
+            { "answer": "0.31", "feedback": "0.31 is the unit price of the 16-ounce jar, not the savings per ounce." }
+          ]
+        }
+      ],
+      "mentor": "Always divide money by units (price ÷ count). That way your unit price means dollars per item, and smaller means cheaper!"
+    }
+  ],
+  "mistake": {
+    "problem": "Ava solved: \"Liam buys 2 shirts at $14.50 each and a hat for $11.25. He pays with a $50 bill. How much change does he get?\"",
+    "work": [
+      "14.50 + 11.25 = 25.75",
+      "50.00 − 25.75 = 24.25",
+      "Answer: $24.25"
+    ],
+    "what_went_wrong": "Ava added the price of only 1 shirt instead of 2 shirts. A quick estimate—2 × $15 + $11 = $41 spent, so about $9 in change—would have caught the missing shirt right away.",
+    "fix": "Multiply first: 2 × 14.50 = 29.00. Add the hat: 29.00 + 11.25 = 40.25. Subtract from $50.00: 50.00 − 40.25 = 9.75. Liam gets $9.75 in change."
+  },
+  "summary": [
+    "Use the four-question plan before calculating: What is it asking? What do I know? Which steps, in what order? Is the answer reasonable?",
+    "To round a decimal quotient to the nearest cent, divide to the thousandths place first and check that third decimal digit.",
+    "Find a unit price by dividing total price by total units, then subtract to compare deals."
+  ],
+  "faith": "Careful planning helps us use what we have wisely. Proverbs 21:5 reminds us that steady, thoughtful planning leads to abundance.",
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "A gardener buys 3 bags of soil at $6.45 each and a watering can for $12.80. What is the total cost in dollars?",
+      "kind": "numeric",
+      "answer": "32.15",
+      "hints": ["Multiply 3 × 6.45 for the soil first.", "Add $12.80 to the cost of the 3 bags of soil."],
+      "solution": ["3 bags of soil: 3 × 6.45 = 19.35.", "Add watering can: 19.35 + 12.80 = 32.15.", "Total cost: $32.15."],
+      "wrong": [
+        { "answer": "19.25", "feedback": "Remember the gardener bought 3 bags of soil, not 1." },
+        { "answer": "19.35", "feedback": "19.35 is only the 3 bags of soil. Add the $12.80 watering can." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Nadia has $35.00. She buys 4 movie snacks at $3.84 each. How much money does she have left, in dollars?",
+      "kind": "numeric",
+      "answer": "19.64",
+      "hints": ["First multiply 4 × 3.84 to find how much Nadia spent.", "Subtract the total spent ($15.36) from $35.00."],
+      "solution": ["Total spent: 4 × 3.84 = 15.36.", "Money left: 35.00 − 15.36 = 19.64. Nadia has $19.64 left."],
+      "wrong": [
+        { "answer": "15.36", "feedback": "15.36 is how much Nadia spent. Subtract it from $35.00 to find what she has left." },
+        { "answer": "20.64", "feedback": "Check your regrouping when subtracting 35.00 − 15.36: borrowing 1 from 5 leaves 4 ones." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A 5-pack of markers costs $6.85. An 8-pack of the same markers costs $10.24. How much less does one marker cost in the 8-pack than in the 5-pack, in dollars?",
+      "kind": "numeric",
+      "answer": "0.09",
+      "hints": ["Find the unit price of each pack: 6.85 ÷ 5 and 10.24 ÷ 8.", "Subtract the 8-pack unit price ($1.28) from the 5-pack unit price ($1.37)."],
+      "solution": ["5-pack unit price: 6.85 ÷ 5 = $1.37 per marker.", "8-pack unit price: 10.24 ÷ 8 = $1.28 per marker.", "Difference: 1.37 − 1.28 = $0.09 less per marker."],
+      "wrong": [
+        { "answer": "1.28", "feedback": "1.28 is the cost per marker in the 8-pack. Subtract it from the 5-pack's unit price." },
+        { "answer": "3.39", "feedback": "3.39 is the difference in pack prices, not the difference per marker. Divide each pack price by its marker count first." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Six cousins split the cost of a $47.50 board game and $7.25 in gift wrap equally. How much does each cousin pay, in dollars? Round to the nearest cent.",
+      "kind": "numeric",
+      "answer": "9.13",
+      "hints": ["First add 47.50 + 7.25 to find the total cost.", "Divide $54.75 by 6 (to thousandths: 9.125), then round to the nearest cent."],
+      "solution": ["Total cost: 47.50 + 7.25 = 54.75.", "Divide by 6: 54.750 ÷ 6 = 9.125.", "The thousandths digit is 5, so round up to $9.13."],
+      "wrong": [
+        { "answer": "9.12", "feedback": "Check the thousandths digit of 54.750 ÷ 6: it is 5, which means round up!" },
+        { "answer": "54.75", "feedback": "54.75 is the combined cost before splitting among the 6 cousins." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A baker uses 1.45 kg of flour for bread and 0.85 kg of flour for muffins each morning. After 6 mornings, how much flour is left from a 20-kg sack, in kilograms?",
+      "kind": "numeric",
+      "answer": "6.2",
+      "hints": ["First find the total flour used in 1 morning: 1.45 + 0.85.", "Multiply one morning's flour (2.3 kg) by 6 mornings, then subtract from 20."],
+      "solution": ["Flour in 1 morning: 1.45 + 0.85 = 2.30 kg.", "Flour in 6 mornings: 2.3 × 6 = 13.8 kg.", "Flour left: 20.0 − 13.8 = 6.2 kg."],
+      "wrong": [
+        { "answer": "13.8", "feedback": "13.8 kg is how much flour was used. Subtract it from the 20-kg sack to find what is left." },
+        { "answer": "17.7", "feedback": "You subtracted only 1 morning of flour. Multiply 2.3 kg by 6 mornings first." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "On a road trip, a car uses 12.4 gallons of gas at $3.65 per gallon and 10.5 gallons at $3.80 per gallon. How much did the driver spend on gas in all, in dollars?",
+      "kind": "numeric",
+      "answer": "85.16",
+      "hints": ["Multiply each fill-up separately: 12.4 × 3.65 and 10.5 × 3.80.", "Add the two amounts together (45.26 + 39.90)."],
+      "solution": ["First fill-up: 12.4 × 3.65 = 45.26.", "Second fill-up: 10.5 × 3.80 = 39.90.", "Total spent: 45.26 + 39.90 = $85.16. (Estimate: 12 × 4 + 10 × 4 = 88. ✓)"],
+      "wrong": [
+        { "answer": "45.26", "feedback": "That is only the first fill-up. Add the second fill-up (10.5 × 3.80)." },
+        { "answer": "85.26", "feedback": "Check 45.26 + 39.90 in the tenths column: 2 + 9 = 11 tenths, carrying 1 to ones." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A robotics team spends $58.40 on parts and $14.75 on batteries, then sells 12 raffle tickets at $4.25 each to help pay the bill. How many dollars still need to be paid?",
+      "kind": "numeric",
+      "answer": "22.15",
+      "hints": ["Find the total bill (58.40 + 14.75) and the raffle earnings (12 × 4.25).", "Subtract the raffle earnings ($51.00) from the total bill ($73.15)."],
+      "solution": ["Total bill: 58.40 + 14.75 = 73.15.", "Raffle earnings: 12 × 4.25 = 51.00.", "Still owed: 73.15 − 51.00 = $22.15."],
+      "wrong": [
+        { "answer": "73.15", "feedback": "73.15 is the full bill before subtracting the raffle ticket money." },
+        { "answer": "68.9", "feedback": "The team sold 12 raffle tickets at $4.25 each, not 1 ticket." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "You want to solve: \"4 friends share 2 pizzas at $13.50 each and 1 salad for $8.40 equally. How much does each friend pay?\" Which step order is correct?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Multiply 2 × 13.50, add 8.40, then divide by 4.",
+        "Add 13.50 + 8.40, multiply by 2, then divide by 4.",
+        "Divide 13.50 by 4, then add 8.40 and multiply by 2.",
+        "Multiply 4 × 13.50, subtract 8.40, then divide by 2."
+      ],
+      "answer": "Multiply 2 × 13.50, add 8.40, then divide by 4.",
+      "hints": ["Only the pizzas are bought in a quantity of 2—there is only 1 salad.", "Find the total group bill first, then split that total among the 4 friends."],
+      "solution": ["Two pizzas cost 2 × 13.50 = $27.00.", "Add the 1 salad: 27.00 + 8.40 = $35.40.", "Divide the entire bill by 4 friends: 35.40 ÷ 4 = $8.85 each."],
+      "wrong": [
+        { "answer": "Add 13.50 + 8.40, multiply by 2, then divide by 4.", "feedback": "Multiplying the sum by 2 would charge for 2 salads instead of 1 salad." },
+        { "answer": "Divide 13.50 by 4, then add 8.40 and multiply by 2.", "feedback": "That charges every friend for a whole salad and doubles the salad too." },
+        { "answer": "Multiply 4 × 13.50, subtract 8.40, then divide by 2.", "feedback": "There are 2 pizzas (not 4), the salad adds to the bill, and 4 friends split it." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "A student solved: \"Buy 3.5 pounds of apples at $2.40 per pound and 2.5 pounds of pears at $2.80 per pound. What is the total cost?\" and got $154.00. Without redoing the exact math, how do you know $154.00 is unreasonable?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Estimating gives about 4 × $2 + 3 × $3 = $17, so the decimal point in $154.00 is off by one place.",
+        "The total cost of fruit must always be less than $5.00.",
+        "You should divide the pounds by the prices instead of multiplying.",
+        "The answer is only unreasonable because it ends in .00."
+      ],
+      "answer": "Estimating gives about 4 × $2 + 3 × $3 = $17, so the decimal point in $154.00 is off by one place.",
+      "hints": ["Round the pounds and prices to whole numbers to make a 3-second estimate.", "Compare your estimate (around $15 to $17) with $154.00."],
+      "solution": ["3.5 × 2.40 is about 4 × $2 = $8, and 2.5 × 2.80 is about 3 × $3 = $9.", "Estimated total is around $17 (exact is $15.40), so $154.00 is ten times too large."],
+      "wrong": [
+        { "answer": "The total cost of fruit must always be less than $5.00.", "feedback": "Buying 6 pounds of fruit at more than $2 per pound clearly costs more than $5." },
+        { "answer": "You should divide the pounds by the prices instead of multiplying.", "feedback": "Total cost is pounds × price per pound, so multiplying is the right operation." },
+        { "answer": "The answer is only unreasonable because it ends in .00.", "feedback": "Exact money answers often end in .00—here the size ($154 vs. ~$17) is what is off." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 1,872 ÷ 24.",
+      "kind": "numeric",
+      "answer": "78",
+      "hints": ["24 doesn't fit into 1 or 18, so start with 187.", "24 is close to 25, and 25 × 7 = 175. Try 24 × 7 = 168."],
+      "solution": ["187 ÷ 24 = 7 (24 × 7 = 168). 187 − 168 = 19.", "Bring down 2 → 192. 192 ÷ 24 = 8 (24 × 8 = 192).", "Answer: 78."],
+      "wrong": [
+        { "answer": "68", "feedback": "24 × 6 = 144 leaves 43, which is larger than 24. Go up to 7." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 48 × 0.25 mentally.",
+      "kind": "numeric",
+      "answer": "12",
+      "hints": ["0.25 is equal to 1/4.", "Divide 48 by 4."],
+      "solution": ["48 × 0.25 = 48 ÷ 4 = 12."],
+      "wrong": [
+        { "answer": "24", "feedback": "24 is 48 × 0.5 (half). Take half once more to find one-fourth." },
+        { "answer": "192", "feedback": "192 is 48 ÷ 0.25 (× 4). Multiplying by 0.25 divides by 4." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "A school garden club buys 2.4 kg of wildflower seeds at $14.50 per kg and 1.8 kg of clover seeds at $11.25 per kg. The club has a $10.00 off coupon, and 6 classrooms split the remaining cost equally. How much does each classroom pay, in dollars? Round to the nearest cent.",
+      "kind": "numeric",
+      "answer": "7.51",
+      "hints": ["First find the seed total: (2.4 × 14.50) + (1.8 × 11.25).", "Subtract the $10.00 coupon from $55.05 to get $45.05, then divide by 6 to the thousandths place and round to the nearest cent."],
+      "solution": ["Wildflower seeds: 2.4 × 14.50 = 34.80.", "Clover seeds: 1.8 × 11.25 = 20.25.", "Subtotal: 34.80 + 20.25 = 55.05.", "After coupon: 55.05 − 10.00 = 45.05.", "Split 6 ways: 45.050 ÷ 6 = 7.5083... → $7.51 per classroom."],
+      "wrong": [
+        { "answer": "9.18", "feedback": "Don't forget to subtract the $10.00 off coupon before dividing by 6 classrooms." },
+        { "answer": "7.5", "feedback": "Check the thousandths digit of 45.050 ÷ 6: it is 8, so round up to the nearest cent." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,391 @@
+{
+  "version": 2,
+  "skill_id": "6.compare-decimals",
+  "title": "Compare and Order Decimals",
+  "hook": "Three swimmers finish a 50-meter race in 28.5 seconds, 28.45 seconds, and 28.405 seconds. A teammate glances at 405 and thinks 28.405 must be the slowest time because 405 is bigger than 5 and 45. Wait—is 28.405 actually bigger than 28.5, or is it the fastest time in the pool?",
+  "goal": "I can compare and order decimals with different numbers of decimal places, including measurements and prices.",
+  "vocabulary": [
+    { "term": "place value", "meaning": "the value of a digit determined by its position in a number", "example": "In 0.405, the 4 is worth 4 tenths (0.4), while the 5 is worth 5 thousandths (0.005)." },
+    { "term": "annex zeros", "meaning": "write zeros at the right end of a decimal without changing its value", "example": "0.5 = 0.50 = 0.500." },
+    { "term": "tenths, hundredths, thousandths", "meaning": "the first three places to the right of the decimal point", "example": "In 2.739, 7 is tenths, 3 is hundredths, and 9 is thousandths." },
+    { "term": "inequality", "meaning": "a math statement comparing two values with symbols like > (greater than) or < (less than)", "example": "0.5 > 0.45 reads '0.5 is greater than 0.45.'" }
+  ],
+  "warm_up": [
+    {
+      "question": "In the number 5.382, what digit is in the hundredths place?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": ["Start at the decimal point and move right: tenths, then hundredths, then thousandths.", "The 3 is in the tenths place. Which digit comes right after it?"],
+      "solution": ["After the decimal point: 3 is tenths, 8 is hundredths, 2 is thousandths.", "The digit in the hundredths place is 8."],
+      "wrong": [
+        { "answer": "3", "feedback": "3 is in the tenths place, one spot after the decimal point. Hundredths is two spots after the decimal point." },
+        { "answer": "2", "feedback": "2 is in the thousandths place (three spots after the decimal point). Look one spot to the left." }
+      ]
+    },
+    {
+      "question": "Which whole number is greater: 4,050 or 4,500?",
+      "kind": "numeric",
+      "answer": "4500",
+      "hints": ["Compare from left to right: both start with 4 thousands.", "Look at the hundreds place: 0 hundreds versus 5 hundreds."],
+      "solution": ["Both have 4 in the thousands place.", "In the hundreds place, 5 > 0, so 4,500 is greater than 4,050."],
+      "wrong": [
+        { "answer": "4050", "feedback": "Compare the hundreds digit: 4,500 has 5 hundreds, while 4,050 has 0 hundreds." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Compare place by place from left to right",
+      "read": [
+        "More digits after the decimal point does **not** make a decimal bigger! Each step to the right is ten times smaller: tenths are big slices (dimes), hundredths are tiny slices (pennies), and thousandths are ten times smaller than pennies.",
+        "To compare any two decimals, **line up their decimal points** and compare digits from **left to right**, starting with the whole-number part.",
+        "Stop at the **first place where the digits are different**. Whichever number has the bigger digit in that place is the larger decimal—no matter how many digits come after it."
+      ],
+      "model": {
+        "caption": "Comparing 0.5, 0.45, and 0.405 by place value",
+        "rows": [
+          ["Number", "Ones", ".", "Tenths", "Hundredths", "Thousandths"],
+          ["0.5", "0", ".", "5", "", ""],
+          ["0.45", "0", ".", "4", "5", ""],
+          ["0.405", "0", ".", "4", "0", "5"]
+        ]
+      },
+      "example": {
+        "problem": "Which race time is smaller (faster): 12.4 seconds or 12.385 seconds?",
+        "steps": [
+          { "say": "Line up the decimal points: 12.4 and 12.385.", "why": "Lining up the dots aligns matching place values." },
+          { "say": "Compare the whole numbers on the left: both have 12.", "why": "Always start at the largest place value on the left." },
+          { "say": "Move to the tenths place: 12.4 has 4 tenths, and 12.385 has 3 tenths.", "why": "This is the first place where the digits differ." },
+          { "say": "Since 3 < 4, 12.385 is smaller than 12.4.", "why": "Even though 385 has more digits, 3 tenths is less than 4 tenths." }
+        ],
+        "answer": "12.385 seconds is smaller."
+      },
+      "try_it": [
+        {
+          "question": "Which decimal is greater: 0.6 or 0.589?",
+          "kind": "numeric",
+          "answer": "0.6",
+          "hints": ["Compare from left to right, starting with the tenths place.", "0.6 has 6 tenths and 0.589 has 5 tenths. Which is larger?"],
+          "solution": ["Ones: both are 0.", "Tenths: 6 tenths > 5 tenths.", "So 0.6 is greater than 0.589."],
+          "wrong": [
+            { "answer": "0.589", "feedback": "589 looks larger than 6, but compare the tenths place first: 6 tenths is bigger than 5 tenths." }
+          ]
+        },
+        {
+          "question": "Which decimal is smaller: 3.08 or 3.1?",
+          "kind": "numeric",
+          "answer": "3.08",
+          "hints": ["Line up the decimal points and compare the tenths place first.", "3.08 has 0 tenths, while 3.1 has 1 tenth."],
+          "solution": ["Ones: both are 3.", "Tenths: 0 tenths < 1 tenth.", "So 3.08 is smaller than 3.1."],
+          "wrong": [
+            { "answer": "3.1", "feedback": "Look at the tenths place of each number—0 tenths is less than 1 tenth." }
+          ]
+        }
+      ],
+      "mentor": "Do not count how many digits a decimal has! Compare left to right from the decimal point outward—the first different digit settles it."
+    },
+    {
+      "heading": "Annex zeros to make every decimal the same length",
+      "read": [
+        "When you have to order three or four decimals at once, **annexing zeros** at the right end makes ordering feel clear and fast. Writing zeros at the far right after the decimal point—like turning `0.5` into `0.500`—never changes the number's value.",
+        "Once every number reaches the same place (say, thousandths), you can read them in the same unit: `0.500` is 500 thousandths, `0.450` is 450 thousandths, and `0.405` is 405 thousandths.",
+        "Watch out: only zeros at the **very right end** leave the value unchanged. A zero *between* the decimal point and another digit (like `0.05`) shifts that digit to a smaller place, so `0.05` and `0.5` are not equal!"
+      ],
+      "model": {
+        "caption": "Write all decimals to thousandths to order them",
+        "rows": [
+          ["Original", "With annexed zeros", "In thousandths", "Rank (least to greatest)"],
+          ["0.5", "0.500", "500 thousandths", "3rd (greatest)"],
+          ["0.45", "0.450", "450 thousandths", "2nd"],
+          ["0.405", "0.405", "405 thousandths", "1st (least)"]
+        ]
+      },
+      "example": {
+        "problem": "Put these lengths of copper wire in order from least to greatest: 2.4 m, 2.045 m, 2.45 m, 2.39 m.",
+        "steps": [
+          { "say": "Find the longest decimal: 2.045 has 3 decimal places (thousandths).", "why": "We want every number to reach the thousandths place." },
+          { "say": "Annex zeros at the right end so all four have 3 decimal places: 2.400, 2.045, 2.450, 2.390.", "why": "Trailing zeros after the decimal point do not change any value." },
+          { "say": "Order the thousandths parts: 045 < 390 < 400 < 450.", "why": "All four numbers have 2 ones, so the thousandths parts decide the order." },
+          { "say": "Write the original numbers in that order: 2.045 m, 2.39 m, 2.4 m, 2.45 m.", "why": "Always report the answer using the original decimals from the problem." }
+        ],
+        "answer": "2.045 m, 2.39 m, 2.4 m, 2.45 m"
+      },
+      "try_it": [
+        {
+          "question": "Which list shows these decimals in order from least to greatest: 0.7, 0.65, 0.705, 0.609?",
+          "kind": "multiple_choice",
+          "choices": [
+            "0.609, 0.65, 0.7, 0.705",
+            "0.7, 0.65, 0.609, 0.705",
+            "0.65, 0.609, 0.7, 0.705",
+            "0.609, 0.65, 0.705, 0.7"
+          ],
+          "answer": "0.609, 0.65, 0.7, 0.705",
+          "hints": ["Annex zeros so every decimal has 3 places: 0.700, 0.650, 0.705, 0.609.", "Now put 609, 650, 700, and 705 thousandths in order from least to greatest."],
+          "solution": ["Rewrite to thousandths: 0.700, 0.650, 0.705, 0.609.", "Order from least to greatest: 0.609, 0.650, 0.700, 0.705.", "Match original numbers: 0.609, 0.65, 0.7, 0.705."],
+          "wrong": [
+            { "answer": "0.7, 0.65, 0.609, 0.705", "feedback": "This compares 7, 65, 609, and 705 without lining up place values. Annex zeros to thousandths first." },
+            { "answer": "0.65, 0.609, 0.7, 0.705", "feedback": "Check the first two numbers: 0.65 = 0.650, which is larger than 0.609." },
+            { "answer": "0.609, 0.65, 0.705, 0.7", "feedback": "Check the last two numbers: 0.7 = 0.700, which is smaller than 0.705." }
+          ]
+        },
+        {
+          "question": "A swimmer recorded four lap times in seconds: 31.4, 31.08, 31.42, and 31.395. Which time is the second fastest (second smallest)?",
+          "kind": "numeric",
+          "answer": "31.395",
+          "hints": ["Annex zeros so all four times reach thousandths: 31.400, 31.080, 31.420, 31.395.", "Put them in order from smallest to largest, then pick the second one."],
+          "solution": ["Rewrite to thousandths: 31.080, 31.395, 31.400, 31.420.", "Fastest (smallest) is 31.08; second fastest is 31.395."],
+          "wrong": [
+            { "answer": "31.08", "feedback": "31.08 is the fastest (smallest) time overall. The question asks for the second fastest." },
+            { "answer": "31.4", "feedback": "31.4 = 31.400, which is slower than 31.395. Check the tenths place: 3 tenths < 4 tenths." }
+          ]
+        }
+      ],
+      "mentor": "Annexing zeros turns messy decimals into matching units—like comparing 609 thousandths to 650 thousandths and 700 thousandths."
+    },
+    {
+      "heading": "Compare measurements, prices, and decimals in between",
+      "read": [
+        "In word problems, watch what 'best' means! A **lower price** is cheaper, and a **smaller race time** is faster—while a **larger jump distance** or **heavier weight** is greater.",
+        "You can also use annexed zeros to find a decimal **between** two close decimals. What is between `0.8` and `0.81`? At first there seems to be no room between 80 hundredths and 81 hundredths.",
+        "Annex one more zero to reach thousandths: `0.8 = 0.800` and `0.81 = 0.810`. Instantly you can see nine decimals in between—`0.801`, `0.802`, …, `0.805`, …, `0.809`!"
+      ],
+      "model": {
+        "caption": "Real-life decimal comparisons",
+        "rows": [
+          ["Context", "What you look for", "Example"],
+          ["Prices", "Lower price is cheaper", "$4.05 < $4.50"],
+          ["Race times", "Smaller time is faster", "28.405 s < 28.5 s"],
+          ["Jump or throw distance", "Larger number is farther", "4.605 m > 4.6 m"],
+          ["Between two decimals", "Annex a zero to open space", "0.805 is between 0.800 and 0.810"]
+        ]
+      },
+      "example": {
+        "problem": "Three trail-mix bags weigh 0.85 lb, 0.805 lb, and 0.9 lb. Which bag is heaviest, and which is lightest?",
+        "steps": [
+          { "say": "Annex zeros so every weight reaches thousandths: 0.850 lb, 0.805 lb, 0.900 lb.", "why": "All three numbers now show thousandths of a pound." },
+          { "say": "Compare: 0.805 < 0.850 < 0.900.", "why": "900 thousandths is greatest, and 805 thousandths is least." },
+          { "say": "Match back to the original weights: 0.9 lb is heaviest and 0.805 lb is lightest.", "why": "Even though 0.9 has one decimal digit, 9 tenths beats 8 tenths." }
+        ],
+        "answer": "Heaviest: 0.9 lb; lightest: 0.805 lb."
+      },
+      "try_it": [
+        {
+          "question": "At a track meet, four long jumpers jumped 4.6 m, 4.58 m, 4.605 m, and 4.59 m. What is the winning (greatest) jump, in meters?",
+          "kind": "numeric",
+          "answer": "4.605",
+          "hints": ["Annex zeros to thousandths: 4.600, 4.580, 4.605, 4.590.", "For long jump, the greatest distance wins."],
+          "solution": ["Write to thousandths: 4.600, 4.580, 4.605, 4.590.", "Compare: 4.580 < 4.590 < 4.600 < 4.605.", "The winning jump is 4.605 meters."],
+          "wrong": [
+            { "answer": "4.6", "feedback": "Compare 4.600 and 4.605: in the thousandths place, 5 > 0, so 4.605 is slightly farther." },
+            { "answer": "4.59", "feedback": "Check the tenths place: 6 tenths beats 5 tenths, so look at 4.6 and 4.605." }
+          ]
+        },
+        {
+          "question": "Which decimal is between 0.8 and 0.81?",
+          "kind": "multiple_choice",
+          "choices": ["0.79", "0.805", "0.82", "0.815"],
+          "answer": "0.805",
+          "hints": ["Annex a zero to write 0.8 as 0.800 and 0.81 as 0.810.", "Which choice is greater than 0.800 and less than 0.810?"],
+          "solution": ["0.8 = 0.800 and 0.81 = 0.810.", "805 thousandths is between 800 thousandths and 810 thousandths, so 0.805 is between 0.8 and 0.81."],
+          "wrong": [
+            { "answer": "0.79", "feedback": "0.79 = 0.790, which is less than 0.800." },
+            { "answer": "0.82", "feedback": "0.82 = 0.820, which is greater than 0.810." },
+            { "answer": "0.815", "feedback": "0.815 is greater than 0.810 (15 thousandths > 10 thousandths)." }
+          ]
+        }
+      ],
+      "mentor": "Whenever two decimals look right next to each other, annex one more zero to both—suddenly nine numbers appear right in between."
+    }
+  ],
+  "mistake": {
+    "problem": "Tessa compared 0.6 and 0.58 and wrote: 0.58 > 0.6.",
+    "work": [
+      "58 is bigger than 6.",
+      "So 0.58 must be greater than 0.6."
+    ],
+    "what_went_wrong": "Tessa compared the digits after the decimal point like whole numbers (58 vs. 6) without matching their place values.",
+    "fix": "Annex a zero so both decimals reach hundredths: 0.6 = 0.60. Now compare 60 hundredths and 58 hundredths (or compare tenths first: 6 tenths > 5 tenths). So 0.6 > 0.58."
+  },
+  "summary": [
+    "Line up the decimal points and compare from left to right; the first place where two digits differ decides which decimal is greater.",
+    "Annex zeros at the right end of decimals (0.5 = 0.500) so every number reaches the same place before ordering.",
+    "A zero at the right end of a decimal does not change its value, but a zero between the decimal point and another digit does (0.5 ≠ 0.05)."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Which decimal is greater: 0.4 or 0.399?",
+      "kind": "numeric",
+      "answer": "0.4",
+      "hints": ["Compare the tenths place first.", "Write 0.4 as 0.400 and compare 400 thousandths to 399 thousandths."],
+      "solution": ["0.4 = 0.400.", "4 tenths > 3 tenths (or 400 thousandths > 399 thousandths).", "0.4 is greater."],
+      "wrong": [
+        { "answer": "0.399", "feedback": "More digits don't mean a larger value. Write 0.4 as 0.400 and compare the tenths place." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Which decimal is smallest: 5.2, 5.19, 5.095, or 5.201?",
+      "kind": "numeric",
+      "answer": "5.095",
+      "hints": ["All four start with 5 ones. Look at the tenths digit of each number.", "The tenths digits are 2, 1, 0, and 2."],
+      "solution": ["Annex zeros: 5.200, 5.190, 5.095, 5.201.", "5.095 has 0 in the tenths place, which is smaller than 1 tenth or 2 tenths.", "Smallest decimal: 5.095."],
+      "wrong": [
+        { "answer": "5.19", "feedback": "Compare the tenths digit of each number: 0 tenths is less than 1 tenth." },
+        { "answer": "5.2", "feedback": "5.2 has 2 tenths, which is larger than 0 tenths and 1 tenth." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Which list is in order from least to greatest?",
+      "kind": "multiple_choice",
+      "choices": [
+        "1.07, 1.7, 1.705, 1.75",
+        "1.7, 1.07, 1.75, 1.705",
+        "1.07, 1.75, 1.7, 1.705",
+        "1.07, 1.705, 1.7, 1.75"
+      ],
+      "answer": "1.07, 1.7, 1.705, 1.75",
+      "hints": ["Annex zeros to thousandths: 1.070, 1.700, 1.705, 1.750.", "Order 070, 700, 705, and 750 thousandths from least to greatest."],
+      "solution": ["Write to thousandths: 1.070, 1.700, 1.705, 1.750.", "In order from least to greatest: 1.07, 1.7, 1.705, 1.75."],
+      "wrong": [
+        { "answer": "1.7, 1.07, 1.75, 1.705", "feedback": "1.07 has 0 tenths, so it is smaller than 1.7 (7 tenths)." },
+        { "answer": "1.07, 1.75, 1.7, 1.705", "feedback": "1.75 = 1.750, which is larger than both 1.700 and 1.705." },
+        { "answer": "1.07, 1.705, 1.7, 1.75", "feedback": "Compare 1.705 and 1.700: 705 thousandths is greater than 700 thousandths." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Which list is in order from greatest to least?",
+      "kind": "multiple_choice",
+      "choices": [
+        "8.4, 8.35, 8.305, 8.09",
+        "8.305, 8.35, 8.09, 8.4",
+        "8.4, 8.305, 8.35, 8.09",
+        "8.35, 8.4, 8.305, 8.09"
+      ],
+      "answer": "8.4, 8.35, 8.305, 8.09",
+      "hints": ["Rewrite all four to thousandths: 8.400, 8.350, 8.305, 8.090.", "Remember the question asks for GREATEST to LEAST (largest first)."],
+      "solution": ["Write to thousandths: 8.400, 8.350, 8.305, 8.090.", "From greatest to least: 8.4, 8.35, 8.305, 8.09."],
+      "wrong": [
+        { "answer": "8.305, 8.35, 8.09, 8.4", "feedback": "Watch the place values! 8.4 = 8.400 is the greatest, not the smallest." },
+        { "answer": "8.4, 8.305, 8.35, 8.09", "feedback": "Check the middle two: 8.35 = 8.350 is greater than 8.305." },
+        { "answer": "8.35, 8.4, 8.305, 8.09", "feedback": "Compare 8.4 (4 tenths) and 8.35 (3 tenths): 8.4 is larger." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Four students ran the 100-meter dash: Maya (14.2 s), Leo (14.18 s), Sam (14.095 s), and Priya (14.21 s). What was the fastest (least) time, in seconds?",
+      "kind": "numeric",
+      "answer": "14.095",
+      "hints": ["In a race, the smallest time is fastest.", "Write all four times to thousandths: 14.200, 14.180, 14.095, 14.210."],
+      "solution": ["Rewrite to thousandths: 14.200, 14.180, 14.095, 14.210.", "The smallest time is 14.095 seconds (0 tenths)."],
+      "wrong": [
+        { "answer": "14.2", "feedback": "Check the tenths digit of each time: compare 2 tenths, 1 tenth, and 0 tenths." },
+        { "answer": "14.21", "feedback": "14.21 seconds is the slowest (greatest) time, not the fastest (least)." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A hardware store sells bolts in four diameters: 0.375 inch, 0.4 inch, 0.35 inch, and 0.39 inch. Which diameter is the second largest, in inches?",
+      "kind": "numeric",
+      "answer": "0.39",
+      "hints": ["Annex zeros to thousandths: 0.375, 0.400, 0.350, 0.390.", "Put them in order from largest to smallest and find the second one."],
+      "solution": ["Write to thousandths: 0.400, 0.390, 0.375, 0.350.", "Largest is 0.4 inch; second largest is 0.39 inch."],
+      "wrong": [
+        { "answer": "0.4", "feedback": "0.4 = 0.400 is the largest diameter. The question asks for the second largest." },
+        { "answer": "0.375", "feedback": "Compare 0.375 and 0.390: 390 thousandths is larger than 375 thousandths." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A deli sells cheese in three packages: Package A weighs 0.75 kg, Package B weighs 0.708 kg, and Package C weighs 0.8 kg. What is the difference in kilograms between the heaviest package and the lightest package?",
+      "kind": "numeric",
+      "answer": "0.092",
+      "hints": ["First write all three weights to thousandths to find the heaviest and lightest.", "Heaviest is 0.800 kg and lightest is 0.708 kg. Now subtract."],
+      "solution": ["Write to thousandths: 0.750, 0.708, 0.800.", "Heaviest: 0.800 kg. Lightest: 0.708 kg.", "Difference: 0.800 − 0.708 = 0.092 kg."],
+      "wrong": [
+        { "answer": "0.05", "feedback": "Check which package is lightest: 0.708 is lighter than 0.750." },
+        { "answer": "0.108", "feedback": "Regroup carefully in 0.800 − 0.708: borrowing from 8 tenths leaves 7 tenths, so 0.800 − 0.708 is less than 0.1." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why is 0.50 equal to 0.5, while 0.05 is NOT equal to 0.5?",
+      "kind": "multiple_choice",
+      "choices": [
+        "In 0.50, the 5 stays in the tenths place and you add 0 hundredths; in 0.05, the 0 pushes the 5 into the hundredths place.",
+        "Any zero anywhere in a decimal never changes its value.",
+        "0.50 is actually ten times larger than 0.5 because it has two digits.",
+        "In 0.05, the 5 is in the ones place instead of the tenths place."
+      ],
+      "answer": "In 0.50, the 5 stays in the tenths place and you add 0 hundredths; in 0.05, the 0 pushes the 5 into the hundredths place.",
+      "hints": ["Look at which place value the 5 sits in for 0.5, 0.50, and 0.05.", "Think about money: $0.50 is 5 dimes (50 cents), while $0.05 is 5 pennies (5 cents)."],
+      "solution": ["In both 0.5 and 0.50, the 5 is in the tenths place (5 dimes = 50 pennies).", "In 0.05, the 0 sits in the tenths place and pushes the 5 into the hundredths place (5 pennies)."],
+      "wrong": [
+        { "answer": "Any zero anywhere in a decimal never changes its value.", "feedback": "Only zeros at the far right end after the decimal point leave the value unchanged. A zero between the dot and another digit changes place value." },
+        { "answer": "0.50 is actually ten times larger than 0.5 because it has two digits.", "feedback": "50 hundredths equals 5 tenths (50 cents = 5 dimes), so 0.50 and 0.5 are equal." },
+        { "answer": "In 0.05, the 5 is in the ones place instead of the tenths place.", "feedback": "The ones place is to the left of the decimal point. In 0.05, the 5 is two spots to the right (hundredths)." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "A student says 3.249 is greater than 3.3 because 249 is greater than 3. Which statement corrects the mistake?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Compare tenths first: 2 tenths is less than 3 tenths, and 3.3 = 3.300 is greater than 3.249.",
+        "Compare the last digit first: 9 is greater than 3, so the student is right.",
+        "Count total digits: more digits always means a larger decimal.",
+        "Drop the 49 from 3.249 before comparing to 3.3."
+      ],
+      "answer": "Compare tenths first: 2 tenths is less than 3 tenths, and 3.3 = 3.300 is greater than 3.249.",
+      "hints": ["Why doesn't comparing 249 to 3 work?", "Rewrite 3.3 with zeros to match the thousandths place in 3.249."],
+      "solution": ["3.3 = 3.300 (300 thousandths), while 3.249 has 249 thousandths.", "Comparing tenths first also shows 2 tenths < 3 tenths, so 3.3 > 3.249."],
+      "wrong": [
+        { "answer": "Compare the last digit first: 9 is greater than 3, so the student is right.", "feedback": "You must compare from left to right (largest place value first), not from the last digit." },
+        { "answer": "Count total digits: more digits always means a larger decimal.", "feedback": "Extra digits on the right represent tiny places like thousandths and do not beat a larger tenths digit." },
+        { "answer": "Drop the 49 from 3.249 before comparing to 3.3.", "feedback": "Never drop digits from a number; instead, annex zeros to 3.3 so both reach thousandths." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Round 16.478 to the nearest tenth.",
+      "kind": "numeric",
+      "answer": "16.5",
+      "hints": ["Find the tenths digit (4) and look at the hundredths digit next to it (7).", "Since 7 is 5 or more, round the tenths digit up."],
+      "solution": ["The tenths digit is 4, and the digit to its right is 7 (5 or more).", "Round 4 up to 5 and drop the digits after tenths: 16.5."],
+      "wrong": [
+        { "answer": "16.4", "feedback": "Look one spot to the right of 4: the 7 tells you to round up." },
+        { "answer": "16.48", "feedback": "16.48 is rounded to the nearest hundredth. The question asks for the nearest tenth." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 18.4 − 5.67.",
+      "kind": "numeric",
+      "answer": "12.73",
+      "hints": ["Line up the decimal points and write 18.4 as 18.40.", "Regroup before subtracting 7 hundredths from 0 hundredths."],
+      "solution": ["Write 18.40 − 5.67.", "Regroup 4 tenths as 3 tenths and 10 hundredths: 10 − 7 = 3.", "Regroup 8 ones as 7 ones and 13 tenths: 13 − 6 = 7.", "17 − 5 = 12. Answer: 12.73."],
+      "wrong": [
+        { "answer": "12.87", "feedback": "Write 18.4 as 18.40 and regroup before subtracting the 7 in the hundredths place." },
+        { "answer": "13.27", "feedback": "Always subtract bottom from top after regrouping—don't flip 0 − 7 into 7 − 0." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Four science samples have masses of 0.62 g, 0.608 g, 0.625 g, and 0.6 g. A fifth sample has a mass strictly between the second-lightest and third-lightest of those four samples. Which could be the mass of the fifth sample?",
+      "kind": "multiple_choice",
+      "choices": ["0.605", "0.615", "0.623", "0.63"],
+      "answer": "0.615",
+      "hints": ["First put the four masses in order from least to greatest by annexing zeros to thousandths.", "The order is 0.600, 0.608, 0.620, 0.625. Which choice lies between the second and third ones?"],
+      "solution": ["Write all four to thousandths: 0.600, 0.608, 0.620, 0.625.", "The second-lightest is 0.608 g and the third-lightest is 0.62 g (0.620 g).", "0.615 is greater than 0.608 and less than 0.620."],
+      "wrong": [
+        { "answer": "0.605", "feedback": "0.605 is between 0.600 and 0.608 (the first and second samples), not between the second and third." },
+        { "answer": "0.623", "feedback": "0.623 is between 0.620 and 0.625 (the third and fourth samples)." },
+        { "answer": "0.63", "feedback": "0.63 = 0.630, which is heavier than all four samples." }
+      ]
+    }
+  ]
+}
