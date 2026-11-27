@@ -1,0 +1,701 @@
+{
+  "version": 2,
+  "skill_id": "7.number-properties",
+  "title": "Properties of Operations",
+  "hook": "A swim team manager adds up lap time adjustments of -1.75 + 2.4 + 1.75 - 0.4 seconds and multiplies 4 × (-3 1/2) × (-0.25) to score a relay. Instead of grinding through every step from left to right, how can rearranging, grouping, and splitting numbers turn messy rational math into quick mental moves?",
+  "goal": "I can name and use the commutative, associative, distributive, identity, and inverse properties to compute with rational numbers efficiently.",
+  "vocabulary": [
+    {
+      "term": "commutative property",
+      "meaning": "changing the order of addends or factors does not change the sum or product (a + b = b + a; a × b = b × a)",
+      "example": "-3/4 + 5 = 5 + (-3/4)."
+    },
+    {
+      "term": "associative property",
+      "meaning": "changing the grouping (parentheses) when adding or multiplying does not change the sum or product",
+      "example": "(-2 × 5) × 3 = -2 × (5 × 3)."
+    },
+    {
+      "term": "distributive property",
+      "meaning": "multiplying a sum or difference by a factor gives the same result as multiplying each term separately: a(b + c) = ab + ac",
+      "example": "-4(10 + 1/2) = -4(10) + (-4)(1/2) = -42."
+    },
+    {
+      "term": "identity and inverse properties",
+      "meaning": "adding 0 or multiplying by 1 leaves a number unchanged (identity); adding an opposite gives 0 and multiplying by a reciprocal gives 1 (inverse)",
+      "example": "-3.5 + 3.5 = 0 (additive inverse) and (-2/5) × (-5/2) = 1 (multiplicative inverse)."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find -8.5 + 3.2 + 8.5.",
+      "kind": "numeric",
+      "answer": "3.2",
+      "hints": [
+        "Notice -8.5 and +8.5 are opposites.",
+        "Add -8.5 + 8.5 first, then add 3.2."
+      ],
+      "solution": [
+        "Reorder to pair opposites: (-8.5 + 8.5) + 3.2.",
+        "0 + 3.2 = 3.2."
+      ],
+      "wrong": [
+        {
+          "answer": "-3.2",
+          "feedback": "Notice the middle term is positive, and -8.5 + 8.5 = 0."
+        },
+        {
+          "answer": "20.2",
+          "feedback": "Watch the negative sign on -8.5: -8.5 + 8.5 cancels to 0."
+        }
+      ]
+    },
+    {
+      "question": "Find (-2/5) × (-5/2) × (-9).",
+      "kind": "numeric",
+      "answer": "-9",
+      "hints": [
+        "Look at the first two factors: -2/5 and -5/2 are reciprocals!",
+        "(-2/5) × (-5/2) = 1. Now multiply 1 by the remaining factor."
+      ],
+      "solution": [
+        "(-2/5) × (-5/2) = 1 (multiplicative inverses).",
+        "1 × (-9) = -9."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "There are three negative factors in total, so the final product stays negative."
+        },
+        {
+          "answer": "-1",
+          "feedback": "Remember to multiply by the third factor after finding (-2/5) × (-5/2) = 1."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Commutative and associative properties: reorder and regroup",
+      "read": [
+        "Two properties let you rearrange addition and multiplication so friendly numbers meet up. The **commutative property** changes the **order** (numbers commute, or travel): `a + b = b + a` and `a × b = b × a`. The **associative property** changes the **grouping** (parentheses): `(a + b) + c = a + (b + c)` and `(a × b) × c = a × (b × c)`.",
+        "Warning: these properties work ONLY for **addition** and **multiplication**—never for subtraction or division (`8 - 3 ≠ 3 - 8`).",
+        "Here's a trick: when a problem has subtraction, **rewrite subtracting as adding the opposite** first (`2.75 - 0.75 = 2.75 + (-0.75)`). Then you can reorder and regroup freely to make whole numbers, tens, or ones!"
+      ],
+      "model": {
+        "caption": "Commutative vs. Associative properties",
+        "rows": [
+          ["Property", "What changes?", "Rational example", "Does it work for − or ÷?"],
+          ["Commutative", "Order of numbers", "-3/8 + 2.75 = 2.75 + (-3/8)", "No (3 − 8 ≠ 8 − 3)"],
+          ["Associative", "Parentheses (grouping)", "(-4 × 7/9) × -0.25 = 7/9 × (-4 × -0.25)", "No ((12 ÷ 6) ÷ 2 ≠ 12 ÷ (6 ÷ 2))"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -3/8 + 2.75 - 5/8 - 0.75 using properties.",
+        "steps": [
+          {
+            "say": "Rewrite subtraction as adding the opposite: -3/8 + 2.75 + (-5/8) + (-0.75).",
+            "why": "Now every operation is addition, so commutative and associative properties apply."
+          },
+          {
+            "say": "Reorder (commutative) and group (associative) compatible numbers: (-3/8 + (-5/8)) + (2.75 + (-0.75)).",
+            "why": "Fractions with denominator 8 pair cleanly, and the .75 decimals match."
+          },
+          {
+            "say": "Add each group: -8/8 + 2 = -1 + 2 = 1.",
+            "why": "Two mental steps give 1 without converting everything to eighths or decimals."
+          }
+        ],
+        "answer": "1"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate (-4) × (7/9) × (-0.25).",
+          "kind": "numeric",
+          "answer": "7/9",
+          "hints": [
+            "Reorder and group (-4) and (-0.25) together.",
+            "Remember 0.25 = 1/4, so (-4) × (-0.25) = 1."
+          ],
+          "solution": [
+            "Commutative and associative properties: ((-4) × (-0.25)) × (7/9).",
+            "(-4) × (-0.25) = 1.",
+            "1 × (7/9) = 7/9."
+          ],
+          "wrong": [
+            {
+              "answer": "-7/9",
+              "feedback": "Notice both -4 and -0.25 are negative: (-4) × (-0.25) = +1, so the product is positive."
+            },
+            {
+              "answer": "28/9",
+              "feedback": "After multiplying (-4) × (7/9) = -28/9, remember to multiply by -0.25 (divide by -4)."
+            }
+          ]
+        },
+        {
+          "question": "Which property justifies rewriting (-2/3 + 5/4) + (-1/4) as -2/3 + (5/4 + (-1/4))?",
+          "kind": "multiple_choice",
+          "choices": [
+            "Associative property of addition",
+            "Commutative property of addition",
+            "Distributive property",
+            "Additive identity property"
+          ],
+          "answer": "Associative property of addition",
+          "hints": [
+            "Compare the order of the three fractions: did any fraction switch places?",
+            "Only the parentheses moved to group the last two fractions together."
+          ],
+          "solution": [
+            "The order -2/3, 5/4, -1/4 stayed the same; only the grouping (parentheses) changed.",
+            "Changing grouping in addition is the associative property of addition."
+          ],
+          "wrong": [
+            {
+              "answer": "Commutative property of addition",
+              "feedback": "Commutative changes the order of the numbers. Here the numbers stayed in the same order and only the parentheses moved."
+            },
+            {
+              "answer": "Distributive property",
+              "feedback": "Distributive involves multiplying across a sum or difference, whereas here everything is addition."
+            },
+            {
+              "answer": "Additive identity property",
+              "feedback": "Additive identity is adding 0; here parentheses moved."
+            }
+          ]
+        }
+      ],
+      "mentor": "Ask yourself: did the numbers swap seats (commutative) or did the parentheses hug new partners (associative)?"
+    },
+    {
+      "heading": "Identity and inverse properties: zeros and ones",
+      "read": [
+        "Four more properties explain why `0` and `1` are so useful when simplifying expressions. The **identity properties** keep a number identical: `a + 0 = a` (**additive identity**) and `a × 1 = a` (**multiplicative identity**).",
+        "The **inverse properties** undo a number back to its identity. A number plus its opposite (**additive inverse**) equals `0`: `(-4/7) + 4/7 = 0`. A nonzero number times its reciprocal (**multiplicative inverse**) equals `1`: `(-3/4) × (-4/3) = 1`.",
+        "Notice that `0` has NO multiplicative inverse because no number multiplied by `0` can equal `1` (and we can never divide by `0`)."
+      ],
+      "model": {
+        "caption": "Identity and inverse properties",
+        "rows": [
+          ["Property", "Rule", "Signed rational example"],
+          ["Additive identity", "a + 0 = a", "-6.25 + 0 = -6.25"],
+          ["Multiplicative identity", "a × 1 = a", "(-3/5) × 1 = -3/5"],
+          ["Additive inverse", "a + (-a) = 0", "-4/7 + 4/7 = 0"],
+          ["Multiplicative inverse", "a × (1/a) = 1 (a ≠ 0)", "(-3/4) × (-4/3) = 1"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate (3/7 × 7/3) × (-12.5) + (-5/9 + 5/9), naming each property used.",
+        "steps": [
+          {
+            "say": "Multiply the reciprocals: 3/7 × 7/3 = 1.",
+            "why": "Multiplicative inverse property: reciprocals multiply to 1."
+          },
+          {
+            "say": "Add the opposites: -5/9 + 5/9 = 0.",
+            "why": "Additive inverse property: opposites add to 0."
+          },
+          {
+            "say": "Multiply 1 × (-12.5) = -12.5.",
+            "why": "Multiplicative identity property: multiplying by 1 keeps the number unchanged."
+          },
+          {
+            "say": "Add -12.5 + 0 = -12.5.",
+            "why": "Additive identity property: adding 0 keeps the number unchanged."
+          }
+        ],
+        "answer": "-12.5"
+      },
+      "try_it": [
+        {
+          "question": "What is the multiplicative inverse (reciprocal) of -2 1/3?",
+          "kind": "numeric",
+          "answer": "-3/7",
+          "hints": [
+            "First convert -2 1/3 to an improper fraction: -(2 × 3 + 1)/3.",
+            "Flip -7/3 and keep the negative sign so the product with -7/3 equals +1."
+          ],
+          "solution": [
+            "-2 1/3 = -7/3.",
+            "Flip -7/3 and keep its sign: -3/7.",
+            "Check: (-7/3) × (-3/7) = 1."
+          ],
+          "wrong": [
+            {
+              "answer": "3/7",
+              "feedback": "Keep the negative sign! (-7/3) × (3/7) = -1, not +1."
+            },
+            {
+              "answer": "7/3",
+              "feedback": "Convert to -7/3 first, then flip numerator and denominator and keep the negative sign."
+            },
+            {
+              "answer": "-3/2",
+              "feedback": "Convert the whole mixed number -2 1/3 into an improper fraction (-7/3) before flipping."
+            }
+          ]
+        },
+        {
+          "question": "Which property is shown by (-8.4) + 8.4 = 0?",
+          "kind": "multiple_choice",
+          "choices": [
+            "Additive inverse property",
+            "Additive identity property",
+            "Multiplicative inverse property",
+            "Associative property of addition"
+          ],
+          "answer": "Additive inverse property",
+          "hints": [
+            "The result is 0, and the two numbers are opposites.",
+            "Identities keep a number the same; inverses cancel to 0 or 1."
+          ],
+          "solution": [
+            "-8.4 and 8.4 are opposites whose sum is 0.",
+            "A number plus its opposite equals 0 is the additive inverse property."
+          ],
+          "wrong": [
+            {
+              "answer": "Additive identity property",
+              "feedback": "Additive identity adds 0 to keep a number the same (-8.4 + 0 = -8.4). Here opposites cancel to 0."
+            },
+            {
+              "answer": "Multiplicative inverse property",
+              "feedback": "Multiplicative inverse multiplies reciprocals to get 1, whereas here opposites add to 0."
+            },
+            {
+              "answer": "Associative property of addition",
+              "feedback": "Associative regroups three numbers with parentheses."
+            }
+          ]
+        }
+      ],
+      "mentor": "Quick memory hook: **Identity** keeps your *identity* (+ 0 or × 1). **Inverse** *inverts* or cancels back to 0 or 1."
+    },
+    {
+      "heading": "The distributive property: split or factor",
+      "read": [
+        "The **distributive property** connects multiplication with addition or subtraction: `a(b + c) = ab + ac` and `a(b - c) = ab - ac`. You can run it in **two directions** to make rational math faster.",
+        "**Direction 1 (Expand):** Split a mixed number or decimal into friendly parts, like `-8 × (3 1/4) = -8(3 + 1/4) = -8(3) + (-8)(1/4) = -24 + (-2) = -26`.",
+        "**Direction 2 (Factor):** When two products share the **same factor**, pull it out in front: `(-2.5)(13) + (-2.5)(-3) = -2.5(13 + (-3)) = -2.5(10) = -25`. Always watch the negative signs when distributing!"
+      ],
+      "model": {
+        "caption": "Using the distributive property two ways",
+        "rows": [
+          ["Direction", "Expression", "Rewrite", "Result"],
+          ["Expand (split a mixed number)", "-8 × (3 1/4)", "-8(3) + (-8)(1/4) = -24 + (-2)", "-26"],
+          ["Factor (pull out a shared factor)", "(-2.5)(13) + (-2.5)(-3)", "-2.5(13 + (-3)) = -2.5(10)", "-25"]
+        ]
+      },
+      "example": {
+        "problem": "Use the distributive property to evaluate -8 × (3 1/4).",
+        "steps": [
+          {
+            "say": "Split the mixed number into a whole number plus a fraction: 3 1/4 = 3 + 1/4.",
+            "why": "Splitting turns a mixed number into two friendly parts."
+          },
+          {
+            "say": "Distribute -8 to BOTH parts: (-8 × 3) + (-8 × 1/4).",
+            "why": "a(b + c) = ab + ac."
+          },
+          {
+            "say": "Multiply each part: -8 × 3 = -24, and -8 × 1/4 = -2.",
+            "why": "Each product comes out to an integer."
+          },
+          {
+            "say": "Add the results: -24 + (-2) = -26.",
+            "why": "Check: -8 × 13/4 = -104/4 = -26. ✓"
+          }
+        ],
+        "answer": "-26"
+      },
+      "try_it": [
+        {
+          "question": "Use the distributive property to evaluate -12 × (2 - 1/6).",
+          "kind": "numeric",
+          "answer": "-22",
+          "hints": [
+            "Rewrite (2 - 1/6) as (2 + (-1/6)) so you can see both signs clearly.",
+            "Multiply (-12 × 2) + (-12 × -1/6)."
+          ],
+          "solution": [
+            "-12 × (2 + (-1/6)) = (-12 × 2) + (-12 × (-1/6)).",
+            "-12 × 2 = -24, and (-12) × (-1/6) = +2.",
+            "-24 + 2 = -22."
+          ],
+          "wrong": [
+            {
+              "answer": "-26",
+              "feedback": "Watch the second product: (-12) × (-1/6) = +2 (same signs!), so add +2 to -24 instead of subtracting 2."
+            },
+            {
+              "answer": "22",
+              "feedback": "Notice -12 × 2 = -24 is negative, so -24 + 2 stays negative."
+            },
+            {
+              "answer": "-23 5/6",
+              "feedback": "Multiply -12 by BOTH terms inside the parentheses, including -1/6."
+            }
+          ]
+        },
+        {
+          "question": "Use the distributive property in reverse to evaluate (-2.5) × 13 + (-2.5) × (-3).",
+          "kind": "numeric",
+          "answer": "-25",
+          "hints": [
+            "Both products share the factor -2.5. Pull -2.5 outside: -2.5 × (13 + (-3)).",
+            "Add inside the parentheses first: 13 + (-3) = 10."
+          ],
+          "solution": [
+            "Factor out -2.5: -2.5 × (13 + (-3)).",
+            "Add inside: 13 + (-3) = 10.",
+            "Multiply: -2.5 × 10 = -25."
+          ],
+          "wrong": [
+            {
+              "answer": "-40",
+              "feedback": "Check the sign of -3 inside the parentheses: 13 + (-3) = 10, not 16."
+            },
+            {
+              "answer": "25",
+              "feedback": "The shared factor -2.5 is negative, so (-2.5) × 10 is negative."
+            }
+          ]
+        }
+      ],
+      "mentor": "Rewriting subtraction as adding the opposite inside parentheses—like `2 + (-1/6)`—prevents nearly every distributive sign mistake!"
+    }
+  ],
+  "mistake": {
+    "problem": "Nia used the distributive property to evaluate -6(5 - 2/3).",
+    "work": [
+      "-6 × 5 - 6 × (2/3)",
+      "= -30 - 4",
+      "= -34"
+    ],
+    "what_went_wrong": "Nia subtracted 6 × (2/3) instead of (-6) × (-2/3). The minus sign in front of 6 and the subtraction sign before 2/3 combine to make a positive product.",
+    "fix": "Rewrite as -6(5 + (-2/3)) = (-6 × 5) + (-6 × -2/3) = -30 + 4 = -26."
+  },
+  "summary": [
+    "Use the commutative (order) and associative (grouping) properties for addition and multiplication—rewrite subtraction as adding the opposite first so numbers can move safely.",
+    "Identity keeps a number unchanged (+ 0 or × 1); inverse cancels a number back to 0 (opposites) or 1 (reciprocals).",
+    "Use the distributive property to expand mixed numbers into friendly parts or factor out a shared multiplier, watching negative signs on every term."
+  ],
+  "faith": "Math follows reliable rules—order and structure work the same way every time, reflecting a God of order rather than confusion (1 Corinthians 14:33).",
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Evaluate -5/9 + 3.6 + (-4/9) + (-1.6).",
+      "kind": "numeric",
+      "answer": "1",
+      "hints": [
+        "Group the fractions with denominator 9 together, and group the decimals together.",
+        "(-5/9 + (-4/9)) = -1 and (3.6 + (-1.6)) = 2."
+      ],
+      "solution": [
+        "Reorder and group: (-5/9 + (-4/9)) + (3.6 + (-1.6)).",
+        "-9/9 + 2 = -1 + 2 = 1."
+      ],
+      "wrong": [
+        {
+          "answer": "-3",
+          "feedback": "Check 3.6 + (-1.6): since 3.6 is positive and larger in size, their sum is +2, not -2."
+        },
+        {
+          "answer": "3",
+          "feedback": "Notice both fractions are negative: -5/9 + (-4/9) = -1, not +1."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate (-0.125) × (-11/13) × (-8).",
+      "kind": "numeric",
+      "answer": "-11/13",
+      "hints": [
+        "Remember 0.125 = 1/8, so (-0.125) × (-8) = 1!",
+        "Group (-0.125) × (-8) first, then multiply by -11/13."
+      ],
+      "solution": [
+        "((-0.125) × (-8)) × (-11/13).",
+        "(-0.125) × (-8) = 1.",
+        "1 × (-11/13) = -11/13."
+      ],
+      "wrong": [
+        {
+          "answer": "11/13",
+          "feedback": "Count the negative factors: three negative numbers multiply to a negative product."
+        },
+        {
+          "answer": "-88/13",
+          "feedback": "Check (-0.125) × (-8): 0.125 is 1/8, so (1/8) × 8 = 1."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate -15 × (2 2/5).",
+      "kind": "numeric",
+      "answer": "-36",
+      "hints": [
+        "Split 2 2/5 into 2 + 2/5 and distribute -15 to each part.",
+        "(-15 × 2) + (-15 × 2/5) = -30 + (-6)."
+      ],
+      "solution": [
+        "-15 × (2 + 2/5) = (-15 × 2) + (-15 × 2/5).",
+        "-30 + (-6) = -36."
+      ],
+      "wrong": [
+        {
+          "answer": "-24",
+          "feedback": "Both terms are negative (-30 and -6), so combine both negative amounts rather than subtracting their sizes."
+        },
+        {
+          "answer": "36",
+          "feedback": "Negative × positive gives a negative product."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate (4/7) × (-19) + (4/7) × 5.",
+      "kind": "numeric",
+      "answer": "-8",
+      "hints": [
+        "Pull out the common factor 4/7 using the distributive property in reverse.",
+        "4/7 × (-19 + 5) = 4/7 × (-14)."
+      ],
+      "solution": [
+        "Factor out 4/7: (4/7) × (-19 + 5).",
+        "-19 + 5 = -14.",
+        "(4/7) × (-14) = 4 × (-2) = -8."
+      ],
+      "wrong": [
+        {
+          "answer": "8",
+          "feedback": "Check -19 + 5 = -14, so (4/7) × (-14) is negative."
+        },
+        {
+          "answer": "-96/7",
+          "feedback": "Check -19 + 5: opposite signs subtract sizes, giving -14 rather than -24."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A baker buys 6 bags of flour at $3.25 each and 6 jars of honey at $4.75 each. What is the total cost, in dollars?",
+      "kind": "numeric",
+      "answer": "48",
+      "hints": [
+        "Use the distributive property: 6 × (3.25 + 4.75).",
+        "Add 3.25 + 4.75 first to make a whole number!"
+      ],
+      "solution": [
+        "6 × 3.25 + 6 × 4.75 = 6 × (3.25 + 4.75).",
+        "3.25 + 4.75 = 8.",
+        "6 × 8 = 48 ($48)."
+      ],
+      "wrong": [
+        {
+          "answer": "14",
+          "feedback": "Multiply the combined price ($8) by 6 items, rather than adding 6 + 8."
+        },
+        {
+          "answer": "42",
+          "feedback": "Check 3.25 + 4.75: 0.25 + 0.75 = 1, so 3.25 + 4.75 = 8."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A submarine logs four depth changes: -12 3/4 meters, +5.4 meters, -7 1/4 meters, and +4.6 meters. What is the net change in depth, in meters?",
+      "kind": "numeric",
+      "answer": "-10",
+      "hints": [
+        "Group the mixed numbers together and the decimals together.",
+        "(-12 3/4 + (-7 1/4)) = -20, and (5.4 + 4.6) = 10."
+      ],
+      "solution": [
+        "Reorder and group: (-12 3/4 + (-7 1/4)) + (5.4 + 4.6).",
+        "-20 + 10 = -10 meters."
+      ],
+      "wrong": [
+        {
+          "answer": "10",
+          "feedback": "Notice the downward changes (-20) are larger in size than the upward changes (+10), so the net change is negative."
+        },
+        {
+          "answer": "-30",
+          "feedback": "+5.4 and +4.6 are positive gains (+10), so add +10 to -20 rather than subtracting 10."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A video game deducts 1.5 points 16 times for penalties, then awards 1.5 points 6 times for bonuses. What is the net point change?",
+      "kind": "numeric",
+      "answer": "-15",
+      "hints": [
+        "Write it as 1.5 × (-16) + 1.5 × 6 and factor out 1.5.",
+        "Compute 1.5 × (-16 + 6)."
+      ],
+      "solution": [
+        "Factor out 1.5: 1.5 × (-16 + 6).",
+        "-16 + 6 = -10.",
+        "1.5 × (-10) = -15."
+      ],
+      "wrong": [
+        {
+          "answer": "15",
+          "feedback": "Since penalties (-16) outnumber bonuses (+6), the net change is negative."
+        },
+        {
+          "answer": "-33",
+          "feedback": "The 6 bonuses ADD points (+6), so combine -16 + 6 = -10 rather than -16 - 6."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which property lets you rewrite (a + b) + c as (b + a) + c?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Commutative property of addition",
+        "Associative property of addition",
+        "Distributive property",
+        "Additive identity property"
+      ],
+      "answer": "Commutative property of addition",
+      "hints": [
+        "Look at the parentheses: did the parentheses move to group different letters?",
+        "Notice a and b switched places inside the parentheses."
+      ],
+      "solution": [
+        "The grouping stayed on the first two terms, while a and b swapped order.",
+        "Changing the order of addends is the commutative property of addition."
+      ],
+      "wrong": [
+        {
+          "answer": "Associative property of addition",
+          "feedback": "Associative changes WHICH numbers are grouped together, like (a + b) + c = a + (b + c). Here the order inside changed."
+        },
+        {
+          "answer": "Distributive property",
+          "feedback": "Distributive multiplies across a sum or difference; here everything is addition."
+        },
+        {
+          "answer": "Additive identity property",
+          "feedback": "Additive identity involves adding 0."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which pair of calculations proves that subtraction is NOT commutative?",
+      "kind": "multiple_choice",
+      "choices": [
+        "8 - 3 = 5, while 3 - 8 = -5",
+        "8 - 3 = 8 + (-3)",
+        "8 - 0 = 8, while 0 + 8 = 8",
+        "(8 - 3) - 2 = 3, while 8 - (3 + 2) = 3"
+      ],
+      "answer": "8 - 3 = 5, while 3 - 8 = -5",
+      "hints": [
+        "Commutative means swapping the order of two numbers gives the same result.",
+        "Look for two expressions that swap the same two numbers around a minus sign and get different answers."
+      ],
+      "solution": [
+        "Swapping 8 and 3 in 8 - 3 vs 3 - 8 gives 5 and -5, which are not equal.",
+        "That counterexample proves subtraction is not commutative."
+      ],
+      "wrong": [
+        {
+          "answer": "8 - 3 = 8 + (-3)",
+          "feedback": "That shows rewriting subtraction as adding the opposite, which IS always true."
+        },
+        {
+          "answer": "8 - 0 = 8, while 0 + 8 = 8",
+          "feedback": "Both equal 8, so that doesn't show subtraction failing."
+        },
+        {
+          "answer": "(8 - 3) - 2 = 3, while 8 - (3 + 2) = 3",
+          "feedback": "Both equal 3 and show grouping rather than swapping two numbers."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -7 1/4 - (-2 3/4).",
+      "kind": "numeric",
+      "answer": "-4.5",
+      "hints": [
+        "Rewrite subtracting a negative as adding the opposite: -7 1/4 + 2 3/4.",
+        "Convert to decimals (-7.25 + 2.75) or fractions (-29/4 + 11/4)."
+      ],
+      "solution": [
+        "Rewrite subtraction: -7 1/4 + 2 3/4.",
+        "Using decimals: -7.25 + 2.75 = -4.5 (or -4 1/2, or -9/2)."
+      ],
+      "wrong": [
+        {
+          "answer": "-10",
+          "feedback": "Subtracting -2 3/4 adds +2 3/4, moving closer to zero instead of subtracting 2 3/4."
+        },
+        {
+          "answer": "4.5",
+          "feedback": "-7 1/4 has a larger size than +2 3/4, so the answer stays negative."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-3.6) ÷ (0.4).",
+      "kind": "numeric",
+      "answer": "-9",
+      "hints": [
+        "Different signs (negative ÷ positive) give a negative quotient.",
+        "Multiply both decimals by 10 to divide 36 by 4."
+      ],
+      "solution": [
+        "Different signs give a negative quotient.",
+        "3.6 ÷ 0.4 = 36 ÷ 4 = 9, so (-3.6) ÷ (0.4) = -9."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "Check the signs: negative divided by positive gives a negative quotient."
+        },
+        {
+          "answer": "-0.9",
+          "feedback": "Shift the decimal point one place right in BOTH numbers: -36 ÷ 4."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Evaluate (-3/5) × 17 + (-3/5) × (-7) + (1/2) × (-12 4/5) + (1/2) × (4/5).",
+      "kind": "numeric",
+      "answer": "-12",
+      "hints": [
+        "Factor (-3/5) out of the first two terms, and factor (1/2) out of the last two terms.",
+        "Inside the first group: 17 + (-7) = 10. Inside the second group, combine -12 4/5 + 4/5."
+      ],
+      "solution": [
+        "Factor (-3/5) from the first pair: (-3/5) × (17 + (-7)) = (-3/5) × 10 = -6.",
+        "Factor (1/2) from the second pair: (1/2) × (-12 4/5 + 4/5) = (1/2) × (-12) = -6.",
+        "Add both results: -6 + (-6) = -12."
+      ],
+      "wrong": [
+        {
+          "answer": "0",
+          "feedback": "Notice both groups give -6: combine -6 + (-6) rather than canceling them to 0."
+        },
+        {
+          "answer": "-20.4",
+          "feedback": "Check the first group carefully: 17 + (-7) = 10, not 24."
+        }
+      ]
+    }
+  ]
+}

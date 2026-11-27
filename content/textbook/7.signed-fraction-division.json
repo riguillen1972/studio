@@ -1,0 +1,716 @@
+{
+  "version": 2,
+  "skill_id": "7.signed-fraction-division",
+  "title": "Dividing Signed Fractions",
+  "hook": "A trail-running club maps a canyon descent where elevation drops 3 3/4 meters over 1 1/2 minutes, while a tide gauge measures water changing by -5/6 meter in 2/3 hour. How do we divide positive and negative fractions and mixed numbers—and why do -(3/4), (-3)/4, and 3/(-4) all name the exact same number?",
+  "goal": "I can divide positive and negative fractions and mixed numbers, and recognize that -(p/q) = (-p)/q = p/(-q).",
+  "vocabulary": [
+    {
+      "term": "reciprocal",
+      "meaning": "the flipped form of a nonzero number; multiplying a number by its reciprocal always equals 1",
+      "example": "The reciprocal of -3/5 is -5/3 because (-3/5) × (-5/3) = 1."
+    },
+    {
+      "term": "improper fraction",
+      "meaning": "a fraction whose numerator has a size greater than or equal to its denominator",
+      "example": "-2 1/4 written as an improper fraction is -9/4."
+    },
+    {
+      "term": "equivalent signs",
+      "meaning": "moving one negative sign to the numerator, the denominator, or in front of a fraction without changing its value",
+      "example": "-(5/8) = (-5)/8 = 5/(-8)."
+    },
+    {
+      "term": "quotient",
+      "meaning": "the result of dividing one number by another",
+      "example": "The quotient of (-3/4) ÷ (3/8) is -2."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find (-2/3) × (-9/4).",
+      "kind": "numeric",
+      "answer": "3/2",
+      "hints": [
+        "Notice both fractions are negative. Same signs multiply to a positive product.",
+        "Multiply numerators and denominators, or cross-simplify 2 with 4 and 3 with 9 first."
+      ],
+      "solution": [
+        "Same signs give a positive product: (-2/3) × (-9/4) = +(2/3 × 9/4).",
+        "Multiply across: (2 × 9) / (3 × 4) = 18/12.",
+        "Simplify by dividing top and bottom by 6: 3/2 (or 1 1/2)."
+      ],
+      "wrong": [
+        {
+          "answer": "-3/2",
+          "feedback": "Check the signs: two negatives (same signs) multiply to a positive result."
+        },
+        {
+          "answer": "8/27",
+          "feedback": "Do not flip either fraction when multiplying—multiply straight across."
+        },
+        {
+          "answer": "-8/27",
+          "feedback": "Multiply straight across without flipping, and remember two negatives make a positive."
+        }
+      ]
+    },
+    {
+      "question": "Find (-42) ÷ 6.",
+      "kind": "numeric",
+      "answer": "-7",
+      "hints": [
+        "Divide the sizes first: 42 ÷ 6 = 7.",
+        "The two numbers have different signs (negative and positive), so check the sign rule."
+      ],
+      "solution": [
+        "42 ÷ 6 = 7.",
+        "Different signs give a negative quotient: (-42) ÷ 6 = -7."
+      ],
+      "wrong": [
+        {
+          "answer": "7",
+          "feedback": "Look at the signs: dividing a negative number by a positive number (different signs) gives a negative quotient."
+        },
+        {
+          "answer": "-36",
+          "feedback": "Divide 42 by 6 instead of adding or subtracting."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Where the negative sign belongs in a fraction",
+      "read": [
+        "Every fraction `p/q` (with `q ≠ 0`) is really a division problem: `p ÷ q`. That means fractions follow the **exact same sign rules** as integer division.",
+        "Look at `(-3) ÷ 4` and `3 ÷ (-4)`. Both divide numbers with **different signs**, so both equal `-0.75`, or `-(3/4)`. In other words, **one negative sign anywhere in a fraction makes the whole fraction negative**: `-(p/q) = (-p)/q = p/(-q)`.",
+        "What if BOTH top and bottom are negative, like `(-3)/(-4)`? Same signs divide to a **positive**, so `(-3)/(-4) = 3/4`!"
+      ],
+      "model": {
+        "caption": "Comparing where negative signs sit in a fraction",
+        "rows": [
+          ["Fraction", "As division", "How many negative signs?", "Value"],
+          ["-(3/4)", "-(3 ÷ 4)", "1 (in front)", "-3/4"],
+          ["(-3)/4", "(-3) ÷ 4", "1 (on top)", "-3/4"],
+          ["3/(-4)", "3 ÷ (-4)", "1 (on bottom)", "-3/4"],
+          ["(-3)/(-4)", "(-3) ÷ (-4)", "2 (top and bottom)", "3/4"]
+        ]
+      },
+      "example": {
+        "problem": "Show why (-12)/15, 12/(-15), and -(12/15) are equal, and write their simplified value.",
+        "steps": [
+          {
+            "say": "Count the negative signs in each expression: each one has exactly one negative sign.",
+            "why": "One negative sign with one positive number means different signs, so every version is negative."
+          },
+          {
+            "say": "Rewrite them using division: (-12) ÷ 15 = -(12 ÷ 15) and 12 ÷ (-15) = -(12 ÷ 15).",
+            "why": "Moving a single negative sign between the numerator, denominator, and front keeps the value unchanged."
+          },
+          {
+            "say": "Simplify 12/15 by dividing numerator and denominator by 3: 12/15 = 4/5.",
+            "why": "Put the negative sign in front or on top for standard form: -4/5."
+          }
+        ],
+        "answer": "All three equal -4/5."
+      },
+      "try_it": [
+        {
+          "question": "Which expression is NOT equal to -(5/8)?",
+          "kind": "multiple_choice",
+          "choices": ["(-5)/8", "5/(-8)", "(-5)/(-8)", "-5/8"],
+          "answer": "(-5)/(-8)",
+          "hints": [
+            "Think of each fraction as division and count the negative signs.",
+            "Two negative signs (same signs) divide to give a positive value."
+          ],
+          "solution": [
+            "(-5)/8, 5/(-8), and -5/8 all have one negative sign, so each equals -(5/8).",
+            "(-5)/(-8) = (-5) ÷ (-8) = +5/8, which is positive and NOT equal to -(5/8)."
+          ],
+          "wrong": [
+            {
+              "answer": "(-5)/8",
+              "feedback": "(-5) ÷ 8 has one negative sign, so it equals -(5/8)."
+            },
+            {
+              "answer": "5/(-8)",
+              "feedback": "5 ÷ (-8) has different signs, so it equals -(5/8)."
+            },
+            {
+              "answer": "-5/8",
+              "feedback": "Putting the minus sign in front is the standard way to write -(5/8)."
+            }
+          ]
+        },
+        {
+          "question": "Write 18/(-24) in simplest form as a signed fraction.",
+          "kind": "numeric",
+          "answer": "-3/4",
+          "hints": [
+            "First decide the sign: 18 ÷ (-24) has one positive and one negative number.",
+            "Move the negative sign to the front (or top), then divide 18 and 24 by their greatest common factor, 6."
+          ],
+          "solution": [
+            "18/(-24) = -(18/24) because different signs give a negative quotient.",
+            "Divide top and bottom by 6: 18 ÷ 6 = 3 and 24 ÷ 6 = 4.",
+            "Simplified fraction: -3/4."
+          ],
+          "wrong": [
+            {
+              "answer": "3/4",
+              "feedback": "Do not drop the negative sign in the denominator: 18/(-24) has one negative sign, so the result is negative."
+            },
+            {
+              "answer": "-4/3",
+              "feedback": "Keep 18 in the numerator and 24 in the denominator when simplifying—do not flip the fraction."
+            }
+          ]
+        }
+      ],
+      "mentor": "Moving a single negative sign from bottom to top—like turning 3/(-4) into -3/4—keeps calculations tidy and makes fractions clearer to compare."
+    },
+    {
+      "heading": "Dividing positive and negative fractions",
+      "read": [
+        "To divide by any nonzero fraction, **multiply by its reciprocal**. Flip the second fraction (the divisor), and **keep its negative sign**! For example, the reciprocal of `-2/3` is `-3/2` because `(-2/3) × (-3/2) = 1`.",
+        "Wait—why does the sign stay when you flip? If you changed `-2/3` to `+3/2`, their product would be `-1`, not `+1`. A number and its reciprocal always have the **same sign**.",
+        "Before multiplying across, you can either determine the **final sign first** (same signs → positive, different signs → negative) or keep each negative sign on its numerator. Cross-simplifying factors on top and bottom keeps the arithmetic small."
+      ],
+      "model": {
+        "caption": "Finding reciprocals of signed numbers",
+        "rows": [
+          ["Number", "Write as a fraction", "Reciprocal", "Check (Number × Reciprocal)"],
+          ["-2/3", "-2/3", "-3/2", "(-2/3) × (-3/2) = 1"],
+          ["5/6", "5/6", "6/5", "(5/6) × (6/5) = 1"],
+          ["-4", "-4/1", "-1/4", "(-4/1) × (-1/4) = 1"]
+        ]
+      },
+      "example": {
+        "problem": "Find (-5/6) ÷ (10/9).",
+        "steps": [
+          {
+            "say": "Keep -5/6, change ÷ to ×, and flip 10/9 to its reciprocal 9/10: (-5/6) × (9/10).",
+            "why": "Dividing by a fraction means multiplying by its reciprocal."
+          },
+          {
+            "say": "Check the signs: negative × positive gives a negative answer.",
+            "why": "Different signs produce a negative result."
+          },
+          {
+            "say": "Cross-simplify before multiplying: 5 and 10 divide by 5 (giving 1 and 2); 9 and 6 divide by 3 (giving 3 and 2).",
+            "why": "Simplifying early avoids big products."
+          },
+          {
+            "say": "Multiply the simplified numerators and denominators: -(1 × 3) / (2 × 2) = -3/4.",
+            "why": "Check: (-3/4) × (10/9) = -30/36 = -5/6. ✓"
+          }
+        ],
+        "answer": "-3/4"
+      },
+      "try_it": [
+        {
+          "question": "Find (-4/9) ÷ (8/15).",
+          "kind": "numeric",
+          "answer": "-5/6",
+          "hints": [
+            "Rewrite as multiplication using the reciprocal of 8/15.",
+            "Multiply (-4/9) × (15/8), and simplify 4 with 8 and 15 with 9."
+          ],
+          "solution": [
+            "Flip 8/15 to 15/8: (-4/9) × (15/8).",
+            "Different signs give a negative answer.",
+            "Cross-simplify: 4/8 = 1/2 and 15/9 = 5/3.",
+            "-(1 × 5) / (3 × 2) = -5/6."
+          ],
+          "wrong": [
+            {
+              "answer": "5/6",
+              "feedback": "Check the signs: dividing a negative fraction by a positive fraction gives a negative quotient."
+            },
+            {
+              "answer": "-32/135",
+              "feedback": "It looks like you multiplied (-4/9) × (8/15) without flipping the second fraction to its reciprocal."
+            },
+            {
+              "answer": "-6/5",
+              "feedback": "Flip the SECOND fraction (8/15 → 15/8), not the first fraction (-4/9)."
+            }
+          ]
+        },
+        {
+          "question": "Find (-7/12) ÷ (-14/9).",
+          "kind": "numeric",
+          "answer": "3/8",
+          "hints": [
+            "Both fractions are negative. Same signs divide to a positive result.",
+            "Multiply (-7/12) × (-9/14) and cross-simplify 7 with 14 and 9 with 12."
+          ],
+          "solution": [
+            "Flip -14/9 to its reciprocal -9/14: (-7/12) × (-9/14).",
+            "Negative × negative (same signs) gives a positive answer.",
+            "Cross-simplify: 7/14 = 1/2 and 9/12 = 3/4.",
+            "(1 × 3) / (4 × 2) = 3/8."
+          ],
+          "wrong": [
+            {
+              "answer": "-3/8",
+              "feedback": "Look closely at both signs: negative divided by negative (same signs) is positive."
+            },
+            {
+              "answer": "8/3",
+              "feedback": "Make sure you flipped the second fraction (-14/9 → -9/14) and kept the first fraction (-7/12) as it is."
+            },
+            {
+              "answer": "49/54",
+              "feedback": "Remember to flip the divisor -14/9 to -9/14 before multiplying."
+            }
+          ]
+        }
+      ],
+      "mentor": "Notice how deciding the final sign right at the start frees your brain to focus on simplifying the fractions cleanly."
+    },
+    {
+      "heading": "Dividing signed mixed numbers and whole numbers",
+      "read": [
+        "You cannot flip a **mixed number** directly—first convert every mixed number or whole number into an **improper fraction** (for example, `3 = 3/1`).",
+        "Watch out for **negative mixed numbers**! `-2 1/4` means the opposite of `2 1/4`, or `-(2 + 1/4)`. Multiply `2 × 4 = 8`, add `1` to get `9`, and **put the negative sign on at the end**: `-9/4`. Never compute `(-2 × 4 + 1)/4 = -7/4`, because `-2 1/4` is `-2` AND `-1/4` further below zero!",
+        "Once every number is a single fraction, multiply by the reciprocal and simplify as you did in Part 2."
+      ],
+      "model": {
+        "caption": "Converting signed mixed numbers and whole numbers before dividing",
+        "rows": [
+          ["Number", "Improper fraction", "Reciprocal"],
+          ["-2 1/4", "-(2 × 4 + 1)/4 = -9/4", "-4/9"],
+          ["-1 3/5", "-(1 × 5 + 3)/5 = -8/5", "-5/8"],
+          ["3 2/3", "(3 × 3 + 2)/3 = 11/3", "3/11"],
+          ["-5", "-5/1", "-1/5"]
+        ]
+      },
+      "example": {
+        "problem": "Find (-2 1/4) ÷ (-1 1/2).",
+        "steps": [
+          {
+            "say": "Convert both mixed numbers to improper fractions: -2 1/4 = -9/4 and -1 1/2 = -3/2.",
+            "why": "You need single fractions (numerator over denominator) before finding a reciprocal."
+          },
+          {
+            "say": "Rewrite as multiplication by the reciprocal: (-9/4) × (-2/3).",
+            "why": "Keep the negative sign on the reciprocal."
+          },
+          {
+            "say": "Same signs give a positive product. Cross-simplify: 9/3 = 3/1 and 2/4 = 1/2.",
+            "why": "Negative ÷ negative is positive, and cross-simplifying shrinks the numbers."
+          },
+          {
+            "say": "Multiply: (3 × 1) / (2 × 1) = 3/2, or 1 1/2.",
+            "why": "Check: (3/2) × (-3/2) = -9/4 = -2 1/4. ✓"
+          }
+        ],
+        "answer": "3/2 (or 1 1/2)"
+      },
+      "try_it": [
+        {
+          "question": "Find (-3 1/3) ÷ (5/6).",
+          "kind": "numeric",
+          "answer": "-4",
+          "hints": [
+            "Convert -3 1/3 to an improper fraction first: -(3 × 3 + 1)/3.",
+            "Multiply (-10/3) × (6/5) and simplify."
+          ],
+          "solution": [
+            "Convert -3 1/3 to an improper fraction: -(9 + 1)/3 = -10/3.",
+            "Multiply by the reciprocal of 5/6: (-10/3) × (6/5).",
+            "Different signs give a negative result: -60/15 = -4."
+          ],
+          "wrong": [
+            {
+              "answer": "4",
+              "feedback": "Check the signs: a negative mixed number divided by a positive fraction gives a negative result."
+            },
+            {
+              "answer": "-25/9",
+              "feedback": "Remember to flip the second fraction (5/6 → 6/5) before multiplying."
+            },
+            {
+              "answer": "-16/5",
+              "feedback": "Check your conversion of -3 1/3: compute -(3 × 3 + 1)/3 = -10/3, rather than (-3 × 3 + 1)/3."
+            }
+          ]
+        },
+        {
+          "question": "Find (2 1/2) ÷ (-1 1/4).",
+          "kind": "numeric",
+          "answer": "-2",
+          "hints": [
+            "Convert both mixed numbers to improper fractions: 2 1/2 = 5/2 and -1 1/4 = -5/4.",
+            "Multiply (5/2) by the reciprocal of -5/4."
+          ],
+          "solution": [
+            "Convert: 2 1/2 = 5/2 and -1 1/4 = -5/4.",
+            "Multiply by the reciprocal: (5/2) × (-4/5).",
+            "The 5s cancel and -4/2 = -2."
+          ],
+          "wrong": [
+            {
+              "answer": "2",
+              "feedback": "Positive divided by negative (different signs) produces a negative quotient."
+            },
+            {
+              "answer": "-25/8",
+              "feedback": "Flip the divisor -5/4 to -4/5 instead of multiplying (5/2) × (-5/4)."
+            },
+            {
+              "answer": "-1/2",
+              "feedback": "Flip the second fraction (-5/4 → -4/5), not the first fraction (5/2)."
+            }
+          ]
+        }
+      ],
+      "mentor": "Every time you convert a negative mixed number, ignore the minus sign while building the improper fraction, then attach the minus sign at the end!"
+    }
+  ],
+  "mistake": {
+    "problem": "Leo evaluated (-2 3/4) ÷ (1/2).",
+    "work": [
+      "-2 3/4 = (-2 × 4 + 3) / 4 = -5/4",
+      "(-5/4) ÷ (1/2) = (-5/4) × (2/1) = -10/4 = -5/2"
+    ],
+    "what_went_wrong": "When converting -2 3/4, Leo multiplied -2 × 4 = -8 and added +3 to get -5/4. Adding +3 moved toward zero instead of making the negative number larger in size.",
+    "fix": "-2 3/4 means -(2 + 3/4) = -11/4. Then (-11/4) × (2/1) = -22/4 = -11/2 (or -5 1/2)."
+  },
+  "summary": [
+    "A single negative sign can sit in front, on top, or on the bottom without changing value: -(p/q) = (-p)/q = p/(-q). Two negatives (top and bottom) make a positive.",
+    "To divide signed fractions, multiply by the reciprocal (keep the divisor's sign!) and use the sign rules: same signs → positive, different signs → negative.",
+    "Convert mixed numbers and whole numbers to improper fractions before flipping, attaching the negative sign after finding -(whole × denominator + numerator) / denominator."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find (-3/5) ÷ (9/10).",
+      "kind": "numeric",
+      "answer": "-2/3",
+      "hints": [
+        "Multiply -3/5 by the reciprocal of 9/10.",
+        "Compute (-3/5) × (10/9) and cross-simplify 3 with 9 and 10 with 5."
+      ],
+      "solution": [
+        "(-3/5) × (10/9).",
+        "Cross-simplify: 3/9 = 1/3 and 10/5 = 2/1.",
+        "Different signs give a negative answer: -(1 × 2) / (1 × 3) = -2/3."
+      ],
+      "wrong": [
+        {
+          "answer": "2/3",
+          "feedback": "Different signs (negative ÷ positive) give a negative quotient."
+        },
+        {
+          "answer": "-27/50",
+          "feedback": "Flip the second fraction (9/10 → 10/9) before multiplying."
+        },
+        {
+          "answer": "-3/2",
+          "feedback": "Flip the second fraction (9/10), not the first fraction (-3/5)."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find (-8/15) ÷ (-4/5).",
+      "kind": "numeric",
+      "answer": "2/3",
+      "hints": [
+        "Same signs (negative ÷ negative) give a positive quotient.",
+        "Multiply (-8/15) × (-5/4) and simplify."
+      ],
+      "solution": [
+        "(-8/15) × (-5/4).",
+        "Same signs give a positive product.",
+        "Cross-simplify: 8/4 = 2/1 and 5/15 = 1/3, giving 2/3."
+      ],
+      "wrong": [
+        {
+          "answer": "-2/3",
+          "feedback": "Both fractions are negative, and dividing same signs gives a positive result."
+        },
+        {
+          "answer": "32/75",
+          "feedback": "Remember to multiply by the reciprocal of -4/5, which is -5/4."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find (-3 3/8) ÷ (9/4).",
+      "kind": "numeric",
+      "answer": "-3/2",
+      "hints": [
+        "Convert -3 3/8 to an improper fraction: -(3 × 8 + 3)/8.",
+        "Multiply (-27/8) × (4/9) and cross-simplify."
+      ],
+      "solution": [
+        "-3 3/8 = -27/8.",
+        "(-27/8) × (4/9).",
+        "Cross-simplify: 27/9 = 3 and 4/8 = 1/2, giving -3/2 (or -1 1/2)."
+      ],
+      "wrong": [
+        {
+          "answer": "3/2",
+          "feedback": "Negative divided by positive gives a negative quotient."
+        },
+        {
+          "answer": "-7/6",
+          "feedback": "Check your improper fraction for -3 3/8: compute -(3 × 8 + 3)/8 = -27/8, not -21/8."
+        },
+        {
+          "answer": "-2/3",
+          "feedback": "Flip the second fraction (9/4 → 4/9), not the first fraction."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find (-4 1/2) ÷ (-1 4/5).",
+      "kind": "numeric",
+      "answer": "5/2",
+      "hints": [
+        "Convert both mixed numbers to improper fractions first.",
+        "Multiply (-9/2) × (-5/9) and simplify."
+      ],
+      "solution": [
+        "-4 1/2 = -9/2 and -1 4/5 = -9/5.",
+        "(-9/2) × (-5/9).",
+        "Same signs give positive, and the 9s cancel to leave 5/2 (or 2 1/2)."
+      ],
+      "wrong": [
+        {
+          "answer": "-5/2",
+          "feedback": "Both numbers are negative, so the quotient is positive."
+        },
+        {
+          "answer": "2/5",
+          "feedback": "Make sure you flipped the second fraction (-9/5 → -5/9), not the first."
+        },
+        {
+          "answer": "81/10",
+          "feedback": "Flip the divisor -9/5 to -5/9 before multiplying."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A scuba diver's elevation changes by -13 1/2 meters in 2 1/4 minutes at a steady rate. What is the diver's elevation change per minute, in meters?",
+      "kind": "numeric",
+      "answer": "-6",
+      "hints": [
+        "Divide the total elevation change by the number of minutes: (-13 1/2) ÷ (2 1/4).",
+        "Convert both mixed numbers to improper fractions: -27/2 and 9/4."
+      ],
+      "solution": [
+        "Rate = (-13 1/2) ÷ (2 1/4) = (-27/2) ÷ (9/4).",
+        "Multiply by the reciprocal: (-27/2) × (4/9).",
+        "Cross-simplify: 27/9 = 3 and 4/2 = 2, giving -(3 × 2) = -6 meters per minute."
+      ],
+      "wrong": [
+        {
+          "answer": "6",
+          "feedback": "Because the diver is descending (negative change), the rate per minute is negative."
+        },
+        {
+          "answer": "-243/8",
+          "feedback": "Divide the change by the time (flip 9/4 to 4/9) instead of multiplying by 9/4."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A rainwater barrel leaks 5/8 gallon every 3/4 hour. Written as a negative rate of change, how many gallons per hour is the water level changing?",
+      "kind": "numeric",
+      "answer": "-5/6",
+      "hints": [
+        "A loss of 5/8 gallon is -5/8. Divide by 3/4 hour.",
+        "Multiply (-5/8) × (4/3) and simplify."
+      ],
+      "solution": [
+        "Rate = (-5/8) ÷ (3/4) = (-5/8) × (4/3).",
+        "Cross-simplify 4 and 8 by 4: (-5/2) × (1/3) = -5/6 gallon per hour."
+      ],
+      "wrong": [
+        {
+          "answer": "5/6",
+          "feedback": "The barrel is losing water, so include the negative sign for a negative rate of change."
+        },
+        {
+          "answer": "-15/32",
+          "feedback": "Flip the divisor 3/4 to 4/3 before multiplying."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A pond's water level dropped from 3/4 foot above normal to 1 1/2 feet below normal over 3/4 of a week. What was the average weekly rate of change, in feet per week?",
+      "kind": "numeric",
+      "answer": "-3",
+      "hints": [
+        "First find the total change (End − Start): (-1 1/2) − (3/4).",
+        "Divide the total change (-9/4) by the time (3/4 week)."
+      ],
+      "solution": [
+        "Total change = End − Start = -1 1/2 − 3/4 = -6/4 − 3/4 = -9/4 feet.",
+        "Average weekly rate = (-9/4) ÷ (3/4) = (-9/4) × (4/3).",
+        "The 4s cancel and -9/3 = -3 feet per week."
+      ],
+      "wrong": [
+        {
+          "answer": "-1",
+          "feedback": "Check the total change from +3/4 to -1 1/2: dropping from +3/4 past 0 to -1 1/2 is larger than a three-quarter-foot drop."
+        },
+        {
+          "answer": "3",
+          "feedback": "The water level dropped, so the rate of change is negative."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which statement explains why -(4/5) = (-4)/5 = 4/(-5)?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Each expression represents a division with one negative number and one positive number, and different signs always give a negative quotient.",
+        "Negative signs always disappear when you rewrite a fraction as division.",
+        "Moving a negative sign to the denominator turns a negative fraction into a positive fraction.",
+        "Any two fractions with the same digits are equal regardless of their signs."
+      ],
+      "answer": "Each expression represents a division with one negative number and one positive number, and different signs always give a negative quotient.",
+      "hints": [
+        "Think about what a fraction bar means as an operation.",
+        "Count how many negative signs appear in (-4) ÷ 5 and in 4 ÷ (-5)."
+      ],
+      "solution": [
+        "A fraction bar means division: (-4)/5 = (-4) ÷ 5 and 4/(-5) = 4 ÷ (-5).",
+        "Both divide numbers with different signs, so both equal -(4/5)."
+      ],
+      "wrong": [
+        {
+          "answer": "Negative signs always disappear when you rewrite a fraction as division.",
+          "feedback": "Only two negative signs cancel to positive; one negative sign stays negative."
+        },
+        {
+          "answer": "Moving a negative sign to the denominator turns a negative fraction into a positive fraction.",
+          "feedback": "4 ÷ (-5) has different signs, so it is still negative."
+        },
+        {
+          "answer": "Any two fractions with the same digits are equal regardless of their signs.",
+          "feedback": "Signs matter: 4/5 is positive while -4/5 is negative."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Devon wants to evaluate (-1 2/3) ÷ (-5/6). Which rewritten multiplication expression is correct?",
+      "kind": "multiple_choice",
+      "choices": [
+        "(-5/3) × (-6/5)",
+        "(-5/3) × (6/5)",
+        "(-1/3) × (-6/5)",
+        "(-5/3) × (-5/6)"
+      ],
+      "answer": "(-5/3) × (-6/5)",
+      "hints": [
+        "Convert -1 2/3 to an improper fraction: -(1 × 3 + 2)/3.",
+        "Keep the negative sign when you take the reciprocal of -5/6."
+      ],
+      "solution": [
+        "-1 2/3 = -5/3.",
+        "The reciprocal of -5/6 is -6/5 (keep the minus sign).",
+        "So (-1 2/3) ÷ (-5/6) = (-5/3) × (-6/5)."
+      ],
+      "wrong": [
+        {
+          "answer": "(-5/3) × (6/5)",
+          "feedback": "When taking the reciprocal of -5/6, keep its negative sign: -6/5."
+        },
+        {
+          "answer": "(-1/3) × (-6/5)",
+          "feedback": "Check the conversion of -1 2/3: -(1 × 3 + 2)/3 = -5/3, not (-1 × 3 + 2)/3."
+        },
+        {
+          "answer": "(-5/3) × (-5/6)",
+          "feedback": "Remember to flip the second fraction (-5/6 → -6/5) when changing division to multiplication."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-3/4) × (-8/9) × (-3/2).",
+      "kind": "numeric",
+      "answer": "-1",
+      "hints": [
+        "Count the negative factors: there are three negative fractions.",
+        "Multiply the sizes (3/4) × (8/9) × (3/2) and apply the sign."
+      ],
+      "solution": [
+        "Three negative factors (an odd count) give a negative product.",
+        "Multiply sizes: (3 × 8 × 3) / (4 × 9 × 2) = 72/72 = 1.",
+        "Apply the negative sign: -1."
+      ],
+      "wrong": [
+        {
+          "answer": "1",
+          "feedback": "Count the negative factors: three negatives (odd count) multiply to a negative product."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-4.5) ÷ (-0.9).",
+      "kind": "numeric",
+      "answer": "5",
+      "hints": [
+        "Same signs (negative ÷ negative) give a positive quotient.",
+        "Multiply both decimals by 10 to divide 45 by 9."
+      ],
+      "solution": [
+        "Same signs give a positive quotient.",
+        "4.5 ÷ 0.9 = 45 ÷ 9 = 5."
+      ],
+      "wrong": [
+        {
+          "answer": "-5",
+          "feedback": "Dividing two negative numbers (same signs) produces a positive quotient."
+        },
+        {
+          "answer": "0.5",
+          "feedback": "Shift the decimal point one place right in BOTH numbers: 45 ÷ 9."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Evaluate ((-3 3/4) ÷ (-2 1/2)) ÷ (-1 1/8).",
+      "kind": "numeric",
+      "answer": "-4/3",
+      "hints": [
+        "Work inside the outer parentheses first: convert -3 3/4 and -2 1/2 to improper fractions and divide.",
+        "Once you have 3/2, divide by -9/8 by multiplying by its reciprocal -8/9."
+      ],
+      "solution": [
+        "Convert all mixed numbers: -3 3/4 = -15/4, -2 1/2 = -5/2, and -1 1/8 = -9/8.",
+        "Inside parentheses: (-15/4) ÷ (-5/2) = (-15/4) × (-2/5) = 30/20 = 3/2.",
+        "Divide by the last fraction: (3/2) ÷ (-9/8) = (3/2) × (-8/9) = -24/18 = -4/3 (or -1 1/3)."
+      ],
+      "wrong": [
+        {
+          "answer": "4/3",
+          "feedback": "Track the signs at the last step: positive (3/2) divided by negative (-9/8) gives a negative result."
+        },
+        {
+          "answer": "-27/16",
+          "feedback": "In the second division, flip -9/8 to -8/9 instead of multiplying by -9/8."
+        }
+      ]
+    }
+  ]
+}

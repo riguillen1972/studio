@@ -1,0 +1,657 @@
+{
+  "version": 2,
+  "skill_id": "7.rational-word-problems",
+  "title": "Word Problems with Rational Numbers",
+  "hook": "A weather balloon launches from a valley 12.5 meters below sea level (-12.5 m), climbs 38 3/4 meters, and then hits a downdraft dropping 14.5 meters per minute for 1 1/2 minutes. How do you turn real-world stories about temperature, elevation, and money into clean multi-step math with signed fractions and decimals?",
+  "goal": "I can solve real-world problems with all four operations on positive and negative fractions and decimals.",
+  "vocabulary": [
+    {
+      "term": "net change",
+      "meaning": "the overall increase or decrease from start to finish after combining all gains and losses",
+      "example": "Earning $15.50 and spending $22.00 gives a net change of -$6.50."
+    },
+    {
+      "term": "elevation",
+      "meaning": "height measured above or below sea level, where sea level is 0",
+      "example": "24.5 meters below sea level is written as -24.5."
+    },
+    {
+      "term": "rate of change",
+      "meaning": "how much a quantity rises or drops per single unit of time or distance",
+      "example": "Cooling 2.4°C per hour is a rate of -2.4°C per hour."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "The morning temperature is -4.8°C and rises by 6.3°C by noon. What is the noon temperature, in °C?",
+      "kind": "numeric",
+      "answer": "1.5",
+      "hints": [
+        "Rising means adding: compute -4.8 + 6.3.",
+        "Subtract the sizes (6.3 - 4.8) and keep the sign of the larger size."
+      ],
+      "solution": [
+        "-4.8 + 6.3 = 6.3 - 4.8 = 1.5°C."
+      ],
+      "wrong": [
+        {
+          "answer": "-1.5",
+          "feedback": "Since +6.3 is larger in size than -4.8, the noon temperature is positive."
+        },
+        {
+          "answer": "-11.1",
+          "feedback": "Rising temperature adds +6.3 to -4.8 rather than subtracting 6.3."
+        }
+      ]
+    },
+    {
+      "question": "A hiker descends 3.5 meters per minute for 4 minutes. What signed number gives the hiker's elevation change, in meters?",
+      "kind": "numeric",
+      "answer": "-14",
+      "hints": [
+        "Descending is a negative rate: -3.5 meters per minute.",
+        "Multiply (-3.5) × 4."
+      ],
+      "solution": [
+        "(-3.5) × 4 = -14 meters."
+      ],
+      "wrong": [
+        {
+          "answer": "14",
+          "feedback": "Descending means going down, so include a negative sign."
+        },
+        {
+          "answer": "-0.875",
+          "feedback": "Multiply the rate (-3.5) by the time (4 minutes) instead of dividing."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Turning stories into signed numbers and expressions",
+      "read": [
+        "Before touching any numbers in a word problem, ask two quick questions: **What is it asking?** and **What do I know?**",
+        "Next, translate direction words into signs. Gains, deposits, climbs, temperatures rising, and heights above sea level are **positive**. Losses, withdrawals, drops, debts, and depths below sea level are **negative**.",
+        "Watch out when a problem asks for the **change** from a starting value to an ending value: always compute **End − Start**! When you start in negative territory (like `-6.5°C`) and warm up to `+14.25°C`, `End − Start = 14.25 - (-6.5) = 20.75°C`."
+      ],
+      "model": {
+        "caption": "Translating real-world clues into math",
+        "rows": [
+          ["Context", "Positive (+) clues", "Negative (−) clues", "Finding total change"],
+          ["Temperature", "warms, rises, above zero", "cools, drops, below zero", "End temp − Start temp"],
+          ["Elevation", "climbs, ascends, above sea level", "descends, dives, below sea level", "End height − Start height"],
+          ["Money", "earns, deposits, refunds", "spends, withdraws, owes, fee", "End balance − Start balance"]
+        ]
+      },
+      "example": {
+        "problem": "At 6:00 a.m., a canyon reads -6.5°C. By noon, the air warms to 14.25°C. What was the temperature change from 6:00 a.m. to noon?",
+        "steps": [
+          {
+            "say": "Identify Start (-6.5) and End (14.25).",
+            "why": "Finding change from start to finish always uses End − Start."
+          },
+          {
+            "say": "Write the subtraction: 14.25 - (-6.5).",
+            "why": "Be careful not to drop the negative sign on -6.5."
+          },
+          {
+            "say": "Turn subtracting a negative into adding: 14.25 + 6.5 = 20.75.",
+            "why": "The temperature rose 6.5°C to reach 0°C, plus 14.25°C more."
+          }
+        ],
+        "answer": "20.75°C"
+      },
+      "try_it": [
+        {
+          "question": "A scuba diver starts at -18.5 feet and swims up to -4.25 feet. What was the diver's change in elevation (End − Start), in feet?",
+          "kind": "numeric",
+          "answer": "14.25",
+          "hints": [
+            "Start is -18.5 and End is -4.25.",
+            "Compute -4.25 - (-18.5) by rewriting subtraction as adding +18.5."
+          ],
+          "solution": [
+            "Change = End − Start = -4.25 - (-18.5).",
+            "Rewrite as addition: -4.25 + 18.5 = 14.25 feet (upward)."
+          ],
+          "wrong": [
+            {
+              "answer": "-14.25",
+              "feedback": "Notice the diver swam UP from -18.5 to -4.25, so the change is positive."
+            },
+            {
+              "answer": "-22.75",
+              "feedback": "In -4.25 - (-18.5), subtracting -18.5 adds +18.5 instead of subtracting 18.5."
+            }
+          ]
+        },
+        {
+          "question": "Nora's lunch balance is -$3.75. She deposits $15.00, then buys a $4.50 salad and a $2.25 juice. What is her new balance, in dollars?",
+          "kind": "numeric",
+          "answer": "4.5",
+          "hints": [
+            "Start at -3.75, add 15.00, and subtract both purchases.",
+            "Compute -3.75 + 15.00 = 11.25 first, then subtract 4.50 and 2.25."
+          ],
+          "solution": [
+            "Expression: -3.75 + 15.00 - 4.50 - 2.25.",
+            "-3.75 + 15.00 = 11.25.",
+            "11.25 - 4.50 = 6.75, and 6.75 - 2.25 = 4.5 ($4.50)."
+          ],
+          "wrong": [
+            {
+              "answer": "12",
+              "feedback": "Notice Nora started with a negative balance (-$3.75), so her $15 deposit first pays off that $3.75 debt."
+            },
+            {
+              "answer": "9",
+              "feedback": "Make sure you subtracted BOTH the $4.50 salad and the $2.25 juice."
+            }
+          ]
+        }
+      ],
+      "mentor": "Anytime you see 'from X to Y', circle Start and End right away and write `End − Start` before computing."
+    },
+    {
+      "heading": "Rates, totals, and equal splits with signed rationals",
+      "read": [
+        "When a quantity changes by the **same rate** over multiple hours, minutes, or items, **multiply** (`rate × time`). When you know the **total change** and want the **average rate** per unit—or need to split a bill or debt equally—**divide** (`total change ÷ count`).",
+        "Real problems often mix fractions and decimals together (like `-12 1/2` meters per minute for `2.4` minutes). Convert to whichever form keeps every number exact (`-12.5` or `-25/2`).",
+        "Always check the **sign** of your rate or total: falling, cooling, or paying gives a negative rate; splitting a negative balance among friends leaves each person with a negative share."
+      ],
+      "model": {
+        "caption": "Multiply vs. Divide in rate problems",
+        "rows": [
+          ["What you know", "What you want", "Operation", "Example"],
+          ["Rate and time", "Total change", "Multiply: rate × time", "-12.5 m/min × 2.4 min = -30 m"],
+          ["Total change and time", "Average rate per unit", "Divide: total change ÷ time", "-8.75°C ÷ 3.5 hr = -2.5°C/hr"]
+        ]
+      },
+      "example": {
+        "problem": "A mountain pond starts at 4.5°C and cools by 1 3/4°C each hour for 3 1/2 hours. What is the pond's temperature at the end?",
+        "steps": [
+          {
+            "say": "Convert mixed numbers to clean decimals: 1 3/4 = 1.75 (cooling means -1.75°C/hr) and 3 1/2 = 3.5 hours.",
+            "why": "Fourth and half fractions terminate cleanly as decimals."
+          },
+          {
+            "say": "Find the total temperature change: (-1.75) × 3.5 = -6.125°C.",
+            "why": "Rate × time gives the total drop."
+          },
+          {
+            "say": "Add the change to the starting temperature: 4.5 + (-6.125) = -1.625°C (or -1 5/8°C).",
+            "why": "Start + change = ending temperature."
+          }
+        ],
+        "answer": "-1.625°C (or -1 5/8°C)"
+      },
+      "try_it": [
+        {
+          "question": "A submarine starts at -15 meters and descends 12 1/2 meters per minute for 2.4 minutes. What is its new elevation, in meters?",
+          "kind": "numeric",
+          "answer": "-45",
+          "hints": [
+            "Descending 12 1/2 meters per minute is a rate of -12.5 meters per minute. Multiply by 2.4 minutes to find the drop.",
+            "Add the drop (-30) to the starting elevation (-15)."
+          ],
+          "solution": [
+            "Change = (-12.5) × 2.4 = -30 meters.",
+            "New elevation = -15 + (-30) = -45 meters."
+          ],
+          "wrong": [
+            {
+              "answer": "-30",
+              "feedback": "-30 meters is how far the submarine descended. Add it to the starting depth of -15 meters."
+            },
+            {
+              "answer": "15",
+              "feedback": "Both the start (-15) and the descent (-30) are downward (negative), so the final depth is deeper below sea level."
+            }
+          ]
+        },
+        {
+          "question": "Over 3 1/2 hours, a cold-storage room cools from 3.5°C to -5.25°C. What is the average rate of change, in °C per hour?",
+          "kind": "numeric",
+          "answer": "-2.5",
+          "hints": [
+            "First find the total change (End − Start): -5.25 - 3.5.",
+            "Divide the total change by 3.5 hours."
+          ],
+          "solution": [
+            "Total change = End − Start = -5.25 - 3.5 = -8.75°C.",
+            "Average rate = -8.75 ÷ 3.5 = -2.5°C per hour."
+          ],
+          "wrong": [
+            {
+              "answer": "2.5",
+              "feedback": "The room cooled down (from +3.5°C to -5.25°C), so the rate of change is negative."
+            },
+            {
+              "answer": "-0.5",
+              "feedback": "Check the total change from +3.5 to -5.25: both numbers sit on opposite sides of 0, so -5.25 - 3.5 = -8.75, not -1.75."
+            }
+          ]
+        }
+      ],
+      "mentor": "Notice how converting `12 1/2` to `12.5` or `3 1/2` to `3.5` turns mixed-number multiplication and division into familiar decimal arithmetic."
+    },
+    {
+      "heading": "Multi-step problems and checking reasonableness",
+      "read": [
+        "Most real-world math takes **three or more steps**: maybe you multiply a rate by time, subtract a one-time fee, and split the total equally among friends.",
+        "Write one clear expression (or list your steps in order), and follow the **order of operations**—multiply and divide before adding and subtracting.",
+        "Finish every problem with a **sense check**: does the sign match the story? If a team starts in debt, earns money, and still ends up positive, is your number reasonable?"
+      ],
+      "model": {
+        "caption": "Four-step plan for multi-step rational problems",
+        "rows": [
+          ["Step", "Question to ask"],
+          ["1. Understand", "What is the starting value, and what is the question asking for?"],
+          ["2. Translate", "Which events are + (gains/rises) and which are − (losses/drops/fees)?"],
+          ["3. Compute", "Follow the order of operations using exact fractions or decimals."],
+          ["4. Sense check", "Does the sign and size fit the story?"]
+        ]
+      },
+      "example": {
+        "problem": "Four friends run a craft booth. They start with -$18.50 (supply cost), earn $14.25 per hour for 4 hours, and pay a $7.50 booth fee. If they split the final profit equally, how much does each friend get?",
+        "steps": [
+          {
+            "say": "Write the total profit expression: (-18.50 + 4 × 14.25 - 7.50).",
+            "why": "Start with -$18.50, add 4 hours of earnings, and subtract the $7.50 fee."
+          },
+          {
+            "say": "Multiply first: 4 × 14.25 = 57.00.",
+            "why": "Multiplication comes before addition and subtraction."
+          },
+          {
+            "say": "Combine left to right: -18.50 + 57.00 - 7.50 = 38.50 - 7.50 = 31.00.",
+            "why": "The total profit is $31.00."
+          },
+          {
+            "say": "Divide equally among 4 friends: 31.00 ÷ 4 = 7.75 ($7.75 each).",
+            "why": "Sense check: 4 × $7.75 = $31, which matches! ✓"
+          }
+        ],
+        "answer": "Each friend gets $7.75."
+      },
+      "try_it": [
+        {
+          "question": "A weather balloon launches at -12.5 meters (below sea level), rises 38 3/4 meters, and then drops 14.5 meters per minute for 1 1/2 minutes. What is its final elevation, in meters?",
+          "kind": "numeric",
+          "answer": "4.5",
+          "hints": [
+            "Convert fractions to decimals: 38 3/4 = 38.75 and 1 1/2 = 1.5.",
+            "Compute -12.5 + 38.75 - (14.5 × 1.5), multiplying 14.5 × 1.5 first."
+          ],
+          "solution": [
+            "Expression: -12.5 + 38.75 - 14.5 × 1.5.",
+            "Multiply first: 14.5 × 1.5 = 21.75.",
+            "Combine left to right: -12.5 + 38.75 = 26.25, then 26.25 - 21.75 = 4.5 meters."
+          ],
+          "wrong": [
+            {
+              "answer": "11.75",
+              "feedback": "Multiply the drop rate (14.5) by 1.5 minutes (getting 21.75) rather than subtracting 14.5 once."
+            },
+            {
+              "answer": "48",
+              "feedback": "Notice the balloon DROPS 21.75 meters at the end, so subtract 21.75 from 26.25."
+            }
+          ]
+        },
+        {
+          "question": "Sam's checking account has $24.50. He pays three equal phone charges of $11.75 each and deposits a $15.00 refund. What is his new balance, in dollars?",
+          "kind": "numeric",
+          "answer": "4.25",
+          "hints": [
+            "Multiply 3 × 11.75 to find the total phone charges.",
+            "Compute 24.50 - 35.25 + 15.00."
+          ],
+          "solution": [
+            "Total phone charges: 3 × 11.75 = 35.25.",
+            "24.50 - 35.25 = -10.75.",
+            "-10.75 + 15.00 = 4.25 ($4.25)."
+          ],
+          "wrong": [
+            {
+              "answer": "27.75",
+              "feedback": "Remember Sam pays THREE charges of $11.75 each, rather than only one."
+            },
+            {
+              "answer": "-25.75",
+              "feedback": "A deposit adds +$15.00 to his balance instead of subtracting $15.00."
+            }
+          ]
+        }
+      ],
+      "mentor": "Multiplying before adding or subtracting—and checking your sign against the story—keeps multi-step problems solid."
+    }
+  ],
+  "mistake": {
+    "problem": "Tariq answered: 'The temperature was -6°C at midnight and warmed to 11.5°C by noon. What was the temperature change?'",
+    "work": [
+      "11.5 - 6 = 5.5°C"
+    ],
+    "what_went_wrong": "Tariq ignored the negative sign on -6°C and subtracted +6 instead of -6. From -6°C up to 0°C is already 6°C of warming, before even reaching +11.5°C!",
+    "fix": "Use End − Start with the negative sign included: 11.5 - (-6) = 11.5 + 6 = 17.5°C."
+  },
+  "summary": [
+    "Translate direction words into positive and negative signs, and always use End − Start to find a change from one value to another.",
+    "Multiply when a steady rate repeats over time, and divide when finding an average rate or splitting a total equally.",
+    "Convert mixed fractions and decimals into one exact form, follow the order of operations, and sense-check the sign of your final answer."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "A freezer is at -14.2°C. A power outage causes the temperature to rise 9.75°C. What is the new temperature, in °C?",
+      "kind": "numeric",
+      "answer": "-4.45",
+      "hints": [
+        "Rising means adding: compute -14.2 + 9.75.",
+        "Subtract 14.20 - 9.75 and keep the negative sign."
+      ],
+      "solution": [
+        "-14.2 + 9.75 = -(14.20 - 9.75) = -4.45°C."
+      ],
+      "wrong": [
+        {
+          "answer": "4.45",
+          "feedback": "Since -14.2 is larger in size than +9.75, the temperature is still below zero."
+        },
+        {
+          "answer": "-23.95",
+          "feedback": "Rising temperature adds +9.75 toward zero rather than subtracting 9.75."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A trail descends 3 3/4 meters each minute for 6 minutes. What signed number gives the total change in elevation, in meters?",
+      "kind": "numeric",
+      "answer": "-22.5",
+      "hints": [
+        "Descending is a negative rate: -3 3/4 = -3.75 (or -15/4).",
+        "Multiply (-3.75) × 6."
+      ],
+      "solution": [
+        "(-3.75) × 6 = -22.5 (or -45/2, or -22 1/2) meters."
+      ],
+      "wrong": [
+        {
+          "answer": "22.5",
+          "feedback": "Descending goes downward, so include a negative sign."
+        },
+        {
+          "answer": "-18.75",
+          "feedback": "Check your multiplication: multiply both 3 and 3/4 (0.75) by 6."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Over 2 1/2 hours, a pond's water level changes by -8.75 centimeters. What is the average change per hour, in centimeters?",
+      "kind": "numeric",
+      "answer": "-3.5",
+      "hints": [
+        "Divide the total change (-8.75) by the time (2 1/2 = 2.5 hours).",
+        "Negative divided by positive gives a negative rate."
+      ],
+      "solution": [
+        "-8.75 ÷ 2.5 = -87.5 ÷ 25 = -3.5 centimeters per hour."
+      ],
+      "wrong": [
+        {
+          "answer": "3.5",
+          "feedback": "Because the total change is negative (-8.75), the hourly rate is negative."
+        },
+        {
+          "answer": "-21.875",
+          "feedback": "Divide -8.75 by 2.5 hours to find the change per hour instead of multiplying."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Tariq's transit card has a balance of -$2.40. He adds $10.00 and then pays for two rides at $2.25 each. What is his new balance, in dollars?",
+      "kind": "numeric",
+      "answer": "3.1",
+      "hints": [
+        "Find the cost of two rides: 2 × 2.25 = 4.50.",
+        "Compute -2.40 + 10.00 - 4.50."
+      ],
+      "solution": [
+        "Two rides cost 2 × 2.25 = 4.50.",
+        "-2.40 + 10.00 = 7.60.",
+        "7.60 - 4.50 = 3.1 ($3.10)."
+      ],
+      "wrong": [
+        {
+          "answer": "5.35",
+          "feedback": "Subtract the cost of TWO rides ($4.50), rather than only one ride ($2.25)."
+        },
+        {
+          "answer": "7.9",
+          "feedback": "Remember Tariq started with -$2.40, so subtract 2.40 from $10.00 before or after paying for the rides."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Hikers start at an overlook 126.75 meters above sea level and hike down to a canyon floor at -30 3/4 meters in 3 1/2 hours. What was their average elevation change per hour, in meters?",
+      "kind": "numeric",
+      "answer": "-45",
+      "hints": [
+        "First find the total change (End − Start): -30.75 - 126.75.",
+        "Divide the total change (-157.5) by 3.5 hours."
+      ],
+      "solution": [
+        "Convert -30 3/4 = -30.75 and 3 1/2 = 3.5.",
+        "Total change = End − Start = -30.75 - 126.75 = -157.5 meters.",
+        "Average rate = -157.5 ÷ 3.5 = -45 meters per hour."
+      ],
+      "wrong": [
+        {
+          "answer": "45",
+          "feedback": "The hikers went down from +126.75 m to -30.75 m, so the rate of change is negative."
+        },
+        {
+          "answer": "-27.43",
+          "feedback": "When finding End − Start, compute -30.75 - 126.75 = -157.5 rather than adding +126.75."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A school garden club starts the month with $42.80. They buy 4 bags of soil at $9.45 each, spend $16.25 on seeds, and then earn $28.50 at a plant sale. What is the club's final balance, in dollars?",
+      "kind": "numeric",
+      "answer": "17.25",
+      "hints": [
+        "First multiply 4 × 9.45 for the soil cost.",
+        "Compute 42.80 - 37.80 - 16.25 + 28.50."
+      ],
+      "solution": [
+        "Soil cost: 4 × 9.45 = 37.80.",
+        "42.80 - 37.80 = 5.00.",
+        "5.00 - 16.25 = -11.25.",
+        "-11.25 + 28.50 = 17.25 ($17.25)."
+      ],
+      "wrong": [
+        {
+          "answer": "45.6",
+          "feedback": "Multiply $9.45 by 4 bags ($37.80) rather than subtracting $9.45 only once."
+        },
+        {
+          "answer": "-39.75",
+          "feedback": "Earning $28.50 at the plant sale ADDS $28.50 to the balance."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "At midnight, a mountain pass is at -5 1/2°C. For the next 3 hours, it drops 1.25°C per hour. Then the sun warms the air by 2 3/4°C per hour for 2 hours. What is the temperature, in °C, after those 5 hours?",
+      "kind": "numeric",
+      "answer": "-3.75",
+      "hints": [
+        "Write an expression: -5.5 - 3(1.25) + 2(2.75).",
+        "Evaluate the two multiplications first: 3 × 1.25 for the cooling, and 2 × 2.75 for the warming."
+      ],
+      "solution": [
+        "Convert fractions: -5 1/2 = -5.5 and 2 3/4 = 2.75.",
+        "Cooling over 3 hours: -3 × 1.25 = -3.75°C.",
+        "Warming over 2 hours: +2 × 2.75 = +5.5°C.",
+        "Combine: -5.5 - 3.75 + 5.5 = -3.75°C."
+      ],
+      "wrong": [
+        {
+          "answer": "3.75",
+          "feedback": "Check the signs: -5.5 + 5.5 cancels to 0, so only the negative cooling term remains."
+        },
+        {
+          "answer": "-4",
+          "feedback": "Multiply BOTH rates by their hours: 3 × 1.25 and 2 × 2.75."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "A valley town sits at -12 meters elevation and a hilltop sits at 45 meters elevation. Which expression finds the change in elevation from the town to the hilltop?",
+      "kind": "multiple_choice",
+      "choices": [
+        "45 - (-12)",
+        "-12 - 45",
+        "45 - 12",
+        "-12 + 45"
+      ],
+      "answer": "45 - (-12)",
+      "hints": [
+        "Change from Start to End is always End − Start.",
+        "Here Start = -12 and End = 45."
+      ],
+      "solution": [
+        "Using End − Start with Start = -12 and End = 45 gives 45 - (-12) = 57 meters."
+      ],
+      "wrong": [
+        {
+          "answer": "-12 - 45",
+          "feedback": "That is Start − End, which gives -57 instead of the upward change +57."
+        },
+        {
+          "answer": "45 - 12",
+          "feedback": "Do not drop the negative sign on -12: subtracting a negative adds 12."
+        },
+        {
+          "answer": "-12 + 45",
+          "feedback": "Adding -12 + 45 gives 33, which is less than the hilltop alone."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "A scuba diver starts at -8.5 meters, descends 3.2 meters per minute for 4 minutes, and then rises 6 meters. Which expression gives the diver's final elevation?",
+      "kind": "multiple_choice",
+      "choices": [
+        "-8.5 - 4(3.2) + 6",
+        "-8.5 + 4(3.2) - 6",
+        "8.5 - 4(3.2) + 6",
+        "(-8.5 - 3.2) × 4 + 6"
+      ],
+      "answer": "-8.5 - 4(3.2) + 6",
+      "hints": [
+        "Start at -8.5, subtract the 4-minute descent of 3.2 m/min, and add the 6-meter rise.",
+        "Only the 3.2 m/min rate is multiplied by 4 minutes—not the starting depth."
+      ],
+      "solution": [
+        "Starting depth is -8.5, descending 4 minutes at 3.2 m/min subtracts 4(3.2), and rising adds 6: -8.5 - 4(3.2) + 6."
+      ],
+      "wrong": [
+        {
+          "answer": "-8.5 + 4(3.2) - 6",
+          "feedback": "The signs are flipped: descending subtracts 4(3.2), and rising adds 6."
+        },
+        {
+          "answer": "8.5 - 4(3.2) + 6",
+          "feedback": "The diver starts BELOW sea level, so the starting value is -8.5, not +8.5."
+        },
+        {
+          "answer": "(-8.5 - 3.2) × 4 + 6",
+          "feedback": "Parentheses around -8.5 - 3.2 would multiply the starting depth by 4 too."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Evaluate -13/4 + 2 1/2.",
+      "kind": "numeric",
+      "answer": "-3/4",
+      "hints": [
+        "Convert 2 1/2 to an improper fraction with denominator 4 (or switch both to decimals).",
+        "2 1/2 = 10/4, so compute -13/4 + 10/4."
+      ],
+      "solution": [
+        "2 1/2 = 5/2 = 10/4.",
+        "-13/4 + 10/4 = -3/4 (or -0.75)."
+      ],
+      "wrong": [
+        {
+          "answer": "3/4",
+          "feedback": "Since -13/4 (-3.25) has a larger size than +2 1/2 (+2.5), the sum is negative."
+        },
+        {
+          "answer": "-23/4",
+          "feedback": "The two numbers have opposite signs, so subtract their sizes rather than adding 13 + 10."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Evaluate (-2 1/2) × (-1.6).",
+      "kind": "numeric",
+      "answer": "4",
+      "hints": [
+        "Convert -2 1/2 to -2.5 (or convert -1.6 to -8/5).",
+        "Same signs (negative × negative) multiply to a positive product."
+      ],
+      "solution": [
+        "-2 1/2 = -2.5.",
+        "(-2.5) × (-1.6) = +4."
+      ],
+      "wrong": [
+        {
+          "answer": "-4",
+          "feedback": "Two negative numbers (same signs) multiply to a positive product."
+        },
+        {
+          "answer": "2.4",
+          "feedback": "Check your fraction product: (-5/2) × (-8/5) simplifies to a positive whole number."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "A robotics club starts with $64.50, buys 4 motors at $18 3/4 each, pays $14.25 for shipping, and then splits the remaining balance equally among 3 team captains. What signed dollar amount represents each captain's share?",
+      "kind": "numeric",
+      "answer": "-8.25",
+      "hints": [
+        "Convert $18 3/4 to $18.75 and multiply by 4 motors.",
+        "Subtract the motor cost and shipping from $64.50, then divide by 3."
+      ],
+      "solution": [
+        "4 motors cost 4 × 18.75 = 75.00.",
+        "Remaining balance: 64.50 - 75.00 - 14.25 = -10.50 - 14.25 = -24.75.",
+        "Split among 3 captains: -24.75 ÷ 3 = -8.25 (-$8.25 each)."
+      ],
+      "wrong": [
+        {
+          "answer": "8.25",
+          "feedback": "The total cost ($89.25) is more than the starting $64.50, so the remaining balance and each captain's share are negative."
+        },
+        {
+          "answer": "10.5",
+          "feedback": "Make sure you multiplied $18.75 by 4 motors and subtracted the $14.25 shipping fee before dividing by 3."
+        }
+      ]
+    }
+  ]
+}
