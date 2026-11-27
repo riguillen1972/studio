@@ -1,0 +1,667 @@
+{
+  "version": 2,
+  "skill_id": "7.multiplicative-inverses",
+  "title": "Multiplicative Inverses",
+  "hook": "A trail crew is packing 16 1/2 pounds of trail mix into 3/4-pound bags, and a robotics team needs to divide a 24-foot cable by -0.4 to model a reverse winch rate. Why does turning division into multiplying by the multiplicative inverse work for signed fractions, mixed numbers, and decimals?",
+  "goal": "I can find the multiplicative inverse of signed fractions, decimals, and mixed numbers, and rewrite division as multiplying by the multiplicative inverse.",
+  "vocabulary": [
+    {
+      "term": "multiplicative inverse",
+      "meaning": "the reciprocal of a nonzero number—the number that multiplies by the original number to equal 1",
+      "example": "The multiplicative inverse of -3/7 is -7/3 because (-3/7) × (-7/3) = 1."
+    },
+    {
+      "term": "reciprocal",
+      "meaning": "another name for the multiplicative inverse, formed by swapping numerator and denominator while keeping the sign",
+      "example": "The reciprocal of -0.25 (-1/4) is -4."
+    },
+    {
+      "term": "improper fraction",
+      "meaning": "a fraction whose numerator has a size greater than or equal to its denominator",
+      "example": "-2 3/5 written as an improper fraction is -13/5."
+    },
+    {
+      "term": "multiplicative identity",
+      "meaning": "the number 1, because multiplying any number by 1 keeps it unchanged",
+      "example": "(-0.4) × 1 = -0.4."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find (-3.2) × 5.",
+      "kind": "numeric",
+      "answer": "-16",
+      "hints": [
+        "Multiply 3.2 × 5 first (3 × 5 = 15 and 0.2 × 5 = 1).",
+        "Different signs (negative × positive) give a negative product."
+      ],
+      "solution": [
+        "3.2 × 5 = 16.",
+        "Negative × positive gives a negative product: -16."
+      ],
+      "wrong": [
+        {
+          "answer": "16",
+          "feedback": "Check the signs: multiplying a negative number by a positive number gives a negative product."
+        },
+        {
+          "answer": "-1.6",
+          "feedback": "Estimate: 3 × 5 = 15, so the answer is near -15 rather than -1.6."
+        }
+      ]
+    },
+    {
+      "question": "What is the reciprocal of 2 1/4?",
+      "kind": "numeric",
+      "answer": "4/9",
+      "hints": [
+        "Convert 2 1/4 to an improper fraction first: (2 × 4 + 1)/4.",
+        "Flip 9/4 upside down."
+      ],
+      "solution": [
+        "2 1/4 = 9/4.",
+        "Flip 9/4 to get its reciprocal: 4/9. Check: (9/4) × (4/9) = 1."
+      ],
+      "wrong": [
+        {
+          "answer": "2 4/1",
+          "feedback": "Convert the entire mixed number to an improper fraction (9/4) before flipping."
+        },
+        {
+          "answer": "9/4",
+          "feedback": "9/4 is equal to 2 1/4. Flip numerator and denominator to get the reciprocal."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Multiplicative inverses of signed fractions and mixed numbers",
+      "read": [
+        "Two nonzero numbers are **multiplicative inverses** (or **reciprocals**) if their product is **`1`**: `a × (1/a) = 1`. Think of how `-3/7 × (-7/3) = +21/21 = 1`.",
+        "Notice two key rules. First, **keep the sign**! A negative number's multiplicative inverse is also negative, because two negatives multiply to `+1`. Second, for a **mixed number** or **integer**, write it as a single fraction first (`-6 = -6/1`, and `-2 3/5 = -13/5`), then flip top and bottom.",
+        "What about `0`? Zero has **no multiplicative inverse**, because `0` times any number is `0`, never `1`."
+      ],
+      "model": {
+        "caption": "Finding multiplicative inverses of signed fractions and mixed numbers",
+        "rows": [
+          ["Number", "Write as a single fraction", "Multiplicative inverse", "Check (Product = 1?)"],
+          ["-3/7", "-3/7", "-7/3", "(-3/7) × (-7/3) = 1"],
+          ["-6", "-6/1", "-1/6", "(-6) × (-1/6) = 1"],
+          ["-2 3/5", "-(2 × 5 + 3)/5 = -13/5", "-5/13", "(-13/5) × (-5/13) = 1"],
+          ["0", "0/1", "None", "0 × anything = 0 ≠ 1"]
+        ]
+      },
+      "example": {
+        "problem": "Find the multiplicative inverse of -3 1/4, and check that their product is 1.",
+        "steps": [
+          {
+            "say": "Convert -3 1/4 to an improper fraction: -(3 × 4 + 1)/4 = -13/4.",
+            "why": "You need one numerator and one denominator before flipping, and you attach the minus sign after building 13/4."
+          },
+          {
+            "say": "Flip numerator and denominator while keeping the negative sign: -4/13.",
+            "why": "Negative × negative = positive, which is required to land on +1."
+          },
+          {
+            "say": "Check by multiplying: (-13/4) × (-4/13) = 52/52 = 1. ✓",
+            "why": "A product of 1 proves -4/13 is the multiplicative inverse."
+          }
+        ],
+        "answer": "-4/13"
+      },
+      "try_it": [
+        {
+          "question": "What is the multiplicative inverse of -5/9?",
+          "kind": "numeric",
+          "answer": "-9/5",
+          "hints": [
+            "Flip the numerator and denominator.",
+            "Keep the negative sign so the product with -5/9 is +1."
+          ],
+          "solution": [
+            "Flip -5/9 and keep the negative sign: -9/5.",
+            "Check: (-5/9) × (-9/5) = 1."
+          ],
+          "wrong": [
+            {
+              "answer": "9/5",
+              "feedback": "Keep the negative sign! (-5/9) × (9/5) = -1, not +1."
+            },
+            {
+              "answer": "5/9",
+              "feedback": "5/9 is the additive inverse (adds to 0). For the multiplicative inverse, flip the fraction and keep its sign."
+            }
+          ]
+        },
+        {
+          "question": "What is the multiplicative inverse of -1 3/8?",
+          "kind": "numeric",
+          "answer": "-8/11",
+          "hints": [
+            "Convert -1 3/8 to an improper fraction: -(1 × 8 + 3)/8.",
+            "Flip -11/8 and keep the negative sign."
+          ],
+          "solution": [
+            "-1 3/8 = -11/8.",
+            "Flip and keep the negative sign: -8/11.",
+            "Check: (-11/8) × (-8/11) = 1."
+          ],
+          "wrong": [
+            {
+              "answer": "8/11",
+              "feedback": "Keep the negative sign so two negatives multiply to +1."
+            },
+            {
+              "answer": "-8/5",
+              "feedback": "Check the improper fraction for -1 3/8: compute -(1 × 8 + 3)/8 = -11/8, not (-1 × 8 + 3)/8."
+            }
+          ]
+        }
+      ],
+      "mentor": "Always keep the sign! A negative number needs a negative multiplicative inverse so their product lands on positive 1."
+    },
+    {
+      "heading": "Multiplicative inverses of signed decimals",
+      "read": [
+        "How do you find the multiplicative inverse of a decimal like `-0.4` or `1.25`? Turn the decimal into a **fraction** using place value, simplify if you want, and **flip it**, keeping the sign.",
+        "For example, `-0.4` is `-4/10`, which simplifies to `-2/5`. Flip it and keep the sign: `-5/2`, or `-2.5`. Check: `(-0.4) × (-2.5) = 1`!",
+        "A few decimal-reciprocal pairs show up everywhere in Grade 7 math: `0.5 ↔ 2`, `0.25 ↔ 4`, `0.2 ↔ 5`, and `0.125 ↔ 8` (and the same with negative signs on both)."
+      ],
+      "model": {
+        "caption": "Decimals and their multiplicative inverses",
+        "rows": [
+          ["Decimal", "As a simplified fraction", "Multiplicative inverse (fraction)", "As a decimal"],
+          ["0.25", "1/4", "4/1 = 4", "4"],
+          ["-0.4", "-4/10 = -2/5", "-5/2", "-2.5"],
+          ["-1.25", "-125/100 = -5/4", "-4/5", "-0.8"],
+          ["0.125", "125/1000 = 1/8", "8/1 = 8", "8"]
+        ]
+      },
+      "example": {
+        "problem": "Find the multiplicative inverse of -0.75.",
+        "steps": [
+          {
+            "say": "Write -0.75 as a fraction using hundredths: -75/100.",
+            "why": "75 is in the hundredths place."
+          },
+          {
+            "say": "Simplify by dividing numerator and denominator by 25: -3/4.",
+            "why": "Smaller numbers make the reciprocal cleaner."
+          },
+          {
+            "say": "Flip -3/4 and keep the negative sign: -4/3.",
+            "why": "Check: (-0.75) × (-4/3) = (-3/4) × (-4/3) = 1. ✓"
+          }
+        ],
+        "answer": "-4/3"
+      },
+      "try_it": [
+        {
+          "question": "What is the multiplicative inverse of -0.2?",
+          "kind": "numeric",
+          "answer": "-5",
+          "hints": [
+            "Write -0.2 as a fraction: -2/10, which simplifies to -1/5.",
+            "Flip -1/5 and keep the negative sign."
+          ],
+          "solution": [
+            "-0.2 = -2/10 = -1/5.",
+            "Flip and keep the negative sign: -5/1 = -5.",
+            "Check: (-0.2) × (-5) = 1."
+          ],
+          "wrong": [
+            {
+              "answer": "5",
+              "feedback": "Keep the negative sign: (-0.2) × 5 = -1, not +1."
+            },
+            {
+              "answer": "0.2",
+              "feedback": "0.2 is the additive inverse (-0.2 + 0.2 = 0). Convert -0.2 to a fraction and flip it for the multiplicative inverse."
+            },
+            {
+              "answer": "-0.5",
+              "feedback": "(-0.2) × (-0.5) = 0.1, not 1. Write -0.2 = -1/5 before flipping."
+            }
+          ]
+        },
+        {
+          "question": "What is the multiplicative inverse of 1.6?",
+          "kind": "numeric",
+          "answer": "5/8",
+          "hints": [
+            "Write 1.6 as a fraction: 16/10, and simplify by dividing top and bottom by 2.",
+            "Flip 8/5 upside down."
+          ],
+          "solution": [
+            "1.6 = 16/10 = 8/5.",
+            "Flip 8/5 to get 5/8 (or 0.625).",
+            "Check: (8/5) × (5/8) = 1."
+          ],
+          "wrong": [
+            {
+              "answer": "-5/8",
+              "feedback": "1.6 is positive, so its multiplicative inverse stays positive."
+            },
+            {
+              "answer": "8/5",
+              "feedback": "8/5 equals 1.6. Flip numerator and denominator to get the reciprocal."
+            }
+          ]
+        }
+      ],
+      "mentor": "Turning a decimal into a fraction takes two seconds and reveals its reciprocal right away."
+    },
+    {
+      "heading": "Rewriting division as multiplying by the multiplicative inverse",
+      "read": [
+        "Earlier you learned that subtracting a number is the same as adding its additive inverse (`a - b = a + (-b)`). Division has the exact same partnership: **dividing by any nonzero number is multiplying by its multiplicative inverse** (`a ÷ b = a × 1/b`).",
+        "This single rule works across integers, fractions, mixed numbers, and decimals! Dividing `24` by `-0.4` (`-2/5`) turns into `24 × (-5/2) = -60`.",
+        "When both numbers are decimals or mixed numbers, convert the divisor to a fraction first, replace `÷` with `×` and the divisor with its multiplicative inverse, then multiply."
+      ],
+      "model": {
+        "caption": "Rewriting division as multiplication by the multiplicative inverse",
+        "rows": [
+          ["Division problem", "Divisor as fraction", "Multiplicative inverse", "Rewritten multiplication", "Result"],
+          ["18 ÷ (-0.5)", "-1/2", "-2", "18 × (-2)", "-36"],
+          ["(-12) ÷ (3/5)", "3/5", "5/3", "(-12) × (5/3)", "-20"],
+          ["(-4.5) ÷ (-1.5)", "-3/2", "-2/3", "(-9/2) × (-2/3)", "3"],
+          ["(-2 1/2) ÷ 5", "5/1", "1/5", "(-5/2) × (1/5)", "-1/2"]
+        ]
+      },
+      "example": {
+        "problem": "Rewrite (-14) ÷ (-0.25) using the multiplicative inverse, and evaluate.",
+        "steps": [
+          {
+            "say": "Write the divisor -0.25 as a fraction: -0.25 = -1/4.",
+            "why": "Converting the decimal makes its multiplicative inverse clear."
+          },
+          {
+            "say": "Find the multiplicative inverse of -1/4: it is -4.",
+            "why": "(-1/4) × (-4) = 1."
+          },
+          {
+            "say": "Rewrite division as multiplication: (-14) × (-4) = 56.",
+            "why": "Dividing by -0.25 is identical to multiplying by -4, and two negatives give a positive."
+          }
+        ],
+        "answer": "56"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate 24 ÷ (-0.4) by rewriting it as multiplying by the multiplicative inverse.",
+          "kind": "numeric",
+          "answer": "-60",
+          "hints": [
+            "Write -0.4 as a simplified fraction (-2/5) and find its multiplicative inverse (-5/2).",
+            "Multiply 24 × (-5/2)."
+          ],
+          "solution": [
+            "-0.4 = -2/5, whose multiplicative inverse is -5/2 (or -2.5).",
+            "Rewrite: 24 × (-5/2) = -120/2 = -60."
+          ],
+          "wrong": [
+            {
+              "answer": "60",
+              "feedback": "Positive divided by negative gives a negative result."
+            },
+            {
+              "answer": "-9.6",
+              "feedback": "It looks like you multiplied 24 × (-0.4). To divide by -0.4, multiply by its reciprocal (-2.5 or -5/2)."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate (-3 3/4) ÷ 1.5.",
+          "kind": "numeric",
+          "answer": "-2.5",
+          "hints": [
+            "Write -3 3/4 as -15/4 and 1.5 as 3/2.",
+            "Multiply (-15/4) by the multiplicative inverse of 3/2."
+          ],
+          "solution": [
+            "-3 3/4 = -15/4 and 1.5 = 3/2.",
+            "Multiplicative inverse of 3/2 is 2/3.",
+            "(-15/4) × (2/3) = -30/12 = -5/2 = -2.5."
+          ],
+          "wrong": [
+            {
+              "answer": "2.5",
+              "feedback": "Different signs (negative ÷ positive) give a negative result."
+            },
+            {
+              "answer": "-5.625",
+              "feedback": "Remember to multiply by the reciprocal of 1.5 (2/3), not by 1.5 itself."
+            }
+          ]
+        }
+      ],
+      "mentor": "Dividing by a decimal like -0.25 looks awkward until you rewrite it as multiplying by -4—then it turns into a quick mental product."
+    }
+  ],
+  "mistake": {
+    "problem": "Noah was asked to find the multiplicative inverse of -0.8.",
+    "work": [
+      "Start with -0.8.",
+      "Change the negative sign to positive.",
+      "Multiplicative inverse = 0.8"
+    ],
+    "what_went_wrong": "Noah found the additive inverse (opposite, which adds to 0) instead of the multiplicative inverse (reciprocal, which multiplies to 1). Notice (-0.8) × 0.8 = -0.64, not 1.",
+    "fix": "Write -0.8 as -4/5, then flip it while keeping the negative sign: -5/4 (or -1.25). Check: (-4/5) × (-5/4) = 1."
+  },
+  "summary": [
+    "The multiplicative inverse (reciprocal) of any nonzero number a is the number that multiplies by a to give 1—and it always keeps the same sign as a.",
+    "Convert mixed numbers and decimals into single fractions before flipping to find their multiplicative inverse; 0 has no multiplicative inverse.",
+    "Every division problem a ÷ b can be rewritten as multiplying by the multiplicative inverse: a × (1/b)."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "What is the multiplicative inverse of -7/12?",
+      "kind": "numeric",
+      "answer": "-12/7",
+      "hints": [
+        "Flip numerator and denominator.",
+        "Keep the negative sign so the product with -7/12 is +1."
+      ],
+      "solution": [
+        "Flip -7/12 and keep the negative sign: -12/7.",
+        "Check: (-7/12) × (-12/7) = 1."
+      ],
+      "wrong": [
+        {
+          "answer": "12/7",
+          "feedback": "Keep the negative sign so two negatives multiply to +1."
+        },
+        {
+          "answer": "7/12",
+          "feedback": "7/12 is the additive inverse. For the multiplicative inverse, flip the fraction and keep the minus sign."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What is the multiplicative inverse of -2 2/5?",
+      "kind": "numeric",
+      "answer": "-5/12",
+      "hints": [
+        "Convert -2 2/5 to an improper fraction first: -(2 × 5 + 2)/5.",
+        "Flip -12/5 and keep the negative sign."
+      ],
+      "solution": [
+        "-2 2/5 = -12/5.",
+        "Flip and keep the negative sign: -5/12."
+      ],
+      "wrong": [
+        {
+          "answer": "5/12",
+          "feedback": "A negative mixed number has a negative multiplicative inverse so their product is +1."
+        },
+        {
+          "answer": "-5/8",
+          "feedback": "Convert -2 2/5 as -(2 × 5 + 2)/5 = -12/5, not (-2 × 5 + 2)/5."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What is the multiplicative inverse of 0.125?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": [
+        "Write 0.125 as 125/1000 and simplify (divide top and bottom by 125).",
+        "0.125 = 1/8. What is the reciprocal of 1/8?"
+      ],
+      "solution": [
+        "0.125 = 125/1000 = 1/8.",
+        "The multiplicative inverse of 1/8 is 8/1 = 8."
+      ],
+      "wrong": [
+        {
+          "answer": "-0.125",
+          "feedback": "-0.125 is the additive inverse (adds to 0). Convert 0.125 to a fraction and flip it to make a product of 1."
+        },
+        {
+          "answer": "4",
+          "feedback": "4 × 0.125 = 0.5, whereas 0.125 = 1/8 needs a larger reciprocal to reach 1."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Rewrite (-30) ÷ (-0.6) using the multiplicative inverse, and evaluate.",
+      "kind": "numeric",
+      "answer": "50",
+      "hints": [
+        "Write -0.6 as -3/5, so its multiplicative inverse is -5/3.",
+        "Multiply (-30) × (-5/3)."
+      ],
+      "solution": [
+        "-0.6 = -3/5, and its multiplicative inverse is -5/3.",
+        "(-30) × (-5/3) = 150/3 = 50."
+      ],
+      "wrong": [
+        {
+          "answer": "-50",
+          "feedback": "Negative divided by negative (same signs) gives a positive result."
+        },
+        {
+          "answer": "18",
+          "feedback": "18 comes from multiplying (-30) × (-0.6). Use the multiplicative inverse of -0.6 instead."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A carpenter cuts a 9-meter board into pieces that are each 0.75 meter long. How many pieces does she get?",
+      "kind": "numeric",
+      "answer": "12",
+      "hints": [
+        "Compute 9 ÷ 0.75 by rewriting 0.75 as 3/4.",
+        "Multiply 9 by the multiplicative inverse of 3/4."
+      ],
+      "solution": [
+        "0.75 = 3/4, whose multiplicative inverse is 4/3.",
+        "9 ÷ 0.75 = 9 × (4/3) = 36/3 = 12 pieces."
+      ],
+      "wrong": [
+        {
+          "answer": "6.75",
+          "feedback": "You multiplied 9 × 0.75 instead of dividing 9 by 0.75."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A trail crew packs 16 1/2 pounds of trail mix into 3/4-pound snack bags. Then they hand out 7 bags to the first hiking group. How many snack bags are left?",
+      "kind": "numeric",
+      "answer": "15",
+      "hints": [
+        "First find the total number of bags: (16 1/2) ÷ (3/4) = (33/2) × (4/3).",
+        "After dividing, subtract the 7 bags handed out."
+      ],
+      "solution": [
+        "16 1/2 = 33/2.",
+        "Total bags = (33/2) × (4/3) = 11 × 2 = 22 bags.",
+        "Bags left = 22 - 7 = 15 bags."
+      ],
+      "wrong": [
+        {
+          "answer": "22",
+          "feedback": "22 is the total number of bags packed. Remember to subtract the 7 bags handed out."
+        },
+        {
+          "answer": "5.375",
+          "feedback": "Divide 16 1/2 by 3/4 (multiply by 4/3) instead of multiplying 16 1/2 × 3/4."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A science freezer cools at a steady rate, changing temperature by -10.8°C over 1.8 hours. At this rate, what is the total temperature change after 2.5 hours, in °C?",
+      "kind": "numeric",
+      "answer": "-15",
+      "hints": [
+        "First find the cooling rate per hour: (-10.8) ÷ 1.8. Notice 1.8 = 9/5, so multiply -10.8 × (5/9).",
+        "Multiply the hourly rate by 2.5 hours."
+      ],
+      "solution": [
+        "1.8 = 9/5, whose multiplicative inverse is 5/9.",
+        "Hourly rate = (-10.8) × (5/9) = -1.2 × 5 = -6°C per hour.",
+        "Change in 2.5 hours = -6 × 2.5 = -15°C."
+      ],
+      "wrong": [
+        {
+          "answer": "-6",
+          "feedback": "-6°C is the change in 1 hour. Multiply by 2.5 hours to answer the question."
+        },
+        {
+          "answer": "15",
+          "feedback": "The freezer is cooling down, so keep the negative sign."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which number does NOT have a multiplicative inverse, and why?",
+      "kind": "multiple_choice",
+      "choices": [
+        "0, because 0 multiplied by any number equals 0, never 1.",
+        "-1, because multiplying by a negative number never gives 1.",
+        "1, because 1 is already the multiplicative identity.",
+        "0.5, because decimals cannot be flipped into fractions."
+      ],
+      "answer": "0, because 0 multiplied by any number equals 0, never 1.",
+      "hints": [
+        "Test each number: can you multiply it by something to get 1?",
+        "What is 0 times any number?"
+      ],
+      "solution": [
+        "Zero times any number is always 0, so no number can multiply by 0 to give 1.",
+        "Therefore, 0 has no multiplicative inverse (and dividing by 0 is impossible)."
+      ],
+      "wrong": [
+        {
+          "answer": "-1, because multiplying by a negative number never gives 1.",
+          "feedback": "(-1) × (-1) = +1, so -1 is its own multiplicative inverse."
+        },
+        {
+          "answer": "1, because 1 is already the multiplicative identity.",
+          "feedback": "1 × 1 = 1, so 1 is its own multiplicative inverse."
+        },
+        {
+          "answer": "0.5, because decimals cannot be flipped into fractions.",
+          "feedback": "0.5 = 1/2, and its multiplicative inverse is 2 (since 0.5 × 2 = 1)."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which expression is equivalent to (-7/8) ÷ (-0.25)?",
+      "kind": "multiple_choice",
+      "choices": [
+        "(-7/8) × (-4)",
+        "(-7/8) × 4",
+        "(-8/7) × (-0.25)",
+        "(-7/8) × (-1/4)"
+      ],
+      "answer": "(-7/8) × (-4)",
+      "hints": [
+        "Write the divisor -0.25 as a fraction: -1/4.",
+        "Replace division with multiplication by the multiplicative inverse of -1/4."
+      ],
+      "solution": [
+        "-0.25 = -1/4, and the multiplicative inverse of -1/4 is -4.",
+        "So (-7/8) ÷ (-0.25) = (-7/8) × (-4)."
+      ],
+      "wrong": [
+        {
+          "answer": "(-7/8) × 4",
+          "feedback": "The multiplicative inverse of -0.25 keeps the negative sign: -4, not +4."
+        },
+        {
+          "answer": "(-8/7) × (-0.25)",
+          "feedback": "Invert the divisor (-0.25), not the dividend (-7/8)."
+        },
+        {
+          "answer": "(-7/8) × (-1/4)",
+          "feedback": "-1/4 equals -0.25. Flip -1/4 to -4 when changing ÷ to ×."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-4.5) × (-1.2).",
+      "kind": "numeric",
+      "answer": "5.4",
+      "hints": [
+        "Two negative numbers (same signs) multiply to a positive product.",
+        "Multiply 45 × 12, then place 2 decimal digits."
+      ],
+      "solution": [
+        "45 × 12 = 540, so 4.5 × 1.2 = 5.40 = 5.4.",
+        "Negative × negative = positive: 5.4."
+      ],
+      "wrong": [
+        {
+          "answer": "-5.4",
+          "feedback": "Both factors are negative, and same signs multiply to a positive product."
+        },
+        {
+          "answer": "54",
+          "feedback": "Count the total decimal places in 4.5 and 1.2 (one each, two in total)."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "What number makes (3 1/3) × ___ = 1 true?",
+      "kind": "numeric",
+      "answer": "3/10",
+      "hints": [
+        "Convert 3 1/3 to an improper fraction: (3 × 3 + 1)/3.",
+        "Find the reciprocal of 10/3."
+      ],
+      "solution": [
+        "3 1/3 = 10/3.",
+        "The reciprocal of 10/3 is 3/10, so (10/3) × (3/10) = 1."
+      ],
+      "wrong": [
+        {
+          "answer": "10/3",
+          "feedback": "10/3 equals 3 1/3. Flip numerator and denominator to get the reciprocal."
+        },
+        {
+          "answer": "-3/10",
+          "feedback": "3 1/3 is positive, so its reciprocal is positive too."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Find the multiplicative inverse of (-1.2) + (-1/5).",
+      "kind": "numeric",
+      "answer": "-5/7",
+      "hints": [
+        "First add (-1.2) + (-1/5) by writing both as decimals or both as fractions.",
+        "-1/5 = -0.2, so the sum is -1.4 = -7/5. Now find the multiplicative inverse of -7/5."
+      ],
+      "solution": [
+        "-1.2 + (-1/5) = -1.2 + (-0.2) = -1.4.",
+        "Write -1.4 as a simplified fraction: -14/10 = -7/5.",
+        "Flip and keep the negative sign: -5/7."
+      ],
+      "wrong": [
+        {
+          "answer": "5/7",
+          "feedback": "Because the sum -1.4 is negative, its multiplicative inverse stays negative."
+        },
+        {
+          "answer": "-7/5",
+          "feedback": "-7/5 is the sum itself. Flip numerator and denominator to get the multiplicative inverse."
+        }
+      ]
+    }
+  ]
+}

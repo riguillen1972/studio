@@ -1,0 +1,661 @@
+{
+  "version": 2,
+  "skill_id": "7.additive-inverses",
+  "title": "Opposites and Additive Inverses",
+  "hook": "During a science club test, a solar rover's battery gains 18% charge in the morning sun, then uses 18% charge climbing a rocky ramp. Where does the net charge end up—back at 0% change! How do opposite quantities cancel out for whole numbers, fractions, and decimals alike?",
+  "goal": "I can recognize opposites as additive inverses that add to 0, describe real situations where quantities combine to make 0, and use zero pairs to simplify signed addition.",
+  "vocabulary": [
+    {
+      "term": "opposite",
+      "meaning": "two numbers that sit the exact same distance from 0 on opposite sides of the number line",
+      "example": "-9 and 9 are opposites; -3/4 and 3/4 are opposites."
+    },
+    {
+      "term": "additive inverse",
+      "meaning": "another name for a number's opposite—the number you add to it to get 0",
+      "example": "The additive inverse of -6.5 is 6.5 because -6.5 + 6.5 = 0."
+    },
+    {
+      "term": "zero pair",
+      "meaning": "a pair of opposite numbers whose sum is 0",
+      "example": "(-4) + 4 = 0 is a zero pair."
+    },
+    {
+      "term": "absolute value",
+      "meaning": "a number's distance from 0 on the number line, always 0 or positive",
+      "example": "|-7.4| = 7.4 and |7.4| = 7.4."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find -13 + 8.",
+      "kind": "numeric",
+      "answer": "-5",
+      "hints": [
+        "The two numbers have different signs, so subtract their sizes: 13 - 8.",
+        "Keep the sign of -13 because it is farther from 0 than 8."
+      ],
+      "solution": [
+        "Compare sizes: 13 - 8 = 5.",
+        "-13 has the larger size, so keep the negative sign: -13 + 8 = -5."
+      ],
+      "wrong": [
+        {
+          "answer": "5",
+          "feedback": "Check the sign: -13 is farther from 0 than +8, so the sum stays negative."
+        },
+        {
+          "answer": "-21",
+          "feedback": "When adding numbers with different signs, subtract their sizes instead of adding 13 + 8."
+        }
+      ]
+    },
+    {
+      "question": "Find 4.25 - 6.75.",
+      "kind": "numeric",
+      "answer": "-2.5",
+      "hints": [
+        "Rewrite subtraction as adding the opposite: 4.25 + (-6.75).",
+        "Subtract the smaller size from the larger size (6.75 - 4.25) and keep the sign of the farther number."
+      ],
+      "solution": [
+        "4.25 - 6.75 = 4.25 + (-6.75).",
+        "6.75 - 4.25 = 2.5, and -6.75 is farther from 0, so the result is -2.5."
+      ],
+      "wrong": [
+        {
+          "answer": "2.5",
+          "feedback": "Since you subtract 6.75 from a smaller number (4.25), the answer is negative."
+        },
+        {
+          "answer": "-11",
+          "feedback": "4.25 is positive and -6.75 is negative, so their sizes subtract rather than add."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Opposites on the number line add to zero",
+      "read": [
+        "Picture walking on a number line starting at 0. If you walk 5 steps right to `+5` and then 5 steps left (`-5`), you land right back at `0`.",
+        "Two numbers that are the same distance from 0 on opposite sides are called **opposites**, or **additive inverses**. Adding any number and its additive inverse always gives `0`: `p + (-p) = 0` and `-p + p = 0`.",
+        "This works for every rational number—integers, fractions (`3/5 + (-3/5) = 0`), mixed numbers, and decimals (`-4.2 + 4.2 = 0`). The additive inverse of `0` is `0` itself, and the opposite of a negative is positive: `-(-7) = 7`."
+      ],
+      "model": {
+        "caption": "Numbers, their additive inverses, and their sums",
+        "rows": [
+          ["Number", "Additive inverse", "Sum", "Number line picture"],
+          ["-9", "9", "-9 + 9 = 0", "9 left, then 9 right → back at 0"],
+          ["3/4", "-3/4", "3/4 + (-3/4) = 0", "3/4 right, then 3/4 left → back at 0"],
+          ["-2.6", "2.6", "-2.6 + 2.6 = 0", "2.6 left, then 2.6 right → back at 0"],
+          ["0", "0", "0 + 0 = 0", "Start at 0, stay at 0"]
+        ]
+      },
+      "example": {
+        "problem": "Find the additive inverse of -3 2/5, and show why they add to 0.",
+        "steps": [
+          {
+            "say": "Find the distance of -3 2/5 from 0: it sits 3 2/5 units to the left of 0.",
+            "why": "Opposite numbers sit the exact same distance from 0."
+          },
+          {
+            "say": "Move the same distance to the right of 0: that lands on +3 2/5 (or 3 2/5).",
+            "why": "Changing the sign from negative to positive gives the opposite."
+          },
+          {
+            "say": "Check by adding: -3 2/5 + 3 2/5 = 0.",
+            "why": "Moving 3 2/5 left and then 3 2/5 right returns to 0."
+          }
+        ],
+        "answer": "The additive inverse of -3 2/5 is 3 2/5."
+      },
+      "try_it": [
+        {
+          "question": "What is the additive inverse of -7.4?",
+          "kind": "numeric",
+          "answer": "7.4",
+          "hints": [
+            "An additive inverse is the same distance from 0 on the opposite side.",
+            "Keep the same distance from 0 and flip the sign from negative to positive."
+          ],
+          "solution": [
+            "-7.4 is 7.4 units left of 0, so its opposite is 7.4 units right of 0: 7.4.",
+            "Check: -7.4 + 7.4 = 0."
+          ],
+          "wrong": [
+            {
+              "answer": "-7.4",
+              "feedback": "-7.4 + (-7.4) = -14.8, not 0. Flip the negative sign to positive."
+            },
+            {
+              "answer": "0",
+              "feedback": "0 is the sum of a number and its additive inverse, not the inverse itself."
+            }
+          ]
+        },
+        {
+          "question": "What number makes (-5/8) + ___ = 0 true?",
+          "kind": "numeric",
+          "answer": "5/8",
+          "hints": [
+            "To reach 0 from -5/8, add its opposite.",
+            "Keep the same fraction size and change the sign to positive."
+          ],
+          "solution": [
+            "The additive inverse of -5/8 is 5/8.",
+            "Check: (-5/8) + 5/8 = 0."
+          ],
+          "wrong": [
+            {
+              "answer": "-5/8",
+              "feedback": "Adding -5/8 + (-5/8) gives -10/8, moving farther left instead of back to 0."
+            },
+            {
+              "answer": "-8/5",
+              "feedback": "-8/5 is the reciprocal (which multiplies to 1), not the additive inverse (which adds to 0)."
+            },
+            {
+              "answer": "8/5",
+              "feedback": "Do not flip the numerator and denominator for an additive inverse—keep the original fraction size and flip the sign."
+            }
+          ]
+        }
+      ],
+      "mentor": "Every nonzero number has a twin on the other side of 0. Put them together and they cancel cleanly to 0."
+    },
+    {
+      "heading": "Real situations that combine to make 0",
+      "read": [
+        "In everyday life, quantities combine to make **0** whenever a gain and a loss have the **exact same size** in opposite directions.",
+        "Think of climbing 15 stairs up (`+15`) and walking 15 stairs down (`-15`), depositing `$24.50` and spending `$24.50`, or an atom pairing one positive proton (`+1`) with one negative electron (`-1`).",
+        "If several changes happen in a row, add them up to find the **net change** so far. The single change that brings everything back to 0 is the **additive inverse** of that net change!"
+      ],
+      "model": {
+        "caption": "Situations that combine to make 0",
+        "rows": [
+          ["Context", "First quantity", "Opposite quantity", "Combined result"],
+          ["Football", "Gain 12 yards (+12)", "Lose 12 yards (-12)", "0 net yards"],
+          ["Temperature", "Drop 6.5°C (-6.5)", "Warm 6.5°C (+6.5)", "0°C net change"],
+          ["Chemistry", "3 protons (+3)", "3 electrons (-3)", "0 electric charge"],
+          ["Bank account", "Deposit $18.25 (+18.25)", "Spend $18.25 (-18.25)", "$0 net change"]
+        ]
+      },
+      "example": {
+        "problem": "A camera drone climbs 14.5 meters above its launch pad, then drops 8.2 meters. What vertical change does it need next to return to launch height (0 meters change)?",
+        "steps": [
+          {
+            "say": "Combine the first two movements: +14.5 + (-8.2) = 6.3 meters.",
+            "why": "Find the drone's current net height above the launch pad."
+          },
+          {
+            "say": "Find the additive inverse of +6.3: it is -6.3.",
+            "why": "To cancel +6.3 back to 0, move the same distance in the opposite direction (down)."
+          },
+          {
+            "say": "Check all three movements: 14.5 + (-8.2) + (-6.3) = 0.",
+            "why": "The upward and downward distances now match and cancel to 0."
+          }
+        ],
+        "answer": "-6.3 meters (drop 6.3 meters)"
+      },
+      "try_it": [
+        {
+          "question": "Which pair of events combines to make 0?",
+          "kind": "multiple_choice",
+          "choices": [
+            "A team loses 9 yards on first down, then gains 9 yards on second down.",
+            "A thermometer drops 9°F in the evening, then drops 9°F more overnight.",
+            "You earn $9 walking a neighbor's dog, then earn $9 mowing a lawn.",
+            "A submarine dives 9 meters, then rises 6 meters."
+          ],
+          "answer": "A team loses 9 yards on first down, then gains 9 yards on second down.",
+          "hints": [
+            "Look for two changes of the same size in opposite directions.",
+            "One change must be negative and the other positive, with equal amounts."
+          ],
+          "solution": [
+            "Losing 9 yards is -9 and gaining 9 yards is +9.",
+            "-9 + 9 = 0 net yards."
+          ],
+          "wrong": [
+            {
+              "answer": "A thermometer drops 9°F in the evening, then drops 9°F more overnight.",
+              "feedback": "Both changes go down (-9 + (-9) = -18), so they add together rather than canceling."
+            },
+            {
+              "answer": "You earn $9 walking a neighbor's dog, then earn $9 mowing a lawn.",
+              "feedback": "Both changes are positive (+9 + 9 = +18), so they do not cancel to 0."
+            },
+            {
+              "answer": "A submarine dives 9 meters, then rises 6 meters.",
+              "feedback": "The directions are opposite, yet the amounts (-9 and +6) are not equal, leaving -3 meters."
+            }
+          ]
+        },
+        {
+          "question": "An underwater robot starts at 0 meters (sea level). It dives to -18.5 meters, then rises 6.5 meters. What signed change (in meters) brings it back to 0 meters?",
+          "kind": "numeric",
+          "answer": "12",
+          "hints": [
+            "First find where the robot is after diving and rising: -18.5 + 6.5.",
+            "Find the additive inverse of the robot's current depth so the total returns to 0."
+          ],
+          "solution": [
+            "Current depth: -18.5 + 6.5 = -12 meters.",
+            "The additive inverse of -12 is +12, so a change of 12 meters returns it to 0."
+          ],
+          "wrong": [
+            {
+              "answer": "-12",
+              "feedback": "That negative number is where the robot is right now. To climb back up to 0, it needs a positive change."
+            },
+            {
+              "answer": "25",
+              "feedback": "Notice rising 6.5 meters already moved the robot closer to 0: add -18.5 + 6.5 first."
+            }
+          ]
+        }
+      ],
+      "mentor": "Whenever a story returns to where it started, look for the exact opposite of the net change so far."
+    },
+    {
+      "heading": "Using additive inverses to simplify sums",
+      "read": [
+        "Additive inverses do more than tell you when two numbers equal 0—they let you **clear out zero pairs** inside longer expressions before you add anything else.",
+        "In `-6.8 + 11.3 + 6.8 + (-4.3)`, `-6.8` and `+6.8` are additive inverses, so they collapse to `0` right away.",
+        "You can also **split** a number to build your own zero pair! To find `-14 + 20`, split `20` into `14 + 6`. Then `(-14 + 14) + 6 = 0 + 6 = 6`."
+      ],
+      "model": {
+        "caption": "Splitting a number to build a zero pair",
+        "rows": [
+          ["Expression", "Split one number", "Zero pair cancels", "Result"],
+          ["-14 + 20", "-14 + (14 + 6)", "(-14 + 14) + 6 = 0 + 6", "6"],
+          ["7.5 + (-10)", "7.5 + (-7.5 + (-2.5))", "(7.5 + (-7.5)) + (-2.5) = 0 + (-2.5)", "-2.5"],
+          ["-2 1/4 + 5", "-2 1/4 + (2 1/4 + 2 3/4)", "(-2 1/4 + 2 1/4) + 2 3/4", "2 3/4"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -6.8 + 11.3 + 6.8 + (-4.3) using additive inverses.",
+        "steps": [
+          {
+            "say": "Scan for additive inverses: -6.8 and 6.8 are opposites.",
+            "why": "Spotting opposites first saves unnecessary decimal arithmetic."
+          },
+          {
+            "say": "Pair them up: (-6.8 + 6.8) + (11.3 + (-4.3)).",
+            "why": "Addition can be reordered and grouped in any order."
+          },
+          {
+            "say": "Cancel the zero pair to 0, then add the rest: 0 + (11.3 - 4.3) = 7.",
+            "why": "Check: 11.3 + (-4.3) = 7."
+          }
+        ],
+        "answer": "7"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate 4 3/4 + (-9.2) + (-4 3/4).",
+          "kind": "numeric",
+          "answer": "-9.2",
+          "hints": [
+            "Look at the first and last numbers: 4 3/4 and -4 3/4.",
+            "Those two numbers are additive inverses, so they combine to 0."
+          ],
+          "solution": [
+            "Pair the additive inverses: (4 3/4 + (-4 3/4)) + (-9.2).",
+            "0 + (-9.2) = -9.2."
+          ],
+          "wrong": [
+            {
+              "answer": "9.2",
+              "feedback": "Keep the negative sign on the middle decimal after the fractions cancel to 0."
+            },
+            {
+              "answer": "0",
+              "feedback": "4 3/4 and -4 3/4 cancel to 0, yet the middle decimal is still left in the sum."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate -16 + 25 by splitting 25 into 16 + 9.",
+          "kind": "numeric",
+          "answer": "9",
+          "hints": [
+            "Rewrite as (-16 + 16) + 9.",
+            "-16 + 16 makes a zero pair!"
+          ],
+          "solution": [
+            "-16 + (16 + 9) = (-16 + 16) + 9.",
+            "0 + 9 = 9."
+          ],
+          "wrong": [
+            {
+              "answer": "-9",
+              "feedback": "Since +25 has a larger size than -16, the sum is positive."
+            },
+            {
+              "answer": "41",
+              "feedback": "-16 and +16 cancel to 0 rather than adding to 32."
+            }
+          ]
+        }
+      ],
+      "mentor": "Spotting zero pairs before you add saves work and prevents sign slips."
+    }
+  ],
+  "mistake": {
+    "problem": "Tyler wanted to find the number that adds to -3/4 to make 0, so he wrote: (-3/4) + (-4/3) = 0.",
+    "work": [
+      "Start with -3/4.",
+      "Flip the fraction to -4/3.",
+      "(-3/4) + (-4/3) = 0"
+    ],
+    "what_went_wrong": "Tyler mixed up the additive inverse with the multiplicative inverse (reciprocal). Flipping -3/4 to -4/3 gives a number whose PRODUCT with -3/4 is 1, not a number whose SUM with -3/4 is 0.",
+    "fix": "For an additive inverse, keep the fraction 3/4 and flip the sign from negative to positive: (-3/4) + 3/4 = 0."
+  },
+  "summary": [
+    "Two numbers the same distance from 0 on opposite sides are opposites (additive inverses), and their sum is always 0: p + (-p) = 0.",
+    "Real situations combine to make 0 whenever a gain and a loss have the exact same size in opposite directions.",
+    "In longer sums, pair additive inverses first—or split a number to create a zero pair—so opposite amounts cancel to 0."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "What is the additive inverse of 19.6?",
+      "kind": "numeric",
+      "answer": "-19.6",
+      "hints": [
+        "19.6 is positive, so its opposite lies on the negative side of 0.",
+        "Keep the same distance from 0 and change the sign."
+      ],
+      "solution": [
+        "The additive inverse of 19.6 is -19.6 because 19.6 + (-19.6) = 0."
+      ],
+      "wrong": [
+        {
+          "answer": "19.6",
+          "feedback": "19.6 + 19.6 = 39.2, not 0. An additive inverse has the opposite sign."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What is the additive inverse of -5 2/3?",
+      "kind": "numeric",
+      "answer": "5 2/3",
+      "hints": [
+        "Opposites sit the same distance from 0 on opposite sides.",
+        "Keep the same mixed-number size and switch the sign from negative to positive."
+      ],
+      "solution": [
+        "The additive inverse of -5 2/3 is 5 2/3 because -5 2/3 + 5 2/3 = 0."
+      ],
+      "wrong": [
+        {
+          "answer": "-5 2/3",
+          "feedback": "Two negative numbers add to a larger negative number, not 0."
+        },
+        {
+          "answer": "-3/17",
+          "feedback": "-3/17 is the reciprocal (multiplicative inverse). For the additive inverse, keep the size and change the sign."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What number makes 7/12 + ___ = 0 true?",
+      "kind": "numeric",
+      "answer": "-7/12",
+      "hints": [
+        "A number plus its additive inverse equals 0.",
+        "Keep the fraction 7/12 and give it the opposite sign."
+      ],
+      "solution": [
+        "7/12 + (-7/12) = 0, so the missing number is -7/12."
+      ],
+      "wrong": [
+        {
+          "answer": "7/12",
+          "feedback": "7/12 + 7/12 = 14/12, not 0. Use a negative sign for the additive inverse."
+        },
+        {
+          "answer": "12/7",
+          "feedback": "12/7 is the reciprocal, which multiplies by 7/12 to make 1. Here you are adding to make 0."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate -14.25 + 6.8 + 14.25 + (-2.8).",
+      "kind": "numeric",
+      "answer": "4",
+      "hints": [
+        "Spot the additive inverses first: -14.25 and 14.25.",
+        "After the opposites cancel to 0, combine 6.8 + (-2.8)."
+      ],
+      "solution": [
+        "Pair opposites: (-14.25 + 14.25) + (6.8 + (-2.8)).",
+        "0 + 4 = 4."
+      ],
+      "wrong": [
+        {
+          "answer": "9.6",
+          "feedback": "Check 6.8 + (-2.8): subtract 2.8 from 6.8 instead of adding them."
+        },
+        {
+          "answer": "-4",
+          "feedback": "6.8 is positive and larger in size than -2.8, so the result stays positive."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A mountain biker climbs 275 feet up a ridge. What signed elevation change (in feet) brings her back to her starting height?",
+      "kind": "numeric",
+      "answer": "-275",
+      "hints": [
+        "Climbing up 275 feet is +275.",
+        "To return to a net change of 0, she needs the additive inverse of +275."
+      ],
+      "solution": [
+        "+275 + (-275) = 0, so the return change is -275 feet."
+      ],
+      "wrong": [
+        {
+          "answer": "275",
+          "feedback": "Include a minus sign to show going back down to the starting height."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "At 7:00 a.m., the air temperature is -9.5°F. By noon it rises 14.5°F, and by midnight it falls 5°F. What is the midnight temperature, in °F?",
+      "kind": "numeric",
+      "answer": "0",
+      "hints": [
+        "First find the noon temperature: -9.5 + 14.5.",
+        "Then subtract 5 (add -5) for the drop to midnight."
+      ],
+      "solution": [
+        "At noon: -9.5 + 14.5 = 5°F.",
+        "At midnight: 5 + (-5) = 0°F."
+      ],
+      "wrong": [
+        {
+          "answer": "5",
+          "feedback": "5°F is the noon temperature. Remember to include the 5°F drop by midnight."
+        },
+        {
+          "answer": "10",
+          "feedback": "By midnight the temperature falls 5°F, so add -5 rather than +5."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Owen starts with $0 in his band fundraiser envelope. He collects $24.50 on Tuesday, pays $11.75 for poster supplies on Wednesday, and turns in the remaining money on Thursday so the envelope returns to $0. What signed dollar change happens on Thursday?",
+      "kind": "numeric",
+      "answer": "-12.75",
+      "hints": [
+        "Find the balance after Tuesday and Wednesday: 24.50 + (-11.75).",
+        "Turning in money lowers the envelope balance to 0, so take the additive inverse of Wednesday's balance."
+      ],
+      "solution": [
+        "Balance after Wednesday: 24.50 - 11.75 = 12.75 ($12.75).",
+        "To bring the envelope back to $0, Thursday's change is -12.75."
+      ],
+      "wrong": [
+        {
+          "answer": "12.75",
+          "feedback": "12.75 is the positive amount left before Thursday. Turning it in to reach 0 is a negative change."
+        },
+        {
+          "answer": "-36.25",
+          "feedback": "Paying $11.75 reduced the envelope from $24.50, so subtract 11.75 before finding the inverse."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which situation describes two quantities that combine to make 0?",
+      "kind": "multiple_choice",
+      "choices": [
+        "A delivery drone rises 16.5 meters from a roof, then descends 16.5 meters back to the roof.",
+        "A baker buys 16.5 pounds of flour in the morning and 16.5 pounds of sugar in the afternoon.",
+        "A game character loses 16.5 health points, then loses 16.5 more.",
+        "A runner sprints 16.5 meters north, then jogs 12.5 meters south."
+      ],
+      "answer": "A delivery drone rises 16.5 meters from a roof, then descends 16.5 meters back to the roof.",
+      "hints": [
+        "Look for two changes that have the same size and opposite directions.",
+        "+16.5 + (-16.5) = 0."
+      ],
+      "solution": [
+        "Rising 16.5 meters (+16.5) and descending 16.5 meters (-16.5) are additive inverses, so they combine to 0."
+      ],
+      "wrong": [
+        {
+          "answer": "A baker buys 16.5 pounds of flour in the morning and 16.5 pounds of sugar in the afternoon.",
+          "feedback": "Both quantities add weight (16.5 + 16.5 = 33), so they do not cancel."
+        },
+        {
+          "answer": "A game character loses 16.5 health points, then loses 16.5 more.",
+          "feedback": "Two losses combine to a bigger loss (-33), not 0."
+        },
+        {
+          "answer": "A runner sprints 16.5 meters north, then jogs 12.5 meters south.",
+          "feedback": "The amounts 16.5 and 12.5 are not equal, so 4 meters remain."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Lena says the additive inverse of -2/5 is -5/2. Which statement explains why Lena is wrong?",
+      "kind": "multiple_choice",
+      "choices": [
+        "-5/2 is the multiplicative inverse (reciprocal), whereas the additive inverse keeps 2/5 and changes the sign to positive.",
+        "Fractions do not have additive inverses—only whole numbers do.",
+        "An additive inverse is always negative, so it should be -2/5.",
+        "To find an additive inverse, you add 1 to both the numerator and denominator."
+      ],
+      "answer": "-5/2 is the multiplicative inverse (reciprocal), whereas the additive inverse keeps 2/5 and changes the sign to positive.",
+      "hints": [
+        "Check what (-2/5) + (-5/2) equals: is it 0?",
+        "Compare adding to make 0 (additive inverse) with multiplying to make 1 (reciprocal)."
+      ],
+      "solution": [
+        "(-2/5) × (-5/2) = 1, so -5/2 is the reciprocal.",
+        "The additive inverse must add to 0: (-2/5) + 2/5 = 0."
+      ],
+      "wrong": [
+        {
+          "answer": "Fractions do not have additive inverses—only whole numbers do.",
+          "feedback": "Every rational number—including fractions and decimals—has an additive inverse."
+        },
+        {
+          "answer": "An additive inverse is always negative, so it should be -2/5.",
+          "feedback": "The additive inverse of a negative number is positive so their sum is 0."
+        },
+        {
+          "answer": "To find an additive inverse, you add 1 to both the numerator and denominator.",
+          "feedback": "Additive inverses keep the exact same distance from 0 and flip the sign."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -3/4 - 5/8.",
+      "kind": "numeric",
+      "answer": "-11/8",
+      "hints": [
+        "Rewrite subtraction as adding the opposite: -3/4 + (-5/8).",
+        "Use a common denominator of 8: -3/4 = -6/8."
+      ],
+      "solution": [
+        "-3/4 - 5/8 = -6/8 + (-5/8).",
+        "Same signs add sizes and keep the negative sign: -11/8 (or -1 3/8)."
+      ],
+      "wrong": [
+        {
+          "answer": "-1/8",
+          "feedback": "Both -6/8 and -5/8 are negative, so combine their sizes instead of subtracting 6 - 5."
+        },
+        {
+          "answer": "11/8",
+          "feedback": "Adding two negative fractions keeps the negative sign."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -8.4 - (-3.9).",
+      "kind": "numeric",
+      "answer": "-4.5",
+      "hints": [
+        "Subtracting -3.9 is the same as adding its opposite: -8.4 + 3.9.",
+        "Since the signs are different, subtract 8.4 - 3.9 and keep the sign of the farther number."
+      ],
+      "solution": [
+        "-8.4 - (-3.9) = -8.4 + 3.9.",
+        "8.4 - 3.9 = 4.5, and -8.4 is farther from 0, so the answer is -4.5."
+      ],
+      "wrong": [
+        {
+          "answer": "-12.3",
+          "feedback": "Subtracting a negative (-3.9) means adding +3.9, moving right toward 0."
+        },
+        {
+          "answer": "4.5",
+          "feedback": "-8.4 is farther from 0 than +3.9, so the result stays negative."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Three numbers add to 0. The first number is -4 3/8, and the second number is 1.25. What is the third number?",
+      "kind": "numeric",
+      "answer": "3.125",
+      "hints": [
+        "Convert -4 3/8 to a decimal (-4.375) or 1.25 to a fraction (1 2/8) so you can add the first two numbers.",
+        "After adding the first two numbers, take the additive inverse of their sum so all three numbers total 0."
+      ],
+      "solution": [
+        "Write both in eighths (or decimals): -4 3/8 = -4.375 and 1.25 = 1 2/8.",
+        "Sum of first two: -4.375 + 1.25 = -3.125 (or -3 1/8).",
+        "To make the total 0, the third number is the additive inverse: 3.125 (or 3 1/8, or 25/8)."
+      ],
+      "wrong": [
+        {
+          "answer": "-3.125",
+          "feedback": "That negative value is the sum of the first two numbers. To bring the total to 0, take its opposite."
+        },
+        {
+          "answer": "5.625",
+          "feedback": "Because -4 3/8 is negative and 1.25 is positive, combine them first before taking the opposite."
+        }
+      ]
+    }
+  ]
+}

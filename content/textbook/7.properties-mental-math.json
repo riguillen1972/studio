@@ -1,0 +1,673 @@
+{
+  "version": 2,
+  "skill_id": "7.properties-mental-math",
+  "title": "Mental Math with Properties",
+  "hook": "At the school store, 8 hoodies cost $99 each, and a volunteer wants to figure out 8 × 99 in her head before typing it in. Meanwhile, a track coach totals three relay splits: 3.7 + 5.8 + 6.3 seconds. How can number properties turn tricky products and sums into fast mental math?",
+  "goal": "I can use the commutative, associative, and distributive properties to reorder, group, and split numbers for mental math with integers, fractions, and decimals.",
+  "vocabulary": [
+    {
+      "term": "compatible numbers",
+      "meaning": "numbers that pair cleanly in your head to make 1, 10, 100, or 0",
+      "example": "25 and 4 are compatible because 25 × 4 = 100; 3.7 and 6.3 are compatible because 3.7 + 6.3 = 10."
+    },
+    {
+      "term": "commutative property",
+      "meaning": "changing the order of addends or factors does not change the sum or product",
+      "example": "3.7 + 5.8 + 6.3 = 3.7 + 6.3 + 5.8."
+    },
+    {
+      "term": "associative property",
+      "meaning": "changing how addends or factors are grouped with parentheses does not change the sum or product",
+      "example": "(25 × 3.8) × 4 = 3.8 × (25 × 4)."
+    },
+    {
+      "term": "distributive property",
+      "meaning": "multiplying a sum or difference by a number gives the same result as multiplying each part separately",
+      "example": "8 × 99 = 8 × (100 - 1) = 800 - 8 = 792."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Which property lets you rewrite (15 + (-8)) + 8 as 15 + (-8 + 8)?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Associative property of addition",
+        "Commutative property of addition",
+        "Distributive property",
+        "Additive identity property"
+      ],
+      "answer": "Associative property of addition",
+      "hints": [
+        "Check if the numbers 15, -8, and 8 stayed in the same order.",
+        "Only the parentheses moved to group -8 and 8 together."
+      ],
+      "solution": [
+        "The order of the three numbers stayed 15, -8, 8 while the parentheses shifted.",
+        "Changing grouping in addition is the associative property of addition."
+      ],
+      "wrong": [
+        {
+          "answer": "Commutative property of addition",
+          "feedback": "Commutative changes the order of numbers. Here the order stayed the same and only the grouping changed."
+        },
+        {
+          "answer": "Distributive property",
+          "feedback": "Distributive connects multiplication across addition or subtraction, while this expression is all addition."
+        },
+        {
+          "answer": "Additive identity property",
+          "feedback": "Additive identity adds 0 to leave a number unchanged."
+        }
+      ]
+    },
+    {
+      "question": "Find (-5/6) × (-6/5) × 14.",
+      "kind": "numeric",
+      "answer": "14",
+      "hints": [
+        "Look at the first two fractions: -5/6 and -6/5 are multiplicative inverses (reciprocals).",
+        "(-5/6) × (-6/5) = 1. Now multiply by 14."
+      ],
+      "solution": [
+        "(-5/6) × (-6/5) = 1 (multiplicative inverse property).",
+        "1 × 14 = 14 (multiplicative identity property)."
+      ],
+      "wrong": [
+        {
+          "answer": "-14",
+          "feedback": "Two negative factors (-5/6 and -6/5) multiply to positive 1, so the final answer stays positive."
+        },
+        {
+          "answer": "1",
+          "feedback": "After multiplying the reciprocals to get 1, remember to multiply by 14."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Hunting for compatible numbers (commutative and associative)",
+      "read": [
+        "Left-to-right arithmetic is often the slowest path. Because addition and multiplication follow the **commutative property** (any order) and the **associative property** (any grouping), you can scan an expression first and pair up **compatible numbers**.",
+        "Compatible numbers are partners that make **10**, **100**, **1**, or **0**: decimals whose tenths add to `1.0` (`3.7 + 6.3 = 10`), fractions with the same denominator (`-2/7 + (-5/7) = -1`), or factors like `25 × 4 = 100`, `12.5 × 8 = 100`, and `0.5 × 2 = 1`.",
+        "When negative signs appear, carry each number's sign along with it, then count the negative signs in multiplication to check the final sign."
+      ],
+      "model": {
+        "caption": "Compatible pairs to look for in mental math",
+        "rows": [
+          ["Friendly pair", "Mental result", "Where it helps"],
+          ["3.7 + 6.3", "10", "3.7 + 5.8 + 6.3 = 10 + 5.8 = 15.8"],
+          ["25 × 4", "100", "25 × 3.8 × 4 = 100 × 3.8 = 380"],
+          ["12.5 × 8", "100", "-8 × 0.7 × 12.5 = -100 × 0.7 = -70"],
+          ["-3/5 + (-2/5)", "-1", "-3/5 + 4.9 + (-2/5) = -1 + 4.9 = 3.9"]
+        ]
+      },
+      "example": {
+        "problem": "Compute 25 × (-3.8) × (-4) mentally.",
+        "steps": [
+          {
+            "say": "Reorder and group 25 and -4 together: (25 × (-4)) × (-3.8).",
+            "why": "Commutative and associative properties let you multiply compatible factors first."
+          },
+          {
+            "say": "Multiply the friendly pair: 25 × (-4) = -100.",
+            "why": "25 × 4 = 100, and positive × negative gives -100."
+          },
+          {
+            "say": "Multiply by -3.8: (-100) × (-3.8) = 380.",
+            "why": "Multiplying by 100 shifts the decimal point two places right, and two negatives make a positive."
+          }
+        ],
+        "answer": "380"
+      },
+      "try_it": [
+        {
+          "question": "Compute 3.7 + 5.8 + 6.3 mentally.",
+          "kind": "numeric",
+          "answer": "15.8",
+          "hints": [
+            "Look at 3.7 and 6.3: their decimal parts (.7 and .3) add to 1.0.",
+            "Reorder to compute (3.7 + 6.3) + 5.8."
+          ],
+          "solution": [
+            "Pair compatible decimals: (3.7 + 6.3) + 5.8.",
+            "3.7 + 6.3 = 10.",
+            "10 + 5.8 = 15.8."
+          ],
+          "wrong": [
+            {
+              "answer": "14.8",
+              "feedback": "Check 3.7 + 6.3: 0.7 + 0.3 carries 1 full unit, so 3.7 + 6.3 = 10, not 9."
+            },
+            {
+              "answer": "16.8",
+              "feedback": "3.7 + 6.3 = 10, then add 5.8 to get a sum under 16."
+            }
+          ]
+        },
+        {
+          "question": "Compute (-8) × 4.9 × 12.5 mentally.",
+          "kind": "numeric",
+          "answer": "-490",
+          "hints": [
+            "Pair -8 and 12.5 first (remember 8 × 12.5 = 100).",
+            "Multiply (-100) × 4.9."
+          ],
+          "solution": [
+            "Group compatible factors: ((-8) × 12.5) × 4.9.",
+            "-8 × 12.5 = -100.",
+            "-100 × 4.9 = -490."
+          ],
+          "wrong": [
+            {
+              "answer": "490",
+              "feedback": "Watch the negative sign on -8: one negative factor keeps the product negative."
+            },
+            {
+              "answer": "-49",
+              "feedback": "8 × 12.5 = 100 (not 10), so shift the decimal point two places right."
+            }
+          ]
+        }
+      ],
+      "mentor": "Scan the whole expression before you calculate. Friendly pairs like 25 × 4 or 3.7 + 6.3 love to jump straight to 100 or 10."
+    },
+    {
+      "heading": "Splitting numbers with the distributive property",
+      "read": [
+        "What if there are no compatible partners in sight, like `8 × 99`? Use the **distributive property** to split one factor into friendly parts near `10`, `100`, or a whole number.",
+        "Since `99` is `1` less than `100`, rewrite `8 × 99` as `8 × (100 - 1)`. Distribute `8` to **both** numbers inside: `8 × 100 - 8 × 1 = 800 - 8 = 792`.",
+        "The same trick handles numbers slightly above `100` (`103 = 100 + 3`), decimals (`10.5 = 10 + 0.5`, or `4.9 = 5 - 0.1`), and mixed numbers (`3 1/4 = 3 + 1/4`)."
+      ],
+      "model": {
+        "caption": "Splitting numbers for mental multiplication",
+        "rows": [
+          ["Harder factor", "Friendly split", "Distribute", "Result"],
+          ["99", "100 - 1", "8(100 - 1) = 800 - 8", "792"],
+          ["103", "100 + 3", "-5(100 + 3) = -500 + (-15)", "-515"],
+          ["4.9", "5 - 0.1", "6(5 - 0.1) = 30 - 0.6", "29.4"],
+          ["10.5", "10 + 0.5", "-6(10 + 0.5) = -60 + (-3)", "-63"]
+        ]
+      },
+      "example": {
+        "problem": "Compute 8 × 99 mentally using the distributive property.",
+        "steps": [
+          {
+            "say": "Rewrite 99 as a friendly difference: 99 = 100 - 1.",
+            "why": "Multiplying by 100 and 1 are fast mental steps."
+          },
+          {
+            "say": "Distribute 8 to both terms: 8 × (100 - 1) = (8 × 100) - (8 × 1).",
+            "why": "The outside factor multiplies every part inside the parentheses."
+          },
+          {
+            "say": "Multiply and subtract: 800 - 8 = 792.",
+            "why": "Check: 8 × 99 is 8 less than 800, which is 792."
+          }
+        ],
+        "answer": "792"
+      },
+      "try_it": [
+        {
+          "question": "Compute 7 × 98 mentally.",
+          "kind": "numeric",
+          "answer": "686",
+          "hints": [
+            "Write 98 as 100 - 2.",
+            "Multiply 7 × 100 and 7 × 2, then subtract."
+          ],
+          "solution": [
+            "7 × (100 - 2) = (7 × 100) - (7 × 2).",
+            "700 - 14 = 686."
+          ],
+          "wrong": [
+            {
+              "answer": "698",
+              "feedback": "Multiply BOTH parts inside (100 - 2) by 7: subtract 7 × 2, not 2."
+            },
+            {
+              "answer": "714",
+              "feedback": "98 is 2 LESS than 100, so subtract 14 from 700 instead of adding."
+            }
+          ]
+        },
+        {
+          "question": "Compute -6 × 10.5 mentally.",
+          "kind": "numeric",
+          "answer": "-63",
+          "hints": [
+            "Split 10.5 into 10 + 0.5.",
+            "Multiply (-6 × 10) + (-6 × 0.5)."
+          ],
+          "solution": [
+            "-6 × (10 + 0.5) = (-6 × 10) + (-6 × 0.5).",
+            "-60 + (-3) = -63."
+          ],
+          "wrong": [
+            {
+              "answer": "-57",
+              "feedback": "Both -6 × 10 (-60) and -6 × 0.5 (-3) are negative, so combine both negative amounts."
+            },
+            {
+              "answer": "63",
+              "feedback": "Negative × positive gives a negative product."
+            }
+          ]
+        }
+      ],
+      "mentor": "Numbers like 98, 99, and 103 are close neighbors of 100. Splitting around 100 turns big multiplication into two small pieces."
+    },
+    {
+      "heading": "Factoring out shared multipliers and handling subtraction",
+      "read": [
+        "The distributive property also runs **in reverse**. Whenever two products share the **same multiplier**, pull that multiplier outside parentheses and combine the other numbers first.",
+        "For example, `(-3.5) × 18 + (-3.5) × (-8)` becomes `-3.5 × (18 + (-8)) = -3.5 × 10 = -35`.",
+        "One more caution: remember that subtraction is **not** commutative (`10 - 4 ≠ 4 - 10`). Before rearranging an expression with minus signs—like `18.4 - 7.6 - 8.4`—rewrite each subtraction as **adding the opposite**: `18.4 + (-7.6) + (-8.4) = (18.4 + (-8.4)) + (-7.6) = 10 - 7.6 = 2.4`."
+      ],
+      "model": {
+        "caption": "Two more mental shortcuts",
+        "rows": [
+          ["Strategy", "Before", "After applying properties", "Result"],
+          ["Factor out a shared multiplier", "(-3.5)(18) + (-3.5)(-8)", "-3.5 × (18 + (-8)) = -3.5 × 10", "-35"],
+          ["Rewrite − as + opposite first", "18.4 - 7.6 - 8.4", "(18.4 + (-8.4)) + (-7.6) = 10 - 7.6", "2.4"]
+        ]
+      },
+      "example": {
+        "problem": "Compute (-3.5) × 18 + (-3.5) × (-8) mentally.",
+        "steps": [
+          {
+            "say": "Spot the shared factor: both products multiply by -3.5.",
+            "why": "Factoring out -3.5 saves you from multiplying by decimals twice."
+          },
+          {
+            "say": "Pull -3.5 outside parentheses: -3.5 × (18 + (-8)).",
+            "why": "Distributive property in reverse: ab + ac = a(b + c)."
+          },
+          {
+            "say": "Add inside first, then multiply: -3.5 × 10 = -35.",
+            "why": "18 + (-8) = 10, and multiplying -3.5 by 10 shifts the decimal point one place right."
+          }
+        ],
+        "answer": "-35"
+      },
+      "try_it": [
+        {
+          "question": "Compute 6.4 × 13 - 6.4 × 3 mentally.",
+          "kind": "numeric",
+          "answer": "64",
+          "hints": [
+            "Both products share the factor 6.4.",
+            "Factor out 6.4 to write 6.4 × (13 - 3)."
+          ],
+          "solution": [
+            "Factor out 6.4: 6.4 × (13 - 3).",
+            "13 - 3 = 10.",
+            "6.4 × 10 = 64."
+          ],
+          "wrong": [
+            {
+              "answer": "102.4",
+              "feedback": "Notice the minus sign between the products: subtract 13 - 3 inside the parentheses instead of adding."
+            },
+            {
+              "answer": "6.4",
+              "feedback": "13 - 3 = 10, so multiply 6.4 by 10."
+            }
+          ]
+        },
+        {
+          "question": "Compute 18.4 - 7.6 - 8.4 mentally.",
+          "kind": "numeric",
+          "answer": "2.4",
+          "hints": [
+            "Rewrite as 18.4 + (-7.6) + (-8.4) so you can move -8.4 next to 18.4.",
+            "Combine 18.4 + (-8.4) = 10 first, then add -7.6."
+          ],
+          "solution": [
+            "Rewrite subtraction: 18.4 + (-7.6) + (-8.4).",
+            "Group compatible numbers: (18.4 + (-8.4)) + (-7.6) = 10 - 7.6 = 2.4."
+          ],
+          "wrong": [
+            {
+              "answer": "19.2",
+              "feedback": "Both 7.6 and 8.4 are being subtracted, so keep the minus sign on 8.4 when moving it."
+            },
+            {
+              "answer": "3.4",
+              "feedback": "Check 10 - 7.6 carefully by subtracting 7.6 from 10.0."
+            }
+          ]
+        }
+      ],
+      "mentor": "Seeing a shared multiplier is like spotting a two-for-one shortcut—it turns two decimal multiplications into one clean step."
+    }
+  ],
+  "mistake": {
+    "problem": "Devon computed 9 × 98 mentally.",
+    "work": [
+      "9 × 98 = 9 × (100 - 2)",
+      "= 900 - 2",
+      "= 898"
+    ],
+    "what_went_wrong": "Devon multiplied 9 by 100, then forgot to multiply 9 by 2 when distributing across the parentheses.",
+    "fix": "Multiply 9 by BOTH numbers inside (100 - 2): (9 × 100) - (9 × 2) = 900 - 18 = 882."
+  },
+  "summary": [
+    "Use the commutative and associative properties to reorder and group compatible numbers that make 10, 100, 1, or 0.",
+    "Use the distributive property to split numbers near 10, 100, or whole numbers (like 99 = 100 - 1), or factor out a shared multiplier.",
+    "Rewrite subtraction as adding the opposite before rearranging terms so every negative sign stays attached to its number."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Compute 4.4 + (-9.7) + 5.6 mentally.",
+      "kind": "numeric",
+      "answer": "0.3",
+      "hints": [
+        "Pair 4.4 and 5.6 first.",
+        "4.4 + 5.6 = 10. Now add -9.7."
+      ],
+      "solution": [
+        "Group compatible decimals: (4.4 + 5.6) + (-9.7).",
+        "10 + (-9.7) = 0.3."
+      ],
+      "wrong": [
+        {
+          "answer": "-0.3",
+          "feedback": "10 is positive and larger in size than -9.7, so the result stays positive."
+        },
+        {
+          "answer": "19.7",
+          "feedback": "Watch the negative sign on -9.7: add -9.7 to 10 rather than +9.7."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Compute 25 × 4.6 × 4 mentally.",
+      "kind": "numeric",
+      "answer": "460",
+      "hints": [
+        "Reorder and group 25 and 4 together.",
+        "25 × 4 = 100, then multiply 100 × 4.6."
+      ],
+      "solution": [
+        "(25 × 4) × 4.6 = 100 × 4.6 = 460."
+      ],
+      "wrong": [
+        {
+          "answer": "46",
+          "feedback": "25 × 4 = 100 (not 10), so shift the decimal point in 4.6 two places right."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Compute 12 × 99 mentally.",
+      "kind": "numeric",
+      "answer": "1188",
+      "hints": [
+        "Split 99 as 100 - 1.",
+        "Distribute 12: (12 × 100) - (12 × 1)."
+      ],
+      "solution": [
+        "12 × (100 - 1) = 1,200 - 12 = 1,188."
+      ],
+      "wrong": [
+        {
+          "answer": "1199",
+          "feedback": "Remember to multiply 12 by 1 as well: subtract 12 from 1,200, not 1."
+        },
+        {
+          "answer": "1212",
+          "feedback": "99 is 100 - 1 (less than 100), so subtract 12 from 1,200 instead of adding."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Compute (-4.2) × 17 + (-4.2) × 3 mentally.",
+      "kind": "numeric",
+      "answer": "-84",
+      "hints": [
+        "Both products share the factor -4.2.",
+        "Factor out -4.2 to get -4.2 × (17 + 3)."
+      ],
+      "solution": [
+        "-4.2 × (17 + 3) = -4.2 × 20 = -84."
+      ],
+      "wrong": [
+        {
+          "answer": "84",
+          "feedback": "The shared factor -4.2 is negative, so -4.2 × 20 stays negative."
+        },
+        {
+          "answer": "-58.8",
+          "feedback": "Add 17 + 3 = 20 inside the parentheses rather than subtracting 17 - 3."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A science teacher buys 8 lab kits at $19.95 each. Use mental math with the distributive property (19.95 = 20 - 0.05) to find the total cost, in dollars.",
+      "kind": "numeric",
+      "answer": "159.6",
+      "hints": [
+        "Compute 8 × (20 - 0.05) = (8 × 20) - (8 × 0.05).",
+        "8 × 0.05 = 0.40. Subtract 0.40 from 160."
+      ],
+      "solution": [
+        "8 × (20 - 0.05) = 160 - 0.40 = 159.60 ($159.60)."
+      ],
+      "wrong": [
+        {
+          "answer": "159.95",
+          "feedback": "Multiply 0.05 by 8 (0.40), then subtract 0.40 from 160."
+        },
+        {
+          "answer": "160.4",
+          "feedback": "19.95 is 0.05 LESS than 20, so subtract 0.40 from 160."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A hiker logs four elevation changes: +12.7 m, -8.5 m, +7.3 m, and -1.5 m. What is the net elevation change, in meters?",
+      "kind": "numeric",
+      "answer": "10",
+      "hints": [
+        "Pair the positive numbers (12.7 + 7.3) and pair the negative numbers (-8.5 + (-1.5)).",
+        "Add the two friendly sums together."
+      ],
+      "solution": [
+        "(12.7 + 7.3) + (-8.5 + (-1.5)) = 20 + (-10) = 10 meters."
+      ],
+      "wrong": [
+        {
+          "answer": "-10",
+          "feedback": "Notice the total climb (+20) is larger in size than the combined drop, so the net change stays positive."
+        },
+        {
+          "answer": "30",
+          "feedback": "Remember -8.5 and -1.5 are downward drops, so combine them as negative changes rather than positive climbs."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A school cafeteria orders 12 crates of apples at $24.50 per crate and receives a $2.50 discount on each crate. What is the final total cost, in dollars?",
+      "kind": "numeric",
+      "answer": "264",
+      "hints": [
+        "Factor out 12: 12 × (24.50 - 2.50).",
+        "Subtract inside the parentheses first to get a whole number, then multiply by 12."
+      ],
+      "solution": [
+        "12 × 24.50 - 12 × 2.50 = 12 × (24.50 - 2.50).",
+        "24.50 - 2.50 = 22.",
+        "12 × 22 = 264 ($264)."
+      ],
+      "wrong": [
+        {
+          "answer": "294",
+          "feedback": "294 is the cost before the $2.50 discount per crate. Subtract $2.50 from $24.50 first."
+        },
+        {
+          "answer": "324",
+          "feedback": "A discount lowers the price per crate, so subtract 2.50 from 24.50 rather than adding."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which expression shows the distributive property applied correctly to compute 6 × 104 mentally?",
+      "kind": "multiple_choice",
+      "choices": [
+        "6 × 100 + 6 × 4",
+        "6 × 100 + 4",
+        "6 × 10 + 6 × 4",
+        "100 × 4 + 6"
+      ],
+      "answer": "6 × 100 + 6 × 4",
+      "hints": [
+        "Split 104 by place value: 100 + 4.",
+        "Multiply 6 by BOTH parts of 100 + 4."
+      ],
+      "solution": [
+        "104 = 100 + 4.",
+        "Distributing 6 gives 6 × 100 + 6 × 4 = 600 + 24 = 624."
+      ],
+      "wrong": [
+        {
+          "answer": "6 × 100 + 4",
+          "feedback": "6 must multiply the 4 as well as the 100."
+        },
+        {
+          "answer": "6 × 10 + 6 × 4",
+          "feedback": "The 1 in 104 stands for 100, not 10."
+        },
+        {
+          "answer": "100 × 4 + 6",
+          "feedback": "Keep 6 as the outside multiplier for both 100 and 4."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "To compute 15.6 - 7.8 - 5.6 mentally, Carlos wrote 15.6 - 5.6 - 7.8. Why is his reorder valid?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Subtracting 5.6 is the same as adding -5.6, and addition can be reordered.",
+        "Subtraction is always commutative, so numbers can swap around minus signs freely.",
+        "Decimals ignore minus signs when you reorder them.",
+        "He used the distributive property to pull out 5.6."
+      ],
+      "answer": "Subtracting 5.6 is the same as adding -5.6, and addition can be reordered.",
+      "hints": [
+        "Check whether subtraction itself is commutative (is 10 - 3 equal to 3 - 10?).",
+        "Think about rewriting 15.6 - 7.8 - 5.6 as 15.6 + (-7.8) + (-5.6)."
+      ],
+      "solution": [
+        "15.6 - 7.8 - 5.6 = 15.6 + (-7.8) + (-5.6).",
+        "Once written as addition, the commutative property lets you swap (-7.8) and (-5.6), giving 15.6 - 5.6 - 7.8."
+      ],
+      "wrong": [
+        {
+          "answer": "Subtraction is always commutative, so numbers can swap around minus signs freely.",
+          "feedback": "Subtraction is NOT commutative (for example, 10 - 3 ≠ 3 - 10). You must carry the minus sign with the number as adding the opposite."
+        },
+        {
+          "answer": "Decimals ignore minus signs when you reorder them.",
+          "feedback": "Signs always matter! Carlos kept the minus sign attached to 5.6."
+        },
+        {
+          "answer": "He used the distributive property to pull out 5.6.",
+          "feedback": "No multiplication is involved here—he reordered addends after treating subtraction as adding opposites."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Which property is shown by (-3/8) × (-8/3) = 1?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Multiplicative inverse property",
+        "Multiplicative identity property",
+        "Additive inverse property",
+        "Associative property of multiplication"
+      ],
+      "answer": "Multiplicative inverse property",
+      "hints": [
+        "Notice the two fractions are reciprocals and their product is 1.",
+        "Identities keep a number the same; inverses cancel back to 0 or 1."
+      ],
+      "solution": [
+        "Multiplying a nonzero number by its reciprocal equals 1, which is the multiplicative inverse property."
+      ],
+      "wrong": [
+        {
+          "answer": "Multiplicative identity property",
+          "feedback": "Multiplicative identity multiplies a number by 1 to leave it unchanged, like (-3/8) × 1 = -3/8."
+        },
+        {
+          "answer": "Additive inverse property",
+          "feedback": "Additive inverse adds opposites to get 0, whereas here reciprocals multiply to get 1."
+        },
+        {
+          "answer": "Associative property of multiplication",
+          "feedback": "Associative changes parentheses across three factors."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Use the distributive property to evaluate -12 × (3 1/4).",
+      "kind": "numeric",
+      "answer": "-39",
+      "hints": [
+        "Split 3 1/4 into 3 + 1/4.",
+        "Compute (-12 × 3) + (-12 × 1/4)."
+      ],
+      "solution": [
+        "-12 × (3 + 1/4) = (-12 × 3) + (-12 × 1/4).",
+        "-36 + (-3) = -39."
+      ],
+      "wrong": [
+        {
+          "answer": "-33",
+          "feedback": "Both -36 and -3 are negative, so combine them rather than subtracting."
+        },
+        {
+          "answer": "39",
+          "feedback": "Negative × positive gives a negative product."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Compute 12.5 × (-19) × 0.8 + (-3.25) × 14 + (-3.25) × (-4) mentally.",
+      "kind": "numeric",
+      "answer": "-222.5",
+      "hints": [
+        "In the first product, pair 12.5 × 0.8 first (remember 125 × 8 = 1,000).",
+        "In the last two products, factor out -3.25: -3.25 × (14 + (-4))."
+      ],
+      "solution": [
+        "First group: (12.5 × 0.8) × (-19) = 10 × (-19) = -190.",
+        "Second group: -3.25 × (14 + (-4)) = -3.25 × 10 = -32.5.",
+        "Add both parts: -190 + (-32.5) = -222.5."
+      ],
+      "wrong": [
+        {
+          "answer": "-157.5",
+          "feedback": "Both parts (-190 and -32.5) are negative, so combine both negative totals."
+        },
+        {
+          "answer": "-248.5",
+          "feedback": "Check the sign of -4 in the second group: 14 + (-4) = 10, not 18."
+        }
+      ]
+    }
+  ]
+}

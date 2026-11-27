@@ -1,0 +1,652 @@
+{
+  "version": 2,
+  "skill_id": "7.change-per-unit",
+  "title": "Average Change Over Time",
+  "hook": "At noon, a mountain weather station reads 14°F. By 6:00 p.m., a cold front has dropped the temperature to -4°F—a total change of -18°F in 6 hours. How fast is the temperature falling per hour, and if that pace keeps up, what will the thermometer read at 9:00 p.m.?",
+  "goal": "I can find the average rate of change per hour, day, or step from positive and negative quantities, and use it to predict earlier or later values.",
+  "vocabulary": [
+    {
+      "term": "total change",
+      "meaning": "the overall increase or decrease from start to finish, found by End value − Start value",
+      "example": "Going from 14°F to -4°F is a total change of -4 - 14 = -18°F."
+    },
+    {
+      "term": "average change per unit",
+      "meaning": "the total change divided by the number of hours, days, or steps (also called average rate of change)",
+      "example": "-18°F ÷ 6 hours = -3°F per hour."
+    },
+    {
+      "term": "predict",
+      "meaning": "to estimate a future or earlier value by assuming the average rate of change continues",
+      "example": "From -4°F, changing by -3°F per hour for 3 more hours predicts -4 + (-9) = -13°F."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find (-54) ÷ 6.",
+      "kind": "numeric",
+      "answer": "-9",
+      "hints": [
+        "Divide 54 by 6 first.",
+        "Different signs (negative ÷ positive) give a negative quotient."
+      ],
+      "solution": [
+        "54 ÷ 6 = 9.",
+        "Negative ÷ positive gives -9."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "Check the signs: dividing a negative number by a positive number gives a negative answer."
+        },
+        {
+          "answer": "-48",
+          "feedback": "Divide 54 by 6 rather than adding 6."
+        }
+      ]
+    },
+    {
+      "question": "Find 12 + (-3.5) × 4.",
+      "kind": "numeric",
+      "answer": "-2",
+      "hints": [
+        "Follow order of operations: multiply (-3.5) × 4 first.",
+        "(-3.5) × 4 = -14. Now add 12 + (-14)."
+      ],
+      "solution": [
+        "Multiply first: (-3.5) × 4 = -14.",
+        "Then add: 12 + (-14) = -2."
+      ],
+      "wrong": [
+        {
+          "answer": "34",
+          "feedback": "Multiply (-3.5) × 4 before adding 12, and keep the negative sign on -14."
+        },
+        {
+          "answer": "26",
+          "feedback": "Check the sign of (-3.5) × 4: negative × positive = -14, so add 12 + (-14)."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Finding average change per hour, day, or step",
+      "read": [
+        "When a quantity rises or falls over several hours, days, or steps, you can find its **average change per unit** by dividing: **Average rate = Total change ÷ Number of units**.",
+        "If the problem already gives the total change (like 'the temperature fell 18°F in 6 hours'), write the drop as a negative number and divide: `-18 ÷ 6 = -3°F` per hour.",
+        "If the problem gives a starting value and an ending value, find the total change first using **End − Start**, then divide by the elapsed time or steps."
+      ],
+      "model": {
+        "caption": "Finding average change per unit",
+        "rows": [
+          ["Situation", "Total change (End − Start)", "Units", "Average change per unit"],
+          ["Temperature fell 18°F in 6 hours", "-18°F", "6 hours", "-18 ÷ 6 = -3°F per hour"],
+          ["Pond went from 11°C to -1°C in 6 hours", "-1 - 11 = -12°C", "6 hours", "-12 ÷ 6 = -2°C per hour"],
+          ["Submersible rose from -32 m to -8 m in 4 minutes", "-8 - (-32) = +24 m", "4 minutes", "24 ÷ 4 = 6 m per minute"]
+        ]
+      },
+      "example": {
+        "problem": "From 8:00 a.m. to 2:00 p.m. (6 hours), a mountain creek's temperature dropped from 11°C to -1°C. What was the average temperature change per hour?",
+        "steps": [
+          {
+            "say": "Find the total change using End − Start: -1 - 11 = -12°C.",
+            "why": "Dropping from 11 down to 0 is 11 degrees, plus 1 more degree below 0 makes -12°C."
+          },
+          {
+            "say": "Divide the total change by the number of hours: (-12) ÷ 6 = -2.",
+            "why": "Average change per hour splits the total change equally across all 6 hours."
+          },
+          {
+            "say": "Check by multiplying back: 11 + (-2 × 6) = 11 + (-12) = -1°C. ✓",
+            "why": "Starting at 11°C and dropping 2°C each hour for 6 hours lands on -1°C."
+          }
+        ],
+        "answer": "-2°C per hour"
+      },
+      "try_it": [
+        {
+          "question": "A hiker's elevation changes by -420 meters over 4 hours. What is the average elevation change per hour, in meters?",
+          "kind": "numeric",
+          "answer": "-105",
+          "hints": [
+            "Divide the total change (-420) by the number of hours (4).",
+            "Negative ÷ positive gives a negative rate."
+          ],
+          "solution": [
+            "(-420) ÷ 4 = -105 meters per hour."
+          ],
+          "wrong": [
+            {
+              "answer": "105",
+              "feedback": "The elevation change (-420 meters) is negative, so include the negative sign in the hourly rate."
+            },
+            {
+              "answer": "-1680",
+              "feedback": "Divide the total change by 4 hours rather than multiplying."
+            }
+          ]
+        },
+        {
+          "question": "On Monday morning, Jonah's bus card has $22.50. Four days later, on Friday morning, it has $8.50. What is the average change per day, in dollars?",
+          "kind": "numeric",
+          "answer": "-3.5",
+          "hints": [
+            "First find the total change (End − Start): 8.50 - 22.50.",
+            "Divide that negative total change by 4 days."
+          ],
+          "solution": [
+            "Total change = 8.50 - 22.50 = -14 dollars.",
+            "Average change per day = (-14) ÷ 4 = -3.5 (-$3.50 per day)."
+          ],
+          "wrong": [
+            {
+              "answer": "3.5",
+              "feedback": "Because the card balance went down from $22.50 to $8.50, the daily change is negative."
+            },
+            {
+              "answer": "-14",
+              "feedback": "-14 is the total 4-day change. Divide by 4 to find the change per day."
+            }
+          ]
+        }
+      ],
+      "mentor": "Always check the direction first: if a value goes down over time, the average change per unit must be negative."
+    },
+    {
+      "heading": "Predicting later values from a starting value",
+      "read": [
+        "Once you know the **average change per unit**, you can predict what a value will be at a later time. Multiply the rate by the number of units forward, then **add that change to your starting value**: `Predicted value = Start + (Rate × Time)`.",
+        "For example, if the temperature is `14°F` at noon and changes by `-3°F` per hour, after `9` hours the total change is `-3 × 9 = -27°F`, so the predicted temperature is `14 + (-27) = -13°F`.",
+        "Watch out for one classic slip: `Rate × Time` tells you **how much it changed**, not the final reading. Always add that change to the starting value."
+      ],
+      "model": {
+        "caption": "Predicting temperature starting at 14°F with a rate of -3°F per hour",
+        "rows": [
+          ["Hours after noon", "Change from noon (Rate × Time)", "Predicted temperature (14 + Change)"],
+          ["0 (noon)", "-3 × 0 = 0°F", "14 + 0 = 14°F"],
+          ["3 (3:00 p.m.)", "-3 × 3 = -9°F", "14 + (-9) = 5°F"],
+          ["6 (6:00 p.m.)", "-3 × 6 = -18°F", "14 + (-18) = -4°F"],
+          ["9 (9:00 p.m.)", "-3 × 9 = -27°F", "14 + (-27) = -13°F"]
+        ]
+      },
+      "example": {
+        "problem": "A snowpack is 38 cm deep. It melts at an average rate of -2.4 cm per day. How deep will it be after 5 days?",
+        "steps": [
+          {
+            "say": "Multiply the daily rate by the number of days: (-2.4) × 5 = -12 cm.",
+            "why": "Find the total change over 5 days."
+          },
+          {
+            "say": "Add the change to the starting depth: 38 + (-12) = 26 cm.",
+            "why": "Start + Change gives the predicted depth after 5 days."
+          }
+        ],
+        "answer": "26 cm"
+      },
+      "try_it": [
+        {
+          "question": "A freezer starts at 16°C and cools at an average rate of -4.5°C per hour. What will its temperature be after 5 hours, in °C?",
+          "kind": "numeric",
+          "answer": "-6.5",
+          "hints": [
+            "Multiply the hourly rate (-4.5) by 5 hours to find the total change.",
+            "Add that negative change to the starting temperature of 16°C."
+          ],
+          "solution": [
+            "Total change = (-4.5) × 5 = -22.5°C.",
+            "Temperature after 5 hours = 16 + (-22.5) = -6.5°C."
+          ],
+          "wrong": [
+            {
+              "answer": "-22.5",
+              "feedback": "-22.5°C is the total drop. Add it to the starting temperature of 16°C."
+            },
+            {
+              "answer": "6.5",
+              "feedback": "Dropping 22.5°C from 16°C goes past 0°C into negative territory."
+            }
+          ]
+        },
+        {
+          "question": "A weather balloon is at 1,200 meters and descends at -45 meters per minute. After 12 minutes, what is its altitude, in meters?",
+          "kind": "numeric",
+          "answer": "660",
+          "hints": [
+            "Find the total change first: (-45) × 12.",
+            "Add -540 to the starting altitude of 1,200 meters."
+          ],
+          "solution": [
+            "Total change = (-45) × 12 = -540 meters.",
+            "Altitude after 12 minutes = 1,200 + (-540) = 660 meters."
+          ],
+          "wrong": [
+            {
+              "answer": "-540",
+              "feedback": "-540 is how far the balloon dropped, not its altitude. Add -540 to 1,200."
+            },
+            {
+              "answer": "1740",
+              "feedback": "Descending lowers the altitude, so subtract 540 from 1,200 instead of adding."
+            }
+          ]
+        }
+      ],
+      "mentor": "Multiplying rate by time gives you the CHANGE, not the final value—remember to add it to where you started!"
+    },
+    {
+      "heading": "Two-step predictions and finding how long a change takes",
+      "read": [
+        "Most real problems combine Parts 1 and 2: first you calculate the **average rate per unit** from two measurements, then you use that rate to **predict a later value**—or find how many more hours, days, or steps it takes to reach a target.",
+        "To find **how many units of time** a change takes, divide the needed change by the rate: **Time = Needed change ÷ Rate**.",
+        "Keep every unit clear as you go: write down the rate with its units (like `°F per hour` or `inches per hour`) before doing the second step."
+      ],
+      "model": {
+        "caption": "Three-step plan for prediction problems",
+        "rows": [
+          ["Step", "Formula", "Example: 10°F at 1 p.m. → -6°F at 5 p.m."],
+          ["1. Find total change", "End − Start", "-6 - 10 = -16°F"],
+          ["2. Find average rate", "Total change ÷ Time", "-16 ÷ 4 hours = -4°F per hour"],
+          ["3. Predict 2.5 hrs later", "Latest + (Rate × Extra time)", "-6 + (-4 × 2.5) = -6 + (-10) = -16°F"]
+        ]
+      },
+      "example": {
+        "problem": "At 1:00 p.m., a mountain pass is 10°F. By 5:00 p.m. (4 hours later), it is -6°F. If this steady rate continues, what temperature do you predict at 7:30 p.m.?",
+        "steps": [
+          {
+            "say": "Find the total change over the 4 hours: -6 - 10 = -16°F.",
+            "why": "Subtract Start (10) from End (-6)."
+          },
+          {
+            "say": "Find the average hourly rate: (-16) ÷ 4 = -4°F per hour.",
+            "why": "Divide total change by 4 hours."
+          },
+          {
+            "say": "Find the elapsed time from 5:00 p.m. to 7:30 p.m.: 2.5 hours. Multiply by the rate: (-4) × 2.5 = -10°F.",
+            "why": "Calculate how much more the temperature drops after 5:00 p.m."
+          },
+          {
+            "say": "Add to the 5:00 p.m. temperature: -6 + (-10) = -16°F.",
+            "why": "You can also check from 1:00 p.m. (6.5 hours total): 10 + (-4 × 6.5) = 10 - 26 = -16°F. ✓"
+          }
+        ],
+        "answer": "-16°F"
+      },
+      "try_it": [
+        {
+          "question": "A backyard pool starts at 48 inches deep. After 3 hours of draining at a steady rate, it is 40.5 inches deep. How deep will it be after 5 hours total, in inches?",
+          "kind": "numeric",
+          "answer": "35.5",
+          "hints": [
+            "Find the hourly rate first: (40.5 - 48) ÷ 3.",
+            "The rate is -2.5 inches per hour. Multiply -2.5 × 5 and add to 48 (or -2.5 × 2 and add to 40.5)."
+          ],
+          "solution": [
+            "Total change in 3 hours = 40.5 - 48 = -7.5 inches.",
+            "Hourly rate = (-7.5) ÷ 3 = -2.5 inches per hour.",
+            "Depth after 5 hours = 48 + (-2.5 × 5) = 48 - 12.5 = 35.5 inches."
+          ],
+          "wrong": [
+            {
+              "answer": "-12.5",
+              "feedback": "-12.5 is the total drop in 5 hours. Add -12.5 to the starting depth of 48 inches."
+            },
+            {
+              "answer": "28",
+              "feedback": "Notice the question asks for 5 hours TOTAL (2 more hours after 40.5 inches), not 5 additional hours after 40.5."
+            }
+          ]
+        },
+        {
+          "question": "A jacket's clearance price drops from $34.00 to $26.50 over 5 days at a steady daily rate. At that same rate, how many MORE days from $26.50 would it take to reach $22.00?",
+          "kind": "numeric",
+          "answer": "3",
+          "hints": [
+            "Find the daily rate first: (26.50 - 34.00) ÷ 5.",
+            "Find the remaining change needed (22.00 - 26.50 = -4.50) and divide by the daily rate (-1.50)."
+          ],
+          "solution": [
+            "Daily rate = (26.50 - 34.00) ÷ 5 = (-7.50) ÷ 5 = -1.50 (-$1.50 per day).",
+            "Remaining change = 22.00 - 26.50 = -4.50.",
+            "Days needed = (-4.50) ÷ (-1.50) = 3 more days."
+          ],
+          "wrong": [
+            {
+              "answer": "8",
+              "feedback": "8 is the total days from $34.00. The question asks how many MORE days starting from $26.50."
+            },
+            {
+              "answer": "-3",
+              "feedback": "Dividing two negatives (-4.50 ÷ -1.50) gives a positive number of days."
+            }
+          ]
+        }
+      ],
+      "mentor": "Breaking a prediction problem into 'find the rate first, then project forward' keeps multi-step decimal problems organized."
+    }
+  ],
+  "mistake": {
+    "problem": "A rain barrel starts at 36 inches deep and drops 15 inches over 5 hours. Mia tried to predict the depth after 8 hours.",
+    "work": [
+      "Average rate = -15 ÷ 5 = -3 inches per hour",
+      "After 8 hours: -3 × 8 = -24 inches"
+    ],
+    "what_went_wrong": "Mia calculated only the total CHANGE (-24 inches) over 8 hours and forgot to add it to the starting depth of 36 inches. A negative depth inside the barrel also doesn't fit the situation.",
+    "fix": "Add the total change to the starting depth: 36 + (-24) = 12 inches."
+  },
+  "summary": [
+    "Find average change per unit by dividing total change (End − Start) by the number of hours, days, or steps; drops and losses give negative rates.",
+    "Predict a later value with Start + (Rate × Time), remembering that Rate × Time is only the change, not the final value.",
+    "To find how many units of time a needed change takes, divide the needed change by the average rate."
+  ],
+  "faith": "Measuring how fast resources change helps us plan wisely—as Jesus reminded listeners to count the cost before starting a project (Luke 14:28).",
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "The temperature falls 24°F evenly over 8 hours. What is the average change per hour, in °F?",
+      "kind": "numeric",
+      "answer": "-3",
+      "hints": [
+        "Falling 24°F is a change of -24°F.",
+        "Divide -24 by 8 hours."
+      ],
+      "solution": [
+        "(-24) ÷ 8 = -3°F per hour."
+      ],
+      "wrong": [
+        {
+          "answer": "3",
+          "feedback": "Because the temperature fell, include a negative sign in the rate of change."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A diver rises from -28 meters to -7 meters in 3.5 minutes. What is the average change per minute, in meters?",
+      "kind": "numeric",
+      "answer": "6",
+      "hints": [
+        "First find the total change (End − Start): -7 - (-28).",
+        "Divide +21 by 3.5 minutes."
+      ],
+      "solution": [
+        "Total change = -7 - (-28) = -7 + 28 = 21 meters.",
+        "Average rate = 21 ÷ 3.5 = 6 meters per minute."
+      ],
+      "wrong": [
+        {
+          "answer": "-6",
+          "feedback": "Moving from -28 meters up to -7 meters is rising, so the rate is positive."
+        },
+        {
+          "answer": "-10",
+          "feedback": "Check End − Start: -7 - (-28) = -7 + 28 = +21, not -35."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A gaming score starts at 450 points and changes by -35 points per round for 6 rounds. What is the score after 6 rounds?",
+      "kind": "numeric",
+      "answer": "240",
+      "hints": [
+        "Multiply (-35) × 6 to find the total point change.",
+        "Add that negative change to 450."
+      ],
+      "solution": [
+        "Total change = (-35) × 6 = -210 points.",
+        "Score after 6 rounds = 450 + (-210) = 240 points."
+      ],
+      "wrong": [
+        {
+          "answer": "-210",
+          "feedback": "-210 is the total change over 6 rounds. Add it to the starting score of 450."
+        },
+        {
+          "answer": "660",
+          "feedback": "Each round changes the score by -35, so subtract 210 from 450 instead of adding."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A glacier changes thickness at an average rate of -3/4 meter per year. What is the total change in thickness after 9 years, in meters?",
+      "kind": "numeric",
+      "answer": "-6.75",
+      "hints": [
+        "Multiply the yearly rate (-3/4) by 9 years.",
+        "Multiply (-3 × 9)/4, then write the result as a negative fraction or decimal."
+      ],
+      "solution": [
+        "(-3/4) × 9 = -27/4 = -6 3/4 = -6.75 meters."
+      ],
+      "wrong": [
+        {
+          "answer": "6.75",
+          "feedback": "Keep the negative sign because the rate of change is negative."
+        },
+        {
+          "answer": "-12",
+          "feedback": "Multiply (-3/4) × 9 rather than dividing 9 by 3/4."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "At 6:00 a.m., the temperature is -5°C. By 10:00 a.m., it rises to 7°C. What was the average temperature change per hour, in °C?",
+      "kind": "numeric",
+      "answer": "3",
+      "hints": [
+        "Count the hours from 6:00 a.m. to 10:00 a.m. (4 hours) and find Total change = 7 - (-5).",
+        "Divide 12°C by 4 hours."
+      ],
+      "solution": [
+        "Total change = 7 - (-5) = 7 + 5 = 12°C.",
+        "Elapsed time = 4 hours.",
+        "Average change = 12 ÷ 4 = 3°C per hour."
+      ],
+      "wrong": [
+        {
+          "answer": "0.5",
+          "feedback": "Check Total change: 7 - (-5) = 12°C, not 7 - 5 = 2°C."
+        },
+        {
+          "answer": "-3",
+          "feedback": "The temperature rose from -5°C to +7°C, so the rate is positive."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A hot-water tank holds 50 gallons and leaks at a steady rate. After 4 hours, 43 gallons remain. At that same rate, how many gallons remain after 10 hours total?",
+      "kind": "numeric",
+      "answer": "32.5",
+      "hints": [
+        "Find the hourly rate first: (43 - 50) ÷ 4 = -7 ÷ 4 = -1.75 gallons per hour.",
+        "Multiply -1.75 × 10 hours and add to the starting 50 gallons."
+      ],
+      "solution": [
+        "Change in 4 hours = 43 - 50 = -7 gallons.",
+        "Hourly rate = (-7) ÷ 4 = -1.75 gallons per hour.",
+        "After 10 hours: 50 + (-1.75 × 10) = 50 - 17.5 = 32.5 gallons."
+      ],
+      "wrong": [
+        {
+          "answer": "-17.5",
+          "feedback": "-17.5 is how many gallons leaked in 10 hours. Add it to the starting 50 gallons."
+        },
+        {
+          "answer": "25.5",
+          "feedback": "The question asks for 10 hours TOTAL from 50 gallons, not 10 more hours after 43 gallons."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A model glider launches from a cliff 240 feet above a canyon floor and changes altitude by -16.5 feet per second. How many seconds after launch is it at 75 feet above the canyon floor?",
+      "kind": "numeric",
+      "answer": "10",
+      "hints": [
+        "First find the needed altitude change (End − Start): 75 - 240.",
+        "Divide that negative change (-165) by the rate (-16.5 feet per second)."
+      ],
+      "solution": [
+        "Needed change = 75 - 240 = -165 feet.",
+        "Time = (-165) ÷ (-16.5) = 10 seconds."
+      ],
+      "wrong": [
+        {
+          "answer": "-10",
+          "feedback": "Time forward is positive: negative ÷ negative gives a positive number of seconds."
+        },
+        {
+          "answer": "14.5",
+          "feedback": "The glider drops from 240 feet to 75 feet (a drop of 165 feet), not all the way to 0 feet."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "A town's reservoir dropped from 18 feet to 12 feet over 4 weeks. Which expression predicts the water level 3 weeks AFTER it reached 12 feet if the same rate continues?",
+      "kind": "multiple_choice",
+      "choices": [
+        "12 + ((-6 ÷ 4) × 3)",
+        "12 + ((6 ÷ 4) × 3)",
+        "(-6 ÷ 4) × 3",
+        "12 + ((-4 ÷ 6) × 3)"
+      ],
+      "answer": "12 + ((-6 ÷ 4) × 3)",
+      "hints": [
+        "Find the weekly rate: (12 - 18) ÷ 4 = -6 ÷ 4.",
+        "Multiply that negative rate by 3 weeks, then add it to 12 feet."
+      ],
+      "solution": [
+        "Total change = 12 - 18 = -6 feet over 4 weeks, so the rate is -6 ÷ 4 feet per week.",
+        "Three weeks later from 12 feet gives 12 + ((-6 ÷ 4) × 3) = 7.5 feet."
+      ],
+      "wrong": [
+        {
+          "answer": "12 + ((6 ÷ 4) × 3)",
+          "feedback": "Because the reservoir dropped, the rate (-6 ÷ 4) must be negative, not positive."
+        },
+        {
+          "answer": "(-6 ÷ 4) × 3",
+          "feedback": "That gives only the 3-week drop; you must add it to the 12-foot level."
+        },
+        {
+          "answer": "12 + ((-4 ÷ 6) × 3)",
+          "feedback": "Rate is change divided by weeks (-6 ÷ 4), not weeks divided by change (-4 ÷ 6)."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Over 5 days, a student's lunch account balance changed at an average rate of -$4.20 per day. Which statement MUST be true?",
+      "kind": "multiple_choice",
+      "choices": [
+        "The total change over the 5 days was -$21.00.",
+        "The student spent exactly $4.20 every single day.",
+        "The starting balance on day 1 was $21.00.",
+        "The balance increased by $4.20 each day."
+      ],
+      "answer": "The total change over the 5 days was -$21.00.",
+      "hints": [
+        "Multiply the 5-day average rate (-$4.20 per day) by 5 days.",
+        "Remember an average rate doesn't tell you the starting balance or whether every day was identical."
+      ],
+      "solution": [
+        "Total change = Average rate × Days = (-4.20) × 5 = -$21.00.",
+        "An average doesn't mean each day was identical, and it doesn't tell us the starting balance."
+      ],
+      "wrong": [
+        {
+          "answer": "The student spent exactly $4.20 every single day.",
+          "feedback": "An average of -$4.20 per day can come from different amounts on different days that total -$21.00."
+        },
+        {
+          "answer": "The starting balance on day 1 was $21.00.",
+          "feedback": "Knowing the average change tells us how much the balance shifted, not where it started."
+        },
+        {
+          "answer": "The balance increased by $4.20 each day.",
+          "feedback": "A negative rate (-$4.20) means the balance decreased on average."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-5/6) × (-18/25).",
+      "kind": "numeric",
+      "answer": "3/5",
+      "hints": [
+        "Two negative fractions (same signs) multiply to a positive product.",
+        "Cross-simplify 5 with 25 and 6 with 18 before multiplying."
+      ],
+      "solution": [
+        "Same signs give a positive product.",
+        "Cross-simplify: 18/6 = 3/1 and 5/25 = 1/5.",
+        "(1 × 3) / (1 × 5) = 3/5."
+      ],
+      "wrong": [
+        {
+          "answer": "-3/5",
+          "feedback": "Negative × negative (same signs) gives a positive product."
+        },
+        {
+          "answer": "5/3",
+          "feedback": "Keep 3 in the numerator and 5 in the denominator—do not flip when multiplying."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-7.2) ÷ 0.8.",
+      "kind": "numeric",
+      "answer": "-9",
+      "hints": [
+        "Different signs (negative ÷ positive) give a negative quotient.",
+        "Multiply both numbers by 10 to divide 72 by 8."
+      ],
+      "solution": [
+        "Different signs give a negative quotient.",
+        "7.2 ÷ 0.8 = 72 ÷ 8 = 9, so (-7.2) ÷ 0.8 = -9."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "Negative divided by positive gives a negative quotient."
+        },
+        {
+          "answer": "-0.9",
+          "feedback": "Shift the decimal point one place right in BOTH numbers: -72 ÷ 8."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "At 2:00 p.m., a mountain trail reads 11.4°F. By 6:00 p.m., it has dropped to -3.6°F. Assuming the temperature changed at the same steady hourly rate before 2:00 p.m. as well, what was the temperature at 11:00 a.m., in °F?",
+      "kind": "numeric",
+      "answer": "22.65",
+      "hints": [
+        "First find the hourly rate from 2:00 p.m. to 6:00 p.m. (4 hours): (-3.6 - 11.4) ÷ 4.",
+        "11:00 a.m. is 3 hours BEFORE 2:00 p.m., so add 3 × 3.75°F back onto 11.4°F."
+      ],
+      "solution": [
+        "Total change from 2:00 p.m. to 6:00 p.m. = -3.6 - 11.4 = -15°F.",
+        "Hourly rate = (-15) ÷ 4 = -3.75°F per hour (dropping 3.75°F each hour).",
+        "Three hours earlier (at 11:00 a.m.), it was warmer by 3 × 3.75 = 11.25°F.",
+        "11:00 a.m. temperature = 11.4 + 11.25 = 22.65°F."
+      ],
+      "wrong": [
+        {
+          "answer": "0.15",
+          "feedback": "11:00 a.m. is BEFORE 2:00 p.m., when the trail was warmer rather than colder."
+        },
+        {
+          "answer": "-3.75",
+          "feedback": "-3.75°F per hour is the hourly rate, not the 11:00 a.m. temperature."
+        }
+      ]
+    }
+  ]
+}
