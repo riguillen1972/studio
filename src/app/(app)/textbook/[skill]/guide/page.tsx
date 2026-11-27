@@ -22,7 +22,9 @@ export default function TeacherGuidePage({ params }: { params: Promise<{ skill: 
   const { skill: skillId } = use(params);
   const { role } = useAppState();
   const skill = SKILLS_BY_ID[skillId];
-  const place = lessonPlace(skillId);
+  // Computed once per lesson: lessonPlace returns a new object each call, and a new object in
+  // load's dependencies would reload the lesson on every render (the guide flickered nonstop)
+  const place = useMemo(() => lessonPlace(skillId), [skillId]);
   const isBlocked = Boolean(role && role !== "teacher");
 
   const [lesson, setLesson] = useState<TextbookLesson | null>(null);
