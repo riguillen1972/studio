@@ -1,0 +1,369 @@
+{
+  "version": 2,
+  "skill_id": "6.budgets",
+  "title": "Budgets and Money Planning",
+  "hook": "You have a $40.00 budget for an arcade afternoon with your cousin. Two game wristbands cost $12.50 each, and prize tokens cost $0.35 each. How many tokens can you buy without going over your budget—and if you're saving up for something bigger, how do you know the exact week you'll reach your goal?",
+  "goal": "I can plan a budget, compare savings or spending plans, and use decimals and rounding to find how many items I can afford or how many weeks it takes to reach a goal.",
+  "vocabulary": [
+    { "term": "budget", "meaning": "a plan for how much money you have and how you will spend or save it", "example": "With a $35.00 budget, your total cost must be $35.00 or less." },
+    { "term": "remaining balance", "meaning": "the money left after you spend some, or the amount still needed to reach a goal", "example": "If a jacket costs $52.00 and you saved $34.50, the remaining balance is $17.50." },
+    { "term": "savings plan", "meaning": "a schedule for setting aside money each week or month toward a goal", "example": "Starting with $15.00 and adding $8.50 every week is a savings plan." },
+    { "term": "round up or round down", "meaning": "choosing the next whole number up or down so a real-life answer makes sense", "example": "Round down to whole items you can afford; round up to whole weeks needed to reach a goal." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 6.75 × 4.",
+      "kind": "numeric",
+      "answer": "27",
+      "hints": ["Multiply 675 × 4 first, then place the decimal point.", "6.75 has 2 decimal places, and 675 × 4 = 2,700."],
+      "solution": ["675 × 4 = 2,700.", "Count 2 decimal places from the right → 27.00, which is 27."],
+      "wrong": [
+        { "answer": "2.7", "feedback": "Estimate first: 7 × 4 = 28, so the product must be near 28, not 2.7." },
+        { "answer": "270", "feedback": "Count both decimal places from 6.75 when placing the decimal point." }
+      ]
+    },
+    {
+      "question": "A box of snacks costs $9.35, and you pay with a $20.00 bill. How much change do you receive, in dollars?",
+      "kind": "numeric",
+      "answer": "10.65",
+      "hints": ["Line up the decimal points: 20.00 − 9.35.", "Remember to regroup across the zeros in 20.00."],
+      "solution": ["20.00 − 9.35 = 10.65.", "Check by adding back: 10.65 + 9.35 = 20.00."],
+      "wrong": [
+        { "answer": "11.65", "feedback": "Check the ones place after regrouping: borrowing 1 from 20 leaves 19, and 19 − 9 = 10." },
+        { "answer": "10.75", "feedback": "Check the tenths column after borrowing 1 tenth for the hundredths: 9 tenths − 3 tenths = 6 tenths." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Stay within a budget: how many can I afford?",
+      "read": [
+        "When you plan with a **budget**, your total spending cannot go over the money you have. If you pay a fixed cost first—like shipping, tax, or admission—subtract that cost from your budget to find your **remaining balance**.",
+        "Next, divide the remaining balance by the price of one item. Often the division gives a decimal remainder.",
+        "For **\"how many can I afford?\"**, always **round down** to the whole number, even if the decimal is 0.8 or 0.9. You cannot buy part of an item, and rounding up would push your bill over budget."
+      ],
+      "model": {
+        "caption": "Rounding down when buying items on a budget",
+        "rows": [
+          ["Money left", "Item price", "Division", "Can afford (round down)", "Money still unspent"],
+          ["$15.00", "$0.35", "15.00 ÷ 0.35 = 42.85...", "42", "$15.00 − (42 × $0.35) = $0.30"],
+          ["$19.25", "$1.45", "19.25 ÷ 1.45 = 13.27...", "13", "$19.25 − (13 × $1.45) = $0.40"],
+          ["$53.50", "$2.25", "53.50 ÷ 2.25 = 23.77...", "23", "$53.50 − (23 × $2.25) = $1.75"]
+        ]
+      },
+      "example": {
+        "problem": "Maya has a $40.00 budget for an arcade afternoon with her cousin. Two wristbands cost $12.50 each, and tokens cost $0.35 each. How many tokens can they afford?",
+        "steps": [
+          { "say": "Find the cost of the 2 wristbands: 2 × 12.50 = $25.00.", "why": "Multiply quantity by price to find the fixed cost." },
+          { "say": "Subtract from the budget: 40.00 − 25.00 = $15.00 left.", "why": "Only the remaining balance can be spent on tokens." },
+          { "say": "Divide by the price of one token: 15.00 ÷ 0.35 = 1,500 ÷ 35 = 42.857...", "why": "Move both decimal points two places right so the divisor is a whole number." },
+          { "say": "Round down to 42 tokens.", "why": "43 tokens would cost 43 × $0.35 = $15.05, which goes over the $15.00 left." }
+        ],
+        "answer": "They can afford 42 tokens."
+      },
+      "try_it": [
+        {
+          "question": "Diego has a $28.00 budget for school supplies. He buys a binder for $8.75 and wants to spend the rest on $1.45 gel pens. How many gel pens can he afford?",
+          "kind": "numeric",
+          "answer": "13",
+          "hints": ["First subtract the $8.75 binder from $28.00.", "Divide your remaining balance ($19.25) by $1.45, then round down to whole pens."],
+          "solution": ["Remaining balance: 28.00 − 8.75 = 19.25.", "Divide: 19.25 ÷ 1.45 = 1,925 ÷ 145 = 13.275...", "Round down so Diego stays within his budget: 13 gel pens (costing $18.85, leaving $0.40)."],
+          "wrong": [
+            { "answer": "14", "feedback": "14 pens plus the binder would cost $29.05, which goes over Diego's $28.00 budget. Always round down for how many you can afford." },
+            { "answer": "19", "feedback": "19 is the $19.25 left over, not the number of pens. Divide $19.25 by $1.45." }
+          ]
+        },
+        {
+          "question": "A drama club has a $110.00 budget for stage props. They spend $34.60 on paint and $21.90 on cardboard, and want to buy wooden dowels at $2.25 each. How many dowels can they afford?",
+          "kind": "numeric",
+          "answer": "23",
+          "hints": ["Add the paint and cardboard costs, then subtract from $110.00.", "Divide $53.50 by $2.25. Even if the decimal part is big, ask whether 24 dowels would stay under budget."],
+          "solution": ["Paint and cardboard: 34.60 + 21.90 = 56.50.", "Remaining balance: 110.00 − 56.50 = 53.50.", "Divide: 53.50 ÷ 2.25 = 5,350 ÷ 225 = 23.777...", "Round down to 23 dowels (24 dowels would cost $54.00, which is $0.50 too much)."],
+          "wrong": [
+            { "answer": "24", "feedback": "23.77... is close to 24, yet 24 dowels cost $54.00 and only $53.50 is left. Round down so you don't go over budget." },
+            { "answer": "53.5", "feedback": "53.50 is the money left in dollars. Divide by $2.25 to find the number of dowels." }
+          ]
+        }
+      ],
+      "mentor": "Notice how 23.77 rounded down to 23 in that second problem! With budgets, even a tiny bit over the limit isn't allowed, so you always round down."
+    },
+    {
+      "heading": "Save toward a goal: how many weeks will it take?",
+      "read": [
+        "When you save toward a goal, the question flips around. First, subtract what you **already have** from the goal price to find how much more money you still need.",
+        "Next, divide the amount you still need by how much you save **each week**.",
+        "If the division leaves any decimal at all—even 0.1 or 0.2—you must **round up** to the next whole week. Stopping at the smaller whole number of weeks leaves you short of your goal!"
+      ],
+      "model": {
+        "caption": "Rounding up when counting weeks to reach a goal",
+        "rows": [
+          ["Still needed", "Saved per week", "Exact division", "Lower weeks total", "Weeks needed (round up)"],
+          ["$88.50", "$14.25", "88.50 ÷ 14.25 = 6.21...", "6 × $14.25 = $85.50 (short!)", "7 weeks"],
+          ["$64.50", "$9.75", "64.50 ÷ 9.75 = 6.61...", "6 × $9.75 = $58.50 (short!)", "7 weeks"],
+          ["$344.60", "$48.50", "344.60 ÷ 48.50 = 7.10...", "7 × $48.50 = $339.50 (short!)", "8 weeks"]
+        ]
+      },
+      "example": {
+        "problem": "Jonah wants a $125.00 telescope. He already has $36.50 saved and earns $14.25 each week mowing lawns. How many full weeks will it take him to have enough?",
+        "steps": [
+          { "say": "Find how much more Jonah needs: 125.00 − 36.50 = $88.50.", "why": "Subtract what he already saved before dividing." },
+          { "say": "Divide by weekly earnings: 88.50 ÷ 14.25 = 8,850 ÷ 1,425 = 6.21...", "why": "Find how many weeks of $14.25 it takes to make $88.50." },
+          { "say": "Check 6 weeks: $36.50 + (6 × $14.25) = $36.50 + $85.50 = $122.00.", "why": "After 6 weeks, Jonah is still $3.00 short of $125.00." },
+          { "say": "Round up to 7 weeks.", "why": "In week 7 he reaches $136.25, which covers the $125.00 telescope with $11.25 left." }
+        ],
+        "answer": "It will take Jonah 7 weeks."
+      },
+      "try_it": [
+        {
+          "question": "Tessa wants to buy an $89.00 pair of soccer cleats. She has $24.50 saved and saves $9.75 every week. How many whole weeks of saving does she need to have at least $89.00?",
+          "kind": "numeric",
+          "answer": "7",
+          "hints": ["Subtract what Tessa already has ($24.50) from $89.00.", "Divide $64.50 by $9.75, and remember to round up if there is any remainder."],
+          "solution": ["Still needed: 89.00 − 24.50 = 64.50.", "Divide: 64.50 ÷ 9.75 = 6,450 ÷ 975 = 6.615...", "6 weeks gives only $24.50 + $58.50 = $83.00, so round up to 7 weeks."],
+          "wrong": [
+            { "answer": "6", "feedback": "After 6 weeks, Tessa only has $83.00, which is $6.00 short. Round up to the next whole week." },
+            { "answer": "10", "feedback": "Don't forget to subtract the $24.50 Tessa already saved before dividing by $9.75." }
+          ]
+        },
+        {
+          "question": "A sixth-grade band needs $460.00 for new music stands. They have $115.40 in their fund and earn $48.50 per car wash. How many car washes must they hold to have enough money?",
+          "kind": "numeric",
+          "answer": "8",
+          "hints": ["First find how much more money the band needs: 460.00 − 115.40.", "Divide $344.60 by $48.50. Check whether the lower whole number actually reaches $460.00."],
+          "solution": ["Still needed: 460.00 − 115.40 = 344.60.", "Divide: 344.60 ÷ 48.50 = 3,446 ÷ 485 = 7.105...", "7 car washes only raise $115.40 + $339.50 = $454.90 ($5.10 short), so round up to 8 car washes."],
+          "wrong": [
+            { "answer": "7", "feedback": "Even though the decimal after 7 is small, 7 car washes leave the band $5.10 short. Any remainder means round up." },
+            { "answer": "10", "feedback": "Remember to subtract the $115.40 already in the fund before dividing by $48.50." }
+          ]
+        }
+      ],
+      "mentor": "Notice the contrast: 'how many can I afford?' rounds DOWN so you don't overspend, while 'how many weeks to reach a goal?' rounds UP so you don't come up short!"
+    },
+    {
+      "heading": "Compare two savings or spending plans",
+      "read": [
+        "Sometimes you have to choose between two **savings plans** or two ways to pay—like a pass with a lower per-visit price versus paying full price each time.",
+        "To compare them fairly, calculate the **total amount** for each plan over the exact same number of weeks or visits: **starting amount + (number of weeks × weekly amount)**.",
+        "Once you have both totals, subtract the smaller total from the larger one to see which plan is better and by how much."
+      ],
+      "model": {
+        "caption": "Comparing two spending plans for 6 skate-rink visits",
+        "rows": [
+          ["Plan", "Starting / pass fee", "Cost per visit", "Total for 6 visits"],
+          ["Plan A (season pass)", "$24.00", "$3.50", "$24.00 + (6 × $3.50) = $45.00"],
+          ["Plan B (pay each time)", "$0.00", "$8.25", "6 × $8.25 = $49.50"]
+        ]
+      },
+      "example": {
+        "problem": "At the roller rink, Plan A is a $24.00 season pass plus $3.50 per visit for skate rentals. Plan B has no pass and costs $8.25 per visit. For 6 visits, how much less does the cheaper plan cost?",
+        "steps": [
+          { "say": "Find Plan A's total for 6 visits: 24.00 + (6 × 3.50) = 24.00 + 21.00 = $45.00.", "why": "Add the one-time pass fee to 6 times the rental fee." },
+          { "say": "Find Plan B's total for 6 visits: 6 × 8.25 = $49.50.", "why": "Multiply the per-visit price by 6 visits." },
+          { "say": "Subtract to compare: 49.50 − 45.00 = $4.50.", "why": "Plan A costs less by $4.50." }
+        ],
+        "answer": "Plan A costs $4.50 less."
+      },
+      "try_it": [
+        {
+          "question": "Leo is comparing two savings plans for 8 weeks. Plan A starts with $32.00 and adds $11.50 each week. Plan B starts with $18.00 and adds $13.75 each week. How many more dollars does the better plan have after 8 weeks?",
+          "kind": "numeric",
+          "answer": "4",
+          "hints": ["Find the 8-week total for Plan A and Plan B separately.", "Multiply each weekly amount by 8, add its starting money, then subtract the two totals."],
+          "solution": ["Plan A: 32.00 + (8 × 11.50) = 32.00 + 92.00 = $124.00.", "Plan B: 18.00 + (8 × 13.75) = 18.00 + 110.00 = $128.00.", "Difference: 128.00 − 124.00 = $4.00 more with Plan B."],
+          "wrong": [
+            { "answer": "128", "feedback": "128 is Plan B's total after 8 weeks. Subtract Plan A's total ($124.00) to find how many more dollars Plan B has." },
+            { "answer": "18", "feedback": "Check the weekly savings × 8 carefully, and include each plan's starting money." }
+          ]
+        },
+        {
+          "question": "A climbing gym offers two choices. Option A is an $18.00 monthly pass plus $6.25 per climb. Option B has no pass and costs $10.50 per climb. If Nadia climbs 5 times this month, how much does she save by choosing the cheaper option, in dollars?",
+          "kind": "numeric",
+          "answer": "3.25",
+          "hints": ["Find the 5-climb cost for Option A (pass + 5 × $6.25) and Option B (5 × $10.50).", "Subtract the cheaper total from the more expensive total."],
+          "solution": ["Option A: 18.00 + (5 × 6.25) = 18.00 + 31.25 = $49.25.", "Option B: 5 × 10.50 = $52.50.", "Savings: 52.50 − 49.25 = $3.25."],
+          "wrong": [
+            { "answer": "49.25", "feedback": "49.25 is Option A's total cost. Subtract it from Option B's cost to find the savings." },
+            { "answer": "13.75", "feedback": "Make sure you multiply Option A's $6.25 per climb by 5 climbs, not 1." }
+          ]
+        }
+      ],
+      "mentor": "A pass or starter fee looks higher at first, but multiplying the weekly rate shows whether the other plan catches up!"
+    }
+  ],
+  "mistake": {
+    "problem": "Tariq has $15.00 saved toward a $68.00 board game and saves $8.50 per week. How many weeks will it take him to have enough?",
+    "work": [
+      "68.00 − 15.00 = 53.00",
+      "53.00 ÷ 8.50 = 6.235...",
+      "6.235 rounds to 6",
+      "Answer: 6 weeks"
+    ],
+    "what_went_wrong": "Tariq used normal rounding rules and rounded 6.235 down to 6 weeks. After 6 weeks, he would only have $15.00 + (6 × $8.50) = $66.00—still $2.00 short of the game!",
+    "fix": "When finding how many weeks it takes to reach a savings goal, any decimal remainder means you must round up. Tariq needs 7 weeks (after 7 weeks he has $74.50)."
+  },
+  "summary": [
+    "To stay within a budget and find how many items you can afford, subtract fixed costs first, divide by the item price, and round down.",
+    "To find how many weeks of saving reach a goal, subtract what you already have, divide by your weekly savings, and round up whenever there is any remainder.",
+    "To compare two savings or spending plans, compute each plan's total for the same number of weeks or visits, then subtract."
+  ],
+  "faith": "Good planning helps us steward the resources we are given wisely. Proverbs 21:20 reminds us that wise people save and plan carefully instead of using everything up right away.",
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Sonia has a $32.00 budget for party favors. She spends $11.50 on balloons and wants to spend the rest on $1.75 keychains. How many keychains can she afford?",
+      "kind": "numeric",
+      "answer": "11",
+      "hints": ["Subtract $11.50 from $32.00 to find the money left.", "Divide $20.50 by $1.75 and round down so Sonia stays within $32.00."],
+      "solution": ["Money left: 32.00 − 11.50 = 20.50.", "20.50 ÷ 1.75 = 2,050 ÷ 175 = 11.714...", "Round down to 11 keychains (12 keychains would cost $21.00, going over budget)."],
+      "wrong": [
+        { "answer": "12", "feedback": "11.71... is close to 12, but 12 keychains cost $21.00 and only $20.50 is left. Round down for budgets." },
+        { "answer": "20.5", "feedback": "20.50 is the money left in dollars. Divide by $1.75 to find how many keychains." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Mateo wants a $140.00 scooter. He has $42.50 saved and earns $16.00 each week walking dogs. How many full weeks will it take him to save at least $140.00?",
+      "kind": "numeric",
+      "answer": "7",
+      "hints": ["Subtract the $42.50 Mateo already has from $140.00.", "Divide $97.50 by $16.00, and round up if there is any remainder."],
+      "solution": ["Still needed: 140.00 − 42.50 = 97.50.", "97.50 ÷ 16.00 = 6.09375.", "6 weeks gives only $42.50 + $96.00 = $138.50 ($1.50 short), so round up to 7 weeks."],
+      "wrong": [
+        { "answer": "6", "feedback": "After 6 weeks, Mateo has $138.50, which is still $1.50 short. Round up to the next whole week." },
+        { "answer": "9", "feedback": "Subtract the $42.50 he already saved before dividing by $16.00." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Liam has a $45.00 monthly allowance budget. This month he spends $14.85 on a book, $9.40 on snacks, and $12.75 on a game card. How much money does he have left in his budget, in dollars?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": ["Add all three purchases together first.", "Subtract the total spent ($37.00) from $45.00."],
+      "solution": ["Total spent: 14.85 + 9.40 + 12.75 = 37.00.", "Left in budget: 45.00 − 37.00 = $8.00, or 8."],
+      "wrong": [
+        { "answer": "37", "feedback": "37 is how much Liam spent in all. Subtract it from his $45.00 budget." },
+        { "answer": "9", "feedback": "Check the sum of the cents: 0.85 + 0.40 + 0.75 = 2.00 whole dollars." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Two friends compare 6-week savings plans. Plan A starts with $40.00 and adds $7.50 per week. Plan B starts with $15.00 and adds $12.25 per week. How many more dollars are in the larger plan after 6 weeks?",
+      "kind": "numeric",
+      "answer": "3.5",
+      "hints": ["Compute Plan A's total and Plan B's total after 6 weeks.", "Plan A is 40 + (6 × 7.50) and Plan B is 15 + (6 × 12.25). Subtract the smaller from the larger."],
+      "solution": ["Plan A: 40.00 + (6 × 7.50) = 40.00 + 45.00 = $85.00.", "Plan B: 15.00 + (6 × 12.25) = 15.00 + 73.50 = $88.50.", "Difference: 88.50 − 85.00 = $3.50."],
+      "wrong": [
+        { "answer": "88.5", "feedback": "88.50 is Plan B's total. Subtract Plan A's total ($85.00) to find the difference." },
+        { "answer": "4.75", "feedback": "4.75 is the difference in weekly deposits, not the 6-week total difference—include each plan's starting money too." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A science club has a $95.00 budget to build model rockets. They pay $19.40 for launch pads and glue, and rocket kits cost $8.40 each. How many whole rocket kits can the club buy?",
+      "kind": "numeric",
+      "answer": "9",
+      "hints": ["Subtract $19.40 from $95.00 first.", "Divide $75.60 by $8.40."],
+      "solution": ["Remaining budget: 95.00 − 19.40 = 75.60.", "Divide: 75.60 ÷ 8.40 = 756 ÷ 84 = 9 exactly.", "The club can buy 9 rocket kits."],
+      "wrong": [
+        { "answer": "11", "feedback": "Don't forget to subtract the $19.40 for launch pads and glue before dividing by $8.40." },
+        { "answer": "75.6", "feedback": "75.60 is the remaining budget in dollars. Divide by $8.40 to find the number of kits." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Clara wants to buy a $95.00 bike helmet and a $25.00 lock. She already has $18.00 saved. Each week she earns $12.50 tutoring and spends $3.75 on bus fare, saving the rest. How many full weeks will it take her to save enough for both items?",
+      "kind": "numeric",
+      "answer": "12",
+      "hints": ["Find the total cost ($95 + $25), subtract $18.00, and find Clara's net savings per week ($12.50 − $3.75).", "Divide the $102.00 still needed by her $8.75 weekly savings, then round up."],
+      "solution": ["Total goal: 95.00 + 25.00 = $120.00.", "Still needed: 120.00 − 18.00 = $102.00.", "Net savings per week: 12.50 − 3.75 = $8.75.", "Weeks: 102.00 ÷ 8.75 = 11.657... → round up to 12 weeks."],
+      "wrong": [
+        { "answer": "11", "feedback": "After 11 weeks, Clara only saves $96.25 more ($114.25 total), still short of $120.00. Round up." },
+        { "answer": "9", "feedback": "Remember Clara spends $3.75 on bus fare each week, so she saves $8.75 per week, not $12.50." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A youth soccer team needs jerseys for 14 players. Shop 1 charges a $28.00 setup fee plus $13.50 per jersey. Shop 2 charges no setup fee and $15.80 per jersey. How many dollars does the team save by picking the cheaper shop?",
+      "kind": "numeric",
+      "answer": "4.2",
+      "hints": ["Find the total cost at Shop 1: 28.00 + (14 × 13.50), and at Shop 2: 14 × 15.80.", "Subtract the smaller total ($217.00) from the larger total ($221.20)."],
+      "solution": ["Shop 1: 28.00 + (14 × 13.50) = 28.00 + 189.00 = $217.00.", "Shop 2: 14 × 15.80 = $221.20.", "Savings: 221.20 − 217.00 = $4.20, or 4.2."],
+      "wrong": [
+        { "answer": "217", "feedback": "217 is Shop 1's total cost. Subtract it from Shop 2's total ($221.20) to find the savings." },
+        { "answer": "32.2", "feedback": "Make sure you include the $28.00 setup fee when finding Shop 1's total cost." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "When calculating how many weeks it will take to save enough money for a bike, your division gives 7.15. Why must you round UP to 8 weeks instead of rounding to the nearest whole number (7)?",
+      "kind": "multiple_choice",
+      "choices": [
+        "After 7 weeks you will still be short of the goal, so you need the 8th week to reach it.",
+        "You always round every decimal up in every kind of math problem.",
+        "7.15 rounds to 8 under standard place-value rounding rules.",
+        "Dividing decimals always adds one extra week to the answer."
+      ],
+      "answer": "After 7 weeks you will still be short of the goal, so you need the 8th week to reach it.",
+      "hints": ["Think about how much money you have after 7 weeks compared to 7.15 weeks.", "Can you buy the bike if you are even a little short of the price?"],
+      "solution": ["7.15 weeks means 7 full weeks is not quite enough money.", "You need part of an 8th week, so it takes 8 full weeks to have enough."],
+      "wrong": [
+        { "answer": "You always round every decimal up in every kind of math problem.", "feedback": "Not always—when buying items within a budget, you round down so you don't overspend." },
+        { "answer": "7.15 rounds to 8 under standard place-value rounding rules.", "feedback": "Under standard rounding, 7.15 would round to 7; here the real-life money goal forces us to round up." },
+        { "answer": "Dividing decimals always adds one extra week to the answer.", "feedback": "Only when there is a remainder past a whole week; an exact whole number like 7.0 needs no extra week." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "You have $30.00 to buy a $7.50 sketchbook and as many $4.25 comic books as you can afford. Which step order finds the right number of comic books?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Subtract 30.00 − 7.50, divide by 4.25, and round down to the whole number.",
+        "Divide 30.00 by 4.25, subtract 7.50, and round up to the whole number.",
+        "Add 7.50 + 4.25, then divide 30.00 by the sum.",
+        "Subtract 30.00 − 7.50, divide by 4.25, and round up to the whole number."
+      ],
+      "answer": "Subtract 30.00 − 7.50, divide by 4.25, and round down to the whole number.",
+      "hints": ["You only buy 1 sketchbook, so pay for that first.", "After dividing the remaining money by $4.25, ask whether you can afford to round up."],
+      "solution": ["First subtract the $7.50 sketchbook: 30.00 − 7.50 = $22.50.", "Divide by $4.25: 22.50 ÷ 4.25 = 5.29... → round down to 5 comic books."],
+      "wrong": [
+        { "answer": "Divide 30.00 by 4.25, subtract 7.50, and round up to the whole number.", "feedback": "Dividing $30.00 first would spend the sketchbook money on comic books, and rounding up goes over budget." },
+        { "answer": "Add 7.50 + 4.25, then divide 30.00 by the sum.", "feedback": "Adding $7.50 + $4.25 assumes you buy one sketchbook with every single comic book." },
+        { "answer": "Subtract 30.00 − 7.50, divide by 4.25, and round up to the whole number.", "feedback": "The step order is right until the end: rounding up goes over your $30.00 budget." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "A 6-pack of sports drinks costs $7.68, and a 9-pack of the same drinks costs $11.07. How much cheaper is one drink in the 9-pack than in the 6-pack, in dollars?",
+      "kind": "numeric",
+      "answer": "0.05",
+      "hints": ["Find each unit price by dividing total price by number of drinks.", "Compute 7.68 ÷ 6 and 11.07 ÷ 9, then subtract."],
+      "solution": ["6-pack unit price: 7.68 ÷ 6 = $1.28 per drink.", "9-pack unit price: 11.07 ÷ 9 = $1.23 per drink.", "Difference: 1.28 − 1.23 = $0.05."],
+      "wrong": [
+        { "answer": "1.23", "feedback": "1.23 is the cost of one drink in the 9-pack. Subtract it from the 6-pack's unit price." },
+        { "answer": "3.39", "feedback": "3.39 is the difference in pack prices, not per drink. Divide each pack price by its drink count first." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 2,496 ÷ 24.",
+      "kind": "numeric",
+      "answer": "104",
+      "hints": ["Start with 24 ÷ 24 = 1. Then bring down the 9.", "Does 24 fit into 9? Write 0 in the quotient before bringing down the 6."],
+      "solution": ["24 ÷ 24 = 1. 24 − 24 = 0. Bring down 9.", "24 doesn't fit into 9, so write 0. Bring down 6 → 96.", "96 ÷ 24 = 4 (24 × 4 = 96).", "Answer: 104."],
+      "wrong": [
+        { "answer": "14", "feedback": "Remember to write a 0 in the tens place when 24 didn't fit into 9. Check: 14 × 24 = 336." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "A robotics team has $65.00 in savings and needs $275.00 for competition fees and parts. They earn $38.50 per week from snack sales, but must spend $14.00 per week on snack supplies. How many full weeks must they run the snack stand to reach $275.00?",
+      "kind": "numeric",
+      "answer": "9",
+      "hints": ["First find how much more money the team needs: 275.00 − 65.00.", "Next find their weekly profit ($38.50 − $14.00 = $24.50), divide $210.00 by $24.50, and round up."],
+      "solution": ["Money still needed: 275.00 − 65.00 = $210.00.", "Weekly profit: 38.50 − 14.00 = $24.50 per week.", "Divide: 210.00 ÷ 24.50 = 2,100 ÷ 245 = 8.571...", "After 8 weeks they have only $65 + $196 = $261, so round up to 9 weeks."],
+      "wrong": [
+        { "answer": "8", "feedback": "After 8 weeks the team has $261.00, which is $14.00 short. Round up to the next whole week." },
+        { "answer": "6", "feedback": "Be sure to subtract the $14.00 weekly supply cost from $38.50 before dividing." }
+      ]
+    }
+  ]
+}

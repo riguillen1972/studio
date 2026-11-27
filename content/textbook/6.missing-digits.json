@@ -1,0 +1,366 @@
+{
+  "version": 2,
+  "skill_id": "6.missing-digits",
+  "title": "Missing-Digit Puzzles",
+  "hook": "A splash of juice smudged one digit in your homework equation: 4_.6 × 3 = 139.8. You don't need to guess all ten digits one by one. How can place value, estimation, and working backward uncover the exact missing digit?",
+  "goal": "I can find a missing digit in multi-digit and decimal equations using place value, estimation, and inverse operations.",
+  "vocabulary": [
+    { "term": "inverse operation", "meaning": "an operation that undoes another operation", "example": "Subtraction undoes addition, and division undoes multiplication." },
+    { "term": "place value", "meaning": "the value a digit has because of its position in a number", "example": "In 4_.6, the blank is in the ones place." },
+    { "term": "regrouping", "meaning": "carrying 10 of one place into the next place left, or borrowing 1 from the left", "example": "In 0.7 + 0.8 = 1.5, 15 tenths regroups as 1 one and 5 tenths." },
+    { "term": "units-digit check", "meaning": "looking at the rightmost digit of a product or sum to narrow down choices", "example": "Since 3 × 6 = 18 ends in 8, 3 × 6 + 1 = 19 ends in 9." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 139.8 ÷ 3.",
+      "kind": "numeric",
+      "answer": "46.6",
+      "hints": ["Bring the decimal point straight up, then start with 13 ÷ 3.", "13 ÷ 3 = 4 (remainder 1), bring down 9 → 19 ÷ 3 = 6 (remainder 1), bring down 8 → 18 ÷ 3 = 6."],
+      "solution": ["13 ÷ 3 = 4 (12), remainder 1. Bring down 9 → 19.", "19 ÷ 3 = 6 (18), remainder 1. Bring down 8 → 18.", "18 ÷ 3 = 6. Answer: 46.6."],
+      "wrong": [
+        { "answer": "466", "feedback": "Remember to bring the decimal point straight up from 139.8." },
+        { "answer": "43.6", "feedback": "Check the middle step: after 13 − 12 = 1, bring down 9 to make 19, and 19 ÷ 3 = 6." }
+      ]
+    },
+    {
+      "question": "Find 52.3 − 34.45.",
+      "kind": "numeric",
+      "answer": "17.85",
+      "hints": ["Rewrite 52.3 as 52.30 so both numbers have hundredths.", "Regroup across the decimal point: 52.30 − 34.45."],
+      "solution": ["Rewrite as 52.30 − 34.45.", "10 − 5 = 5 hundredths; 12 − 4 = 8 tenths; 11 − 4 = 7 ones; 4 − 3 = 1 ten.", "Answer: 17.85."],
+      "wrong": [
+        { "answer": "18.85", "feedback": "Check the ones place after borrowing 1 one for the tenths: 11 − 4 = 7, not 8." },
+        { "answer": "17.95", "feedback": "After borrowing 1 tenth for the hundredths, 2 tenths borrows 1 one to make 12 tenths, and 12 − 4 = 8." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Missing digits in decimal addition and subtraction",
+      "read": [
+        "In an addition or subtraction puzzle, you have two ways to find a missing digit: **line up the columns** to check carries and borrows, or use an **inverse operation**.",
+        "With an inverse operation, subtraction undoes addition (`A + B = C` means `B = C − A`), and addition or subtraction undoes subtraction (`A − B = C` means `B = A − C`). That gives you the whole missing number at once!",
+        "If you work column by column instead, always start at the **rightmost column** so you don't miss a **carry** or **borrow** moving left."
+      ],
+      "model": {
+        "caption": "Solving 3_.74 + 18.65 = 55.39 two ways",
+        "rows": [
+          ["Method", "What you do", "Result"],
+          ["Inverse operation", "Subtract 55.39 − 18.65 = 36.74", "Match 3_.74 → missing digit is 6"],
+          ["Column by column", "4 + 5 = 9; 7 + 6 = 13 tenths (carry 1); 1 + _ + 8 = 15", "1 + _ + 8 = 15 → _ = 6"]
+        ]
+      },
+      "example": {
+        "problem": "Find the missing digit in 3_.74 + 18.65 = 55.39. What digit goes in the blank?",
+        "steps": [
+          { "say": "Use the inverse operation: subtract 55.39 − 18.65.", "why": "Subtraction undoes addition and reveals the full missing addend." },
+          { "say": "Compute 55.39 − 18.65 = 36.74.", "why": "Line up the decimal points and regroup: 13 − 6 = 7 tenths, 14 − 8 = 6 ones, 4 − 1 = 3 tens." },
+          { "say": "Compare 36.74 with 3_.74.", "why": "Every other digit matches, so the ones digit in the blank is 6." },
+          { "say": "Plug 6 back in to check: 36.74 + 18.65 = 55.39. ✓", "why": "Checking guarantees no carry was missed." }
+        ],
+        "answer": "The digit 6 goes in the blank."
+      },
+      "try_it": [
+        {
+          "question": "In the equation 24._8 + 13.45 = 38.23, what digit goes in the blank?",
+          "kind": "numeric",
+          "answer": "7",
+          "hints": ["Subtract 13.45 from 38.23 to reveal the entire first number.", "Or check the tenths column: 8 + 5 = 13 carries 1 tenth, so 1 + _ + 4 ends in 2 (meaning 12)."],
+          "solution": ["Inverse operation: 38.23 − 13.45 = 24.78.", "Compare 24.78 with 24._8 → the missing tenths digit is 7.", "Check: 24.78 + 13.45 = 38.23."],
+          "wrong": [
+            { "answer": "8", "feedback": "Don't forget the 1 tenth carried from 8 + 5 = 13 hundredths! 1 + _ + 4 = 12." },
+            { "answer": "6", "feedback": "Check 38.23 − 13.45 again in the tenths column: 11 − 4 = 7." }
+          ]
+        },
+        {
+          "question": "In the equation 61.2 − 1_.75 = 42.45, what digit goes in the blank?",
+          "kind": "numeric",
+          "answer": "8",
+          "hints": ["Think: if 61.20 − B = 42.45, then B = 61.20 − 42.45.", "Compute 61.20 − 42.45 and match it to 1_.75."],
+          "solution": ["Rewrite 61.2 as 61.20.", "Subtract: 61.20 − 42.45 = 18.75.", "Compare 18.75 with 1_.75 → the missing ones digit is 8."],
+          "wrong": [
+            { "answer": "9", "feedback": "Check the ones column after borrowing 1 one from 61 for the tenths: 10 − 2 = 8." },
+            { "answer": "7", "feedback": "Remember 1.20 borrows 1 one from 61, leaving 60 ones, and 60 − 42 = 18." }
+          ]
+        }
+      ],
+      "mentor": "Using the inverse operation turns any addition or subtraction puzzle into one clean calculation—no guessing needed!"
+    },
+    {
+      "heading": "Missing digits in decimal multiplication",
+      "read": [
+        "In multiplication puzzles like `4_.6 × 3 = 139.8`, **division** is your fastest tool: divide `139.8 ÷ 3` to uncover the whole factor at once.",
+        "You can also double-check with **estimation** and the **last-digit check**. Look at `40 × 3 = 120` and `50 × 3 = 150`, so `139.8` puts the factor near `46` or `47`. Since `3 × 6 = 18` carries `1`, `3 × _ + 1` must end in `9`, which picks `6` (`3 × 6 + 1 = 19`)!",
+        "Watch out when a digit is in the **last place** of a factor: for multiplying by `2, 4, 5, 6,` or `8`, two different digits can give the same ending digit, so **estimation or division** tells them apart!"
+      ],
+      "model": {
+        "caption": "Solving 2_.4 × 6 = 170.4",
+        "rows": [
+          ["Strategy", "How it works", "What it tells you"],
+          ["Inverse division", "170.4 ÷ 6 = 28.4", "The blank in 2_.4 is 8"],
+          ["Units-digit check", "6 × 4 = 24 (carry 2); 6 × _ + 2 ends in 0 → 6 × _ ends in 8", "Could be 3 (18) or 8 (48)"],
+          ["Estimation", "23 × 6 = 138 (too small); 28 × 6 = 168 (right near 170.4!)", "Must be 8, not 3"]
+        ]
+      },
+      "example": {
+        "problem": "In 2_.4 × 6 = 170.4, what digit goes in the blank?",
+        "steps": [
+          { "say": "Use inverse division: divide 170.4 ÷ 6.", "why": "Dividing the product by 6 reveals the entire first factor." },
+          { "say": "17 ÷ 6 = 2 (remainder 5); 50 ÷ 6 = 8 (remainder 2); bring down 4 → 24 ÷ 6 = 4, giving 28.4.", "why": "Bring the decimal point straight up above 170.4." },
+          { "say": "Compare 28.4 with 2_.4: the ones digit is 8.", "why": "Check by multiplying: 28.4 × 6 = 170.4. ✓" }
+        ],
+        "answer": "The digit 8 goes in the blank."
+      },
+      "try_it": [
+        {
+          "question": "In the equation 3_.5 × 4 = 138, what digit goes in the blank?",
+          "kind": "numeric",
+          "answer": "4",
+          "hints": ["Divide 138 by the second factor to find the whole first factor.", "Annex a decimal point and zero to 138.0 so you can finish dividing."],
+          "solution": ["Inverse division: 138.0 ÷ 4 = 34.5.", "Compare 34.5 with 3_.5 → the missing ones digit is 4.", "Check: 34.5 × 4 = 138."],
+          "wrong": [
+            { "answer": "9", "feedback": "Estimate: 39.5 × 4 is almost 40 × 4 = 160, which is much too big for 138." },
+            { "answer": "3", "feedback": "Check 33.5 × 4 = 134, which is too small. Try dividing 138.0 by the second factor." }
+          ]
+        },
+        {
+          "question": "In the equation 7.2_ × 5 = 36.15, what digit goes in the blank?",
+          "kind": "numeric",
+          "answer": "3",
+          "hints": ["Use division: 36.15 ÷ 5.", "Check: 36 ÷ 5 = 7 (remainder 1), 11 ÷ 5 = 2 (remainder 1), 15 ÷ 5 = ?"],
+          "solution": ["Divide: 36.15 ÷ 5 = 7.23.", "Compare 7.23 with 7.2_ → the missing hundredths digit is 3.", "Check: 7.23 × 5 = 36.15."],
+          "wrong": [
+            { "answer": "5", "feedback": "Check 7.25 × 5 = 36.25, which is 0.10 too high. Divide 36.15 ÷ 5." },
+            { "answer": "1", "feedback": "7.21 × 5 = 36.05. Look at the 15 hundredths left after 36.1 − 36.0 = 0.1." }
+          ]
+        }
+      ],
+      "mentor": "Notice how estimation narrows down candidates in two seconds—then division locks in the single digit that works!"
+    },
+    {
+      "heading": "Missing digits in multi-digit and decimal division",
+      "read": [
+        "When a digit is missing inside a **division** equation, multiplication is the inverse operation that unlocks it!",
+        "If the blank is in the **dividend** (`dividend ÷ divisor = quotient`), multiply **divisor × quotient**. If the blank is in the **divisor** (`dividend ÷ divisor = quotient`), divide **dividend ÷ quotient**.",
+        "Always plug your digit back in and watch the **decimal points**—moving decimal points in a divisor changes the whole answer."
+      ],
+      "model": {
+        "caption": "Where is the blank in A ÷ B = C?",
+        "rows": [
+          ["Blank is in…", "Inverse equation to use", "Example"],
+          ["Dividend (A)", "A = B × C", "3_6.4 ÷ 8 = 45.8 → 8 × 45.8 = 366.4 → _ = 6"],
+          ["Divisor (B)", "B = A ÷ C", "43.2 ÷ _.6 = 12 → 43.2 ÷ 12 = 3.6 → _ = 3"],
+          ["Quotient (C)", "C = A ÷ B", "153.6 ÷ 12 = 1_.8 → 153.6 ÷ 12 = 12.8 → _ = 2"]
+        ]
+      },
+      "example": {
+        "problem": "In 3_6.4 ÷ 8 = 45.8, what digit goes in the blank?",
+        "steps": [
+          { "say": "The blank is in the dividend, so multiply divisor × quotient: 8 × 45.8.", "why": "Multiplication undoes division." },
+          { "say": "Compute 8 × 458 = 3,664, then place 1 decimal place → 366.4.", "why": "45.8 has 1 decimal place." },
+          { "say": "Compare 366.4 with 3_6.4: the tens digit is 6.", "why": "Check by dividing: 366.4 ÷ 8 = 45.8. ✓" }
+        ],
+        "answer": "The digit 6 goes in the blank."
+      },
+      "try_it": [
+        {
+          "question": "In the equation 2,9_2 ÷ 12 = 246, what digit goes in the blank?",
+          "kind": "numeric",
+          "answer": "5",
+          "hints": ["Multiply 246 × 12 to find the whole dividend.", "246 × 10 = 2,460 and 246 × 2 = 492. Add them together."],
+          "solution": ["Inverse multiplication: 246 × 12 = 2,460 + 492 = 2,952.", "Compare 2,952 with 2,9_2 → the missing tens digit is 5.", "Check: 2,952 ÷ 12 = 246."],
+          "wrong": [
+            { "answer": "4", "feedback": "Check 2,942 ÷ 12: 12 × 245 = 2,940, so 2,942 leaves a remainder of 2." },
+            { "answer": "6", "feedback": "Check 246 × 12 carefully: 2,460 + 492 = 2,952, so the tens digit is 5." }
+          ]
+        },
+        {
+          "question": "In the equation 43.2 ÷ _.6 = 12, what digit goes in the blank?",
+          "kind": "numeric",
+          "answer": "3",
+          "hints": ["The blank is in the divisor, so divide 43.2 by 12.", "Bring the decimal point straight up when dividing 43.2 ÷ 12."],
+          "solution": ["Inverse division: 43.2 ÷ 12 = 3.6.", "Compare 3.6 with _.6 → the missing ones digit is 3.", "Check: 43.2 ÷ 3.6 = 432 ÷ 36 = 12."],
+          "wrong": [
+            { "answer": "4", "feedback": "Estimate: 4.6 × 12 = 55.2, which is larger than 43.2. Try 43.2 ÷ 12." },
+            { "answer": "2", "feedback": "Estimate: 2.6 × 12 = 31.2, which is smaller than 43.2." }
+          ]
+        }
+      ],
+      "mentor": "Whether the blank is in the dividend, divisor, or quotient, rewriting the division as multiplication or another division puts every digit in plain sight!"
+    }
+  ],
+  "mistake": {
+    "problem": "Elena solved: 2_.4 + 15.8 = 43.2. What digit goes in the blank?",
+    "work": [
+      "Look at the ones column: _ + 5 = 13.",
+      "13 − 5 = 8.",
+      "Answer: 8"
+    ],
+    "what_went_wrong": "Elena forgot the 1 one carried from the tenths column! Since 4 + 8 = 12 tenths, that carries 1 into the ones column, making 1 + _ + 5 = 13.",
+    "fix": "Subtract 43.2 − 15.8 = 27.4 (or solve 1 + _ + 5 = 13), so the digit in the blank is 7. Check: 27.4 + 15.8 = 43.2."
+  },
+  "summary": [
+    "In addition and subtraction puzzles, line up decimal points and watch for carries or borrows from the column to the right.",
+    "In multiplication and division puzzles, use inverse operations (division or multiplication) to find the full number directly.",
+    "Always estimate and plug your digit back into the original equation to verify that every digit matches."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "In the equation 37._6 + 14.85 = 52.31, what digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "4",
+      "hints": ["Subtract 14.85 from 52.31.", "Watch the tenths column when regrouping from 52.31."],
+      "solution": ["52.31 − 14.85 = 37.46.", "Compare 37.46 with 37._6 → the missing digit is 4."],
+      "wrong": [
+        { "answer": "5", "feedback": "Don't forget the 1 tenth carried from 6 + 5 = 11 hundredths! 1 + _ + 8 = 13." },
+        { "answer": "3", "feedback": "Check 52.31 − 14.85 in the tenths column after borrowing 1 tenth for hundredths: 12 − 8 = 4." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "In the equation 80.4 − 26._5 = 53.65, what digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "7",
+      "hints": ["Rewrite 80.4 as 80.40 and subtract 53.65.", "Compare the difference with 26._5."],
+      "solution": ["80.40 − 53.65 = 26.75.", "Compare 26.75 with 26._5 → the missing digit is 7."],
+      "wrong": [
+        { "answer": "8", "feedback": "Remember 80.40 borrows 1 tenth for hundredths, so compute 13 tenths − 6 tenths in the tenths column." },
+        { "answer": "6", "feedback": "Check 80.40 − 26.65 = 53.75, which is 0.10 too high." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "In the equation 5_.4 × 7 = 373.8, what digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "3",
+      "hints": ["Divide 373.8 by 7 to find the whole factor.", "37 ÷ 7 = 5 (remainder 2), then 23 ÷ 7 = ?"],
+      "solution": ["373.8 ÷ 7 = 53.4.", "Compare 53.4 with 5_.4 → the missing digit is 3.", "Check: 53.4 × 7 = 373.8."],
+      "wrong": [
+        { "answer": "4", "feedback": "54.4 × 7 = 380.8, which is larger than 373.8." },
+        { "answer": "2", "feedback": "52.4 × 7 = 366.8, which is smaller than 373.8." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "In the equation 3,8_6 ÷ 14 = 274, what digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "3",
+      "hints": ["Multiply 274 × 14 to find the whole dividend.", "274 × 10 = 2,740 and 274 × 4 = 1,096."],
+      "solution": ["274 × 14 = 2,740 + 1,096 = 3,836.", "Compare 3,836 with 3,8_6 → the missing tens digit is 3."],
+      "wrong": [
+        { "answer": "4", "feedback": "Check 274 × 14: add 2,740 + 1,096 carefully and inspect the tens digit." },
+        { "answer": "2", "feedback": "3,826 ÷ 14 leaves a remainder. Recompute 274 × 14." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Sam bought 3 identical sketchbooks at $4._5 each for a total of $14.55. What digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": ["Divide the total cost ($14.55) by 3 sketchbooks.", "Compare your quotient with $4._5."],
+      "solution": ["14.55 ÷ 3 = 4.85.", "Compare $4.85 with $4._5 → the missing tenths digit is 8."],
+      "wrong": [
+        { "answer": "7", "feedback": "3 × $4.75 = $14.25, which is $0.30 short of $14.55." },
+        { "answer": "9", "feedback": "3 × $4.95 = $14.85, which is $0.30 over $14.55." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A bakery packs 18 identical boxes of muffins with a total weight of 43.2 kilograms. Each box weighs 2._ kilograms. What digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "4",
+      "hints": ["Divide the total weight (43.2 kg) by 18 boxes.", "Or check 18 × 2._ = 43.2 using the last digit: 8 × _ ends in 2!"],
+      "solution": ["43.2 ÷ 18 = 2.4 kg per box.", "Compare 2.4 with 2._ → the missing tenths digit is 4. (Check: 18 × 2.4 = 43.2.)"],
+      "wrong": [
+        { "answer": "9", "feedback": "8 × 9 = 72 also ends in 2, yet 18 × 2.9 = 52.2, way above 43.2. Always check with estimation!" },
+        { "answer": "2", "feedback": "18 × 2.2 = 39.6, which is less than 43.2." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Maya buys a $12.60 water bottle and 4 granola bars at $1._5 each. Her total bill is $19.20. What digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "6",
+      "hints": ["First subtract the $12.60 water bottle from $19.20.", "Divide the remaining $6.60 by 4 granola bars."],
+      "solution": ["Cost of 4 granola bars: 19.20 − 12.60 = $6.60.", "Price of 1 granola bar: 6.60 ÷ 4 = $1.65.", "Compare $1.65 with $1._5 → the missing digit is 6."],
+      "wrong": [
+        { "answer": "5", "feedback": "4 × $1.55 = $6.20, plus $12.60 is only $18.80." },
+        { "answer": "8", "feedback": "4 × $1.85 = $7.40, plus $12.60 is $20.00—too high." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "In the puzzle 5_.4 × 6 = 344.4, two digits (2 and 7) both pass the units-digit check (6 × 4 = 24 carries 2, and 6 × _ + 2 ends in 4 for both _ = 2 and _ = 7). How can you tell in three seconds which digit works?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Estimate: 52 × 6 = 312 (too small), while 57 × 6 = 342 (right near 344.4), so it must be 7.",
+        "Pick the smaller digit because multiplication always uses smaller digits.",
+        "Add 5 + 4 + 6 = 15 and divide by 2.",
+        "Both 2 and 7 give 344.4 when multiplied by 6."
+      ],
+      "answer": "Estimate: 52 × 6 = 312 (too small), while 57 × 6 = 342 (right near 344.4), so it must be 7.",
+      "hints": ["Compare 52 × 6 and 57 × 6 against 344.4.", "Estimation tells two candidates apart immediately."],
+      "solution": ["52.4 × 6 = 314.4, which is 30 too low.", "57.4 × 6 = 344.4, which matches!"],
+      "wrong": [
+        { "answer": "Pick the smaller digit because multiplication always uses smaller digits.", "feedback": "There is no rule favoring smaller digits—test size with an estimate." },
+        { "answer": "Add 5 + 4 + 6 = 15 and divide by 2.", "feedback": "Adding unrelated digits doesn't test product size." },
+        { "answer": "Both 2 and 7 give 344.4 when multiplied by 6.", "feedback": "52.4 × 6 = 314.4, whereas 57.4 × 6 = 344.4." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why can't you find the missing digit in 1_.5 + 8.7 = 2_.2 without another clue?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Any digit from 1 to 9 in the first blank works, with the second blank one less (0 to 8), so there is no single answer.",
+        "Because 8.7 only has one decimal place.",
+        "Because you can't add decimals with different tens digits.",
+        "Because 5 + 7 = 12 never carries into the ones place."
+      ],
+      "answer": "Any digit from 1 to 9 in the first blank works, with the second blank one less (0 to 8), so there is no single answer.",
+      "hints": ["Try plugging in 1, then 2, then 3 for the first blank.", "Does more than one digit work when both numbers have a blank?"],
+      "solution": ["For example, 11.5 + 8.7 = 20.2 (blanks 1 and 0), 12.5 + 8.7 = 21.2 (blanks 2 and 1), and 19.5 + 8.7 = 28.2 (blanks 9 and 8).", "Any digit 1 to 9 works in the first blank, with the second blank one less (0 to 8)—while 0 gives 19.2, which doesn't fit 2_.2."],
+      "wrong": [
+        { "answer": "Because 8.7 only has one decimal place.", "feedback": "1_.5 also has one decimal place—the issue is having two blanks that can shift together." },
+        { "answer": "Because you can't add decimals with different tens digits.", "feedback": "You can add decimals of any size once decimal points line up." },
+        { "answer": "Because 5 + 7 = 12 never carries into the ones place.", "feedback": "12 tenths actually DOES carry 1 into the ones place." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 64.8 ÷ 0.9.",
+      "kind": "numeric",
+      "answer": "72",
+      "hints": ["Multiply both 64.8 and 0.9 by 10.", "Now divide 648 ÷ 9."],
+      "solution": ["64.8 ÷ 0.9 = 648 ÷ 9.", "64 ÷ 9 = 7 (63), remainder 1. Bring down 8 → 18 ÷ 9 = 2.", "Answer: 72."],
+      "wrong": [
+        { "answer": "7.2", "feedback": "Moving the decimal point 1 place right in 0.9 means moving 64.8 one place right to 648 too." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 4,368 ÷ 28.",
+      "kind": "numeric",
+      "answer": "156",
+      "hints": ["Start with 43 ÷ 28 = 1 (remainder 15). Bring down 6 to make 156.", "28 × 5 = 140 fits into 156, leaving 16. Bring down the last digit and divide by 28."],
+      "solution": ["43 ÷ 28 = 1 (28). 43 − 28 = 15. Bring down 6 → 156.", "156 ÷ 28 = 5 (140). 156 − 140 = 16. Bring down 8 → 168.", "168 ÷ 28 = 6 (28 × 6 = 168). Answer: 156."],
+      "wrong": [
+        { "answer": "146", "feedback": "Check 156 ÷ 28: 28 × 5 = 140 still fits, so recheck the middle digit." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "In the equation (12.5 + 3._5) × 4 = 65.8, what digit goes in the blank?",
+      "kind": "numeric",
+      "answer": "9",
+      "hints": ["Work backward from the outside: divide 65.8 by 4 first.", "Once you know 12.5 + 3._5 = 16.45, subtract 12.50 from 16.45."],
+      "solution": ["Undo × 4: 65.80 ÷ 4 = 16.45, so 12.5 + 3._5 = 16.45.", "Undo + 12.5: 16.45 − 12.50 = 3.95.", "Compare 3.95 with 3._5 → the missing tenths digit is 9."],
+      "wrong": [
+        { "answer": "4", "feedback": "Did you subtract 12.5 from 16.45 carefully? In tenths, borrow 1 from 6 to make 14 − 5 = 9." },
+        { "answer": "1", "feedback": "Undo × 4 first by dividing 65.8 by 4 before subtracting 12.5." }
+      ]
+    }
+  ]
+}

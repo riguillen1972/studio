@@ -1,0 +1,377 @@
+{
+  "version": 2,
+  "skill_id": "6.factors-primes",
+  "title": "Factors, Multiples, and Prime Factorization",
+  "hook": "The sixth-grade choir has 36 singers and wants to stand in equal rows on stage—could they use 4 rows, 6 rows, or 8 rows? And how can breaking any whole number down into prime building blocks reveal every secret about how it divides?",
+  "goal": "I can find factors and multiples of whole numbers, tell prime numbers from composite numbers, and write a prime factorization using exponents.",
+  "vocabulary": [
+    { "term": "factor", "meaning": "a whole number that divides another whole number evenly with zero remainder", "example": "4 and 9 are factors of 36 because 4 × 9 = 36." },
+    { "term": "multiple", "meaning": "the product of a given whole number and 1, 2, 3, and so on", "example": "The first four multiples of 12 are 12, 24, 36, and 48." },
+    { "term": "prime number", "meaning": "a whole number greater than 1 with exactly two factors: 1 and itself", "example": "13 is prime because its only factors are 1 and 13. (1 is neither prime nor composite.)" },
+    { "term": "prime factorization", "meaning": "writing a composite number as a product of prime numbers", "example": "The prime factorization of 60 is 2^2 × 3 × 5." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 24 × 15.",
+      "kind": "numeric",
+      "answer": "360",
+      "hints": ["Multiply 24 × 10 and 24 × 5, then add.", "24 × 10 = 240 and 24 × 5 = 120."],
+      "solution": ["24 × 10 = 240", "24 × 5 = 120", "240 + 120 = 360"],
+      "wrong": [
+        { "answer": "144", "feedback": "It looks like 24 × 10 wasn't shifted to 240. Check 240 + 120." },
+        { "answer": "260", "feedback": "Check 24 × 5 = 120, then add 240 + 120." }
+      ]
+    },
+    {
+      "question": "Find 315 ÷ 9.",
+      "kind": "numeric",
+      "answer": "35",
+      "hints": ["Start with 31 ÷ 9.", "9 × 3 = 27 leaves 4. Bring down the 5 to make 45."],
+      "solution": ["31 ÷ 9 = 3 (9 × 3 = 27). 31 − 27 = 4. Bring down 5 → 45.", "45 ÷ 9 = 5. Answer: 35."],
+      "wrong": [
+        { "answer": "34", "feedback": "Check 45 ÷ 9: 9 × 5 = 45, so the ones digit is 5." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Factors and multiples",
+      "read": [
+        "People mix up **factors** and **multiples** all the time, so keep this picture in mind: **factors** are smaller or equal building blocks that multiply to make your number; **multiples** grow larger as you skip-count by your number.",
+        "To list every factor of a number without missing any, find **factor pairs** in order starting at 1. Stop when the pairs meet or start repeating. Notice that if a pair has the same number twice (like `6 × 6 = 36`), count `6` only once.",
+        "To find the **nth multiple** of a number, multiply that number by `n` (for example, the 4th multiple of 12 is `12 × 4 = 48`)."
+      ],
+      "model": {
+        "caption": "Comparing factors and multiples of 24",
+        "rows": [
+          ["Concept", "How to find them", "Result for 24"],
+          ["Factors", "Pairs that multiply to 24: 1×24, 2×12, 3×8, 4×6", "1, 2, 3, 4, 6, 8, 12, 24 (8 factors)"],
+          ["Multiples", "Multiply 24 by 1, 2, 3, 4, 5…", "24, 48, 72, 96, 120… (never ends)"]
+        ]
+      },
+      "example": {
+        "problem": "How many factors does 36 have?",
+        "steps": [
+          { "say": "Start at 1 and test whole numbers in order: 1 × 36 = 36.", "why": "1 and the number itself are always the first factor pair." },
+          { "say": "Test 2, 3, 4, 5, 6: 2 × 18 = 36, 3 × 12 = 36, 4 × 9 = 36, 5 doesn't divide 36, 6 × 6 = 36.", "why": "Stopping when the two numbers in the pair meet (6 × 6) means no pairs are left." },
+          { "say": "List the distinct factors: 1, 2, 3, 4, 6, 9, 12, 18, 36.", "why": "6 × 6 repeats 6, so count 6 only once." },
+          { "say": "Count them: 9 factors in all.", "why": "Counting every distinct factor answers the question." }
+        ],
+        "answer": "36 has 9 factors."
+      },
+      "try_it": [
+        {
+          "question": "How many factors does 28 have?",
+          "kind": "numeric",
+          "answer": "6",
+          "hints": ["Test numbers starting at 1: 1 × 28, 2 × 14, 3?, 4 × 7…", "Stop once you pass 5, because 4 × 7 already caught the middle pair."],
+          "solution": ["Factor pairs: 1 × 28, 2 × 14, 4 × 7 (3, 5, and 6 do not divide 28 evenly).", "Factors of 28: 1, 2, 4, 7, 14, 28.", "Total count: 6 factors."],
+          "wrong": [
+            { "answer": "4", "feedback": "Don't forget 1 and 28! Every number has 1 and itself as factors." },
+            { "answer": "5", "feedback": "Check factor pairs carefully: 1 × 28, 2 × 14, and 4 × 7 give 3 pairs (2 factors per pair)." }
+          ]
+        },
+        {
+          "question": "What is the 6th multiple of 15?",
+          "kind": "numeric",
+          "answer": "90",
+          "hints": ["Multiples of 15 start at 15 × 1 = 15, 15 × 2 = 30, …", "Multiply 15 × 6."],
+          "solution": ["The 6th multiple of 15 is 15 × 6 = 90.", "(15, 30, 45, 60, 75, 90)"],
+          "wrong": [
+            { "answer": "75", "feedback": "75 is the 5th multiple (15 × 5). Count one more 15 for the 6th multiple." },
+            { "answer": "4", "feedback": "Factors divide 15 (1, 3, 5, 15). Multiples come from multiplying 15 by 1, 2, 3, 4, 5, 6." }
+          ]
+        }
+      ],
+      "mentor": "Factor pairs keep you organized: once the left number meets or passes the right number, you are guaranteed to have found every factor!"
+    },
+    {
+      "heading": "Prime and composite numbers",
+      "read": [
+        "A **prime number** is a whole number greater than 1 with **exactly two** factors: `1` and itself. A **composite number** is a whole number greater than 1 with **more than two** factors.",
+        "Watch two special cases: **1 is neither prime nor composite** because it only has one factor (`1`). And **2 is the only even prime**—every other even number has `2` as an extra factor.",
+        "Be careful with odd numbers like `51` or `57`! They look prime at a glance, so test small primes (`2, 3, 5, 7`) before deciding. Remember: if a number's digits add up to a multiple of `3`, then `3` divides it!"
+      ],
+      "model": {
+        "caption": "Quick prime test up to 100: check divisibility by 2, 3, 5, and 7",
+        "rows": [
+          ["Prime to test", "Quick clue", "Example"],
+          ["2", "Ends in 0, 2, 4, 6, or 8", "34 is even → composite (2 × 17)"],
+          ["3", "Sum of digits is divisible by 3", "57 → 5 + 7 = 12 → composite (3 × 19)"],
+          ["5", "Ends in 0 or 5", "65 ends in 5 → composite (5 × 13)"],
+          ["7", "Divide by 7 to check", "91 ÷ 7 = 13 → composite (7 × 13)"]
+        ]
+      },
+      "example": {
+        "problem": "Is 59 prime or composite?",
+        "steps": [
+          { "say": "Test 2: 59 ends in 9, so it is odd and not divisible by 2.", "why": "Even numbers greater than 2 are always composite." },
+          { "say": "Test 3: 5 + 9 = 14, which is not divisible by 3.", "why": "If the digit sum isn't a multiple of 3, 3 doesn't divide the number." },
+          { "say": "Test 5: 59 doesn't end in 0 or 5.", "why": "Multiples of 5 always end in 0 or 5." },
+          { "say": "Test 7: 7 × 8 = 56 and 7 × 9 = 63, so 7 doesn't divide 59.", "why": "Since 8 × 8 = 64 > 59, no larger prime needs testing—any factor larger than 8 would pair with a factor smaller than 8." },
+          { "say": "Conclusion: 59 has only two factors (1 and 59), so 59 is prime.", "why": "It passed all tests up to 7." }
+        ],
+        "answer": "59 is prime."
+      },
+      "try_it": [
+        {
+          "question": "Which number is prime?",
+          "kind": "multiple_choice",
+          "choices": ["27", "39", "43", "51"],
+          "answer": "43",
+          "hints": ["Check the sum of digits of each choice to see which ones are divisible by 3.", "27, 39, and 51 all have digit sums divisible by 3!"],
+          "solution": ["27 = 3 × 9 (composite)", "39 = 3 × 13 (composite)", "51 = 3 × 17 (composite)", "43 is not divisible by 2, 3, 5, or 7, so 43 is prime."],
+          "wrong": [
+            { "answer": "27", "feedback": "27 = 3 × 9, so 27 has more than two factors (it is composite)." },
+            { "answer": "39", "feedback": "Check the digit sum: 3 + 9 = 12, so 39 = 3 × 13 (composite)." },
+            { "answer": "51", "feedback": "51 looks prime, yet 5 + 1 = 6, so 51 = 3 × 17 (composite)." }
+          ]
+        },
+        {
+          "question": "What is the sum of all prime numbers between 10 and 20?",
+          "kind": "numeric",
+          "answer": "60",
+          "hints": ["List the odd numbers between 10 and 20: 11, 13, 15, 17, 19.", "Cross out any number divisible by 3 or 5, then add the remaining primes."],
+          "solution": ["Between 10 and 20, 15 = 3 × 5 is composite.", "The primes are 11, 13, 17, and 19.", "Sum: 11 + 13 + 17 + 19 = 60."],
+          "wrong": [
+            { "answer": "75", "feedback": "Check 15 carefully: 15 = 3 × 5, so 15 is composite and should not be included." },
+            { "answer": "41", "feedback": "Did you miss one of the four primes between 10 and 20 (11, 13, 17, 19)?" }
+          ]
+        }
+      ],
+      "mentor": "Numbers like 51 and 91 fool people all the time because they are odd. Testing 3 and 7 catches them right away!"
+    },
+    {
+      "heading": "Prime factorization with factor trees and exponents",
+      "read": [
+        "Every composite number can be broken apart until every factor is prime. Writing it as a product of primes is called its **prime factorization**—and there is only one prime factorization for every whole number!",
+        "You can use a **factor tree** (split the number into any factor pair, and keep splitting composite branches until every branch ends in a prime) or **divide by primes** (`2, 3, 5, 7…`) one step at a time.",
+        "Finally, write the prime factors in order from least to greatest, using **exponents** for repeated primes—like `2^2 × 3 × 5` for `60`."
+      ],
+      "model": {
+        "caption": "Factor tree steps for 72",
+        "rows": [
+          ["Split level", "Branches", "Primes found so far"],
+          ["Start", "72 = 8 × 9", "Split composite 8 and 9"],
+          ["Next", "8 = 2 × 4 and 9 = 3 × 3", "2, 3, 3 are prime; split 4"],
+          ["End", "4 = 2 × 2", "All primes: 2 × 2 × 2 × 3 × 3 = 2^3 × 3^2"]
+        ]
+      },
+      "example": {
+        "problem": "Write the prime factorization of 180 using exponents.",
+        "steps": [
+          { "say": "Split 180 into a friendly factor pair: 180 = 18 × 10.", "why": "Any starting factor pair gives the exact same prime factors at the end." },
+          { "say": "Split each branch: 18 = 2 × 9 and 10 = 2 × 5.", "why": "2 and 5 are prime; 9 is still composite." },
+          { "say": "Split 9: 9 = 3 × 3.", "why": "Now every branch ends in a prime number: 2, 2, 3, 3, 5." },
+          { "say": "Group repeated primes with exponents from least to greatest: 2^2 × 3^2 × 5.", "why": "Check by multiplying: 4 × 9 × 5 = 180. ✓" }
+        ],
+        "answer": "The prime factorization of 180 is 2^2 × 3^2 × 5."
+      },
+      "try_it": [
+        {
+          "question": "Which is the prime factorization of 84?",
+          "kind": "multiple_choice",
+          "choices": ["2^2 × 3 × 7", "2 × 3^2 × 7", "4 × 3 × 7", "2^2 × 21"],
+          "answer": "2^2 × 3 × 7",
+          "hints": ["Start by dividing 84 by 2: 84 = 2 × 42.", "Keep breaking down 42 until every factor is prime."],
+          "solution": ["84 = 2 × 42", "42 = 2 × 21", "21 = 3 × 7", "Prime factorization: 2 × 2 × 3 × 7 = 2^2 × 3 × 7."],
+          "wrong": [
+            { "answer": "2 × 3^2 × 7", "feedback": "Check the product: 2 × 9 × 7 = 126, not 84. Count how many 2s and 3s are in 84." },
+            { "answer": "4 × 3 × 7", "feedback": "4 is composite (2 × 2), so it must be split into primes too." },
+            { "answer": "2^2 × 21", "feedback": "21 is composite (3 × 7). Keep splitting until every factor is prime." }
+          ]
+        },
+        {
+          "question": "What number has the prime factorization 2^3 × 3 × 5?",
+          "kind": "numeric",
+          "answer": "120",
+          "hints": ["First evaluate the exponent: 2^3 = 2 × 2 × 2.", "Multiply 8 × 3 × 5."],
+          "solution": ["2^3 = 2 × 2 × 2 = 8.", "8 × 3 = 24, and 24 × 5 = 120."],
+          "wrong": [
+            { "answer": "90", "feedback": "Check 2^3: it means 2 × 2 × 2 = 8, not 2 × 3 = 6." },
+            { "answer": "60", "feedback": "60 is 2^2 × 3 × 5. With 2^3, multiply by one more 2." }
+          ]
+        }
+      ],
+      "mentor": "Before picking a multiple-choice prime factorization, check two things: is EVERY base prime, and do they multiply back to the original number?"
+    }
+  ],
+  "mistake": {
+    "problem": "Sam wrote the prime factorization of 48 as 2^3 × 6.",
+    "work": [
+      "48 = 8 × 6",
+      "8 = 2 × 2 × 2 = 2^3",
+      "Prime factorization: 2^3 × 6"
+    ],
+    "what_went_wrong": "Sam stopped one step too early! Even though 2^3 × 6 equals 48, 6 is a composite number (2 × 3), not a prime number.",
+    "fix": "Split 6 into 2 × 3 and group all four 2s together: 2 × 2 × 2 × 2 × 3 = 2^4 × 3."
+  },
+  "summary": [
+    "Factors divide a number evenly (find them in pairs so none are skipped); multiples come from multiplying by 1, 2, 3, and so on.",
+    "A prime number has exactly two factors (1 and itself); a composite number has more than two; 1 is neither prime nor composite.",
+    "To write a prime factorization, keep splitting composite factors until every factor is prime, then group repeats with exponents."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "How many factors does 45 have?",
+      "kind": "numeric",
+      "answer": "6",
+      "hints": ["Find factor pairs of 45 starting from 1: 1 × 45, 2?, 3 × 15…", "Test whole numbers up to 7—since 5 × 9 already finds the middle pair, you can stop right after 5!"],
+      "solution": ["Factor pairs of 45: 1 × 45, 3 × 15, 5 × 9.", "Factors: 1, 3, 5, 9, 15, 45.", "Total count: 6 factors."],
+      "wrong": [
+        { "answer": "4", "feedback": "Don't forget 1 and 45! Both are factors of 45." },
+        { "answer": "5", "feedback": "Count every number in all three factor pairs: 1 × 45, 3 × 15, and 5 × 9." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What is the 7th multiple of 14?",
+      "kind": "numeric",
+      "answer": "98",
+      "hints": ["Multiply 14 by 7.", "10 × 7 = 70 and 4 × 7 = 28."],
+      "solution": ["14 × 7 = 70 + 28 = 98."],
+      "wrong": [
+        { "answer": "84", "feedback": "84 is the 6th multiple (14 × 6). Add one more 14 for the 7th multiple." },
+        { "answer": "21", "feedback": "Multiples come from multiplying 14 × 7, not adding 14 + 7." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Which number is prime?",
+      "kind": "multiple_choice",
+      "choices": ["57", "67", "87", "91"],
+      "answer": "67",
+      "hints": ["Test 3 first by adding the digits of each number, then test 7.", "Remember 91 = 7 × 13!"],
+      "solution": ["57 = 3 × 19 (composite)", "87 = 3 × 29 (composite)", "91 = 7 × 13 (composite)", "67 is not divisible by 2, 3, 5, or 7, so 67 is prime."],
+      "wrong": [
+        { "answer": "57", "feedback": "5 + 7 = 12, so 57 is divisible by 3 (3 × 19)." },
+        { "answer": "87", "feedback": "8 + 7 = 15, so 87 is divisible by 3 (3 × 29)." },
+        { "answer": "91", "feedback": "91 is a classic surprise: check 91 ÷ 7 = 13, so 91 is composite." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Which is the prime factorization of 126?",
+      "kind": "multiple_choice",
+      "choices": ["2 × 3^2 × 7", "2^2 × 3 × 7", "2 × 9 × 7", "2 × 3 × 7^2"],
+      "answer": "2 × 3^2 × 7",
+      "hints": ["Start by dividing 126 by 2: 126 = 2 × 63.", "Now break 63 into prime factors (63 = 9 × 7)."],
+      "solution": ["126 = 2 × 63", "63 = 9 × 7 = 3 × 3 × 7", "Prime factorization: 2 × 3^2 × 7."],
+      "wrong": [
+        { "answer": "2^2 × 3 × 7", "feedback": "Multiply back: 4 × 3 × 7 = 84, not 126." },
+        { "answer": "2 × 9 × 7", "feedback": "9 is composite (3 × 3). Every factor in a prime factorization must be prime." },
+        { "answer": "2 × 3 × 7^2", "feedback": "Multiply back: 2 × 3 × 49 = 294, not 126." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A baker wants to arrange 42 cupcakes in equal rows on a rectangular tray, with at least 2 rows and at least 2 cupcakes in each row. How many different row counts can she choose from?",
+      "kind": "numeric",
+      "answer": "6",
+      "hints": ["First list all factors of 42.", "Exclude 1 row (1 × 42) and 42 rows (42 × 1) because the problem requires at least 2 rows and 2 cupcakes per row."],
+      "solution": ["All factors of 42: 1, 2, 3, 6, 7, 14, 21, 42 (8 factors).", "Excluding 1 and 42 leaves 6 row counts: 2, 3, 6, 7, 14, or 21 rows."],
+      "wrong": [
+        { "answer": "8", "feedback": "8 includes 1 row and 42 rows, which break the rule of at least 2 rows and 2 cupcakes per row." },
+        { "answer": "3", "feedback": "Each factor pair like 2 × 21 gives TWO layouts: 2 rows of 21 OR 21 rows of 2." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Liam is sorting 210 trading cards into equal packets and wants to know the prime building blocks of 210. What is the largest prime factor of 210?",
+      "kind": "numeric",
+      "answer": "7",
+      "hints": ["Split 210 into 21 × 10 first.", "Break both 21 and 10 into primes, then pick the largest prime."],
+      "solution": ["210 = 21 × 10 = (3 × 7) × (2 × 5) = 2 × 3 × 5 × 7.", "The prime factors are 2, 3, 5, and 7. The largest is 7."],
+      "wrong": [
+        { "answer": "21", "feedback": "21 is composite, so break it into its two prime factors first." },
+        { "answer": "5", "feedback": "Divide 210 by 2 × 3 × 5 = 30—there is still one larger prime factor left!" }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A secret locker code is the whole number whose prime factorization is 2^2 × 3^2 × 7. What is the locker code?",
+      "kind": "numeric",
+      "answer": "252",
+      "hints": ["Evaluate each power first: 2^2 = 4 and 3^2 = 9.", "Multiply 4 × 9 × 7."],
+      "solution": ["2^2 = 4 and 3^2 = 9.", "4 × 9 = 36, and 36 × 7 = 252."],
+      "wrong": [
+        { "answer": "84", "feedback": "Check 3^2: it means 3 × 3 = 9, not 3." },
+        { "answer": "126", "feedback": "Check 2^2: it means 2 × 2 = 4, not 2." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why is the number 1 neither prime nor composite?",
+      "kind": "multiple_choice",
+      "choices": [
+        "1 has only one factor (itself), while prime numbers need exactly two factors and composite numbers need more than two.",
+        "1 is odd, and odd numbers cannot be composite.",
+        "1 is smaller than 10, and prime numbers are at least 2 digits.",
+        "Because 1 × 1 = 1 makes 1 a negative number."
+      ],
+      "answer": "1 has only one factor (itself), while prime numbers need exactly two factors and composite numbers need more than two.",
+      "hints": ["Count how many factors the number 1 has.", "Compare that count with the definitions of prime (exactly 2) and composite (more than 2)."],
+      "solution": ["The only whole number that divides 1 evenly is 1, so 1 has only 1 factor.", "Because prime requires 2 factors and composite requires more than 2, 1 is neither."],
+      "wrong": [
+        { "answer": "1 is odd, and odd numbers cannot be composite.", "feedback": "Many odd numbers are composite, such as 9, 15, and 21." },
+        { "answer": "1 is smaller than 10, and prime numbers are at least 2 digits.", "feedback": "2, 3, 5, and 7 are all single-digit prime numbers." },
+        { "answer": "Because 1 × 1 = 1 makes 1 a negative number.", "feedback": "1 is a positive whole number—its factor count is what makes it neither prime nor composite." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Maya checks 91 by noticing it is odd and not divisible by 3 or 5, so she says 91 must be prime. Which response explains why Maya is wrong?",
+      "kind": "multiple_choice",
+      "choices": [
+        "She didn't test 7: 91 = 7 × 13, so 91 is composite.",
+        "Any number ending in 1 is always composite.",
+        "91 is composite because 9 + 1 = 10 is divisible by 2.",
+        "Every number above 50 is composite."
+      ],
+      "answer": "She didn't test 7: 91 = 7 × 13, so 91 is composite.",
+      "hints": ["Divide 91 by the next prime after 5, which is 7.", "Does 7 × 13 equal 91?"],
+      "solution": ["To test numbers up to 100 for primality, you must check 2, 3, 5, AND 7.", "91 ÷ 7 = 13, so 91 = 7 × 13 is composite."],
+      "wrong": [
+        { "answer": "Any number ending in 1 is always composite.", "feedback": "11, 31, 41, 61, and 71 all end in 1 and are prime!" },
+        { "answer": "91 is composite because 9 + 1 = 10 is divisible by 2.", "feedback": "The digit-sum test works for 3 and 9, not for 2." },
+        { "answer": "Every number above 50 is composite.", "feedback": "Primes keep going forever—53, 59, 61, 67, 71, and more are all prime." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 1,728 ÷ 16.",
+      "kind": "numeric",
+      "answer": "108",
+      "hints": ["Start with 17 ÷ 16 = 1 (remainder 1). Bring down 2 to make 12.", "16 doesn't fit into 12, so write 0 in the quotient before bringing down the 8."],
+      "solution": ["17 ÷ 16 = 1 (16). 17 − 16 = 1. Bring down 2 → 12.", "16 doesn't fit into 12, so write 0. Bring down 8 → 128.", "128 ÷ 16 = 8. Answer: 108."],
+      "wrong": [
+        { "answer": "18", "feedback": "Don't forget the 0 in the tens place when 16 didn't fit into 12." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 4.25 × 8.",
+      "kind": "numeric",
+      "answer": "34",
+      "hints": ["Multiply 425 × 8 first, then count 2 decimal places.", "400 × 8 = 3,200 and 25 × 8 = 200."],
+      "solution": ["425 × 8 = 3,400.", "Count 2 decimal places from the right → 34.00, which is 34."],
+      "wrong": [
+        { "answer": "3.4", "feedback": "Estimate: 4 × 8 = 32, so the product must be a little above 32, not 3.4." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "What is the smallest whole number that has four different prime factors?",
+      "kind": "numeric",
+      "answer": "210",
+      "hints": ["To make the product as small as possible, pick the four smallest prime numbers.", "The four smallest primes are 2, 3, 5, and 7. Multiply them together!"],
+      "solution": ["The four smallest prime numbers are 2, 3, 5, and 7 (remember 1 is not prime).", "Multiply: 2 × 3 × 5 × 7 = 6 × 35 = 210."],
+      "wrong": [
+        { "answer": "30", "feedback": "30 = 2 × 3 × 5 only has three prime factors. Include the 4th smallest prime too." },
+        { "answer": "105", "feedback": "105 = 3 × 5 × 7 skips the smallest prime (2) and only has three prime factors." }
+      ]
+    }
+  ]
+}

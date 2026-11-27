@@ -1,0 +1,376 @@
+{
+  "version": 2,
+  "skill_id": "6.decimal-error-analysis",
+  "title": "Find the Mistake in Decimal Work",
+  "hook": "Leo ran a decimal problem on paper and got 25.4 ÷ 0.5 = 5.08 instead of 50.8. Where did his work go off track—and how can you spot the exact step with a decimal mistake in seconds without redoing every digit from scratch?",
+  "goal": "I can inspect worked decimal addition, subtraction, multiplication, and division steps to pinpoint the exact mistake and find the correct answer.",
+  "vocabulary": [
+    { "term": "error analysis", "meaning": "reading a worked solution step by step to find where a mistake happened and why", "example": "Checking whether decimal points were lined up before adding is error analysis." },
+    { "term": "annex zeros", "meaning": "putting trailing zeros after the decimal point so numbers have matching places without changing value", "example": "Rewriting 18 as 18.00 before subtracting 4.65." },
+    { "term": "place-value alignment", "meaning": "lining up digits with matching place values (tenths under tenths, hundredths under hundredths)", "example": "In 14.6 + 3.75, the 6 tenths lines up over the 7 tenths, not over the 5 hundredths." },
+    { "term": "power-of-10 shift", "meaning": "multiplying both divisor and dividend by 10, 100, or 1,000 so the divisor becomes a whole number", "example": "In 7.2 ÷ 0.08, multiply both by 100 to get 720 ÷ 8." }
+  ],
+  "warm_up": [
+    {
+      "question": "Find 14.6 + 3.75.",
+      "kind": "numeric",
+      "answer": "18.35",
+      "hints": ["Line up the decimal points and annex a zero to 14.60.", "Add hundredths (0 + 5), then tenths (6 + 7 = 13), carrying 1 to the ones."],
+      "solution": ["Rewrite as 14.60 + 3.75.", "0 + 5 = 5 hundredths; 6 + 7 = 13 tenths (write 3, carry 1).", "1 + 14 + 3 = 18. Answer: 18.35."],
+      "wrong": [
+        { "answer": "5.21", "feedback": "Line up the decimal points, not the right edges! 14.6 is 14.60, not 1.46." },
+        { "answer": "17.35", "feedback": "Remember to carry 1 from 6 + 7 = 13 tenths into the ones column." }
+      ]
+    },
+    {
+      "question": "Find 7.2 ÷ 0.08.",
+      "kind": "numeric",
+      "answer": "90",
+      "hints": ["Move the decimal point in 0.08 two places right to make 8.", "Move the decimal point in 7.2 two places right too (annex a zero to make 720)."],
+      "solution": ["Multiply both numbers by 100: 7.2 → 720 and 0.08 → 8.", "720 ÷ 8 = 90."],
+      "wrong": [
+        { "answer": "9", "feedback": "You moved 0.08 two places right (× 100), so 7.2 also moves two places right to 720, not 72." },
+        { "answer": "0.9", "feedback": "Dividing by a number less than 1 makes the quotient bigger than 7.2, not smaller." }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Spot mistakes in adding and subtracting decimals",
+      "read": [
+        "When you check someone's decimal addition or subtraction, look at **Step 1** first: did they line up the **decimal points**? A common trap is lining up the rightmost digits instead, which adds tenths to hundredths.",
+        "Next, look for missing **annexed zeros** when subtracting from a whole number or a shorter decimal—like trying to subtract `18 − 4.65` without rewriting `18` as `18.00`.",
+        "Finally, check **regrouping** across the decimal point: borrowing 1 whole gives 10 tenths, and carrying 10 tenths adds 1 to the ones place."
+      ],
+      "model": {
+        "caption": "What to look for in add/subtract work",
+        "rows": [
+          ["Mistake type", "What wrong work looks like", "How to catch it"],
+          ["Right-aligned instead of decimal-aligned", "14.6 + 3.75 written as 1.46 + 3.75 = 5.21", "Estimate: 15 + 4 = 19, not 5"],
+          ["Missing annexed zeros", "18 − 4.65 written as 14.65", "You cannot drop .65 down; rewrite 18 as 18.00"],
+          ["Subtracted bottom from top", "24.2 − 6.85 → 5 − 0 = 5, 8 − 2 = 6", "Always subtract top minus bottom, regrouping first"]
+        ]
+      },
+      "example": {
+        "problem": "Find the mistake in Ben's work for 16 − 4.75:\nStep 1: Write 16 above 4.75 with 6 over 4.\nStep 2: Bring .75 straight down into the answer.\nStep 3: Subtract 16 − 4 = 12 to get 12.75.",
+        "steps": [
+          { "say": "Check Step 1: 6 is in the ones place and 4 is in the ones place, so the place values line up.", "why": "Even though 16 has no visible decimal point, 16 = 16.00." },
+          { "say": "Check Step 2: Ben brought .75 straight down instead of subtracting .75 from .00!", "why": "You cannot skip subtracting the hundredths and tenths; 16.00 needs regrouping." },
+          { "say": "Fix Step 2 by rewriting 16 as 16.00 and regrouping: 16.00 − 4.75 = 11.25.", "why": "Estimate check: 16 − 5 = 11, which matches 11.25." }
+        ],
+        "answer": "Step 2 has the mistake; the correct answer is 11.25."
+      },
+      "try_it": [
+        {
+          "question": "A student solved 23.4 + 5.18 using these steps:\nStep 1: Line up the right-most digits of both numbers so 4 is above 8 and 3 is above 1.\nStep 2: Add the columns from right to left: 4 + 8 = 12 (write 2, carry 1); 1 + 3 + 1 = 5; 2 + 5 = 7.\nStep 3: Place the decimal point after two digits from the right to get 7.52.\nWhich step has the mistake?",
+          "kind": "multiple_choice",
+          "choices": ["Step 1", "Step 2", "Step 3"],
+          "answer": "Step 1",
+          "hints": ["Look at how the numbers were lined up before adding.", "In 23.4 + 5.18, should 4 tenths sit above 8 hundredths, or should the decimal points line up?"],
+          "solution": ["Step 1 lined up the right edges instead of the decimal points.", "Correct setup: 23.40 + 5.18 = 28.58."],
+          "wrong": [
+            { "answer": "Step 2", "feedback": "The column addition itself (234 + 518 = 752) matched the misaligned numbers; the mistake happened earlier when setting up the columns." },
+            { "answer": "Step 3", "feedback": "23 + 5 should be around 28, so 7.52 is wrong because the decimal points were misaligned from the start." }
+          ]
+        },
+        {
+          "question": "A student solved 18 − 4.65 using these steps:\nStep 1: Write 18.00 above 4.65 with decimal points lined up.\nStep 2: Subtract 65 hundredths from 00 by bringing 65 straight down to get .65.\nStep 3: Subtract 18 − 4 = 14 to get 14.65.\nWhat is the correct answer?",
+          "kind": "numeric",
+          "answer": "13.35",
+          "hints": ["Step 2 brought .65 straight down instead of regrouping from 18.00.", "Regroup 18.00 as 17 ones + 9 tenths + 10 hundredths, then subtract 4.65."],
+          "solution": ["Rewrite 18 as 18.00.", "Borrow 1 one → 17.9(10): 10 − 5 = 5 hundredths, 9 − 6 = 3 tenths, 17 − 4 = 13 ones.", "Correct answer: 13.35."],
+          "wrong": [
+            { "answer": "14.65", "feedback": "14.65 is the student's wrong answer—they forgot to regroup when subtracting .65 from .00." },
+            { "answer": "14.35", "feedback": "Check the ones place after borrowing 1 from 18: 17 − 4 = 13, not 14." }
+          ]
+        }
+      ],
+      "mentor": "A two-second whole-number estimate catches almost every alignment mistake: 23 + 5 has to be near 28, never 7!"
+    },
+    {
+      "heading": "Spot mistakes in multiplying decimals",
+      "read": [
+        "When multiplying decimals, students often confuse the addition rule with the multiplication rule. In multiplication, you do **not** line up decimal points and bring the dot straight down.",
+        "Instead, multiply as whole numbers, then count the **total decimal places in both factors combined**. That total tells you how many places to count from the right in the product.",
+        "Watch out for one sneaky trap: **trailing zeros**! In `2.5 × 0.4`, `25 × 4 = 100`. You must count 2 decimal places *before* dropping zeros: `100` becomes `1.00`, which is `1`, not `10`."
+      ],
+      "model": {
+        "caption": "Checking decimal multiplication steps",
+        "rows": [
+          ["Rule to check", "Wrong step", "Right step"],
+          ["Count places in BOTH factors", "2.4 × 0.3 → 1 decimal place → 7.2", "2.4 (1) + 0.3 (1) = 2 places → 0.72"],
+          ["Keep trailing zeros while counting", "2.5 × 0.4 → 25 × 4 = 100 → drop 0 → 10", "Count 2 places on 100 first → 1.00 = 1"],
+          ["Verify with estimation", "4.8 × 3.2 = 153.6 (ignored estimate)", "5 × 3 = 15, so 15.36 makes sense"]
+        ]
+      },
+      "example": {
+        "problem": "Check Priya's work for 3.4 × 0.25:\nStep 1: Multiply as whole numbers: 34 × 25 = 850.\nStep 2: Count decimal places in both factors: 3.4 has 1 place and 0.25 has 2 places, so 3 places in all.\nStep 3: Drop the trailing zero from 850 to get 85, then move the decimal point 3 places left to get 0.085.",
+        "steps": [
+          { "say": "Check Step 1: 34 × 25 = 850. That whole-number product is right.", "why": "34 × 20 = 680 and 34 × 5 = 170; 680 + 170 = 850." },
+          { "say": "Check Step 2: 1 decimal place + 2 decimal places = 3 total decimal places. Right again.", "why": "Always add the decimal place counts of both factors." },
+          { "say": "Check Step 3: Priya dropped the 0 from 850 BEFORE counting 3 places left!", "why": "Dropping the zero early shifted every digit one place too small." },
+          { "say": "Fix Step 3: Count 3 places from the right in 850 → 0.850, which equals 0.85.", "why": "Estimate check: 3.4 × 0.25 is about 3.4 × 1/4 ≈ 0.85. ✓" }
+        ],
+        "answer": "Step 3 has the mistake; the correct answer is 0.85."
+      },
+      "try_it": [
+        {
+          "question": "A student solved 4.2 × 0.35 using these steps:\nStep 1: Ignore the decimal points and compute 42 × 35.\nStep 2: Multiply: 42 × 5 = 210 and 42 × 30 = 1,260.\nStep 3: Add: 210 + 1,260 = 1,470.\nStep 4: Because 0.35 has 2 decimal places, count 2 places from the right to get 14.70.\nWhich step has the mistake?",
+          "kind": "multiple_choice",
+          "choices": ["Step 1", "Step 2", "Step 3", "Step 4"],
+          "answer": "Step 4",
+          "hints": ["Check 42 × 35 = 1,470 first, then look at how the decimal point was placed.", "How many total decimal places are in 4.2 AND 0.35 combined?"],
+          "solution": ["42 × 35 = 1,470 is completely right.", "Step 4 only counted the 2 decimal places in 0.35 and forgot the 1 decimal place in 4.2.", "With 1 + 2 = 3 decimal places, 1,470 becomes 1.470 = 1.47."],
+          "wrong": [
+            { "answer": "Step 1", "feedback": "Ignoring the decimal points to multiply whole numbers first is a solid strategy." },
+            { "answer": "Step 2", "feedback": "Check 42 × 5 = 210 and 42 × 30 = 1,260—both partial products are right." },
+            { "answer": "Step 3", "feedback": "210 + 1,260 = 1,470 is right. Check how many decimal places were counted in the last step." }
+          ]
+        },
+        {
+          "question": "A student solved 2.5 × 0.16 using these steps:\nStep 1: Multiply 25 × 16 = 400.\nStep 2: Drop the two zeros from 400 to get 4.\nStep 3: Count 3 decimal places left from 4 to get 0.004.\nWhat is the correct answer?",
+          "kind": "numeric",
+          "answer": "0.4",
+          "hints": ["Do not drop the zeros from 400 until AFTER you count the decimal places.", "2.5 has 1 decimal place and 0.16 has 2 decimal places, so count 3 places left from 400."],
+          "solution": ["25 × 16 = 400.", "Total decimal places: 1 + 2 = 3.", "Count 3 places from the right in 400 → 0.400, which equals 0.4."],
+          "wrong": [
+            { "answer": "0.004", "feedback": "0.004 is the student's wrong answer—the zeros in 400 must stay in place while counting 3 decimal places." },
+            { "answer": "4", "feedback": "Don't forget to count 3 decimal places from the right of 400." }
+          ]
+        }
+      ],
+      "mentor": "Never drop a trailing zero until AFTER you place the decimal point—those zeros hold place value while you count!"
+    },
+    {
+      "heading": "Spot mistakes in dividing decimals",
+      "read": [
+        "Decimal division has three classic mistakes to watch for:",
+        "1. **Moving only one decimal point** (or moving them different distances) when the divisor is a decimal. Both divisor and dividend must shift the **same number of places** right.\n2. **Dividing the wrong way**—for instance, finding `0.4 ÷ 12` instead of `12 ÷ 0.4`, or computing price ÷ pounds backward.\n3. **Misplacing the decimal point** in the quotient instead of bringing it straight up from the adjusted dividend."
+      ],
+      "model": {
+        "caption": "Checking decimal division steps",
+        "rows": [
+          ["Problem", "Wrong shift / setup", "Right shift / setup"],
+          ["6.4 ÷ 0.08", "64 ÷ 8 = 8 (moved 6.4 once, 0.08 twice)", "640 ÷ 8 = 80 (moved both twice)"],
+          ["15 ÷ 0.25", "15 ÷ 25 = 0.6 (forgot to shift 15)", "1,500 ÷ 25 = 60 (shifted both twice)"],
+          ["18.4 ÷ 4", "18.4 ÷ 4 = 46 (dropped the dot)", "18.4 ÷ 4 = 4.6 (dot straight up)"]
+        ]
+      },
+      "example": {
+        "problem": "Check Marcus's work for 9.6 ÷ 0.12:\nStep 1: Move the decimal point in 0.12 two places right to make 12.\nStep 2: Move the decimal point in 9.6 one place right to make 96.\nStep 3: Divide 96 ÷ 12 = 8.",
+        "steps": [
+          { "say": "Check Step 1: 0.12 moved two places right is 12. That's right.", "why": "We multiply the divisor by 100 to make it a whole number." },
+          { "say": "Check Step 2: Marcus only moved 9.6 ONE place right (× 10) instead of TWO places right (× 100)!", "why": "Both numbers must be multiplied by the same power of 10 so the quotient stays unchanged." },
+          { "say": "Fix Step 2 and divide: 9.6 × 100 = 960, and 960 ÷ 12 = 80.", "why": "Check by multiplying: 80 × 0.12 = 9.6. ✓" }
+        ],
+        "answer": "Step 2 has the mistake; the correct answer is 80."
+      },
+      "try_it": [
+        {
+          "question": "A student solved 14.4 ÷ 0.06 using these steps:\nStep 1: Multiply the divisor 0.06 by 100 to get 6.\nStep 2: Multiply the dividend 14.4 by 10 to get 144.\nStep 3: Divide 144 by 6: 14 ÷ 6 = 2 (remainder 2), bring down 4 to make 24, and 24 ÷ 6 = 4.\nStep 4: Write the quotient as 24.\nWhich step has the mistake?",
+          "kind": "multiple_choice",
+          "choices": ["Step 1", "Step 2", "Step 3", "Step 4"],
+          "answer": "Step 2",
+          "hints": ["Compare the power of 10 used to scale the divisor versus the dividend.", "Both divisor and dividend must be multiplied by the exact same power of 10."],
+          "solution": ["Step 1 multiplied by 100, while Step 2 multiplied by only 10.", "Multiply 14.4 by 100 to get 1,440, then 1,440 ÷ 6 = 240."],
+          "wrong": [
+            { "answer": "Step 1", "feedback": "Multiplying 0.06 by 100 to turn the divisor into 6 is the right first move." },
+            { "answer": "Step 3", "feedback": "144 ÷ 6 = 24 is right for 144, so the error happened earlier when scaling 14.4." },
+            { "answer": "Step 4", "feedback": "The error happened before dividing: check how 14.4 was scaled." }
+          ]
+        },
+        {
+          "question": "A student solved 3.45 ÷ 1.5 using these steps:\nStep 1: Move both decimal points 1 place right to make 34.5 ÷ 15.\nStep 2: Divide 345 ÷ 15 = 23.\nStep 3: Write the final quotient as 23.\nWhat is the correct answer?",
+          "kind": "numeric",
+          "answer": "2.3",
+          "hints": ["Step 1 turned the problem into 34.5 ÷ 15, which still has a decimal point in 34.5.", "Bring the decimal point straight up from 34.5 into the quotient 23."],
+          "solution": ["34.5 ÷ 15: bring the decimal point straight up above the bar.", "34 ÷ 15 = 2 (30), remainder 4; bring down 5 → 45 ÷ 15 = 3.", "Correct answer: 2.3. (Estimate: 3 ÷ 1.5 = 2. ✓)"],
+          "wrong": [
+            { "answer": "23", "feedback": "23 is the student's wrong answer—the decimal point in 34.5 must come straight up into the quotient." },
+            { "answer": "0.23", "feedback": "Check your estimate: 3.45 ÷ 1.5 is a bit more than 3 ÷ 1.5 = 2, not 0.23." }
+          ]
+        }
+      ],
+      "mentor": "Whenever you move a decimal point in the divisor, draw an arrow on both numbers right away so you can't shift them different distances!"
+    }
+  ],
+  "mistake": {
+    "problem": "Noah solved 15 ÷ 0.25.",
+    "work": [
+      "Step 1: Turn 0.25 into the whole number 25.",
+      "Step 2: Keep 15 as 15.",
+      "Step 3: Divide 15 ÷ 25 = 0.6."
+    ],
+    "what_went_wrong": "Noah multiplied the divisor 0.25 by 100 to get 25, but forgot to multiply the dividend 15 by 100 too. Dividing by 0.25 means counting how many quarters fit in 15—the answer should be much bigger than 15, not 0.6!",
+    "fix": "Multiply both numbers by 100: 15 × 100 = 1,500 and 0.25 × 100 = 25. Then divide 1,500 ÷ 25 = 60."
+  },
+  "summary": [
+    "In decimal addition and subtraction, check that decimal points are lined up and zeros are annexed before subtracting.",
+    "In decimal multiplication, count the total decimal places in both factors combined, and never drop trailing zeros before placing the dot.",
+    "In decimal division, multiply both divisor and dividend by the same power of 10, then bring the dividend's decimal point straight up."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "A student solved 32.4 − 6.18 using these steps:\nStep 1: Rewrite 32.4 as 32.40 so both numbers have two decimal places.\nStep 2: In the hundredths column, subtract 8 − 0 = 8.\nStep 3: Subtract tenths and ones: 4 − 1 = 3 and 32 − 6 = 26, giving 26.38.\nWhich step has the mistake?",
+      "kind": "multiple_choice",
+      "choices": ["Step 1", "Step 2", "Step 3"],
+      "answer": "Step 2",
+      "hints": ["Look closely at the hundredths column subtraction.", "Can you flip 0 − 8 around into 8 − 0?"],
+      "solution": ["In Step 2, the student subtracted bottom minus top (8 − 0) instead of regrouping from the 4 tenths.", "Regrouping gives 10 − 8 = 2 hundredths and 3 − 1 = 2 tenths, so the right answer is 26.22."],
+      "wrong": [
+        { "answer": "Step 1", "feedback": "Annexing a zero to turn 32.4 into 32.40 is the right first step." },
+        { "answer": "Step 3", "feedback": "Step 3 subtracted the leftover digits that weren't regrouped; the real rule break happened in the hundredths column." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A student solved 0.45 × 1.8 using these steps:\nStep 1: Multiply 45 × 18 = 810.\nStep 2: Drop the zero from 810 to get 81.\nStep 3: Count 3 decimal places from the right to get 0.081.\nWhat is the correct answer?",
+      "kind": "numeric",
+      "answer": "0.81",
+      "hints": ["Keep the 0 in 810 while counting the 3 decimal places.", "Count 3 places from the right in 810."],
+      "solution": ["45 × 18 = 810.", "0.45 (2 places) + 1.8 (1 place) = 3 decimal places.", "Count 3 places from the right in 810 → 0.810, which equals 0.81."],
+      "wrong": [
+        { "answer": "0.081", "feedback": "0.081 is the student's wrong answer—the zero in 810 must stay until after you count 3 places." },
+        { "answer": "8.1", "feedback": "Estimate: 0.45 is a little less than half of 1.8, so the product should be less than 0.9, not 8.1." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A student solved 5.4 ÷ 0.09 using these steps:\nStep 1: Move the decimal point in 0.09 two places right to make 9.\nStep 2: Move the decimal point in 5.4 one place right to make 54.\nStep 3: Divide 54 ÷ 9 = 6.\nStep 4: Check by estimating 5 ÷ 0.1 and write 6 as the answer.\nWhich step has the mistake?",
+      "kind": "multiple_choice",
+      "choices": ["Step 1", "Step 2", "Step 3", "Step 4"],
+      "answer": "Step 2",
+      "hints": ["Compare how many places the decimal point moved in the divisor versus the dividend.", "Both divisor and dividend must move the same number of places."],
+      "solution": ["Step 1 moved 2 places right, so Step 2 needed to move 5.4 two places right to 540.", "540 ÷ 9 = 60."],
+      "wrong": [
+        { "answer": "Step 1", "feedback": "Moving 0.09 two places right to get the whole number 9 is right." },
+        { "answer": "Step 3", "feedback": "54 ÷ 9 = 6 is right for 54, so the mistake happened when scaling 5.4." },
+        { "answer": "Step 4", "feedback": "Notice 5 ÷ 0.1 = 50 actually catches that 6 is too small—the real scaling error happened earlier when shifting 5.4." }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "A student solved 25.2 ÷ 6 using these steps:\nStep 1: Start with 25 ÷ 6 = 4 (remainder 1).\nStep 2: Bring down 2 to make 12, and 12 ÷ 6 = 2.\nStep 3: Write the quotient as 42.\nWhat is the correct answer?",
+      "kind": "numeric",
+      "answer": "4.2",
+      "hints": ["The divisor 6 is already a whole number, so where does the decimal point in 25.2 go?", "Bring the decimal point straight up from 25.2 into the quotient."],
+      "solution": ["25 ÷ 6 = 4 (remainder 1). Bring the decimal point straight up.", "Bring down 2 → 12 ÷ 6 = 2.", "Correct answer: 4.2."],
+      "wrong": [
+        { "answer": "42", "feedback": "42 is the student's answer after forgetting the decimal point. Bring it straight up from 25.2." },
+        { "answer": "0.42", "feedback": "Estimate: 24 ÷ 6 = 4, so the answer should be around 4, not 0.42." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "At a school book fair, Sam wants to find the total of a $12.75 novel and a $3.50 bookmark (written as $3.5 on his scratch paper). Look at his steps:\nStep 1: Write 12.75 over 3.5 with the 5 in 3.5 aligned under the 5 in 12.75.\nStep 2: Add the columns: 5 + 5 = 10 (write 0, carry 1); 1 + 7 + 3 = 11 (write 1, carry 1); 1 + 2 = 3.\nStep 3: Bring the decimal point down to get $13.10.\nWhich step in Sam's work has the mistake?",
+      "kind": "multiple_choice",
+      "choices": ["Step 1", "Step 2", "Step 3"],
+      "answer": "Step 1",
+      "hints": ["Look at where 3.5 was placed under 12.75.", "In 3.5, the 5 is in the tenths place, not the hundredths place."],
+      "solution": ["Step 1 misaligned 3.5 under 12.75, turning $3.50 into $0.35.", "Aligned properly: 12.75 + 3.50 = 16.25."],
+      "wrong": [
+        { "answer": "Step 2", "feedback": "The column sums matched the misaligned setup from the start." },
+        { "answer": "Step 3", "feedback": "The mistake happened earlier when 3.5 was placed in the wrong columns." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "Maya is making 3.5 batches of trail mix. Each batch needs 1.4 cups of oats. Here is her work:\nStep 1: Multiply 35 × 14 = 490.\nStep 2: Add the decimal places: 3.5 has 1 place and 1.4 has 1 place, so 2 places total.\nStep 3: Drop the zero to get 49, then move 2 places left to get 0.49 cups.\nWhat is the correct number of cups of oats?",
+      "kind": "numeric",
+      "answer": "4.9",
+      "hints": ["Keep the 0 on 490 when counting 2 decimal places from the right.", "Estimate: 3.5 × 1.4 is more than 3 × 1 = 3."],
+      "solution": ["35 × 14 = 490.", "Count 2 decimal places from the right in 490 → 4.90, which is 4.9 cups."],
+      "wrong": [
+        { "answer": "0.49", "feedback": "0.49 is Maya's wrong answer—she dropped the zero before counting the 2 decimal places." },
+        { "answer": "49", "feedback": "Count 2 decimal places from the right in 490." }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A 1.6-kilogram bag of almonds costs $12.80. Carlos wants to find the unit price (dollars per kilogram). Here are his steps:\nStep 1: Decide to divide kilograms by dollars: 1.6 ÷ 12.80.\nStep 2: Move both decimal points 2 places right: 160 ÷ 1,280.\nStep 3: Divide 160 ÷ 1,280 = 0.125, so $0.13 per kilogram.\nWhich step has the mistake?",
+      "kind": "multiple_choice",
+      "choices": ["Step 1", "Step 2", "Step 3"],
+      "answer": "Step 1",
+      "hints": ["To find dollars per kilogram, which quantity goes first in the division?", "Unit price is total price ÷ total kilograms."],
+      "solution": ["Step 1 divided the wrong way (kilograms ÷ dollars instead of dollars ÷ kilograms).", "Correct unit price: 12.80 ÷ 1.6 = 128 ÷ 16 = $8.00 per kilogram."],
+      "wrong": [
+        { "answer": "Step 2", "feedback": "Scaling 1.6 and 12.80 by 100 was consistent, yet the division order chosen at the start was already backwards." },
+        { "answer": "Step 3", "feedback": "160 ÷ 1,280 is 0.125, so the arithmetic matched the backwards division setup." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Without computing the exact digits, why does a quick estimate immediately show that 6.8 × 0.49 = 33.32 must have a decimal-point mistake?",
+      "kind": "multiple_choice",
+      "choices": [
+        "6.8 is about 7 and 0.49 is about 0.5 (half), so the product must be near 3.5, not 33.32.",
+        "Multiplying any two decimals always gives an answer less than 1.",
+        "A product can never have the same digits after the decimal point as 33.32.",
+        "6.8 + 0.49 is about 7.3, and products are always close to sums."
+      ],
+      "answer": "6.8 is about 7 and 0.49 is about 0.5 (half), so the product must be near 3.5, not 33.32.",
+      "hints": ["Round 6.8 to 7 and 0.49 to 0.5.", "What is half of 7?"],
+      "solution": ["6.8 ≈ 7 and 0.49 ≈ 0.5.", "7 × 0.5 = 3.5, so 33.32 is ten times too big (the exact product is 3.332)."],
+      "wrong": [
+        { "answer": "Multiplying any two decimals always gives an answer less than 1.", "feedback": "Not true—for example, 6.8 × 2.5 = 17. Check using a quick estimate instead." },
+        { "answer": "A product can never have the same digits after the decimal point as 33.32.", "feedback": "The digits 3-3-3-2 are actually right; only the decimal point's place is off!" },
+        { "answer": "6.8 + 0.49 is about 7.3, and products are always close to sums.", "feedback": "Sums and products don't have to be close—estimate by multiplying rounded numbers." }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "When checking work for 4.2 ÷ 0.07, why must you multiply both numbers by 100 instead of 10?",
+      "kind": "multiple_choice",
+      "choices": [
+        "0.07 has two decimal places, so multiplying by 100 turns the divisor into the whole number 7.",
+        "4.2 has one decimal place, and you always multiply by 100 when dividing.",
+        "Multiplying by 10 gives 42 ÷ 0.7, which changes the quotient.",
+        "Dividing by a decimal always needs the dividend to end in zero."
+      ],
+      "answer": "0.07 has two decimal places, so multiplying by 100 turns the divisor into the whole number 7.",
+      "hints": ["Which number needs to become a whole number first—the divisor or the dividend?", "What is 0.07 × 10 versus 0.07 × 100?"],
+      "solution": ["To use whole-number division, the divisor 0.07 must become a whole number.", "0.07 × 100 = 7, and 4.2 × 100 = 420, so 420 ÷ 7 = 60."],
+      "wrong": [
+        { "answer": "4.2 has one decimal place, and you always multiply by 100 when dividing.", "feedback": "You choose the power of 10 based on the divisor's decimal places, not always 100." },
+        { "answer": "Multiplying by 10 gives 42 ÷ 0.7, which changes the quotient.", "feedback": "42 ÷ 0.7 has the same quotient (60), yet 0.7 is still a decimal—we need a whole-number divisor." },
+        { "answer": "Dividing by a decimal always needs the dividend to end in zero.", "feedback": "The goal is a whole-number divisor, not a dividend ending in zero." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 3,888 ÷ 36.",
+      "kind": "numeric",
+      "answer": "108",
+      "hints": ["Start with 38 ÷ 36 = 1. Bring down the 8 to make 28.", "Does 36 fit into 28? Write 0 in the quotient before bringing down the final 8."],
+      "solution": ["38 ÷ 36 = 1 (remainder 2). Bring down 8 → 28.", "36 doesn't fit into 28, so write 0. Bring down 8 → 288.", "288 ÷ 36 = 8 (36 × 8 = 288). Answer: 108."],
+      "wrong": [
+        { "answer": "18", "feedback": "When 36 didn't fit into 28, write 0 in the tens place of the quotient." }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "A club has $27.50 left in its budget after buying snacks. Notebooks cost $3.25 each. How many notebooks can the club afford?",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": ["Divide $27.50 by $3.25.", "Round down to whole notebooks so you don't go over $27.50."],
+      "solution": ["27.50 ÷ 3.25 = 2,750 ÷ 325 = 8.46...", "Round down to 8 notebooks (8 × $3.25 = $26.00; 9 would cost $29.25)."],
+      "wrong": [
+        { "answer": "9", "feedback": "9 notebooks cost $29.25, which goes over $27.50. Round down for budgets." }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Elena tried to solve (12.4 − 3.75) ÷ 0.5 using these steps:\nStep 1: Subtract 12.4 − 3.75 = 9.35 by bringing 5 down and doing 7 − 4 = 3.\nStep 2: Move both decimal points 1 place right to divide by 5.\nStep 3: Divide by 5.\nFix Elena's mistake and find the correct answer to (12.4 − 3.75) ÷ 0.5.",
+      "kind": "numeric",
+      "answer": "17.3",
+      "hints": ["First fix Step 1: rewrite 12.4 as 12.40 and regroup to subtract 3.75.", "Then divide your difference (8.65) by 0.5 by shifting both decimal points 1 place right: 86.5 ÷ 5."],
+      "solution": ["Fix Step 1: 12.40 − 3.75 = 8.65.", "Move both decimal points 1 place right: 8.65 ÷ 0.5 = 86.5 ÷ 5.", "Divide: 86.5 ÷ 5 = 17.3."],
+      "wrong": [
+        { "answer": "18.7", "feedback": "18.7 uses Elena's wrong subtraction (9.35 ÷ 0.5). Recompute 12.40 − 3.75 with regrouping first." },
+        { "answer": "4.325", "feedback": "You multiplied 8.65 by 0.5 instead of dividing by 0.5. Remember dividing by 0.5 is multiplying by 2." }
+      ]
+    }
+  ]
+}
