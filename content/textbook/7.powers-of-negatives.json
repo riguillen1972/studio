@@ -1,0 +1,675 @@
+{
+  "version": 2,
+  "skill_id": "7.powers-of-negatives",
+  "title": "Powers of negative numbers",
+  "hook": "A coding club puzzle asks you to evaluate (-2)^5 and compare (-4)^2 with -4^2. Why can one pair of parentheses change a number's sign, and how can you predict the sign of (-1)^99 without multiplying 99 times?",
+  "goal": "I can evaluate powers of negative numbers, tell (-a)^n apart from -a^n, and predict the sign of a power from its exponent.",
+  "vocabulary": [
+    {
+      "term": "base",
+      "meaning": "the number being multiplied repeatedly in a power",
+      "example": "In (-2)^3, the base is -2. In -2^3, the base is 2."
+    },
+    {
+      "term": "exponent",
+      "meaning": "the number after ^ that tells how many times to multiply the base by itself",
+      "example": "In (-5)^4, the exponent is 4, so multiply -5 four times."
+    },
+    {
+      "term": "power",
+      "meaning": "an expression made of a base and an exponent, or its value",
+      "example": "(-2)^3 is a power whose value is -8."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find (-6) × (-4) × (-2).",
+      "kind": "numeric",
+      "answer": "-48",
+      "hints": [
+        "Multiply the first two factors: (-6) × (-4) = 24.",
+        "Now multiply 24 × (-2). Remember: different signs give a negative product."
+      ],
+      "solution": [
+        "(-6) × (-4) = 24 (same signs → positive).",
+        "24 × (-2) = -48 (different signs → negative)."
+      ],
+      "wrong": [
+        {
+          "answer": "48",
+          "feedback": "Count the negative factors: there are three negative numbers (an odd count), so the final product is negative."
+        },
+        {
+          "answer": "-12",
+          "feedback": "Multiply the numbers together rather than adding them."
+        }
+      ]
+    },
+    {
+      "question": "Evaluate 2^3 + 5 × 3.",
+      "kind": "numeric",
+      "answer": "23",
+      "hints": [
+        "According to the order of operations, evaluate the exponent 2^3 first.",
+        "Next multiply 5 × 3, then add."
+      ],
+      "solution": [
+        "2^3 = 2 × 2 × 2 = 8.",
+        "5 × 3 = 15.",
+        "8 + 15 = 23."
+      ],
+      "wrong": [
+        {
+          "answer": "39",
+          "feedback": "Multiply 5 × 3 before adding 8 + 5."
+        },
+        {
+          "answer": "21",
+          "feedback": "Check 2^3: it means 2 × 2 × 2 = 8, not 2 × 3 = 6."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Evaluating powers of a negative base",
+      "read": [
+        "When parentheses wrap around a negative number, like `(-2)^3`, the **negative number itself** is the base. Write it as repeated multiplication, then multiply step by step using the integer sign rules.",
+        "Notice how the sign flips back and forth as the exponent grows: `(-2)^1 = -2`, `(-2)^2 = 4`, `(-2)^3 = -8`, `(-2)^4 = 16`.",
+        "The exact same idea works for negative **fractions** and **decimals**: `(-1/2)^3 = (-1/2) × (-1/2) × (-1/2) = -1/8`."
+      ],
+      "model": {
+        "caption": "Powers of (-2)",
+        "rows": [
+          ["Power", "Repeated multiplication", "Value"],
+          ["(-2)^1", "-2", "-2"],
+          ["(-2)^2", "(-2) × (-2)", "4"],
+          ["(-2)^3", "(-2) × (-2) × (-2)", "-8"],
+          ["(-2)^4", "(-2) × (-2) × (-2) × (-2)", "16"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate (-2)^5.",
+        "steps": [
+          {
+            "say": "Write out (-2) five times: (-2) × (-2) × (-2) × (-2) × (-2).",
+            "why": "Parentheses mean the entire -2 is the base."
+          },
+          {
+            "say": "Multiply the first pair: (-2) × (-2) = 4, and the second pair: (-2) × (-2) = 4.",
+            "why": "Two negatives multiply to a positive."
+          },
+          {
+            "say": "Multiply those results: 4 × 4 = 16.",
+            "why": "Four factors of -2 give +16."
+          },
+          {
+            "say": "Multiply by the fifth factor: 16 × (-2) = -32.",
+            "why": "Positive times negative gives a negative result."
+          }
+        ],
+        "answer": "(-2)^5 = -32"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate (-2)^3.",
+          "kind": "numeric",
+          "answer": "-8",
+          "hints": [
+            "Write it out as (-2) × (-2) × (-2).",
+            "First multiply (-2) × (-2) = 4, then multiply by -2."
+          ],
+          "solution": [
+            "(-2) × (-2) = 4.",
+            "4 × (-2) = -8."
+          ],
+          "wrong": [
+            {
+              "answer": "8",
+              "feedback": "There are three factors of -2: 4 × (-2) is negative."
+            },
+            {
+              "answer": "-6",
+              "feedback": "An exponent means repeated multiplication (-2 × -2 × -2), not (-2) × 3."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate (-1/2)^3.",
+          "kind": "numeric",
+          "answer": "-1/8",
+          "hints": [
+            "Write it as (-1/2) × (-1/2) × (-1/2).",
+            "Multiply the numerators across and denominators across, keeping track of the three negative signs."
+          ],
+          "solution": [
+            "(-1/2) × (-1/2) = 1/4.",
+            "(1/4) × (-1/2) = -1/8."
+          ],
+          "wrong": [
+            {
+              "answer": "1/8",
+              "feedback": "Count the three negative factors: 1/4 times -1/2 is negative."
+            },
+            {
+              "answer": "-3/2",
+              "feedback": "Multiply -1/2 by itself three times rather than multiplying (-1/2) × 3."
+            },
+            {
+              "answer": "-1/6",
+              "feedback": "In the denominator, compute 2 × 2 × 2, not 2 × 3."
+            }
+          ]
+        }
+      ],
+      "mentor": "Writing out the repeated factors takes three seconds and catches almost every exponent slip."
+    },
+    {
+      "heading": "Parentheses matter: (-a)^n vs. -a^n",
+      "read": [
+        "Watch out for the biggest trap with negative powers: **`(-3)^2` and `-3^2` are NOT equal**!",
+        "In **`(-3)^2`**, the parentheses put `-3` inside the base, so you multiply `(-3) × (-3) = 9`.",
+        "In **`-3^2`**, there are no parentheses around `-3`. In the order of operations, **exponents come before the negative sign** (think of `-3^2` as `-1 × 3^2`). First evaluate `3^2 = 9`, then attach the negative sign to get **`-9`**. Even with odd powers like `-2^3`, the math means `-(2 × 2 × 2) = -8`."
+      ],
+      "model": {
+        "caption": "Comparing (-a)^n and -a^n",
+        "rows": [
+          ["Expression", "Base", "What it means", "Value"],
+          ["(-3)^2", "-3", "(-3) × (-3)", "9"],
+          ["-3^2", "3", "-(3 × 3)", "-9"],
+          ["(-5)^2", "-5", "(-5) × (-5)", "25"],
+          ["-5^2", "5", "-(5 × 5)", "-25"],
+          ["-2^3", "2", "-(2 × 2 × 2)", "-8"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -6^2 + (-4)^2.",
+        "steps": [
+          {
+            "say": "Look at -6^2: there are no parentheses, so compute 6^2 = 36 first, then apply the minus sign to get -36.",
+            "why": "Exponents apply only to 6, not to the minus sign in front."
+          },
+          {
+            "say": "Look at (-4)^2: parentheses wrap -4, so multiply (-4) × (-4) = 16.",
+            "why": "Here -4 is the base."
+          },
+          {
+            "say": "Add the two values: -36 + 16 = -20.",
+            "why": "Different signs subtract sizes (36 - 16 = 20) and keep the sign of -36."
+          }
+        ],
+        "answer": "-6^2 + (-4)^2 = -20"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate -3^2.",
+          "kind": "numeric",
+          "answer": "-9",
+          "hints": [
+            "Notice there are no parentheses around -3.",
+            "Compute 3^2 first, then place the minus sign in front."
+          ],
+          "solution": [
+            "Without parentheses, -3^2 means -(3 × 3) = -9."
+          ],
+          "wrong": [
+            {
+              "answer": "9",
+              "feedback": "Without parentheses, the exponent applies only to 3, not to the minus sign. (-3)^2 is positive 9, while -3^2 is negative."
+            },
+            {
+              "answer": "-6",
+              "feedback": "3^2 means 3 × 3, not 3 × 2."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate (-5)^2 + (-4^2).",
+          "kind": "numeric",
+          "answer": "9",
+          "hints": [
+            "In (-5)^2, -5 is the base: (-5) × (-5).",
+            "In (-4^2), the exponent 2 is attached only to 4, so -4^2 = -(4 × 4)."
+          ],
+          "solution": [
+            "(-5)^2 = (-5) × (-5) = 25.",
+            "-4^2 = -(4 × 4) = -16.",
+            "25 + (-16) = 9."
+          ],
+          "wrong": [
+            {
+              "answer": "41",
+              "feedback": "Check -4^2: the exponent 2 sits on 4, not on (-4), so -4^2 is -16."
+            },
+            {
+              "answer": "-41",
+              "feedback": "Check (-5)^2: parentheses wrap -5, so (-5) × (-5) is positive 25."
+            }
+          ]
+        }
+      ],
+      "mentor": "Ask yourself one question every time: is the minus sign inside parentheses with the number? That decides whether the minus gets raised to the power."
+    },
+    {
+      "heading": "Predicting the sign: even vs. odd exponents",
+      "read": [
+        "Every pair of negative factors multiplies to a **positive**. That gives you a quick shortcut for **any power of a negative base** like `(-a)^n` (where `a > 0`):",
+        "If the exponent is **even** (`2, 4, 6, ...`), every negative pairs up, so the answer is **positive**. If the exponent is **odd** (`1, 3, 5, ...`), one negative is left without a partner, so the answer is **negative**.",
+        "This lets you solve huge powers of `-1` in a blink: `(-1)^100 = 1` (even exponent) and `(-1)^99 = -1` (odd exponent). Meanwhile, `-1^100` without parentheses means `-(1^100) = -1`!"
+      ],
+      "model": {
+        "caption": "Sign rule for powers",
+        "rows": [
+          ["Form (with a > 0)", "Exponent", "Result sign", "Example"],
+          ["(-a)^n", "Even (2, 4, 6, ...)", "Positive (+)", "(-1)^100 = 1"],
+          ["(-a)^n", "Odd (1, 3, 5, ...)", "Negative (-)", "(-1)^99 = -1"],
+          ["-a^n (no parentheses)", "Any whole number >= 1", "Negative (-)", "-1^100 = -1"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate (-1)^47 + (-1)^48 - 1^50.",
+        "steps": [
+          {
+            "say": "Look at (-1)^47: the base is -1 and the exponent 47 is odd, so (-1)^47 = -1.",
+            "why": "An odd exponent on a negative base leaves one minus sign left over."
+          },
+          {
+            "say": "Look at (-1)^48: the base is -1 and the exponent 48 is even, so (-1)^48 = 1.",
+            "why": "An even exponent pairs up every negative factor to make a positive."
+          },
+          {
+            "say": "Look at - 1^50: 1^50 = 1, and we subtract it: -1 + 1 - 1.",
+            "why": "Exponents are evaluated before subtraction."
+          },
+          {
+            "say": "Combine from left to right: -1 + 1 = 0, and 0 - 1 = -1.",
+            "why": "-1 and 1 cancel as opposites, leaving -1."
+          }
+        ],
+        "answer": "(-1)^47 + (-1)^48 - 1^50 = -1"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate (-1)^99.",
+          "kind": "numeric",
+          "answer": "-1",
+          "hints": [
+            "Check whether the exponent 99 is even or odd.",
+            "Multiplying 1 by itself 99 times gives 1; an odd exponent on a negative base decides the sign."
+          ],
+          "solution": [
+            "1^99 = 1, and 99 is odd, so (-1)^99 = -1."
+          ],
+          "wrong": [
+            {
+              "answer": "1",
+              "feedback": "Because 99 is odd, one negative factor is left without a partner, making the result negative."
+            },
+            {
+              "answer": "-99",
+              "feedback": "Raise the base to the 99th power by repeated multiplication rather than multiplying by 99."
+            }
+          ]
+        },
+        {
+          "question": "Without multiplying it all out, what is the sign of (-7)^15?",
+          "kind": "multiple_choice",
+          "choices": [
+            "Positive",
+            "Negative",
+            "Zero"
+          ],
+          "answer": "Negative",
+          "hints": [
+            "The base -7 is inside parentheses.",
+            "Is the exponent 15 even or odd?"
+          ],
+          "solution": [
+            "The base is negative (-7) and the exponent 15 is odd, so (-7)^15 is negative."
+          ],
+          "wrong": [
+            {
+              "answer": "Positive",
+              "feedback": "An even exponent gives a positive result, whereas 15 is an odd exponent."
+            },
+            {
+              "answer": "Zero",
+              "feedback": "A power is 0 only when the base is 0."
+            }
+          ]
+        }
+      ],
+      "mentor": "Even exponents pair negatives into positives; odd exponents leave one minus sign behind."
+    }
+  ],
+  "mistake": {
+    "problem": "Leo evaluated -4^2.",
+    "work": [
+      "-4^2 = (-4) × (-4) = 16"
+    ],
+    "what_went_wrong": "Leo treated -4 as the base even though there are no parentheses around -4. Without parentheses, the exponent 2 applies only to 4, not to the minus sign.",
+    "fix": "Evaluate 4^2 = 16 first, then apply the minus sign: -4^2 = -(4 × 4) = -16. (To get 16, it would need parentheses: (-4)^2.)"
+  },
+  "summary": [
+    "Parentheses matter: (-a)^n multiplies the negative base (-a) by itself n times, while -a^n computes a^n first and then applies the minus sign.",
+    "For a negative base (-a)^n (with a > 0), an even exponent gives a positive result and an odd exponent gives a negative result.",
+    "Negative fractions and decimals follow the exact same rules: write out the repeated factors and apply the even/odd sign check."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Evaluate (-2)^4.",
+      "kind": "numeric",
+      "answer": "16",
+      "hints": [
+        "Multiply (-2) × (-2) × (-2) × (-2).",
+        "The exponent 4 is even, so the result will be positive."
+      ],
+      "solution": [
+        "(-2) × (-2) = 4, and (-2) × (-2) = 4.",
+        "4 × 4 = 16."
+      ],
+      "wrong": [
+        {
+          "answer": "-16",
+          "feedback": "The base -2 is inside parentheses and the exponent 4 is even, so all four negatives pair up into a positive."
+        },
+        {
+          "answer": "-8",
+          "feedback": "Use repeated multiplication (-2 × -2 × -2 × -2), not (-2) × 4."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate (-5)^3.",
+      "kind": "numeric",
+      "answer": "-125",
+      "hints": [
+        "Write it out as (-5) × (-5) × (-5).",
+        "(-5) × (-5) = 25; now multiply 25 × (-5)."
+      ],
+      "solution": [
+        "(-5) × (-5) = 25.",
+        "25 × (-5) = -125."
+      ],
+      "wrong": [
+        {
+          "answer": "125",
+          "feedback": "The exponent 3 is odd, so a negative base stays negative."
+        },
+        {
+          "answer": "-15",
+          "feedback": "Multiply -5 by itself three times rather than multiplying (-5) × 3."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate -7^2.",
+      "kind": "numeric",
+      "answer": "-49",
+      "hints": [
+        "There are no parentheses around -7.",
+        "Evaluate 7^2 first, then attach the minus sign."
+      ],
+      "solution": [
+        "-7^2 = -(7 × 7) = -49."
+      ],
+      "wrong": [
+        {
+          "answer": "49",
+          "feedback": "Without parentheses, the exponent applies only to 7, leaving the minus sign in front."
+        },
+        {
+          "answer": "-14",
+          "feedback": "7^2 means 7 × 7, not 7 × 2."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate (-0.4)^2.",
+      "kind": "numeric",
+      "answer": "0.16",
+      "hints": [
+        "Multiply (-0.4) × (-0.4).",
+        "Two negatives give a positive, and 0.4 × 0.4 has 2 decimal places."
+      ],
+      "solution": [
+        "(-0.4) × (-0.4): same signs give a positive.",
+        "4 × 4 = 16 with 2 total decimal places gives 0.16."
+      ],
+      "wrong": [
+        {
+          "answer": "-0.16",
+          "feedback": "Parentheses include the minus sign, and the exponent 2 is even, so the product is positive."
+        },
+        {
+          "answer": "1.6",
+          "feedback": "Count the total decimal places in 0.4 and 0.4 (1 + 1 = 2 decimal places)."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "In a video game, hitting traps multiplies a penalty starting at -3: on the third trap in a row, the score change is (-3)^3 points. What is this score change?",
+      "kind": "numeric",
+      "answer": "-27",
+      "hints": [
+        "Evaluate (-3) × (-3) × (-3).",
+        "An odd exponent on a negative base stays negative."
+      ],
+      "solution": [
+        "(-3) × (-3) = 9.",
+        "9 × (-3) = -27 points."
+      ],
+      "wrong": [
+        {
+          "answer": "27",
+          "feedback": "Count the negative factors: three negative factors multiply to a negative."
+        },
+        {
+          "answer": "-9",
+          "feedback": "Multiply three factors of -3, not (-3) × 3."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A lab freezer starts at 0°C. A cooling cycle changes the temperature by -2^4 degrees, and then a heater adds (-3)^2 degrees. What is the final temperature, in degrees Celsius?",
+      "kind": "numeric",
+      "answer": "-7",
+      "hints": [
+        "First evaluate -2^4 carefully (note there are no parentheses!).",
+        "Next evaluate (-3)^2, then add the two changes starting from 0."
+      ],
+      "solution": [
+        "-2^4 = -(2 × 2 × 2 × 2) = -16.",
+        "(-3)^2 = (-3) × (-3) = 9.",
+        "0 + (-16) + 9 = -7 degrees Celsius."
+      ],
+      "wrong": [
+        {
+          "answer": "25",
+          "feedback": "Check -2^4: without parentheses, it is -(2^4) = -16, not +16."
+        },
+        {
+          "answer": "-25",
+          "feedback": "Check (-3)^2: parentheses wrap -3, so (-3) × (-3) is positive 9."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "In a board game, Kira starts with 10 points. Her first card adds (-2)^3 points, and her second card subtracts -3^2 points. Write and evaluate 10 + (-2)^3 - (-3^2) to find her new score.",
+      "kind": "numeric",
+      "answer": "11",
+      "hints": [
+        "Evaluate each power first: (-2)^3 and -3^2.",
+        "Then rewrite subtracting a negative as adding the opposite."
+      ],
+      "solution": [
+        "(-2)^3 = -8, and -3^2 = -9.",
+        "10 + (-8) - (-9) = 2 + 9 = 11 points."
+      ],
+      "wrong": [
+        {
+          "answer": "-7",
+          "feedback": "Check - (-3^2): -3^2 is -9, and subtracting -9 adds +9."
+        },
+        {
+          "answer": "9",
+          "feedback": "Check (-2)^3: (-2) × (-2) × (-2) = -8, not -6."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why is (-6)^2 positive while -6^2 is negative?",
+      "kind": "multiple_choice",
+      "choices": [
+        "(-6)^2 multiplies (-6) × (-6), while -6^2 means -(6 × 6).",
+        "(-6)^2 means (-6) × 2, while -6^2 means 6 × (-2).",
+        "Because 6 is an even number, while any expression without parentheses is odd.",
+        "Calculators always turn parentheses into positive numbers."
+      ],
+      "answer": "(-6)^2 multiplies (-6) × (-6), while -6^2 means -(6 × 6).",
+      "hints": [
+        "What is the base in (-6)^2 compared to -6^2?",
+        "Remember that exponents happen before a minus sign outside parentheses."
+      ],
+      "solution": [
+        "Parentheses in (-6)^2 make -6 the base, so (-6) × (-6) = 36.",
+        "Without parentheses, -6^2 applies the exponent only to 6: -(6 × 6) = -36."
+      ],
+      "wrong": [
+        {
+          "answer": "(-6)^2 means (-6) × 2, while -6^2 means 6 × (-2).",
+          "feedback": "Exponents mean repeated multiplication, not multiplying by the exponent—and both of those would be negative anyway."
+        },
+        {
+          "answer": "Because 6 is an even number, while any expression without parentheses is odd.",
+          "feedback": "Whether 6 is even has nothing to do with the sign; the parentheses decide whether the minus sign is part of the base."
+        },
+        {
+          "answer": "Calculators always turn parentheses into positive numbers.",
+          "feedback": "Parentheses don't force positives—for instance, (-6)^3 is negative! They tell you the minus sign is part of the base."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which power has a negative value?",
+      "kind": "multiple_choice",
+      "choices": [
+        "(-3)^4",
+        "(-3)^5",
+        "(-10)^2",
+        "(-1)^100"
+      ],
+      "answer": "(-3)^5",
+      "hints": [
+        "Every choice has a negative base inside parentheses.",
+        "Look for the choice with an odd exponent."
+      ],
+      "solution": [
+        "With a negative base inside parentheses, an even exponent gives a positive result and an odd exponent gives a negative result.",
+        "5 is odd, so (-3)^5 is negative."
+      ],
+      "wrong": [
+        {
+          "answer": "(-3)^4",
+          "feedback": "4 is an even exponent, so four negative factors pair up to make a positive."
+        },
+        {
+          "answer": "(-10)^2",
+          "feedback": "2 is an even exponent: (-10) × (-10) = 100."
+        },
+        {
+          "answer": "(-1)^100",
+          "feedback": "100 is an even exponent, so (-1)^100 = +1."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-3/4) × (-8/9).",
+      "kind": "numeric",
+      "answer": "2/3",
+      "hints": [
+        "Same signs (negative × negative) give a positive product.",
+        "Multiply numerators and denominators (or cross-simplify 3 with 9 and 8 with 4), then simplify."
+      ],
+      "solution": [
+        "Negative × negative = positive.",
+        "(3/4) × (8/9) = 24/36 = 2/3."
+      ],
+      "wrong": [
+        {
+          "answer": "-2/3",
+          "feedback": "Both fractions are negative. Same signs multiply to a positive product."
+        },
+        {
+          "answer": "27/32",
+          "feedback": "This is multiplication, not division—don't flip the second fraction."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Evaluate 3^4 - 4 × 5.",
+      "kind": "numeric",
+      "answer": "61",
+      "hints": [
+        "Evaluate the exponent 3^4 first: 3 × 3 × 3 × 3.",
+        "Next multiply 4 × 5, then subtract."
+      ],
+      "solution": [
+        "3^4 = 3 × 3 × 3 × 3 = 81.",
+        "4 × 5 = 20.",
+        "81 - 20 = 61."
+      ],
+      "wrong": [
+        {
+          "answer": "385",
+          "feedback": "Multiply 4 × 5 before subtracting, rather than computing (81 - 4) × 5."
+        },
+        {
+          "answer": "-8",
+          "feedback": "3^4 means 3 multiplied 4 times (81), not 3 × 4 (12)."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Evaluate (-2)^3 × (-1)^7 - 4^2.",
+      "kind": "numeric",
+      "answer": "-8",
+      "hints": [
+        "Evaluate each power first: (-2)^3, (-1)^7, and 4^2.",
+        "Multiply the first two evaluated powers together before subtracting 4^2."
+      ],
+      "solution": [
+        "(-2)^3 = -8, (-1)^7 = -1, and 4^2 = 16.",
+        "Multiply: (-8) × (-1) = 8.",
+        "Subtract: 8 - 16 = -8."
+      ],
+      "wrong": [
+        {
+          "answer": "-24",
+          "feedback": "Check the product of the first two powers: two negative numbers multiply to a positive."
+        },
+        {
+          "answer": "24",
+          "feedback": "Notice - 4^2 subtracts 16 from 8."
+        },
+        {
+          "answer": "-16",
+          "feedback": "Check (-1)^7: 7 is odd, so (-1)^7 = -1 (not -7)."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,700 @@
+{
+  "version": 2,
+  "skill_id": "7.integer-number-line",
+  "title": "Add integers on a number line",
+  "hook": "You step into a tower elevator on Floor 3 and press the button to go down 5 levels to the underground garage. Which floor do you land on? Putting integers on a number line turns every gain and drop into a clear step left or right from where you start.",
+  "goal": "I can model adding and subtracting integers as moves on a number line, including opposites that combine to make 0.",
+  "vocabulary": [
+    {
+      "term": "integer",
+      "meaning": "any whole number, its opposite, or zero (..., -3, -2, -1, 0, 1, 2, 3, ...)",
+      "example": "-7, 0, and 12 are integers; 2.5 and -1/2 are not."
+    },
+    {
+      "term": "opposite (additive inverse)",
+      "meaning": "two numbers that are the same distance from 0 on opposite sides of the number line; their sum is always 0",
+      "example": "6 and -6 are opposites because 6 + (-6) = 0."
+    },
+    {
+      "term": "absolute value",
+      "meaning": "how many units a number is from 0 on a number line, written |q|; it tells the length of a move without its direction",
+      "example": "|-5| = 5 and |5| = 5."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "A parking garage level is 4 floors below ground (ground level is 0). What integer represents 4 floors below ground?",
+      "kind": "numeric",
+      "answer": "-4",
+      "hints": [
+        "Ground level is 0, and floors above ground are positive.",
+        "Use a minus sign for floors below 0."
+      ],
+      "solution": [
+        "Four floors below 0 is represented by the integer -4."
+      ],
+      "wrong": [
+        {
+          "answer": "4",
+          "feedback": "Positive 4 means 4 floors above ground. Below ground level uses a negative sign."
+        },
+        {
+          "answer": "0",
+          "feedback": "0 is ground level itself. Move 4 floors below 0."
+        }
+      ]
+    },
+    {
+      "question": "What is the opposite of 15?",
+      "kind": "numeric",
+      "answer": "-15",
+      "hints": [
+        "Opposites sit the same distance from 0 on opposite sides of the number line.",
+        "15 is 15 units to the right of 0. What number is 15 units to the left of 0?"
+      ],
+      "solution": [
+        "The opposite of 15 is -15, because 15 + (-15) = 0."
+      ],
+      "wrong": [
+        {
+          "answer": "15",
+          "feedback": "15 is the original number, on the positive side of 0. Its opposite sits on the negative side."
+        },
+        {
+          "answer": "0",
+          "feedback": "0 is the halfway point between opposites, not the opposite of 15."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Starting at p and moving |q| units",
+      "read": [
+        "Think of adding `p + q` as taking a walk on a horizontal number line. First, stand at your starting number **`p`**.",
+        "Next, look at **`q`**. Its **absolute value** `|q|` tells you **how many units** to walk, and its sign tells you **which way**: if `q` is **positive**, walk `|q|` units to the **right** (toward larger numbers); if `q` is **negative**, walk `|q|` units to the **left** (toward smaller numbers).",
+        "If you start to the left of `0` and move even farther left—like `-2 + (-5)`—your arrow keeps going deeper into negative territory, so you land on a negative number farther from `0`."
+      ],
+      "model": {
+        "caption": "How p + q moves on a number line",
+        "rows": [
+          ["Expression", "Start at p", "Move |q| units", "Land at"],
+          ["3 + 4", "3", "4 units right", "7"],
+          ["3 + (-5)", "3", "5 units left", "-2"],
+          ["-6 + 4", "-6", "4 units right", "-2"],
+          ["-2 + (-5)", "-2", "5 units left", "-7"]
+        ]
+      },
+      "example": {
+        "problem": "Model 3 + (-8) on a number line and find where you land.",
+        "steps": [
+          {
+            "say": "Start at p = 3 on the number line.",
+            "why": "The first number tells you where your trip begins."
+          },
+          {
+            "say": "Look at q = -8: its absolute value is |-8| = 8, and it is negative, so move 8 units to the left.",
+            "why": "Adding a negative number always moves left on the number line."
+          },
+          {
+            "say": "Count 3 units left to reach 0, then count the remaining 5 units left to land at -5.",
+            "why": "3 + 5 = 8 total units moved left, so 3 + (-8) = -5."
+          }
+        ],
+        "answer": "3 + (-8) = -5"
+      },
+      "try_it": [
+        {
+          "question": "Start at 4 on a number line and add -9 (find 4 + (-9)). Where do you land?",
+          "kind": "numeric",
+          "answer": "-5",
+          "hints": [
+            "Begin at 4. Because -9 is negative, move 9 units to the left.",
+            "Moving 4 units left brings you to 0. How many more units left do you still need to move?"
+          ],
+          "solution": [
+            "Start at 4 and move 9 units left.",
+            "4 units left reaches 0, and 9 - 4 = 5 more units left lands at -5."
+          ],
+          "wrong": [
+            {
+              "answer": "13",
+              "feedback": "Adding -9 moves to the left, not to the right."
+            },
+            {
+              "answer": "5",
+              "feedback": "Moving 9 units left from 4 goes past 0 into the negative side of the number line."
+            },
+            {
+              "answer": "-13",
+              "feedback": "Check your starting spot: you started at +4, not -4."
+            }
+          ]
+        },
+        {
+          "question": "Find -7 + (-4) by starting at -7 and moving on a number line.",
+          "kind": "numeric",
+          "answer": "-11",
+          "hints": [
+            "Stand at -7. Look at the sign of -4: which direction do you move?",
+            "Move 4 units to the left from -7."
+          ],
+          "solution": [
+            "Start at -7 and move |-4| = 4 units to the left.",
+            "Counting 4 units left from -7 (-8, -9, -10, -11) lands at -11."
+          ],
+          "wrong": [
+            {
+              "answer": "-3",
+              "feedback": "You moved 4 units to the right. Because -4 is negative, move 4 units to the left."
+            },
+            {
+              "answer": "11",
+              "feedback": "Both the start (-7) and the move (left 4) stay on the negative side of 0."
+            },
+            {
+              "answer": "3",
+              "feedback": "Start at -7 (left of 0) and move 4 units farther left."
+            }
+          ]
+        }
+      ],
+      "mentor": "Picture the number line in your head: first plant your feet at the starting number, then check the second number's sign to pick right or left."
+    },
+    {
+      "heading": "Opposites and crossing zero",
+      "read": [
+        "What happens when you add a number and its **opposite**, like `6 + (-6)` or `-12 + 12`? You walk `|p|` units away from `0` and then walk the exact same distance back, landing right on **`0`**. That's why opposites are called **additive inverses**: `p + (-p) = 0`.",
+        "Zero is also your best landmark whenever a move **crosses 0**. Split the total move into two hops: first hop to `0`, then finish the leftover units on the other side.",
+        "For example, to find `-6 + 10`, hop `6` units right from `-6` to hit `0`, then hop the remaining `4` units right to land at `4`."
+      ],
+      "model": {
+        "caption": "Using 0 as a landmark",
+        "rows": [
+          ["Expression", "Hop 1 (to 0)", "Hop 2 (leftover)", "Land at"],
+          ["-6 + 6", "6 units right to 0", "0 units left over", "0"],
+          ["-6 + 10", "6 units right to 0", "4 units right past 0", "4"],
+          ["4 + (-9)", "4 units left to 0", "5 units left past 0", "-5"]
+        ]
+      },
+      "example": {
+        "problem": "Find -9 + 14 by crossing 0 on a number line.",
+        "steps": [
+          {
+            "say": "Start at -9 and prepare to move 14 units to the right.",
+            "why": "Adding positive 14 moves |14| = 14 units right."
+          },
+          {
+            "say": "Hop 9 units right from -9 to reach 0.",
+            "why": "-9 and +9 are opposites, so -9 + 9 = 0."
+          },
+          {
+            "say": "Find the leftover move: 14 - 9 = 5 units still to go.",
+            "why": "You used 9 of the 14 units to get back to 0."
+          },
+          {
+            "say": "Hop 5 more units right from 0 to land at 5.",
+            "why": "0 + 5 = 5, so -9 + 14 = 5."
+          }
+        ],
+        "answer": "-9 + 14 = 5"
+      },
+      "try_it": [
+        {
+          "question": "In a trivia round, Priya starts at -12 points and scores 12 points. What is her new score (-12 + 12)?",
+          "kind": "numeric",
+          "answer": "0",
+          "hints": [
+            "-12 and 12 are opposites on the number line.",
+            "Start at -12 and move 12 units to the right."
+          ],
+          "solution": [
+            "Start at -12 and move 12 units right.",
+            "Because -12 and 12 are additive inverses, they cancel out to 0."
+          ],
+          "wrong": [
+            {
+              "answer": "-24",
+              "feedback": "Scoring 12 points moves 12 units right from -12, not farther left."
+            },
+            {
+              "answer": "24",
+              "feedback": "Priya started 12 points below the starting mark, so gaining 12 points brings her back to the starting mark."
+            }
+          ]
+        },
+        {
+          "question": "Start at -8 on a number line and move 13 units to the right (-8 + 13). Where do you land?",
+          "kind": "numeric",
+          "answer": "5",
+          "hints": [
+            "First hop 8 units right from -8 to reach 0.",
+            "How many of the 13 units are left to hop past 0?"
+          ],
+          "solution": [
+            "Hop 8 units right from -8 to 0.",
+            "13 - 8 = 5 leftover units right from 0 lands at 5."
+          ],
+          "wrong": [
+            {
+              "answer": "-21",
+              "feedback": "Adding +13 moves right toward 0 and past it, not left."
+            },
+            {
+              "answer": "-5",
+              "feedback": "13 is larger than 8, so the move crosses 0 onto the positive side."
+            },
+            {
+              "answer": "21",
+              "feedback": "You started at -8, so 8 of the 13 units are spent getting back to 0."
+            }
+          ]
+        }
+      ],
+      "mentor": "Zero is a great pit stop on a number line—hop to 0 first, then see how many steps are left over!"
+    },
+    {
+      "heading": "Modeling subtraction on a number line",
+      "read": [
+        "Subtraction is also a move on a number line. Subtracting a **positive** number (`p - q`) moves **`q` units to the left**, the exact same move as `p + (-q)`.",
+        "What about subtracting a **negative** number, like `2 - (-4)`? Subtracting reverses direction, so subtracting a negative move turns around and moves **`4` units to the right**, the same as `2 + 4`.",
+        "Think of taking away a `-4` penalty in a game: removing a negative pulls your score **up** (right on the number line)!"
+      ],
+      "model": {
+        "caption": "Subtraction moves on a number line",
+        "rows": [
+          ["Subtraction", "Start at", "Move on number line", "Land at"],
+          ["4 - 7", "4", "7 units left", "-3"],
+          ["-3 - 5", "-3", "5 units left", "-8"],
+          ["2 - (-4)", "2", "4 units right", "6"],
+          ["-5 - (-3)", "-5", "3 units right", "-2"]
+        ]
+      },
+      "example": {
+        "problem": "Use a number line to find -3 - (-8).",
+        "steps": [
+          {
+            "say": "Start at -3 on the number line.",
+            "why": "The first number sets your starting point."
+          },
+          {
+            "say": "We are subtracting -8, which reverses the negative direction into moving 8 units to the right.",
+            "why": "Subtracting a negative number moves right, the same as adding its opposite (+8)."
+          },
+          {
+            "say": "Hop 3 units right from -3 to reach 0, then 5 more units right to land at 5.",
+            "why": "3 + 5 = 8 total units right, so -3 - (-8) = 5."
+          }
+        ],
+        "answer": "-3 - (-8) = 5"
+      },
+      "try_it": [
+        {
+          "question": "Use a number line to find -5 - 6.",
+          "kind": "numeric",
+          "answer": "-11",
+          "hints": [
+            "Start at -5. Subtracting positive 6 moves left.",
+            "Count 6 units to the left from -5."
+          ],
+          "solution": [
+            "Start at -5 and move 6 units to the left.",
+            "Counting 6 units left from -5 lands at -11."
+          ],
+          "wrong": [
+            {
+              "answer": "1",
+              "feedback": "Subtracting 6 moves left from -5, not right."
+            },
+            {
+              "answer": "-1",
+              "feedback": "Starting at -5 and subtracting 6 goes farther left past -5, not back toward 0."
+            },
+            {
+              "answer": "11",
+              "feedback": "Both the start (-5) and the move (left 6) stay on the negative side of 0."
+            }
+          ]
+        },
+        {
+          "question": "Which number line move models 4 - (-7)?",
+          "kind": "multiple_choice",
+          "choices": [
+            "Start at 4 and move 7 units to the right, landing at 11",
+            "Start at 4 and move 7 units to the left, landing at -3",
+            "Start at -4 and move 7 units to the right, landing at 3",
+            "Start at -7 and move 4 units to the left, landing at -11"
+          ],
+          "answer": "Start at 4 and move 7 units to the right, landing at 11",
+          "hints": [
+            "Where does the expression 4 - (-7) start?",
+            "Subtracting a negative (-7) reverses direction and moves to the right."
+          ],
+          "solution": [
+            "The first number is 4, so start at 4.",
+            "Subtracting -7 moves 7 units to the right, landing at 4 + 7 = 11."
+          ],
+          "wrong": [
+            {
+              "answer": "Start at 4 and move 7 units to the left, landing at -3",
+              "feedback": "Moving 7 units left models 4 - 7, not 4 - (-7). Subtracting a negative moves right."
+            },
+            {
+              "answer": "Start at -4 and move 7 units to the right, landing at 3",
+              "feedback": "Check the starting number: the first number is positive 4, not -4."
+            },
+            {
+              "answer": "Start at -7 and move 4 units to the left, landing at -11",
+              "feedback": "Start at the first number (4), and move right when subtracting -7."
+            }
+          ]
+        }
+      ],
+      "mentor": "Keep the direction rule handy: subtracting a positive pulls left, while subtracting a negative pushes right!"
+    }
+  ],
+  "mistake": {
+    "problem": "Devon used a number line to find -6 + (-3).",
+    "work": [
+      "Start at -6.",
+      "Move 3 units to the right.",
+      "Land at -3."
+    ],
+    "what_went_wrong": "Devon moved to the right instead of to the left! Adding a negative number (-3) always moves left on the number line.",
+    "fix": "Start at -6 and move |-3| = 3 units to the left: -7, -8, -9. The correct sum is -9."
+  },
+  "summary": [
+    "To model p + q on a number line, start at p and move |q| units: go right if q is positive, and go left if q is negative.",
+    "Opposites like p and -p always add to 0; when a move crosses 0, hop to 0 first and then finish the leftover units.",
+    "Subtracting a positive moves left (p - q = p + (-q)), while subtracting a negative moves right (p - (-q) = p + q)."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find 6 + (-10) using a number line.",
+      "kind": "numeric",
+      "answer": "-4",
+      "hints": [
+        "Start at 6 and move 10 units to the left.",
+        "6 units left reaches 0; how many more units left do you move?"
+      ],
+      "solution": [
+        "Start at 6 and hop 6 units left to reach 0.",
+        "Move the remaining 10 - 6 = 4 units left to land at -4."
+      ],
+      "wrong": [
+        {
+          "answer": "4",
+          "feedback": "Moving 10 units left from 6 crosses 0 into the negative numbers."
+        },
+        {
+          "answer": "16",
+          "feedback": "Adding -10 moves left, not right."
+        },
+        {
+          "answer": "-16",
+          "feedback": "You started at +6, not -6."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find -9 + (-6) using a number line.",
+      "kind": "numeric",
+      "answer": "-15",
+      "hints": [
+        "Start at -9. Because -6 is negative, move left.",
+        "Count 6 units left from -9."
+      ],
+      "solution": [
+        "Start at -9 and move |-6| = 6 units to the left.",
+        "9 + 6 = 15 units left of 0, so you land at -15."
+      ],
+      "wrong": [
+        {
+          "answer": "-3",
+          "feedback": "Moving right gives -3. Adding -6 moves 6 units left from -9."
+        },
+        {
+          "answer": "15",
+          "feedback": "Check the side of 0: starting at -9 and moving left stays negative."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find -4 - 9 using a number line.",
+      "kind": "numeric",
+      "answer": "-13",
+      "hints": [
+        "Start at -4. Subtracting positive 9 moves 9 units left.",
+        "Add the distances left of 0: 4 + 9."
+      ],
+      "solution": [
+        "Start at -4 and move 9 units to the left.",
+        "You land at -13."
+      ],
+      "wrong": [
+        {
+          "answer": "5",
+          "feedback": "Subtracting 9 moves left from -4, not right."
+        },
+        {
+          "answer": "-5",
+          "feedback": "Starting at -4 and moving 9 units left goes away from 0, not toward 0."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 5 - (-7) using a number line.",
+      "kind": "numeric",
+      "answer": "12",
+      "hints": [
+        "Start at 5. Subtracting -7 reverses direction and moves right.",
+        "Move 7 units to the right from 5."
+      ],
+      "solution": [
+        "Start at 5 and move 7 units to the right.",
+        "5 + 7 = 12."
+      ],
+      "wrong": [
+        {
+          "answer": "-2",
+          "feedback": "Moving 7 units left would be 5 - 7. Subtracting a negative (-7) moves 7 units right."
+        },
+        {
+          "answer": "2",
+          "feedback": "Subtracting -7 adds 7 to 5 rather than subtracting 7."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A tower elevator starts at Floor 4, goes down 7 levels to an underground lab, and then goes up 2 levels. What floor is it on now?",
+      "kind": "numeric",
+      "answer": "-1",
+      "hints": [
+        "Write the trip as 4 + (-7) + 2.",
+        "First move 7 units left from 4, then move 2 units right."
+      ],
+      "solution": [
+        "Start at 4 and move 7 levels down: 4 + (-7) = -3.",
+        "From -3, move 2 levels up: -3 + 2 = -1 (1 floor below ground)."
+      ],
+      "wrong": [
+        {
+          "answer": "1",
+          "feedback": "4 - 7 reaches -3 (3 below ground). Going up 2 floors from -3 still leaves you below 0."
+        },
+        {
+          "answer": "-5",
+          "feedback": "The second move goes UP 2 levels (right on the number line), not down 2 more."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "In a board game, Tariq's token starts at -5, moves 12 spaces to the right, and then moves 4 spaces to the left. Where does his token finish?",
+      "kind": "numeric",
+      "answer": "3",
+      "hints": [
+        "First find -5 + 12 by hopping 5 spaces right to 0, then the rest.",
+        "From that spot, move 4 spaces left."
+      ],
+      "solution": [
+        "First move: -5 + 12 = 7 (5 spaces to 0, then 7 more spaces right).",
+        "Second move: 7 + (-4) = 3."
+      ],
+      "wrong": [
+        {
+          "answer": "-13",
+          "feedback": "Moving 12 spaces to the right adds +12, crossing 0 onto the positive side."
+        },
+        {
+          "answer": "7",
+          "feedback": "Don't forget the second move: 4 spaces to the left after reaching 7."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A pond gauge starts at -7 centimeters (below the full mark). A rainstorm raises the water level 5 centimeters, and then sunny weather drops it 4 centimeters. What does the gauge read now, in centimeters?",
+      "kind": "numeric",
+      "answer": "-6",
+      "hints": [
+        "Write the changes as -7 + 5 - 4.",
+        "First move 5 units right from -7, then move 4 units left."
+      ],
+      "solution": [
+        "After the rain: -7 + 5 = -2.",
+        "After evaporation: -2 - 4 = -6 centimeters."
+      ],
+      "wrong": [
+        {
+          "answer": "-2",
+          "feedback": "That is the reading right after the rain. Remember to drop 4 centimeters afterward."
+        },
+        {
+          "answer": "2",
+          "feedback": "Starting at -7 and rising 5 only gets you to -2, still below 0."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "On a number line, how do you locate the sum p + q when q is negative?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Start at p and move |q| units to the left",
+        "Start at p and move |q| units to the right",
+        "Start at q and move |p| units to the right",
+        "Start at 0 and move |p| + |q| units to the left"
+      ],
+      "answer": "Start at p and move |q| units to the left",
+      "hints": [
+        "Which number tells you where to start in p + q?",
+        "Does adding a negative number move right or left?"
+      ],
+      "solution": [
+        "In p + q, p is the starting point and |q| is the distance.",
+        "Because q is negative, you move |q| units to the left from p."
+      ],
+      "wrong": [
+        {
+          "answer": "Start at p and move |q| units to the right",
+          "feedback": "Moving to the right is for adding a positive number. Negative q moves left."
+        },
+        {
+          "answer": "Start at q and move |p| units to the right",
+          "feedback": "Start at p; also, the sign of p could be negative, so moving right from q isn't always right."
+        },
+        {
+          "answer": "Start at 0 and move |p| + |q| units to the left",
+          "feedback": "If p is positive, p and q move in opposite directions rather than combining leftward."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which expression equals 0?",
+      "kind": "multiple_choice",
+      "choices": [
+        "17 + (-17)",
+        "-17 + (-17)",
+        "17 - (-17)",
+        "-17 + 0"
+      ],
+      "answer": "17 + (-17)",
+      "hints": [
+        "Two numbers add to 0 only when they are opposites (additive inverses).",
+        "Check whether each expression moves back to 0 on a number line."
+      ],
+      "solution": [
+        "17 and -17 are opposites, so starting at 17 and moving 17 units left lands at 0."
+      ],
+      "wrong": [
+        {
+          "answer": "-17 + (-17)",
+          "feedback": "Starting at -17 and moving 17 units left gives -34, not 0."
+        },
+        {
+          "answer": "17 - (-17)",
+          "feedback": "Subtracting -17 moves 17 units right from 17, giving 34."
+        },
+        {
+          "answer": "-17 + 0",
+          "feedback": "Adding 0 keeps you at -17."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Which list shows the integers -6, 3, -11, and 0 in order from least to greatest?",
+      "kind": "multiple_choice",
+      "choices": [
+        "-11, -6, 0, 3",
+        "-6, -11, 0, 3",
+        "0, 3, -6, -11",
+        "-11, 0, -6, 3"
+      ],
+      "answer": "-11, -6, 0, 3",
+      "hints": [
+        "On a horizontal number line, smaller numbers sit farther to the left.",
+        "Between -11 and -6, which one is farther to the left of 0?"
+      ],
+      "solution": [
+        "Moving from left to right on the number line gives -11, then -6, then 0, then 3."
+      ],
+      "wrong": [
+        {
+          "answer": "-6, -11, 0, 3",
+          "feedback": "-11 is farther left from 0 than -6, so -11 is less than -6."
+        },
+        {
+          "answer": "0, 3, -6, -11",
+          "feedback": "Negative integers are smaller than 0 and positive integers, so they come first."
+        },
+        {
+          "answer": "-11, 0, -6, 3",
+          "feedback": "All negative numbers sit to the left of 0, so -6 comes before 0."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "On a number line, what integer is located halfway between -8 and 2?",
+      "kind": "numeric",
+      "answer": "-3",
+      "hints": [
+        "First count the total distance from -8 to 2 on a number line (8 units to 0 plus 2 more).",
+        "Half of 10 units is 5 units. Move 5 units right from -8 (or 5 units left from 2)."
+      ],
+      "solution": [
+        "The total distance between -8 and 2 is 8 + 2 = 10 units.",
+        "Half of 10 is 5 units.",
+        "Moving 5 units right from -8 (or 5 units left from 2) lands at -3."
+      ],
+      "wrong": [
+        {
+          "answer": "3",
+          "feedback": "3 is bigger than 2, so it isn't between -8 and 2. Try moving 5 units left from 2."
+        },
+        {
+          "answer": "-5",
+          "feedback": "5 is half the distance (10 ÷ 2 = 5), not the landing spot itself. Move 5 units from -8 or 2."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "On a number line, a frog starts at -11, jumps 18 units to the right, and then makes one more jump to land at -2. What integer represents the second jump?",
+      "kind": "numeric",
+      "answer": "-9",
+      "hints": [
+        "First find where the frog lands after jumping 18 units right from -11.",
+        "From 7, how many units and in which direction must the frog jump to reach -2?"
+      ],
+      "solution": [
+        "After the first jump: -11 + 18 = 7.",
+        "To get from 7 down to -2, the frog jumps 7 units left to 0 and 2 more units left to -2: 9 units left total.",
+        "A move 9 units to the left is represented by -9."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "9 is the distance between 7 and -2, but the frog jumped left, so the integer is negative."
+        },
+        {
+          "answer": "-5",
+          "feedback": "7 and -2 are on opposite sides of 0, so add the distances: 7 to 0 plus 2 more to -2."
+        },
+        {
+          "answer": "7",
+          "feedback": "7 is where the frog landed after the first jump, not the value of the second jump."
+        }
+      ]
+    }
+  ]
+}

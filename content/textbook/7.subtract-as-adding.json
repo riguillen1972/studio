@@ -1,0 +1,669 @@
+{
+  "version": 2,
+  "skill_id": "7.subtract-as-adding",
+  "title": "Subtract by adding the opposite",
+  "hook": "A mountain weather station records -2.5°C at dusk, and the temperature drops 4.25°C by midnight—written as -2.5 - 4.25. Meanwhile, canceling a penalty of -8 points in a quiz game is written 5 - (-8). How does turning every subtraction into adding the opposite handle both of these?",
+  "goal": "I can rewrite subtraction of integers, decimals, and fractions as adding the opposite and evaluate the result.",
+  "vocabulary": [
+    {
+      "term": "additive inverse",
+      "meaning": "the opposite of a number; a number and its additive inverse always add to 0",
+      "example": "The additive inverse of -8 is 8, and the additive inverse of 4.25 is -4.25."
+    },
+    {
+      "term": "equivalent expressions",
+      "meaning": "two expressions that always have the exact same value",
+      "example": "5 - (-8) and 5 + 8 are equivalent expressions because both equal 13."
+    },
+    {
+      "term": "common denominator",
+      "meaning": "a shared bottom number used so two fractions can be combined",
+      "example": "For 2/5 and 3/10, a common denominator is 10 (4/10 and 3/10)."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find -14 + 9.",
+      "kind": "numeric",
+      "answer": "-5",
+      "hints": [
+        "The two numbers have different signs, so subtract their sizes: 14 - 9.",
+        "Which number is farther from 0: -14 or 9?"
+      ],
+      "solution": [
+        "Different signs: 14 - 9 = 5.",
+        "-14 is farther from 0 than 9, so keep the negative sign: -5."
+      ],
+      "wrong": [
+        {
+          "answer": "5",
+          "feedback": "Check which number is farther from 0: -14 has a larger distance from 0 than 9, so the sum stays negative."
+        },
+        {
+          "answer": "-23",
+          "feedback": "Add the sizes only when both numbers share the same sign. Here -14 and 9 have different signs."
+        }
+      ]
+    },
+    {
+      "question": "Find -3.5 + (-1.75).",
+      "kind": "numeric",
+      "answer": "-5.25",
+      "hints": [
+        "Both numbers are negative, so add 3.50 + 1.75.",
+        "Keep the shared negative sign."
+      ],
+      "solution": [
+        "Same sign (both negative): 3.50 + 1.75 = 5.25.",
+        "Keep the negative sign: -5.25."
+      ],
+      "wrong": [
+        {
+          "answer": "5.25",
+          "feedback": "Adding two negative numbers gives a negative sum."
+        },
+        {
+          "answer": "-1.75",
+          "feedback": "Since both numbers are negative, combine their sizes instead of subtracting."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Keep, Change, Opposite with integers",
+      "read": [
+        "Every subtraction problem can be rewritten as **adding the opposite** (the **additive inverse**): **`p - q = p + (-q)`**. Once you rewrite it as addition, you already know every rule you need!",
+        "Use **Keep, Change, Opposite**: **Keep** the first number as it is, **Change** the subtraction sign (`−`) to addition (`+`), and switch the second number to its **Opposite**.",
+        "Watch how cleanly this handles subtracting a negative: `5 - (-8)` becomes `5 + 8 = 13`. Taking away a `-8` penalty raises your score by `8`!"
+      ],
+      "model": {
+        "caption": "Rewriting integer subtraction as adding the opposite",
+        "rows": [
+          ["Subtraction", "Keep, Change, Opposite", "Result"],
+          ["5 - (-8)", "5 + 8", "13"],
+          ["-9 - 6", "-9 + (-6)", "-15"],
+          ["-11 - (-4)", "-11 + 4", "-7"],
+          ["7 - 15", "7 + (-15)", "-8"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -16 - (-9) by adding the opposite.",
+        "steps": [
+          {
+            "say": "Keep -16, change minus to plus, and switch -9 to its opposite (+9): -16 + 9.",
+            "why": "Subtracting -9 is equivalent to adding 9."
+          },
+          {
+            "say": "Now add -16 + 9. Different signs mean subtract sizes: 16 - 9 = 7.",
+            "why": "Positive 9 cancels 9 of the negative units."
+          },
+          {
+            "say": "-16 is farther from 0 than 9, so keep the negative sign: -7.",
+            "why": "The negative pull is stronger, giving -16 - (-9) = -7."
+          }
+        ],
+        "answer": "-16 - (-9) = -7"
+      },
+      "try_it": [
+        {
+          "question": "Find 5 - (-8).",
+          "kind": "numeric",
+          "answer": "13",
+          "hints": [
+            "Keep 5, change minus to plus, and take the opposite of -8.",
+            "Rewrite 5 - (-8) as 5 + 8."
+          ],
+          "solution": [
+            "Keep, Change, Opposite: 5 - (-8) = 5 + 8 = 13."
+          ],
+          "wrong": [
+            {
+              "answer": "-3",
+              "feedback": "That would be 5 - 8. When you subtract -8, it changes to adding +8."
+            },
+            {
+              "answer": "3",
+              "feedback": "Watch the double minus: subtracting -8 adds 8 instead of subtracting 8."
+            }
+          ]
+        },
+        {
+          "question": "Find -14 - 9.",
+          "kind": "numeric",
+          "answer": "-23",
+          "hints": [
+            "Keep -14, change minus to plus, and switch 9 to -9: -14 + (-9).",
+            "Both numbers are negative, so add their sizes and keep the negative sign."
+          ],
+          "solution": [
+            "Rewrite as addition: -14 + (-9).",
+            "Same signs: 14 + 9 = 23, keep the negative sign → -23."
+          ],
+          "wrong": [
+            {
+              "answer": "-5",
+              "feedback": "Rewrite -14 - 9 as -14 + (-9). Both numbers are negative, so add 14 and 9 rather than subtracting."
+            },
+            {
+              "answer": "23",
+              "feedback": "Adding two negative numbers keeps the negative sign."
+            }
+          ]
+        }
+      ],
+      "mentor": "Never guess at two minus signs in a row! Rewrite it with Keep, Change, Opposite first, and the problem turns into plain addition."
+    },
+    {
+      "heading": "Subtracting signed decimals",
+      "read": [
+        "Decimals follow the **exact same rule**: rewrite `p - q` as `p + (-q)` first, before touching the digits.",
+        "Once it's an addition problem, check the signs. **Same signs**: line up the decimal points, add the sizes, and keep the shared sign. **Different signs**: subtract the smaller size from the larger size, and keep the sign of the number farther from `0`.",
+        "Writing trailing zeros—like writing `2.50` instead of `2.5`—keeps your tenths and hundredths lined up cleanly."
+      ],
+      "model": {
+        "caption": "Decimal subtraction as adding the opposite",
+        "rows": [
+          ["Expression", "Add the opposite", "Value"],
+          ["-2.5 - 4.25", "-2.5 + (-4.25)", "-6.75"],
+          ["3.4 - (-1.6)", "3.4 + 1.6", "5"],
+          ["-7.2 - (-2.9)", "-7.2 + 2.9", "-4.3"]
+        ]
+      },
+      "example": {
+        "problem": "Find -2.5 - 4.25.",
+        "steps": [
+          {
+            "say": "Rewrite subtraction as adding the opposite: -2.5 + (-4.25).",
+            "why": "Keep -2.5, change minus to plus, and take the opposite of 4.25 (-4.25)."
+          },
+          {
+            "say": "Check the signs: both numbers are negative, so line up decimal points and add 2.50 + 4.25 = 6.75.",
+            "why": "Numbers with the same sign combine their sizes."
+          },
+          {
+            "say": "Keep the shared negative sign: -6.75.",
+            "why": "Adding two negative decimals produces a negative decimal."
+          }
+        ],
+        "answer": "-2.5 - 4.25 = -6.75"
+      },
+      "try_it": [
+        {
+          "question": "Find -3.6 - 2.45.",
+          "kind": "numeric",
+          "answer": "-6.05",
+          "hints": [
+            "Rewrite as -3.6 + (-2.45).",
+            "Write -3.6 as -3.60 so the hundredths line up, then add 3.60 + 2.45."
+          ],
+          "solution": [
+            "Rewrite: -3.6 + (-2.45).",
+            "Same signs: 3.60 + 2.45 = 6.05.",
+            "Keep the negative sign: -6.05."
+          ],
+          "wrong": [
+            {
+              "answer": "-1.15",
+              "feedback": "Rewrite -3.6 - 2.45 as -3.6 + (-2.45). Both numbers are negative, so add their sizes."
+            },
+            {
+              "answer": "6.05",
+              "feedback": "Adding two negative numbers keeps the negative sign."
+            },
+            {
+              "answer": "-5.51",
+              "feedback": "Line up the decimal points: 3.6 is 3.60, not 3.06."
+            }
+          ]
+        },
+        {
+          "question": "Find -4.8 - (-7.25).",
+          "kind": "numeric",
+          "answer": "2.45",
+          "hints": [
+            "Rewrite subtracting a negative as adding a positive: -4.8 + 7.25.",
+            "Different signs: subtract 7.25 - 4.80 and keep the sign of the number farther from 0."
+          ],
+          "solution": [
+            "Rewrite: -4.8 + 7.25.",
+            "Different signs: 7.25 - 4.80 = 2.45.",
+            "7.25 is farther from 0 than -4.8, so the answer is positive: 2.45."
+          ],
+          "wrong": [
+            {
+              "answer": "-12.05",
+              "feedback": "Subtracting -7.25 changes to adding +7.25, not adding -7.25."
+            },
+            {
+              "answer": "-2.45",
+              "feedback": "After rewriting as -4.8 + 7.25, positive 7.25 is farther from 0 than -4.8, so the sum is positive."
+            }
+          ]
+        }
+      ],
+      "mentor": "Pad decimals with a trailing zero whenever one number has fewer decimal places—it saves you from misaligning digits!"
+    },
+    {
+      "heading": "Subtracting signed fractions and mixed numbers",
+      "read": [
+        "With **fractions** and **mixed numbers**, rewrite subtraction as adding the opposite **first**. That way you can clearly see whether the two fractions have the same sign or different signs.",
+        "Next, convert any **mixed numbers** to improper fractions so you never get stuck trying to borrow across zero. Find a **common denominator**, then combine the numerators using the integer addition rules.",
+        "Always simplify your final fraction if the numerator and denominator share a factor."
+      ],
+      "model": {
+        "caption": "Fraction subtraction as adding the opposite",
+        "rows": [
+          ["Expression", "Add the opposite", "Common denominator", "Result"],
+          ["-3/4 - 1/2", "-3/4 + (-1/2)", "-3/4 + (-2/4)", "-5/4 (or -1 1/4)"],
+          ["2/3 - (-5/6)", "2/3 + 5/6", "4/6 + 5/6", "9/6 = 3/2 (or 1 1/2)"],
+          ["-1 1/3 - (-2/3)", "-4/3 + 2/3", "-4/3 + 2/3", "-2/3"]
+        ]
+      },
+      "example": {
+        "problem": "Find -1 1/4 - (-3/8).",
+        "steps": [
+          {
+            "say": "Rewrite subtraction as adding the opposite: -1 1/4 + 3/8.",
+            "why": "Keep -1 1/4, change minus to plus, and take the opposite of -3/8 (+3/8)."
+          },
+          {
+            "say": "Convert the mixed number to an improper fraction: -1 1/4 = -5/4.",
+            "why": "Improper fractions keep the entire negative value together cleanly."
+          },
+          {
+            "say": "Rewrite with a common denominator of 8: -5/4 = -10/8, giving -10/8 + 3/8.",
+            "why": "Multiply numerator and denominator of -5/4 by 2."
+          },
+          {
+            "say": "Combine the numerators: -10 + 3 = -7, so the answer is -7/8.",
+            "why": "Keep the common denominator 8."
+          }
+        ],
+        "answer": "-1 1/4 - (-3/8) = -7/8"
+      },
+      "try_it": [
+        {
+          "question": "Find -2/5 - 3/10.",
+          "kind": "numeric",
+          "answer": "-7/10",
+          "hints": [
+            "Rewrite as adding the opposite: -2/5 + (-3/10).",
+            "Use 10 as the common denominator: -2/5 = -4/10."
+          ],
+          "solution": [
+            "Rewrite: -2/5 + (-3/10).",
+            "Common denominator 10: -4/10 + (-3/10).",
+            "Combine numerators: -4 + (-3) = -7, giving -7/10."
+          ],
+          "wrong": [
+            {
+              "answer": "-1/10",
+              "feedback": "Rewrite -2/5 - 3/10 as -4/10 + (-3/10). Both fractions are negative, so add the numerators."
+            },
+            {
+              "answer": "1/10",
+              "feedback": "Both -4/10 and -3/10 are negative, so their sum stays negative."
+            },
+            {
+              "answer": "-5/15",
+              "feedback": "Don't add denominators! Find a common denominator of 10 first."
+            }
+          ]
+        },
+        {
+          "question": "Find 1/2 - (-3/4).",
+          "kind": "numeric",
+          "answer": "5/4",
+          "hints": [
+            "Rewrite subtracting -3/4 as adding +3/4: 1/2 + 3/4.",
+            "Use a common denominator of 4: 1/2 = 2/4."
+          ],
+          "solution": [
+            "Rewrite: 1/2 + 3/4.",
+            "Common denominator 4: 2/4 + 3/4 = 5/4 (or 1 1/4)."
+          ],
+          "wrong": [
+            {
+              "answer": "-1/4",
+              "feedback": "Subtracting -3/4 changes to adding +3/4, not subtracting 3/4."
+            },
+            {
+              "answer": "4/6",
+              "feedback": "Find a common denominator of 4 before adding the numerators."
+            }
+          ]
+        }
+      ],
+      "mentor": "Rewriting as addition before finding a common denominator keeps negative signs from sneaking away."
+    }
+  ],
+  "mistake": {
+    "problem": "Clara evaluated -2.5 - 4.25.",
+    "work": [
+      "-2.5 - 4.25",
+      "= -2.5 + 4.25",
+      "= 1.75"
+    ],
+    "what_went_wrong": "Clara changed subtraction to addition, but she forgot the third step: take the opposite of 4.25! Leaving 4.25 positive turned the problem into adding 4.25 instead of subtracting it.",
+    "fix": "Use all three parts of Keep, Change, Opposite: -2.5 + (-4.25). Both numbers are negative, so add 2.50 + 4.25 = 6.75 and keep the minus sign: -6.75."
+  },
+  "summary": [
+    "Rewrite every subtraction problem as adding the opposite using Keep, Change, Opposite: p - q = p + (-q).",
+    "Subtracting a negative turns into adding a positive: p - (-q) = p + q.",
+    "The same rule works for decimals (line up decimal points with trailing zeros) and fractions (use a common denominator after rewriting as addition)."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find -8 - (-15).",
+      "kind": "numeric",
+      "answer": "7",
+      "hints": [
+        "Rewrite using Keep, Change, Opposite: -8 + 15.",
+        "Different signs: subtract 15 - 8 and keep the sign of the number farther from 0."
+      ],
+      "solution": [
+        "Rewrite: -8 - (-15) = -8 + 15.",
+        "15 - 8 = 7, and 15 is farther from 0, so the answer is 7."
+      ],
+      "wrong": [
+        {
+          "answer": "-23",
+          "feedback": "Subtracting -15 turns into adding +15, not adding -15."
+        },
+        {
+          "answer": "-7",
+          "feedback": "After rewriting as -8 + 15, positive 15 is farther from 0 than -8, so the sum is positive."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find -6.4 - 3.85.",
+      "kind": "numeric",
+      "answer": "-10.25",
+      "hints": [
+        "Rewrite as -6.4 + (-3.85).",
+        "Line up the decimals as 6.40 + 3.85 and keep the shared negative sign."
+      ],
+      "solution": [
+        "Rewrite: -6.4 + (-3.85).",
+        "Same signs: 6.40 + 3.85 = 10.25, keep negative → -10.25."
+      ],
+      "wrong": [
+        {
+          "answer": "-2.55",
+          "feedback": "Both -6.4 and -3.85 are negative once rewritten as addition, so add their sizes."
+        },
+        {
+          "answer": "10.25",
+          "feedback": "Adding two negative decimals gives a negative result."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 4.15 - (-2.9).",
+      "kind": "numeric",
+      "answer": "7.05",
+      "hints": [
+        "Subtracting -2.9 becomes adding +2.9.",
+        "Line up the decimal points: 4.15 + 2.90."
+      ],
+      "solution": [
+        "Rewrite: 4.15 + 2.90 = 7.05."
+      ],
+      "wrong": [
+        {
+          "answer": "1.25",
+          "feedback": "Watch the double minus: subtracting -2.9 means adding +2.9, not subtracting 2.9."
+        },
+        {
+          "answer": "4.44",
+          "feedback": "Line up the tenths place: 2.9 is 2.90, not 0.29."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find -5/6 - (-1/3).",
+      "kind": "numeric",
+      "answer": "-1/2",
+      "hints": [
+        "Rewrite subtracting -1/3 as adding +1/3: -5/6 + 1/3.",
+        "Use 6 as the common denominator (1/3 = 2/6) and simplify at the end."
+      ],
+      "solution": [
+        "Rewrite: -5/6 + 1/3.",
+        "Common denominator 6: -5/6 + 2/6 = -3/6.",
+        "Simplify -3/6 by dividing top and bottom by 3: -1/2."
+      ],
+      "wrong": [
+        {
+          "answer": "-7/6",
+          "feedback": "Subtracting -1/3 turns into adding +1/3, not adding -1/3."
+        },
+        {
+          "answer": "1/2",
+          "feedback": "In -5/6 + 2/6, -5/6 is farther from 0 than 2/6, so the sum stays negative."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A glacier's surface sits at -12.5 meters relative to a marker stake in June, and melts down to -18.75 meters by August. Find -18.75 - (-12.5) to get the change in elevation, in meters.",
+      "kind": "numeric",
+      "answer": "-6.25",
+      "hints": [
+        "Rewrite -18.75 - (-12.5) as -18.75 + 12.5.",
+        "Different signs: subtract 18.75 - 12.50 and keep the sign of the number farther from 0."
+      ],
+      "solution": [
+        "Rewrite: -18.75 + 12.50.",
+        "18.75 - 12.50 = 6.25.",
+        "-18.75 is farther from 0, so the change is -6.25 meters."
+      ],
+      "wrong": [
+        {
+          "answer": "6.25",
+          "feedback": "The glacier melted downward from -12.5 to -18.75, so the change is negative."
+        },
+        {
+          "answer": "-31.25",
+          "feedback": "Subtracting -12.5 turns into adding +12.5, not adding -12.5."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A science club starts the week with -$14.25 in its supply fund. They spend $9.50 on batteries (subtract 9.50), then have a -$12.00 shipping charge refunded (subtract -12.00). What is their new balance, in dollars?",
+      "kind": "numeric",
+      "answer": "-11.75",
+      "hints": [
+        "Write the expression: -14.25 - 9.50 - (-12.00).",
+        "Rewrite both subtractions as adding the opposite: -14.25 + (-9.50) + 12.00."
+      ],
+      "solution": [
+        "Rewrite: -14.25 + (-9.50) + 12.00.",
+        "Combine the first two: -14.25 + (-9.50) = -23.75.",
+        "Add the refund: -23.75 + 12.00 = -11.75 dollars."
+      ],
+      "wrong": [
+        {
+          "answer": "-35.75",
+          "feedback": "Refunding a -$12.00 charge means subtracting -12.00, which adds +12.00 back to the fund."
+        },
+        {
+          "answer": "-23.75",
+          "feedback": "That is the balance after buying batteries. Remember to subtract the -$12.00 shipping charge."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "On Monday a reservoir was 1 1/2 feet below full (-1 1/2). By Friday it is 2 3/4 feet below full (-2 3/4). Find Friday's level minus Monday's level (-2 3/4 - (-1 1/2)) to see the change in feet.",
+      "kind": "numeric",
+      "answer": "-5/4",
+      "hints": [
+        "Rewrite as -2 3/4 + 1 1/2.",
+        "Convert to improper fractions with denominator 4: -11/4 + 6/4."
+      ],
+      "solution": [
+        "Rewrite: -2 3/4 + 1 1/2.",
+        "Improper fractions with denominator 4: -11/4 + 6/4 = -5/4 (or -1 1/4) feet."
+      ],
+      "wrong": [
+        {
+          "answer": "5/4",
+          "feedback": "The water dropped lower from Monday to Friday, so the change is negative."
+        },
+        {
+          "answer": "-17/4",
+          "feedback": "Subtracting -1 1/2 turns into adding +1 1/2, not adding -1 1/2."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which addition expression is equivalent to -9 - (-14)?",
+      "kind": "multiple_choice",
+      "choices": [
+        "-9 + 14",
+        "-9 + (-14)",
+        "9 + 14",
+        "9 + (-14)"
+      ],
+      "answer": "-9 + 14",
+      "hints": [
+        "Keep the first number unchanged.",
+        "Change minus to plus, and take the opposite of -14."
+      ],
+      "solution": [
+        "Keep -9, change − to +, and take the opposite of -14 (which is 14): -9 + 14."
+      ],
+      "wrong": [
+        {
+          "answer": "-9 + (-14)",
+          "feedback": "You changed − to +, so also switch -14 to its opposite (+14)."
+        },
+        {
+          "answer": "9 + 14",
+          "feedback": "Keep the first number (-9) unchanged instead of flipping its sign."
+        },
+        {
+          "answer": "9 + (-14)",
+          "feedback": "The first number stays -9, and the second number switches to +14."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Without calculating the exact value, will -3.8 - (-7.1) be positive or negative, and why?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Positive, because rewriting as -3.8 + 7.1 gives a positive number farther from 0 than -3.8.",
+        "Negative, because both numbers in the original expression have minus signs.",
+        "Negative, because subtracting always makes a number smaller.",
+        "Positive, because -3.8 + (-7.1) is always positive."
+      ],
+      "answer": "Positive, because rewriting as -3.8 + 7.1 gives a positive number farther from 0 than -3.8.",
+      "hints": [
+        "Rewrite -3.8 - (-7.1) as adding the opposite first.",
+        "In -3.8 + 7.1, which number is farther from 0?"
+      ],
+      "solution": [
+        "-3.8 - (-7.1) rewrites to -3.8 + 7.1.",
+        "Because 7.1 is positive and farther from 0 than -3.8, the sum is positive."
+      ],
+      "wrong": [
+        {
+          "answer": "Negative, because both numbers in the original expression have minus signs.",
+          "feedback": "Subtracting a negative (-7.1) turns into adding positive 7.1."
+        },
+        {
+          "answer": "Negative, because subtracting always makes a number smaller.",
+          "feedback": "Subtracting a positive makes a number smaller, while subtracting a negative makes it larger."
+        },
+        {
+          "answer": "Positive, because -3.8 + (-7.1) is always positive.",
+          "feedback": "Two mistakes there: -3.8 - (-7.1) rewrites to -3.8 + 7.1, and adding two negatives is negative."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -19 + 11.",
+      "kind": "numeric",
+      "answer": "-8",
+      "hints": [
+        "Different signs: subtract 19 - 11.",
+        "-19 is farther from 0 than 11."
+      ],
+      "solution": [
+        "19 - 11 = 8.",
+        "-19 is farther from 0, so the sum is -8."
+      ],
+      "wrong": [
+        {
+          "answer": "8",
+          "feedback": "-19 is farther from 0 than 11, so the sum stays negative."
+        },
+        {
+          "answer": "-30",
+          "feedback": "Different signs cancel against each other, so subtract 19 - 11 instead of adding."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -2/3 + 5/6.",
+      "kind": "numeric",
+      "answer": "1/6",
+      "hints": [
+        "Rewrite -2/3 with denominator 6: -4/6.",
+        "Now combine -4/6 + 5/6."
+      ],
+      "solution": [
+        "-2/3 = -4/6.",
+        "-4/6 + 5/6 = 1/6."
+      ],
+      "wrong": [
+        {
+          "answer": "-1/6",
+          "feedback": "5/6 is farther from 0 than -4/6, so the sum is positive."
+        },
+        {
+          "answer": "3/9",
+          "feedback": "Find a common denominator of 6 instead of adding denominators."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Evaluate -3 1/2 - (-1.75) - 2 1/4.",
+      "kind": "numeric",
+      "answer": "-4",
+      "hints": [
+        "Convert all three numbers to either decimals (quarters) or fractions with denominator 4.",
+        "Rewrite both subtractions as adding the opposite: -3.5 + 1.75 + (-2.25)."
+      ],
+      "solution": [
+        "Convert to decimals: -3 1/2 = -3.5 and 2 1/4 = 2.25.",
+        "Rewrite as addition: -3.5 + 1.75 + (-2.25).",
+        "Combine from left to right (or group negatives first): -3.5 + (-2.25) = -5.75, and -5.75 + 1.75 = -4."
+      ],
+      "wrong": [
+        {
+          "answer": "-7.5",
+          "feedback": "Watch the double minus on - (-1.75): subtracting -1.75 adds +1.75."
+        },
+        {
+          "answer": "0.5",
+          "feedback": "Check the last term: - 2 1/4 subtracts 2.25 (adds -2.25)."
+        }
+      ]
+    }
+  ]
+}

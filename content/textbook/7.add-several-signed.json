@@ -1,0 +1,674 @@
+{
+  "version": 2,
+  "skill_id": "7.add-several-signed",
+  "title": "Add several signed numbers",
+  "hook": "During a 6-play football drive, the Falcons gain 8 yards, lose 12 yards, gain 15 yards, lose 8 yards, gain 4 yards, and lose 6 yards: 8 + (-12) + 15 + (-8) + 4 + (-6). Adding left to right five times invites sign slips—how can grouping smartly turn that long chain into mental math?",
+  "goal": "I can add a list of positive and negative numbers efficiently by canceling opposites, grouping positives and negatives, and pairing friendly decimals or fractions.",
+  "vocabulary": [
+    {
+      "term": "commutative property of addition",
+      "meaning": "changing the order of numbers being added does not change the sum",
+      "example": "8 + (-12) + 15 = 8 + 15 + (-12)."
+    },
+    {
+      "term": "associative property of addition",
+      "meaning": "changing how numbers being added are grouped does not change the sum",
+      "example": "(8 + 15) + (-12) = 8 + (15 + (-12))."
+    },
+    {
+      "term": "additive inverses (opposites)",
+      "meaning": "two numbers whose sum is 0; canceling them clears clutter before adding",
+      "example": "In 8 + (-12) + (-8), 8 and -8 cancel to 0."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Find -16 + (-9).",
+      "kind": "numeric",
+      "answer": "-25",
+      "hints": [
+        "Both numbers are negative, so add 16 + 9.",
+        "Keep the shared negative sign."
+      ],
+      "solution": [
+        "Same sign (both negative): 16 + 9 = 25.",
+        "Keep the negative sign: -25."
+      ],
+      "wrong": [
+        {
+          "answer": "-7",
+          "feedback": "Both numbers are negative, so combine their sizes instead of subtracting."
+        },
+        {
+          "answer": "25",
+          "feedback": "Adding two negative numbers gives a negative result."
+        }
+      ]
+    },
+    {
+      "question": "Find 18 + (-23).",
+      "kind": "numeric",
+      "answer": "-5",
+      "hints": [
+        "Different signs: subtract 23 - 18.",
+        "-23 is farther from 0 than 18."
+      ],
+      "solution": [
+        "23 - 18 = 5.",
+        "-23 is farther from 0, so the sum is -5."
+      ],
+      "wrong": [
+        {
+          "answer": "5",
+          "feedback": "-23 is farther from 0 than 18, so the sum stays negative."
+        },
+        {
+          "answer": "-41",
+          "feedback": "When signs are different, subtract the smaller size from the larger size."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Cancel opposites and friendly pairs first",
+      "read": [
+        "Because addition is **commutative** (you can swap the order) and **associative** (you can group any terms), you never have to slog through a long addition list strictly left to right.",
+        "Start by scanning the list for **opposites** like `8` and `-8`. Since `8 + (-8) = 0`, they cancel out completely and drop out of the problem!",
+        "Also look for **friendly triples** that add to `0` (like `7 + 5 + (-12) = 0`) or **friendly pairs** that make round tens (like `14 + 6 = 20`)."
+      ],
+      "model": {
+        "caption": "Canceling opposites in 8 + (-12) + 15 + (-8) + 4 + (-6)",
+        "rows": [
+          ["Step", "Expression", "Why"],
+          ["1. Spot opposites", "8 + (-8) = 0", "Opposites always cancel to 0"],
+          ["2. Remaining terms", "(-12) + 15 + 4 + (-6)", "Only four terms left"],
+          ["3. Combine", "(15 + 4) + (-12 + -6) = 19 + (-18)", "Group positives and negatives"],
+          ["4. Finish", "19 + (-18) = 1", "One quick final sum"]
+        ]
+      },
+      "example": {
+        "problem": "Find -13 + 7 + 13 + (-11) + 5.",
+        "steps": [
+          {
+            "say": "Scan for opposites: -13 + 13 = 0, so cross both out.",
+            "why": "Additive inverses add to 0 without changing the total."
+          },
+          {
+            "say": "Look at what remains: 7 + (-11) + 5.",
+            "why": "Five numbers shrank down to three."
+          },
+          {
+            "say": "Group the positives: 7 + 5 = 12.",
+            "why": "Addition lets us reorder and group terms freely."
+          },
+          {
+            "say": "Add the remaining negative: 12 + (-11) = 1.",
+            "why": "12 - 11 = 1, and 12 is farther from 0."
+          }
+        ],
+        "answer": "-13 + 7 + 13 + (-11) + 5 = 1"
+      },
+      "try_it": [
+        {
+          "question": "Find 17 + (-9) + (-17) + 12 + (-4).",
+          "kind": "numeric",
+          "answer": "-1",
+          "hints": [
+            "Spot the opposites 17 and -17 first—they cancel to 0.",
+            "Add the remaining negatives (-9 + -4), then combine with 12."
+          ],
+          "solution": [
+            "Cancel opposites: 17 + (-17) = 0.",
+            "Combine remaining negatives: -9 + (-4) = -13.",
+            "12 + (-13) = -1."
+          ],
+          "wrong": [
+            {
+              "answer": "1",
+              "feedback": "In 12 + (-13), -13 is farther from 0 than 12, so the sum stays negative."
+            },
+            {
+              "answer": "33",
+              "feedback": "Check 17 and -17: they have opposite signs, so they cancel to 0 instead of adding to 34."
+            }
+          ]
+        },
+        {
+          "question": "Find -25 + 18 + (-18) + 11 + 14.",
+          "kind": "numeric",
+          "answer": "0",
+          "hints": [
+            "First cancel the opposites 18 and -18.",
+            "Now add 11 + 14, and combine with -25."
+          ],
+          "solution": [
+            "18 + (-18) = 0.",
+            "11 + 14 = 25.",
+            "-25 + 25 = 0."
+          ],
+          "wrong": [
+            {
+              "answer": "-50",
+              "feedback": "11 and 14 are both positive (+25), so they cancel -25 rather than doubling it."
+            },
+            {
+              "answer": "36",
+              "feedback": "18 and -18 are opposites, so they cancel each other out instead of combining to 36."
+            }
+          ]
+        }
+      ],
+      "mentor": "Always scan for opposites before you add a single number—why do work that cancels out anyway?"
+    },
+    {
+      "heading": "Combine all positives, combine all negatives",
+      "read": [
+        "When no opposites are left to cancel, split the list into **two teams**:",
+        "1. Add all the **positive** numbers together into one positive total. 2. Add all the **negative** numbers together into one negative total.",
+        "That shrinks a five- or six-number chain into **one single addition** of two numbers with opposite signs!"
+      ],
+      "model": {
+        "caption": "Two-team grouping for -7 + 12 + (-15) + 9 + (-4) + 6",
+        "rows": [
+          ["Team", "Numbers", "Team total"],
+          ["Positives", "12 + 9 + 6", "27"],
+          ["Negatives", "(-7) + (-15) + (-4)", "-26"],
+          ["Combine teams", "27 + (-26)", "1"]
+        ]
+      },
+      "example": {
+        "problem": "Find -8 + 14 + (-11) + 6 + (-19) + 5.",
+        "steps": [
+          {
+            "say": "Group and add all the positive numbers: 14 + 6 + 5 = 25.",
+            "why": "Adding 14 + 6 = 20 first makes a friendly ten."
+          },
+          {
+            "say": "Group and add all the negative numbers: (-8) + (-11) + (-19) = -38.",
+            "why": "Notice (-11) + (-19) = -30 first, then -30 + (-8) = -38."
+          },
+          {
+            "say": "Combine the two team totals: 25 + (-38) = -13.",
+            "why": "Different signs: 38 - 25 = 13, and -38 is farther from 0."
+          }
+        ],
+        "answer": "-8 + 14 + (-11) + 6 + (-19) + 5 = -13"
+      },
+      "try_it": [
+        {
+          "question": "Find 12 + (-7) + (-15) + 8 + (-3).",
+          "kind": "numeric",
+          "answer": "-5",
+          "hints": [
+            "Add the positives first: 12 + 8.",
+            "Add the negatives together: (-7) + (-15) + (-3). Notice -7 + (-3) = -10."
+          ],
+          "solution": [
+            "Positives: 12 + 8 = 20.",
+            "Negatives: (-7) + (-3) + (-15) = -10 + (-15) = -25.",
+            "Combine: 20 + (-25) = -5."
+          ],
+          "wrong": [
+            {
+              "answer": "5",
+              "feedback": "Your negative total (-25) is farther from 0 than your positive total (20), so keep the minus sign."
+            },
+            {
+              "answer": "-11",
+              "feedback": "Check your negative total: (-7) + (-15) + (-3) = -25, and 12 + 8 = 20."
+            }
+          ]
+        },
+        {
+          "question": "Find -16 + 21 + (-9) + (-14) + 11.",
+          "kind": "numeric",
+          "answer": "-7",
+          "hints": [
+            "Positives: 21 + 11. Negatives: (-16) + (-14) + (-9).",
+            "Spot the friendly pair (-16) + (-14) = -30."
+          ],
+          "solution": [
+            "Positives: 21 + 11 = 32.",
+            "Negatives: (-16 + -14) + (-9) = -30 + (-9) = -39.",
+            "Combine: 32 + (-39) = -7."
+          ],
+          "wrong": [
+            {
+              "answer": "7",
+              "feedback": "-39 is farther from 0 than 32, so the sum is negative."
+            },
+            {
+              "answer": "-29",
+              "feedback": "Check the positive team: both 21 and 11 are positive, giving 32."
+            }
+          ]
+        }
+      ],
+      "mentor": "Putting all the gains in one pile and all the losses in the other turns six numbers into one clean tug-of-war."
+    },
+    {
+      "heading": "Grouping signed decimals and fractions",
+      "read": [
+        "Grouping is even more helpful with **decimals** and **fractions**! First, if there is any **subtraction** in the list, rewrite it as **adding the opposite** so every operation is `+`. (Only addition can be reordered freely!)",
+        "Next, pair **decimals** that make whole numbers—like `-2.3 + (-1.7) = -4` or `4.8 + 1.2 = 6`.",
+        "With **fractions**, group fractions that already share the **same denominator**—like `3/4 + (-3/4) = 0` or `2/5 + 3/5 = 1`—before finding a common denominator for anything left over."
+      ],
+      "model": {
+        "caption": "Friendly pairs with decimals and fractions",
+        "rows": [
+          ["Expression", "Best grouping", "Result"],
+          ["-2.3 + 4.8 + (-1.7) + 1.2", "(-2.3 + -1.7) + (4.8 + 1.2) = -4 + 6", "2"],
+          ["3/4 + (-1/3) + (-3/4) + 5/6", "(3/4 + -3/4) + (-2/6 + 5/6) = 0 + 3/6", "1/2"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -4.6 + 2.75 - 1.4 + 4.25.",
+        "steps": [
+          {
+            "say": "Rewrite the subtraction - 1.4 as + (-1.4): -4.6 + 2.75 + (-1.4) + 4.25.",
+            "why": "Every term must be added before we reorder them."
+          },
+          {
+            "say": "Pair the tenths that make a whole number: -4.6 + (-1.4) = -6.",
+            "why": ".6 + .4 = 1.0, so 4.6 + 1.4 = 6.0."
+          },
+          {
+            "say": "Pair the quarters: 2.75 + 4.25 = 7.",
+            "why": ".75 + .25 = 1.00, so 2.75 + 4.25 = 7."
+          },
+          {
+            "say": "Combine the two clean totals: -6 + 7 = 1.",
+            "why": "Friendly grouping avoided messy decimal column work."
+          }
+        ],
+        "answer": "-4.6 + 2.75 - 1.4 + 4.25 = 1"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate -3.2 + 5.75 + (-1.8) + 2.25.",
+          "kind": "numeric",
+          "answer": "3",
+          "hints": [
+            "Pair the two negative numbers (-3.2 + -1.8) and the two positive numbers (5.75 + 2.25).",
+            "Each pair makes an exact whole number!"
+          ],
+          "solution": [
+            "Negatives: -3.2 + (-1.8) = -5.",
+            "Positives: 5.75 + 2.25 = 8.",
+            "Combine: -5 + 8 = 3."
+          ],
+          "wrong": [
+            {
+              "answer": "-3",
+              "feedback": "Positive 8 is farther from 0 than -5, so the result is positive."
+            },
+            {
+              "answer": "13",
+              "feedback": "Remember that -3.2 and -1.8 are negative, so their sum is -5, not +5."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate 3/5 + (-1/4) + 2/5 + (-3/4).",
+          "kind": "numeric",
+          "answer": "0",
+          "hints": [
+            "Group the fifths together: 3/5 + 2/5.",
+            "Group the fourths together: (-1/4) + (-3/4)."
+          ],
+          "solution": [
+            "Fifths: 3/5 + 2/5 = 5/5 = 1.",
+            "Fourths: (-1/4) + (-3/4) = -4/4 = -1.",
+            "Combine: 1 + (-1) = 0."
+          ],
+          "wrong": [
+            {
+              "answer": "2",
+              "feedback": "The fourths (-1/4 and -3/4) are both negative, so they add to -1, not +1."
+            },
+            {
+              "answer": "1/2",
+              "feedback": "Notice 3/5 + 2/5 = 1 and -1/4 + (-3/4) = -1; combine those two sums."
+            }
+          ]
+        }
+      ],
+      "mentor": "Rewriting subtractions as adding the opposite is what unlocks reordering—never swap terms around a minus sign!"
+    }
+  ],
+  "mistake": {
+    "problem": "Sofia tried to regroup 9 - 14 + 5.",
+    "work": [
+      "9 - 14 + 5",
+      "= 9 - (14 + 5)",
+      "= 9 - 19 = -10"
+    ],
+    "what_went_wrong": "Sofia kept the minus sign outside parentheses around (14 + 5), which accidentally subtracted 5 instead of adding 5! You cannot regroup around a subtraction sign.",
+    "fix": "First rewrite - 14 as adding the opposite: 9 + (-14) + 5. Now reorder and group safely: (9 + 5) + (-14) = 14 + (-14) = 0."
+  },
+  "summary": [
+    "Rewriting any subtractions as adding the opposite lets you reorder and group terms freely using the commutative and associative properties.",
+    "Scan first for opposites (like 8 and -8) that cancel to 0, then combine all positives into one sum and all negatives into one sum.",
+    "With decimals and fractions, pair friendly decimals that make whole numbers and fractions that share the same denominator."
+  ],
+  "faith": "Keeping careful track of gains and losses helps us stay honest with money and budgets—Proverbs 11:1 reminds us that accurate weights and measures matter.",
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find -11 + 19 + (-19) + 6 + (-4).",
+      "kind": "numeric",
+      "answer": "-9",
+      "hints": [
+        "First cancel the opposites 19 and -19.",
+        "Combine the remaining negatives (-11 + -4) with +6."
+      ],
+      "solution": [
+        "Opposites 19 + (-19) = 0.",
+        "Remaining negatives: -11 + (-4) = -15.",
+        "-15 + 6 = -9."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "-15 is farther from 0 than 6, so the sum stays negative."
+        },
+        {
+          "answer": "-21",
+          "feedback": "Notice 6 is positive, so -15 + 6 moves 6 units right."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find 14 + (-9) + (-12) + 7 + (-5) + 3.",
+      "kind": "numeric",
+      "answer": "-2",
+      "hints": [
+        "Group all positive numbers (14 + 7 + 3) and all negative numbers ((-9) + (-12) + (-5)).",
+        "Combine 24 + (-26)."
+      ],
+      "solution": [
+        "Positives: 14 + 7 + 3 = 24.",
+        "Negatives: (-9) + (-12) + (-5) = -26.",
+        "Combine: 24 + (-26) = -2."
+      ],
+      "wrong": [
+        {
+          "answer": "2",
+          "feedback": "The negative total (-26) is farther from 0 than the positive total (24)."
+        },
+        {
+          "answer": "-8",
+          "feedback": "Check the positive sum: 14 + 7 + 3 = 24."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate -5.4 + 3.8 + (-2.6) + 1.2.",
+      "kind": "numeric",
+      "answer": "-3",
+      "hints": [
+        "Pair the negative decimals (-5.4 + -2.6) and the positive decimals (3.8 + 1.2).",
+        "Each pair adds to an exact whole number."
+      ],
+      "solution": [
+        "Negatives: -5.4 + (-2.6) = -8.",
+        "Positives: 3.8 + 1.2 = 5.",
+        "Combine: -8 + 5 = -3."
+      ],
+      "wrong": [
+        {
+          "answer": "3",
+          "feedback": "-8 is farther from 0 than 5, so keep the negative sign."
+        },
+        {
+          "answer": "-13",
+          "feedback": "3.8 and 1.2 are both positive (+5), not negative."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate 5/8 + (-2/3) + (-5/8) + 5/6.",
+      "kind": "numeric",
+      "answer": "1/6",
+      "hints": [
+        "Cancel the opposites 5/8 and -5/8 first!",
+        "Now add -2/3 + 5/6 using common denominator 6."
+      ],
+      "solution": [
+        "Cancel opposites: 5/8 + (-5/8) = 0.",
+        "Common denominator 6: -2/3 = -4/6.",
+        "-4/6 + 5/6 = 1/6."
+      ],
+      "wrong": [
+        {
+          "answer": "-1/6",
+          "feedback": "In -4/6 + 5/6, positive 5/6 is farther from 0 than -4/6."
+        },
+        {
+          "answer": "3/3",
+          "feedback": "5/8 and -5/8 cancel to 0; for -2/3 + 5/6, use a common denominator of 6."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "In a 6-play football drive, the Falcons gain 8 yards, lose 12 yards, gain 15 yards, lose 8 yards, gain 4 yards, and lose 6 yards: 8 + (-12) + 15 + (-8) + 4 + (-6). What is their net yardage?",
+      "kind": "numeric",
+      "answer": "1",
+      "hints": [
+        "Cancel the opposites 8 and -8 first.",
+        "Combine the remaining positives (15 + 4) and negatives (-12 + -6)."
+      ],
+      "solution": [
+        "Cancel opposites: 8 + (-8) = 0.",
+        "Positives: 15 + 4 = 19.",
+        "Negatives: -12 + (-6) = -18.",
+        "19 + (-18) = 1 yard."
+      ],
+      "wrong": [
+        {
+          "answer": "-1",
+          "feedback": "Positive 19 is larger in size than -18, so the net yardage is positive."
+        },
+        {
+          "answer": "17",
+          "feedback": "8 and -8 cancel to 0 rather than adding to 16."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A neighborhood pet-sitting club starts with $25.00. They spend $14.50 on treats, earn $18.25 walking dogs, spend $5.50 on waste bags, and earn $11.75 cat sitting. How much money does the club have now, in dollars?",
+      "kind": "numeric",
+      "answer": "35",
+      "hints": [
+        "Write spending as adding negatives: 25.00 + (-14.50) + 18.25 + (-5.50) + 11.75.",
+        "Pair the two expenses (-14.50 + -5.50) and the two earnings (18.25 + 11.75)."
+      ],
+      "solution": [
+        "Expenses: -14.50 + (-5.50) = -20.00.",
+        "Earnings: 18.25 + 11.75 = 30.00.",
+        "Combine with the starting $25.00: 25 + (-20) + 30 = 35 dollars."
+      ],
+      "wrong": [
+        {
+          "answer": "10",
+          "feedback": "Don't forget to include the starting $25.00!"
+        },
+        {
+          "answer": "75",
+          "feedback": "Spending $14.50 and $5.50 subtracts $20.00 from the total instead of adding it."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "During a 4-hour winter hike, the temperature changes by +2.4°C, -3.75°C, +1.6°C, and -2.25°C. What is the total temperature change, in degrees Celsius?",
+      "kind": "numeric",
+      "answer": "-2",
+      "hints": [
+        "Pair the two positive changes (2.4 + 1.6) and the two negative changes (-3.75 + -2.25).",
+        "Each pair gives a clean whole number."
+      ],
+      "solution": [
+        "Positives: 2.4 + 1.6 = 4.",
+        "Negatives: -3.75 + (-2.25) = -6.",
+        "Total change: 4 + (-6) = -2 degrees Celsius."
+      ],
+      "wrong": [
+        {
+          "answer": "2",
+          "feedback": "The drops (-6) were larger than the rises (+4), so the total change is negative."
+        },
+        {
+          "answer": "10",
+          "feedback": "Remember that -3.75 and -2.25 are temperature drops (negative)."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why should you rewrite 12 - 7 + 3 - 5 as 12 + (-7) + 3 + (-5) before reordering terms?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Subtraction is not commutative, so turning subtractions into adding the opposite lets you safely reorder and group any terms.",
+        "Rewriting changes negative numbers into positive numbers so the answer gets bigger.",
+        "Parentheses can only be used when there are no negative numbers.",
+        "Adding negative numbers gives a different answer than subtracting positive numbers."
+      ],
+      "answer": "Subtraction is not commutative, so turning subtractions into adding the opposite lets you safely reorder and group any terms.",
+      "hints": [
+        "Does 12 - 7 equal 7 - 12?",
+        "Which property lets you reorder and regroup terms?"
+      ],
+      "solution": [
+        "Subtraction is neither commutative nor associative, so swapping or grouping around a minus sign causes errors.",
+        "Rewriting every subtraction as adding the opposite lets you apply the commutative and associative properties of addition."
+      ],
+      "wrong": [
+        {
+          "answer": "Rewriting changes negative numbers into positive numbers so the answer gets bigger.",
+          "feedback": "Rewriting - 7 as + (-7) keeps the value exact; it does not change the answer."
+        },
+        {
+          "answer": "Parentheses can only be used when there are no negative numbers.",
+          "feedback": "Parentheses work fine with negative numbers—the trouble is putting a minus sign in front of a grouped sum."
+        },
+        {
+          "answer": "Adding negative numbers gives a different answer than subtracting positive numbers.",
+          "feedback": "Adding the opposite gives the exact same value as subtracting."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which grouping makes -4.3 + 2.8 + (-1.7) + 4.3 fastest to evaluate mentally?",
+      "kind": "multiple_choice",
+      "choices": [
+        "(-4.3 + 4.3) + (2.8 + (-1.7))",
+        "(-4.3 + 2.8) + (-1.7 + 4.3)",
+        "(-4.3 + (-1.7)) + 2.8 + 4.3",
+        "2.8 + (-4.3 + (-1.7) + 4.3)"
+      ],
+      "answer": "(-4.3 + 4.3) + (2.8 + (-1.7))",
+      "hints": [
+        "Look for two numbers in the list that are opposites.",
+        "Opposites cancel to 0 right away!"
+      ],
+      "solution": [
+        "-4.3 and 4.3 are opposites, so grouping (-4.3 + 4.3) cancels to 0 immediately, leaving only 2.8 + (-1.7) = 1.1."
+      ],
+      "wrong": [
+        {
+          "answer": "(-4.3 + 2.8) + (-1.7 + 4.3)",
+          "feedback": "That pairs numbers with different signs and decimal parts instead of canceling -4.3 and 4.3 first."
+        },
+        {
+          "answer": "(-4.3 + (-1.7)) + 2.8 + 4.3",
+          "feedback": "Even though -4.3 + (-1.7) = -6 is nice, pairing the opposites -4.3 and 4.3 cancels both out to 0."
+        },
+        {
+          "answer": "2.8 + (-4.3 + (-1.7) + 4.3)",
+          "feedback": "Grouping the three terms together still leaves three numbers inside the parentheses instead of canceling the opposites first."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -13 - (-21).",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": [
+        "Rewrite subtracting -21 as adding +21.",
+        "Evaluate -13 + 21."
+      ],
+      "solution": [
+        "-13 - (-21) = -13 + 21 = 8."
+      ],
+      "wrong": [
+        {
+          "answer": "-34",
+          "feedback": "Subtracting -21 changes to adding +21, not adding -21."
+        },
+        {
+          "answer": "-8",
+          "feedback": "After rewriting as -13 + 21, 21 is farther from 0 than -13, so the answer is positive."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -1 1/2 + 3/4.",
+      "kind": "numeric",
+      "answer": "-3/4",
+      "hints": [
+        "Convert -1 1/2 to an improper fraction: -3/2.",
+        "Rewrite with denominator 4: -6/4 + 3/4."
+      ],
+      "solution": [
+        "-1 1/2 = -3/2 = -6/4.",
+        "-6/4 + 3/4 = -3/4."
+      ],
+      "wrong": [
+        {
+          "answer": "3/4",
+          "feedback": "-6/4 is farther from 0 than 3/4, so the sum stays negative."
+        },
+        {
+          "answer": "-9/4",
+          "feedback": "-6/4 and +3/4 have different signs, so subtract the numerators rather than adding."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Evaluate 4 2/3 + (-2.75) + (-1 2/3) + 5.25 - 7.",
+      "kind": "numeric",
+      "answer": "-1.5",
+      "hints": [
+        "Rewrite - 7 as + (-7), then pair the mixed numbers that share thirds and the decimals that share quarters.",
+        "4 2/3 + (-1 2/3) = 3, and -2.75 + 5.25 = 2.5."
+      ],
+      "solution": [
+        "Rewrite: 4 2/3 + (-2.75) + (-1 2/3) + 5.25 + (-7).",
+        "Pair the mixed numbers: 4 2/3 + (-1 2/3) = 3.",
+        "Pair the decimals: -2.75 + 5.25 = 2.5.",
+        "Combine with -7: 3 + 2.5 + (-7) = 5.5 + (-7) = -1.5 (or -1 1/2)."
+      ],
+      "wrong": [
+        {
+          "answer": "1.5",
+          "feedback": "-7 is farther from 0 than 5.5, so the final sum is negative."
+        },
+        {
+          "answer": "12.5",
+          "feedback": "Notice - 7 subtracts 7 at the end, and -2.75 is negative."
+        }
+      ]
+    }
+  ]
+}
