@@ -1,0 +1,653 @@
+{
+  "version": 2,
+  "skill_id": "7.signed-order-of-operations",
+  "title": "Order of Operations with Negative Numbers",
+  "hook": "Maya typed -3^2 into one calculator and got -9, then typed (-3)^2 into another and got +9. Meanwhile, evaluating -3 + 4(-2)^2 ÷ 8 gives three different answers if you go in the wrong order! How do we make sure everyone gets the one right value?",
+  "goal": "I can evaluate expressions with negative integers, fractions, and decimals using the order of operations.",
+  "vocabulary": [
+    {
+      "term": "order of operations",
+      "meaning": "the agreed-upon order for evaluating expressions: Grouping (parentheses), Exponents, Multiply and Divide (left to right), Add and Subtract (left to right)",
+      "example": "In 2 + 3 × (-4), multiply 3 × (-4) = -12 first, then add 2 to get -10."
+    },
+    {
+      "term": "base",
+      "meaning": "the number being multiplied repeatedly by an exponent",
+      "example": "In (-3)^2, the base is -3; in -3^2, the base is 3 and the minus sign sits outside."
+    },
+    {
+      "term": "grouping symbol",
+      "meaning": "parentheses ( ), brackets [ ], or a fraction bar that holds an expression together to be evaluated first",
+      "example": "In (-10 + 4) / 2, evaluate -10 + 4 = -6 first, then divide by 2."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "Evaluate 5 + 3 × (9 - 4).",
+      "kind": "numeric",
+      "answer": "20",
+      "hints": [
+        "Start inside the parentheses: 9 - 4.",
+        "Multiply 3 × 5 before adding 5."
+      ],
+      "solution": [
+        "Parentheses: 9 - 4 = 5 → 5 + 3 × 5.",
+        "Multiply: 3 × 5 = 15 → 5 + 15.",
+        "Add: 20."
+      ],
+      "wrong": [
+        {
+          "answer": "40",
+          "feedback": "Multiply 3 × 5 before adding 5."
+        }
+      ]
+    },
+    {
+      "question": "Evaluate (-4) × (-7) + (-10).",
+      "kind": "numeric",
+      "answer": "18",
+      "hints": [
+        "Multiply (-4) × (-7) first (same signs → positive).",
+        "Then add 28 + (-10)."
+      ],
+      "solution": [
+        "(-4) × (-7) = 28.",
+        "28 + (-10) = 18."
+      ],
+      "wrong": [
+        {
+          "answer": "-38",
+          "feedback": "Check (-4) × (-7): two negatives multiply to +28, not -28."
+        },
+        {
+          "answer": "38",
+          "feedback": "Add -10 to 28 (which lowers 28 by 10), rather than adding +10."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Parentheses and exponents with negative numbers",
+      "read": [
+        "The **order of operations** works the exact same way with negative numbers as with positives: **1. Grouping** (parentheses, brackets), **2. Exponents**, **3. Multiply & Divide** (left to right), **4. Add & Subtract** (left to right).",
+        "Watch out for the biggest exponent trap with negatives: **`(-3)^2` is NOT the same as `-3^2`**! Parentheses around `(-3)^2` put `-3` inside the base, so `(-3) × (-3) = 9`.",
+        "Without parentheses, `-3^2` means the opposite of `3^2`, which is `-(3 × 3) = -9`! Also notice odd powers: `(-2)^3 = (-2) × (-2) × (-2) = -8`."
+      ],
+      "model": {
+        "caption": "Watch the parentheses on negative powers",
+        "rows": [
+          ["Expression", "What it means", "Value"],
+          ["(-3)^2", "(-3) × (-3)", "9"],
+          ["-3^2", "-(3 × 3)", "-9"],
+          ["(-2)^3", "(-2) × (-2) × (-2)", "-8"],
+          ["(-2)^4", "(-2) × (-2) × (-2) × (-2)", "16"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -3 + 4(-2)^2 ÷ 8.",
+        "steps": [
+          {
+            "say": "Evaluate the exponent first: (-2)^2 = (-2) × (-2) = 4. The expression becomes -3 + 4(4) ÷ 8.",
+            "why": "Exponents come before multiplying, dividing, and adding."
+          },
+          {
+            "say": "Multiply and divide from left to right: 4 × 4 = 16, then 16 ÷ 8 = 2. Now we have -3 + 2.",
+            "why": "4(4) means 4 × 4; multiplication and division happen left to right before addition."
+          },
+          {
+            "say": "Add last: -3 + 2 = -1.",
+            "why": "Addition and subtraction are always the final step."
+          }
+        ],
+        "answer": "-3 + 4(-2)^2 ÷ 8 = -1"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate (-5)^2 - 3 × 4.",
+          "kind": "numeric",
+          "answer": "13",
+          "hints": [
+            "Evaluate (-5)^2 first: (-5) × (-5).",
+            "Multiply 3 × 4 = 12, then subtract from 25."
+          ],
+          "solution": [
+            "(-5)^2 = 25.",
+            "3 × 4 = 12.",
+            "25 - 12 = 13."
+          ],
+          "wrong": [
+            {
+              "answer": "-37",
+              "feedback": "The parentheses mean (-5) × (-5) = +25, not -25."
+            },
+            {
+              "answer": "88",
+              "feedback": "Multiply 3 × 4 before subtracting from 25."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate -4^2 + 6 ÷ (-2).",
+          "kind": "numeric",
+          "answer": "-19",
+          "hints": [
+            "Notice there are NO parentheses around -4 in -4^2, so -4^2 = -(4 × 4) = -16.",
+            "Next divide 6 ÷ (-2) = -3, then add -16 + (-3)."
+          ],
+          "solution": [
+            "-4^2 = -(4 × 4) = -16.",
+            "6 ÷ (-2) = -3.",
+            "-16 + (-3) = -19."
+          ],
+          "wrong": [
+            {
+              "answer": "13",
+              "feedback": "Without parentheses around -4, the exponent applies only to 4: -4^2 = -16, not +16."
+            },
+            {
+              "answer": "5",
+              "feedback": "Check -4^2 = -16 and do division (6 ÷ -2) before adding."
+            }
+          ]
+        }
+      ],
+      "mentor": "Parentheses around a negative base change everything: (-3)^2 is +9, while -3^2 is -9."
+    },
+    {
+      "heading": "Left-to-right rules and fraction bars",
+      "read": [
+        "Multiply and Divide belong to the **same step**—always work **left to right**, not M before D! In `-24 ÷ 3 × (-2)`, divide `-24 ÷ 3 = -8` first, then multiply `-8 × (-2) = 16`.",
+        "Add and Subtract also belong to the **same step**, worked **left to right**.",
+        "A **fraction bar** acts like invisible parentheses around the whole top (numerator) and the whole bottom (denominator). Evaluate the top and bottom separately first, then divide."
+      ],
+      "model": {
+        "caption": "Left-to-right and fraction bars",
+        "rows": [
+          ["Trap", "Right order", "Result"],
+          ["-24 ÷ 3 × (-2)", "Left to right: (-24 ÷ 3) × (-2) = -8 × (-2)", "16"],
+          ["(-10 + 4) / (-2)", "Top first: -6 / -2", "3"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate (-18 + 6) ÷ (-3) × 2 - 5.",
+        "steps": [
+          {
+            "say": "Start inside the parentheses: -18 + 6 = -12. Now we have -12 ÷ (-3) × 2 - 5.",
+            "why": "Grouping symbols always go first."
+          },
+          {
+            "say": "Divide and multiply from left to right: -12 ÷ (-3) = 4, then 4 × 2 = 8. Now we have 8 - 5.",
+            "why": "Division sits to the left of multiplication here, so divide before multiplying."
+          },
+          {
+            "say": "Subtract last: 8 - 5 = 3.",
+            "why": "Subtraction comes after multiplication and division."
+          }
+        ],
+        "answer": "(-18 + 6) ÷ (-3) × 2 - 5 = 3"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate -36 ÷ (-4) × 2.",
+          "kind": "numeric",
+          "answer": "18",
+          "hints": [
+            "Division and multiplication have the same priority, so work left to right.",
+            "First find -36 ÷ (-4) = 9, then multiply by 2."
+          ],
+          "solution": [
+            "-36 ÷ (-4) = 9 (same signs → positive).",
+            "9 × 2 = 18."
+          ],
+          "wrong": [
+            {
+              "answer": "4.5",
+              "feedback": "Don't multiply (-4) × 2 first! Division and multiplication go strictly left to right."
+            },
+            {
+              "answer": "-18",
+              "feedback": "Negative divided by negative gives positive 9, so multiplying 9 × 2 stays positive."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate (-14 - 4) / (2 - 5).",
+          "kind": "numeric",
+          "answer": "6",
+          "hints": [
+            "Treat the fraction bar as grouping: evaluate the numerator (-14 - 4) and denominator (2 - 5) first.",
+            "-18 ÷ (-3) has the same signs."
+          ],
+          "solution": [
+            "Numerator: -14 - 4 = -18.",
+            "Denominator: 2 - 5 = -3.",
+            "Divide: -18 ÷ (-3) = 6."
+          ],
+          "wrong": [
+            {
+              "answer": "-6",
+              "feedback": "Both the numerator (-18) and denominator (-3) are negative, so dividing gives a positive result."
+            },
+            {
+              "answer": "-3 1/3",
+              "feedback": "Evaluate -14 - 4 = -18 (not -10) and 2 - 5 = -3 before dividing."
+            }
+          ]
+        }
+      ],
+      "mentor": "Think of Multiply/Divide as a tie—whoever sits farther left wins and goes first!"
+    },
+    {
+      "heading": "Order of operations with signed fractions and decimals",
+      "read": [
+        "Real-world formulas and measurements mix **negative integers, fractions, and decimals** in the same expression. The order of operations doesn't change when fractions or decimals show up.",
+        "Take one clean step per line and rewrite what's left. When you see a fraction like `-3/4` multiplied by `-8`, simplify or convert as needed, and keep track of every negative sign.",
+        "If an expression mixes decimals and clean fractions like `1/2 = 0.5` or `1/4 = 0.25`, converting to all decimals (or all fractions) makes the final addition or subtraction smooth."
+      ],
+      "model": {
+        "caption": "Step-by-step with signed decimals: -1.5 × (4 - 10) + (-3)^2 ÷ 2",
+        "rows": [
+          ["Step", "Expression after step", "Why"],
+          ["1. Grouping", "-1.5 × (-6) + (-3)^2 ÷ 2", "4 - 10 = -6"],
+          ["2. Exponents", "-1.5 × (-6) + 9 ÷ 2", "(-3)^2 = 9"],
+          ["3. Multiply & Divide", "9 + 4.5", "-1.5 × (-6) = 9 and 9 ÷ 2 = 4.5"],
+          ["4. Add", "13.5", "9 + 4.5 = 13.5"]
+        ]
+      },
+      "example": {
+        "problem": "Evaluate -3/4 × (-8) + (-1.5)^2 - 5.",
+        "steps": [
+          {
+            "say": "Evaluate the exponent: (-1.5)^2 = (-1.5) × (-1.5) = 2.25. Now we have -3/4 × (-8) + 2.25 - 5.",
+            "why": "Exponents come before multiplication, addition, and subtraction."
+          },
+          {
+            "say": "Multiply: -3/4 × (-8) = 24/4 = 6. Now we have 6 + 2.25 - 5.",
+            "why": "Same signs (negative × negative) give a positive product."
+          },
+          {
+            "say": "Add and subtract left to right: 6 + 2.25 = 8.25, then 8.25 - 5 = 3.25.",
+            "why": "Work addition and subtraction in order from left to right."
+          }
+        ],
+        "answer": "-3/4 × (-8) + (-1.5)^2 - 5 = 3.25"
+      },
+      "try_it": [
+        {
+          "question": "Evaluate -2.4 + 0.5 × (-6)^2.",
+          "kind": "numeric",
+          "answer": "15.6",
+          "hints": [
+            "Start with the exponent: (-6)^2 = 36.",
+            "Next multiply 0.5 × 36 = 18, then add -2.4 + 18."
+          ],
+          "solution": [
+            "(-6)^2 = 36.",
+            "0.5 × 36 = 18.",
+            "-2.4 + 18 = 15.6."
+          ],
+          "wrong": [
+            {
+              "answer": "-20.4",
+              "feedback": "(-6)^2 is +36, so 0.5 × 36 is +18, not -18."
+            },
+            {
+              "answer": "-68.4",
+              "feedback": "Do the exponent and multiplication before adding -2.4."
+            }
+          ]
+        },
+        {
+          "question": "Evaluate (1/2 - 3/4) × (-12) - 4.",
+          "kind": "numeric",
+          "answer": "-1",
+          "hints": [
+            "Evaluate inside the parentheses first: 1/2 - 3/4 = 2/4 - 3/4 = -1/4.",
+            "Next multiply (-1/4) × (-12) = 3, then subtract 4."
+          ],
+          "solution": [
+            "Parentheses: 1/2 - 3/4 = -1/4.",
+            "Multiply: (-1/4) × (-12) = 3.",
+            "Subtract: 3 - 4 = -1."
+          ],
+          "wrong": [
+            {
+              "answer": "-7",
+              "feedback": "Check (-1/4) × (-12): two negatives multiply to +3, not -3."
+            },
+            {
+              "answer": "1",
+              "feedback": "3 - 4 goes 1 unit below zero, giving a negative result."
+            }
+          ]
+        }
+      ],
+      "mentor": "Write out one step per line. Trying to hold three negative signs and a decimal in your head at once is where slips happen."
+    }
+  ],
+  "mistake": {
+    "problem": "Nolan evaluated 5 - 2(-3)^2.",
+    "work": [
+      "5 - 2(-3)^2",
+      "= 3(-3)^2",
+      "= 3 × 9 = 27"
+    ],
+    "what_went_wrong": "Nolan subtracted 5 - 2 = 3 first! Subtraction comes after exponents and multiplication, even when 5 - 2 sits at the front.",
+    "fix": "Evaluate the exponent first: (-3)^2 = 9. Then multiply: 2 × 9 = 18. Subtract last: 5 - 18 = -13."
+  },
+  "summary": [
+    "Follow Grouping, Exponents, Multiply/Divide (left to right), and Add/Subtract (left to right)—including fraction bars as grouping.",
+    "Watch parentheses on negative powers: (-a)^2 is positive, while -a^2 means -(a × a) and stays negative.",
+    "Write one step per line and settle signs carefully when expressions mix integers, fractions, and decimals."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Evaluate -8 + 3 × (-4).",
+      "kind": "numeric",
+      "answer": "-20",
+      "hints": [
+        "Multiply 3 × (-4) before adding -8.",
+        "3 × (-4) = -12. Now add -8 + (-12)."
+      ],
+      "solution": [
+        "Multiply: 3 × (-4) = -12.",
+        "Add: -8 + (-12) = -20."
+      ],
+      "wrong": [
+        {
+          "answer": "20",
+          "feedback": "Multiply 3 × (-4) = -12 before adding -8 (don't add -8 + 3 first)."
+        },
+        {
+          "answer": "-4",
+          "feedback": "-8 + (-12) combines two negative numbers in the negative direction."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate (-4)^2 - 5 × (-2).",
+      "kind": "numeric",
+      "answer": "26",
+      "hints": [
+        "First find (-4)^2 = 16 and 5 × (-2) = -10.",
+        "Now compute 16 - (-10)."
+      ],
+      "solution": [
+        "Exponent: (-4)^2 = 16.",
+        "Multiply: 5 × (-2) = -10.",
+        "Subtract: 16 - (-10) = 16 + 10 = 26."
+      ],
+      "wrong": [
+        {
+          "answer": "6",
+          "feedback": "Watch the double negative in 16 - (-10): subtracting -10 adds 10."
+        },
+        {
+          "answer": "-6",
+          "feedback": "Check (-4)^2: parentheses keep -4 inside the base, so (-4) × (-4) = +16."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate -48 ÷ 6 × (-3) + 1.",
+      "kind": "numeric",
+      "answer": "25",
+      "hints": [
+        "Work division and multiplication from left to right: first -48 ÷ 6 = -8.",
+        "Next multiply -8 × (-3) = 24, then add 1."
+      ],
+      "solution": [
+        "Divide: -48 ÷ 6 = -8.",
+        "Multiply: -8 × (-3) = 24.",
+        "Add: 24 + 1 = 25."
+      ],
+      "wrong": [
+        {
+          "answer": "3",
+          "feedback": "Work division and multiplication left to right (-48 ÷ 6 first), rather than 6 × (-3) first."
+        },
+        {
+          "answer": "-23",
+          "feedback": "-8 × (-3) has two negatives, so it equals +24."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate -2/3 × (-9) + (-0.5)^2.",
+      "kind": "numeric",
+      "answer": "6.25",
+      "hints": [
+        "Evaluate (-0.5)^2 = (-0.5) × (-0.5) = 0.25.",
+        "Multiply -2/3 × (-9) = 18/3 = 6, then add 0.25."
+      ],
+      "solution": [
+        "Exponent: (-0.5)^2 = 0.25.",
+        "Multiply: (-2/3) × (-9) = 6.",
+        "Add: 6 + 0.25 = 6.25."
+      ],
+      "wrong": [
+        {
+          "answer": "5.75",
+          "feedback": "(-0.5)^2 is positive (+0.25), not negative."
+        },
+        {
+          "answer": "-5.75",
+          "feedback": "(-2/3) × (-9) multiplies two negatives, giving +6."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A diver starts at -32 feet. She swims up 4 feet per minute for 5 minutes, and then dives down 9 feet to inspect a coral arch. What is her new elevation, in feet?",
+      "kind": "numeric",
+      "answer": "-21",
+      "hints": [
+        "Write an expression: -32 + 4 × 5 - 9.",
+        "Multiply 4 × 5 = 20 first, then add and subtract left to right."
+      ],
+      "solution": [
+        "Expression: -32 + 4 × 5 - 9.",
+        "Multiply: 4 × 5 = 20 → -32 + 20 - 9.",
+        "Left to right: -32 + 20 = -12, and -12 - 9 = -21 feet."
+      ],
+      "wrong": [
+        {
+          "answer": "-149",
+          "feedback": "Multiply 4 × 5 before adding -32."
+        },
+        {
+          "answer": "-3",
+          "feedback": "At the end she dives DOWN 9 feet (-9), not up."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A club snack account has a balance of -$12.50. Four members each deposit $15.25, and the treasurer buys 2 cases of juice at $9.50 each. What is the new balance, in dollars?",
+      "kind": "numeric",
+      "answer": "29.5",
+      "hints": [
+        "Set up: -12.50 + 4(15.25) - 2(9.50).",
+        "Multiply first: 4 × 15.25 = 61 and 2 × 9.50 = 19."
+      ],
+      "solution": [
+        "Expression: -12.50 + 4(15.25) - 2(9.50).",
+        "Multiply: -12.50 + 61 - 19.",
+        "Left to right: 48.50 - 19 = 29.50 ($29.50)."
+      ],
+      "wrong": [
+        {
+          "answer": "54.5",
+          "feedback": "Remember the account started at -$12.50, so subtract 12.50 from the deposits."
+        },
+        {
+          "answer": "-24",
+          "feedback": "Multiply 4 × 15.25 and 2 × 9.50 before adding or subtracting from left to right."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "The formula C = (F - 32) × 5/9 converts a Fahrenheit temperature F to Celsius C. Find C when F = -4°F.",
+      "kind": "numeric",
+      "answer": "-20",
+      "hints": [
+        "Substitute F = -4 inside the parentheses: (-4 - 32) × 5/9.",
+        "-4 - 32 = -36. Now multiply -36 × 5/9."
+      ],
+      "solution": [
+        "Parentheses: -4 - 32 = -36.",
+        "Multiply: -36 × 5/9 = -180/9 = -20°C."
+      ],
+      "wrong": [
+        {
+          "answer": "20",
+          "feedback": "-36 is negative, so multiplying by positive 5/9 gives a negative Celsius temperature."
+        },
+        {
+          "answer": "-15.56",
+          "feedback": "Check -4 - 32: both are negative, so -4 - 32 = -36, not -28."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why does -5^2 equal -25, while (-5)^2 equals 25?",
+      "kind": "multiple_choice",
+      "choices": [
+        "In (-5)^2 the base is -5, so (-5)(-5) = 25; in -5^2 the exponent applies only to 5, giving -(5 × 5) = -25.",
+        "Because -5^2 means -5 × 2 = -10, while (-5)^2 means (-5) × (-5).",
+        "Because odd exponents stay negative and even exponents only change when there are no parentheses.",
+        "They actually have the same value; one drops the negative sign."
+      ],
+      "answer": "In (-5)^2 the base is -5, so (-5)(-5) = 25; in -5^2 the exponent applies only to 5, giving -(5 × 5) = -25.",
+      "hints": [
+        "Look at what the exponent 2 is attached to in each expression.",
+        "Parentheses include the minus sign in the base; without parentheses, the minus sign sits outside."
+      ],
+      "solution": [
+        "(-5)^2 means (-5) × (-5) = 25.",
+        "-5^2 means -(5^2) = -(25) = -25."
+      ],
+      "wrong": [
+        {
+          "answer": "Because -5^2 means -5 × 2 = -10, while (-5)^2 means (-5) × (-5).",
+          "feedback": "An exponent of 2 means multiply the base by itself, never multiply by 2."
+        },
+        {
+          "answer": "They actually have the same value; one drops the negative sign.",
+          "feedback": "Order of operations treats -5^2 as -(5^2) = -25, which is not equal to +25."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Marcus wants to evaluate -30 ÷ 5 × (-2) + 4. Which step should he do FIRST?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Divide -30 by 5",
+        "Multiply 5 by -2",
+        "Add -2 and 4",
+        "Multiply -30 by -2"
+      ],
+      "answer": "Divide -30 by 5",
+      "hints": [
+        "There are no parentheses with operations inside and no exponents.",
+        "Multiplication and division share the same priority—which one is farthest left?"
+      ],
+      "solution": [
+        "Division and multiplication go left to right, so -30 ÷ 5 goes first."
+      ],
+      "wrong": [
+        {
+          "answer": "Multiply 5 by -2",
+          "feedback": "Multiplication does not go ahead of division when division is to its left."
+        },
+        {
+          "answer": "Add -2 and 4",
+          "feedback": "Addition comes after all multiplication and division."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -3/4 - (-5/8).",
+      "kind": "numeric",
+      "answer": "-1/8",
+      "hints": [
+        "Rewrite subtraction as adding the opposite: -3/4 + 5/8.",
+        "Convert -3/4 to -6/8, then combine with 5/8."
+      ],
+      "solution": [
+        "-3/4 - (-5/8) = -3/4 + 5/8.",
+        "-6/8 + 5/8 = -1/8."
+      ],
+      "wrong": [
+        {
+          "answer": "1/8",
+          "feedback": "-6/8 is farther from 0 than 5/8, so the sum stays negative."
+        },
+        {
+          "answer": "-11/8",
+          "feedback": "Subtracting -5/8 becomes adding +5/8, so combine -6 + 5 in the numerator."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find (-3.2) ÷ (-0.4).",
+      "kind": "numeric",
+      "answer": "8",
+      "hints": [
+        "Same signs (negative ÷ negative) give a positive quotient.",
+        "Shift both decimal points 1 place right: 32 ÷ 4."
+      ],
+      "solution": [
+        "Same signs → positive.",
+        "3.2 ÷ 0.4 = 32 ÷ 4 = 8."
+      ],
+      "wrong": [
+        {
+          "answer": "-8",
+          "feedback": "Both -3.2 and -0.4 are negative, so the quotient is positive."
+        },
+        {
+          "answer": "0.8",
+          "feedback": "Shift the decimal point 1 place right in BOTH numbers to get 32 ÷ 4."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Evaluate [(-6)^2 - 4 × (-3)] ÷ (-2 × 3) - (-5) × 1/2.",
+      "kind": "numeric",
+      "answer": "-5.5",
+      "hints": [
+        "Evaluate inside the brackets first: (-6)^2 = 36 and 4 × (-3) = -12, so 36 - (-12) = 48.",
+        "Also evaluate (-2 × 3) = -6, then divide 48 ÷ (-6) = -8, and subtract (-5) × 1/2 = -2.5."
+      ],
+      "solution": [
+        "Brackets: (-6)^2 - 4(-3) = 36 - (-12) = 48.",
+        "Parentheses: -2 × 3 = -6.",
+        "Divide and multiply: 48 ÷ (-6) = -8, and (-5) × 1/2 = -2.5.",
+        "Subtract: -8 - (-2.5) = -8 + 2.5 = -5.5 (or -5 1/2)."
+      ],
+      "wrong": [
+        {
+          "answer": "-10.5",
+          "feedback": "Check the last step: -8 - (-2.5) turns into -8 + 2.5, not -8 - 2.5."
+        },
+        {
+          "answer": "1.5",
+          "feedback": "Watch the brackets: (-6)^2 is +36 and subtracting -12 adds 12 to make 48, not 24."
+        }
+      ]
+    }
+  ]
+}

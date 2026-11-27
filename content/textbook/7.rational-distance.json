@@ -1,0 +1,639 @@
+{
+  "version": 2,
+  "skill_id": "7.rational-distance",
+  "title": "Distance Between Rational Numbers",
+  "hook": "Before sunrise in Minnesota, the thermometer reads -8°F. By noon, the sun warms the air to 5°F. Someone in class guesses the temperature rose 3°F because 8 - 5 = 3—why is that off, and how far apart are -8 and 5 really?",
+  "goal": "I can find the distance between any two rational numbers using a number line and the absolute value of their difference.",
+  "vocabulary": [
+    {
+      "term": "absolute value",
+      "meaning": "how far a number is from 0 on the number line, written |n|; it is never negative",
+      "example": "|-8| = 8 and |5| = 5."
+    },
+    {
+      "term": "distance",
+      "meaning": "how many units apart two numbers are on a number line, always zero or positive",
+      "example": "The distance between -8 and 5 is |-8 - 5| = 13."
+    },
+    {
+      "term": "directed change",
+      "meaning": "how much a value goes up (positive) or down (negative), found by end - start",
+      "example": "Going from 5°F down to -8°F is a change of -8 - 5 = -13°F, while the distance is 13°F."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "What is |-17|?",
+      "kind": "numeric",
+      "answer": "17",
+      "hints": [
+        "Absolute value means distance from 0.",
+        "Distances are positive or zero, never negative."
+      ],
+      "solution": [
+        "-17 is 17 units from 0, so |-17| = 17."
+      ],
+      "wrong": [
+        {
+          "answer": "-17",
+          "feedback": "Absolute value measures distance from 0, so it drops the negative sign."
+        }
+      ]
+    },
+    {
+      "question": "Find -9 - (-14).",
+      "kind": "numeric",
+      "answer": "5",
+      "hints": [
+        "Rewrite subtracting a negative as adding a positive: -9 + 14.",
+        "Subtract 14 - 9 and keep the sign of 14."
+      ],
+      "solution": [
+        "-9 - (-14) = -9 + 14 = 5."
+      ],
+      "wrong": [
+        {
+          "answer": "-23",
+          "feedback": "Subtracting -14 turns into adding +14, not adding -14."
+        },
+        {
+          "answer": "-5",
+          "feedback": "After rewriting as -9 + 14, 14 is farther from 0 than -9, so the sum is positive."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Distance on a number line: crossing zero vs. same side",
+      "read": [
+        "Distance asks: **how many steps** does it take to walk from one number to the other on a number line? Steps are always counted positively—you never walk `-13` steps.",
+        "When the two numbers are on **opposite sides of 0** (one negative, one positive), your trip crosses `0`. First walk from the negative number to `0`, then walk from `0` to the positive number—so you **add** their distances from `0`.",
+        "When both numbers are on the **same side of 0** (both negative or both positive), you don't cross `0`. You **subtract** the smaller distance from `0` from the larger distance from `0`."
+      ],
+      "model": {
+        "caption": "Distance depends on whether the trip crosses 0",
+        "rows": [
+          ["Numbers", "Crosses 0?", "Trip in steps", "Distance"],
+          ["-8 and 5", "Yes (opposite sides)", "-8 → 0 is 8, plus 0 → 5 is 5", "8 + 5 = 13"],
+          ["-12 and -4", "No (both negative)", "12 units from 0 minus 4 units from 0", "12 - 4 = 8"],
+          ["3 and 11", "No (both positive)", "11 units from 0 minus 3 units from 0", "11 - 3 = 8"]
+        ]
+      },
+      "example": {
+        "problem": "Find the distance between -14 and 9 on a number line.",
+        "steps": [
+          {
+            "say": "Check where they sit: -14 is left of 0, and 9 is right of 0.",
+            "why": "They are on opposite sides of 0, so the path crosses 0."
+          },
+          {
+            "say": "Walk from -14 to 0: that takes 14 units.",
+            "why": "|-14| = 14."
+          },
+          {
+            "say": "Walk from 0 to 9: that takes 9 more units.",
+            "why": "|9| = 9."
+          },
+          {
+            "say": "Add the two parts of the trip: 14 + 9 = 23.",
+            "why": "Together, those two stretches give the total distance between -14 and 9."
+          }
+        ],
+        "answer": "The distance between -14 and 9 is 23."
+      },
+      "try_it": [
+        {
+          "question": "Before sunrise the temperature is -8°F, and by noon it reaches 5°F. By how many degrees did the temperature rise?",
+          "kind": "numeric",
+          "answer": "13",
+          "hints": [
+            "-8 and 5 are on opposite sides of 0.",
+            "Walk 8 degrees from -8 to 0, then 5 more degrees from 0 to 5."
+          ],
+          "solution": [
+            "From -8°F to 0°F is 8 degrees.",
+            "From 0°F to 5°F is 5 degrees.",
+            "8 + 5 = 13 degrees."
+          ],
+          "wrong": [
+            {
+              "answer": "3",
+              "feedback": "8 - 5 = 3 ignores the fact that -8 and 5 are on opposite sides of 0. Add the 8 steps up to 0 and the 5 steps past 0."
+            },
+            {
+              "answer": "-3",
+              "feedback": "The temperature went up across 0, so count steps from -8 to 0 and then from 0 to 5."
+            }
+          ]
+        },
+        {
+          "question": "What is the distance between -19 and -7 on a number line?",
+          "kind": "numeric",
+          "answer": "12",
+          "hints": [
+            "Both -19 and -7 are negative (on the same side of 0).",
+            "Find the difference between 19 and 7."
+          ],
+          "solution": [
+            "Both numbers are on the same side of 0.",
+            "19 - 7 = 12 units apart."
+          ],
+          "wrong": [
+            {
+              "answer": "-12",
+              "feedback": "Distance is always positive (or zero). Drop the minus sign."
+            },
+            {
+              "answer": "26",
+              "feedback": "Both -19 and -7 are on the left side of 0, so the path doesn't cross 0. Subtract 19 - 7."
+            }
+          ]
+        }
+      ],
+      "mentor": "Ask yourself one quick question first: do these two numbers cross zero? That tells you right away whether the distances from 0 add or subtract."
+    },
+    {
+      "heading": "The distance formula: |a - b|",
+      "read": [
+        "What if we want one rule that works every single time—without even checking whether the numbers cross `0`? That rule is **the absolute value of their difference**: **`|a - b|`**.",
+        "Why does subtraction inside absolute value work? When you compute `5 - (-8)`, subtracting a negative turns into `5 + 8 = 13`. When you compute `-19 - (-7)`, you get `-12`, and absolute value turns it into `12`.",
+        "Better yet, **order doesn't matter**: **`|a - b| = |b - a|`**. Subtract in whichever order feels cleaner, then take the absolute value at the very end!"
+      ],
+      "model": {
+        "caption": "Both orders give the exact same distance",
+        "rows": [
+          ["a and b", "|a - b|", "|b - a|", "Distance"],
+          ["-8 and 5", "|-8 - 5| = |-13| = 13", "|5 - (-8)| = |13| = 13", "13"],
+          ["-15 and -6", "|-15 - (-6)| = |-9| = 9", "|-6 - (-15)| = |9| = 9", "9"]
+        ]
+      },
+      "example": {
+        "problem": "Use |a - b| to find the distance between -11.5 and 4.2.",
+        "steps": [
+          {
+            "say": "Plug the two numbers into the distance formula: |4.2 - (-11.5)|.",
+            "why": "Order doesn't matter in |a - b|; putting the positive number first often makes the arithmetic cleaner."
+          },
+          {
+            "say": "Rewrite subtracting a negative inside the bars: 4.2 - (-11.5) = 4.2 + 11.5 = 15.7.",
+            "why": "Subtracting a negative is the same as adding its opposite."
+          },
+          {
+            "say": "Take the absolute value: |15.7| = 15.7.",
+            "why": "Distance is always positive or zero."
+          }
+        ],
+        "answer": "The distance between -11.5 and 4.2 is 15.7."
+      },
+      "try_it": [
+        {
+          "question": "Find the distance between -6.5 and 8.2.",
+          "kind": "numeric",
+          "answer": "14.7",
+          "hints": [
+            "Set up |8.2 - (-6.5)|.",
+            "Subtracting -6.5 becomes adding +6.5: 8.2 + 6.5."
+          ],
+          "solution": [
+            "|8.2 - (-6.5)| = |8.2 + 6.5| = |14.7| = 14.7."
+          ],
+          "wrong": [
+            {
+              "answer": "1.7",
+              "feedback": "Notice the minus sign on -6.5: 8.2 - (-6.5) = 8.2 + 6.5, not 8.2 - 6.5."
+            },
+            {
+              "answer": "-14.7",
+              "feedback": "Distance uses absolute value, so it is always positive."
+            }
+          ]
+        },
+        {
+          "question": "Find the distance between -12.4 and -3.9.",
+          "kind": "numeric",
+          "answer": "8.5",
+          "hints": [
+            "Set up |-12.4 - (-3.9)|.",
+            "Rewrite as |-12.4 + 3.9|, subtract 12.4 - 3.9, then take the absolute value."
+          ],
+          "solution": [
+            "|-12.4 - (-3.9)| = |-12.4 + 3.9| = |-8.5| = 8.5."
+          ],
+          "wrong": [
+            {
+              "answer": "-8.5",
+              "feedback": "Don't forget the absolute value bars at the end! Distance cannot be negative."
+            },
+            {
+              "answer": "16.3",
+              "feedback": "Rewrite -12.4 - (-3.9) carefully as -12.4 + 3.9; since signs are different, subtract 12.4 - 3.9."
+            }
+          ]
+        }
+      ],
+      "mentor": "Notice how |a - b| automatically handles crossing zero when you turn subtracting a negative into adding!"
+    },
+    {
+      "heading": "Fractions, decimals, and distance vs. directed change",
+      "read": [
+        "The formula **`|a - b|`** works for **fractions and mixed numbers** too—find a common denominator, subtract, and take the absolute value.",
+        "In word problems, watch whether a question asks for **distance** (how far apart) or **directed change** (did it go up or down?).",
+        "**Distance** (`|a - b|`) is always positive. **Directed change** (`end - start`) keeps its sign: positive if it increased, negative if it decreased."
+      ],
+      "model": {
+        "caption": "Distance vs. directed change from 3/4 down to -1/2",
+        "rows": [
+          ["Question", "Formula", "Calculation", "Answer"],
+          ["How far apart are 3/4 and -1/2?", "|a - b|", "|3/4 - (-1/2)| = |3/4 + 2/4| = |5/4|", "1 1/4"],
+          ["What was the change from 3/4 to -1/2?", "end - start", "-1/2 - 3/4 = -2/4 - 3/4 = -5/4", "-1 1/4"]
+        ]
+      },
+      "example": {
+        "problem": "A drone starts at -2 1/4 meters inside a canyon and rises to 4 1/2 meters above the rim. What is the vertical distance between its start and end positions?",
+        "steps": [
+          {
+            "say": "Set up the distance formula: |4 1/2 - (-2 1/4)|.",
+            "why": "The question asks for vertical distance, so we use |a - b|."
+          },
+          {
+            "say": "Rewrite subtracting a negative as addition: |4 1/2 + 2 1/4|.",
+            "why": "Subtracting -2 1/4 is the same as adding 2 1/4."
+          },
+          {
+            "say": "Use a common denominator of 4: 4 2/4 + 2 1/4 = 6 3/4.",
+            "why": "1/2 = 2/4, so the fractions combine cleanly."
+          },
+          {
+            "say": "Take the absolute value: |6 3/4| = 6 3/4 meters.",
+            "why": "Distance is positive."
+          }
+        ],
+        "answer": "The vertical distance is 6 3/4 meters."
+      },
+      "try_it": [
+        {
+          "question": "What is the distance between -3/4 and 1 1/2 on a number line?",
+          "kind": "numeric",
+          "answer": "2 1/4",
+          "hints": [
+            "Set up |1 1/2 - (-3/4)| = |1 1/2 + 3/4|.",
+            "Rewrite 1 1/2 as 1 2/4 (or 6/4) and add 3/4."
+          ],
+          "solution": [
+            "|1 1/2 - (-3/4)| = |1 2/4 + 3/4| = |1 5/4| = 2 1/4 (or 9/4)."
+          ],
+          "wrong": [
+            {
+              "answer": "3/4",
+              "feedback": "-3/4 and 1 1/2 are on opposite sides of 0, so add 3/4 + 1 1/2 instead of subtracting."
+            },
+            {
+              "answer": "-2 1/4",
+              "feedback": "Distance is always positive."
+            }
+          ]
+        },
+        {
+          "question": "A walk-in freezer cools from 2.5°C to -16.8°C. What is the distance between those two temperatures, in °C?",
+          "kind": "numeric",
+          "answer": "19.3",
+          "hints": [
+            "Use |2.5 - (-16.8)|.",
+            "Subtracting -16.8 turns into adding 16.8."
+          ],
+          "solution": [
+            "|2.5 - (-16.8)| = |2.5 + 16.8| = 19.3°C."
+          ],
+          "wrong": [
+            {
+              "answer": "-19.3",
+              "feedback": "That negative value is the directed change (a drop), while the distance between two temperatures is always positive."
+            },
+            {
+              "answer": "14.3",
+              "feedback": "2.5 and -16.8 are on opposite sides of 0, so add 2.5 + 16.8 rather than subtracting."
+            }
+          ]
+        }
+      ],
+      "mentor": "Two numbers, one formula: |a - b| works for integers, decimals, and fractions—and always gives a non-negative distance."
+    }
+  ],
+  "mistake": {
+    "problem": "Kira found the distance between -12 and 5 on a number line.",
+    "work": [
+      "|-12| = 12 and |5| = 5",
+      "12 - 5 = 7",
+      "Distance: 7"
+    ],
+    "what_went_wrong": "Kira subtracted the two absolute values instead of using |a - b|. Because -12 and 5 are on opposite sides of 0, you must cross 0—not take the difference of their sizes.",
+    "fix": "Use |a - b|: |-12 - 5| = |-17| = 17 (or add 12 + 5 = 17)."
+  },
+  "summary": [
+    "The distance between any two rational numbers a and b on a number line is |a - b| (which equals |b - a|), and is always 0 or positive.",
+    "Numbers on opposite sides of 0 cross 0, so their distances from 0 add; numbers on the same side of 0 subtract.",
+    "Distance (|a - b|) tells how far apart two values are, while directed change (end - start) includes the direction (+ up, - down)."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "What is the distance between -15 and 6 on a number line?",
+      "kind": "numeric",
+      "answer": "21",
+      "hints": [
+        "Set up |-15 - 6| or |6 - (-15)|.",
+        "They are on opposite sides of 0: 15 units to 0 plus 6 more units."
+      ],
+      "solution": [
+        "|-15 - 6| = |-21| = 21."
+      ],
+      "wrong": [
+        {
+          "answer": "9",
+          "feedback": "-15 and 6 are on opposite sides of 0, so their distances from 0 add instead of subtracting."
+        },
+        {
+          "answer": "-21",
+          "feedback": "Distance is always positive (use absolute value)."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Evaluate |-24 - (-9)|.",
+      "kind": "numeric",
+      "answer": "15",
+      "hints": [
+        "Rewrite inside the bars first: -24 - (-9) = -24 + 9.",
+        "Combine -24 + 9 (different signs, so subtract 24 - 9 and keep the negative sign), then take the absolute value."
+      ],
+      "solution": [
+        "-24 - (-9) = -24 + 9 = -15.",
+        "|-15| = 15."
+      ],
+      "wrong": [
+        {
+          "answer": "-15",
+          "feedback": "Don't forget the absolute value bars around the outside!"
+        },
+        {
+          "answer": "33",
+          "feedback": "Inside the bars, -24 - (-9) becomes -24 + 9 (different signs, so subtract 24 - 9)."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What is the distance between -3.8 and 5.45?",
+      "kind": "numeric",
+      "answer": "9.25",
+      "hints": [
+        "Set up |5.45 - (-3.8)|.",
+        "Rewrite subtracting a negative as adding: 5.45 + 3.80."
+      ],
+      "solution": [
+        "|5.45 - (-3.8)| = |5.45 + 3.80| = 9.25."
+      ],
+      "wrong": [
+        {
+          "answer": "1.65",
+          "feedback": "-3.8 and 5.45 are on opposite sides of 0, so add 3.8 + 5.45 instead of subtracting."
+        },
+        {
+          "answer": "-9.25",
+          "feedback": "Distance is positive; take the absolute value."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "What is the distance between -5/6 and 2/3?",
+      "kind": "numeric",
+      "answer": "1 1/2",
+      "hints": [
+        "Set up |2/3 - (-5/6)| = |2/3 + 5/6|.",
+        "Convert 2/3 to 4/6, then add 4/6 + 5/6."
+      ],
+      "solution": [
+        "|2/3 - (-5/6)| = |4/6 + 5/6| = 9/6 = 3/2 = 1 1/2."
+      ],
+      "wrong": [
+        {
+          "answer": "1/6",
+          "feedback": "Because -5/6 and 2/3 sit on opposite sides of 0, add 5/6 + 4/6 instead of subtracting."
+        },
+        {
+          "answer": "-1 1/2",
+          "feedback": "Distance is always positive."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A scuba diver explores a reef at -48 feet. Directly above, a pelican glides at 27 feet above the water. What is the vertical distance between the diver and the pelican, in feet?",
+      "kind": "numeric",
+      "answer": "75",
+      "hints": [
+        "Find |27 - (-48)|.",
+        "Add 48 feet up to the surface plus 27 feet above the surface."
+      ],
+      "solution": [
+        "|27 - (-48)| = |27 + 48| = 75 feet."
+      ],
+      "wrong": [
+        {
+          "answer": "21",
+          "feedback": "48 - 27 doesn't cross sea level (0). Add the 48 feet below water and the 27 feet above water."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "At 6 a.m., the outdoor temperature was -11.5°F. By noon, it warmed up by 18°F. How many degrees apart is the noon temperature from -4.5°F?",
+      "kind": "numeric",
+      "answer": "11",
+      "hints": [
+        "First find the noon temperature: -11.5 + 18.",
+        "Noon is 6.5°F. Now find the distance between 6.5 and -4.5."
+      ],
+      "solution": [
+        "Noon temperature: -11.5 + 18 = 6.5°F.",
+        "Distance between 6.5 and -4.5: |6.5 - (-4.5)| = |6.5 + 4.5| = 11°F."
+      ],
+      "wrong": [
+        {
+          "answer": "2",
+          "feedback": "Check the sign of -4.5: 6.5 and -4.5 are on opposite sides of 0, so add 6.5 + 4.5."
+        },
+        {
+          "answer": "6.5",
+          "feedback": "6.5°F is the noon temperature. Now find how far 6.5°F is from -4.5°F."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "In a trivia tournament, Priya finishes Round 1 with -150 points and finishes Round 2 with 225 points. How many points apart are her Round 1 and Round 2 scores?",
+      "kind": "numeric",
+      "answer": "375",
+      "hints": [
+        "Find |225 - (-150)|.",
+        "Add 150 points to reach 0, plus 225 more points."
+      ],
+      "solution": [
+        "|225 - (-150)| = |225 + 150| = 375 points."
+      ],
+      "wrong": [
+        {
+          "answer": "75",
+          "feedback": "From -150 to 225 crosses 0, so add 150 + 225 instead of subtracting."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which expression does NOT equal the distance between -7 and 4 on a number line?",
+      "kind": "multiple_choice",
+      "choices": [
+        "|-7| - |4|",
+        "|-7 - 4|",
+        "|4 - (-7)|",
+        "|-7| + |4|"
+      ],
+      "answer": "|-7| - |4|",
+      "hints": [
+        "Evaluate each choice!",
+        "The true distance between -7 and 4 is 11. Which choice gives 3 instead of 11?"
+      ],
+      "solution": [
+        "|-7 - 4| = |-11| = 11, |4 - (-7)| = |11| = 11, and |-7| + |4| = 7 + 4 = 11.",
+        "|-7| - |4| = 7 - 4 = 3, which is wrong because -7 and 4 are on opposite sides of 0."
+      ],
+      "wrong": [
+        {
+          "answer": "|-7 - 4|",
+          "feedback": "|-7 - 4| = |-11| = 11, which is the right distance."
+        },
+        {
+          "answer": "|4 - (-7)|",
+          "feedback": "|4 - (-7)| = |4 + 7| = 11, which is the right distance."
+        },
+        {
+          "answer": "|-7| + |4|",
+          "feedback": "Because -7 and 4 are on opposite sides of 0, |-7| + |4| = 7 + 4 = 11 actually matches the distance!"
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Why does |a - b| always equal |b - a| for any two rational numbers a and b?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Because a - b and b - a are opposites, so they have the same distance from 0.",
+        "Because subtraction is commutative, meaning a - b is always equal to b - a.",
+        "Because absolute value turns a - b into a + b.",
+        "It only works when both a and b are positive."
+      ],
+      "answer": "Because a - b and b - a are opposites, so they have the same distance from 0.",
+      "hints": [
+        "Test an example like 3 - 8 = -5 and 8 - 3 = 5.",
+        "-5 and 5 are opposites, so what is true about |-5| and |5|?"
+      ],
+      "solution": [
+        "For any numbers a and b, a - b and b - a are opposites (like -5 and 5).",
+        "Opposites are the same distance from 0, so |a - b| = |b - a|."
+      ],
+      "wrong": [
+        {
+          "answer": "Because subtraction is commutative, meaning a - b is always equal to b - a.",
+          "feedback": "Subtraction is not commutative (3 - 8 = -5, while 8 - 3 = 5)—their absolute values are equal, not the differences themselves."
+        },
+        {
+          "answer": "Because absolute value turns a - b into a + b.",
+          "feedback": "Careful: |10 - 3| = 7, not 10 + 3 = 13! Absolute value doesn't change subtraction into addition."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Which list orders these numbers from least to greatest: |-5|, -6, -1.5, |2|?",
+      "kind": "multiple_choice",
+      "choices": [
+        "-6, -1.5, |2|, |-5|",
+        "-1.5, |2|, |-5|, -6",
+        "-6, |2|, -1.5, |-5|",
+        "|-5|, -6, -1.5, |2|"
+      ],
+      "answer": "-6, -1.5, |2|, |-5|",
+      "hints": [
+        "First evaluate the absolute values: |2| = 2 and |-5| = 5.",
+        "Now order -6, -1.5, 2, and 5 from left to right on a number line."
+      ],
+      "solution": [
+        "|2| = 2 and |-5| = 5.",
+        "From least to greatest: -6 < -1.5 < 2 < 5, so -6, -1.5, |2|, |-5|."
+      ],
+      "wrong": [
+        {
+          "answer": "|-5|, -6, -1.5, |2|",
+          "feedback": "Remember |-5| equals +5 (positive), so it is the greatest number here, not the least."
+        },
+        {
+          "answer": "-1.5, |2|, |-5|, -6",
+          "feedback": "-6 is negative and sits farthest left on the number line, making it the least."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find -2.75 + 4.1 - 3.6.",
+      "kind": "numeric",
+      "answer": "-2.25",
+      "hints": [
+        "First add -2.75 + 4.10 = 1.35.",
+        "Now subtract 1.35 - 3.60 (rewrite as 1.35 + (-3.60))."
+      ],
+      "solution": [
+        "-2.75 + 4.10 = 1.35.",
+        "1.35 - 3.60 = -2.25."
+      ],
+      "wrong": [
+        {
+          "answer": "2.25",
+          "feedback": "From 1.35, subtracting 3.60 takes you below zero."
+        },
+        {
+          "answer": "-4.95",
+          "feedback": "Double-check 4.10 - 2.75 = 1.35, then 1.35 - 3.60."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "On a number line, point A is at -3 3/4. Point B is 5 1/2 units to the right of A, and point C is 7 1/4 units to the left of B. What is the distance between point A and point C?",
+      "kind": "numeric",
+      "answer": "1 3/4",
+      "hints": [
+        "Find B first: -3 3/4 + 5 1/2. Then find C: B - 7 1/4.",
+        "Once you have C, find |A - C| (or notice how far C ended up from A)."
+      ],
+      "solution": [
+        "B = -3 3/4 + 5 2/4 = 1 3/4.",
+        "C = 1 3/4 - 7 1/4 = -5 2/4 = -5 1/2.",
+        "Distance between A and C: |-3 3/4 - (-5 2/4)| = |-3 3/4 + 5 2/4| = 1 3/4 (or 7/4)."
+      ],
+      "wrong": [
+        {
+          "answer": "9 1/4",
+          "feedback": "Both A (-3 3/4) and C (-5 1/2) are negative, so subtract their distances from 0 rather than adding."
+        },
+        {
+          "answer": "-5 1/2",
+          "feedback": "-5 1/2 is the location of point C. The question asks for the distance between A and C."
+        }
+      ]
+    }
+  ]
+}

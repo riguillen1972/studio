@@ -1,0 +1,638 @@
+{
+  "version": 2,
+  "skill_id": "7.multiply-integers",
+  "title": "Multiply and Divide Integers and Rationals",
+  "hook": "A weather drone drops 2.4°C per kilometer as it climbs 4 kilometers into the clouds, while a quiz game refunds 3 wrong-answer penalties of -15 points each. How do you know when a product or quotient turns out positive versus negative?",
+  "goal": "I can multiply and divide positive and negative integers, fractions, and decimals using the sign rules.",
+  "vocabulary": [
+    {
+      "term": "product",
+      "meaning": "the result of multiplying two or more numbers",
+      "example": "The product of -6 and 4 is -24."
+    },
+    {
+      "term": "quotient",
+      "meaning": "the result of dividing one number by another",
+      "example": "The quotient of -36 ÷ (-9) is 4."
+    },
+    {
+      "term": "reciprocal",
+      "meaning": "the flipped version of a nonzero fraction; a number and its reciprocal multiply to 1",
+      "example": "The reciprocal of -3/4 is -4/3 because (-3/4) × (-4/3) = 1."
+    }
+  ],
+  "warm_up": [
+    {
+      "question": "A submarine drops 45 meters below sea level. What signed integer represents 45 meters below sea level?",
+      "kind": "numeric",
+      "answer": "-45",
+      "hints": [
+        "Sea level is 0.",
+        "Below 0 uses a negative sign."
+      ],
+      "solution": [
+        "45 meters below sea level is represented by -45."
+      ],
+      "wrong": [
+        {
+          "answer": "45",
+          "feedback": "Positive 45 would mean 45 meters above sea level. Use a negative sign for below sea level."
+        }
+      ]
+    },
+    {
+      "question": "Find 3/4 ÷ 3/8.",
+      "kind": "numeric",
+      "answer": "2",
+      "hints": [
+        "Multiply by the reciprocal of the second fraction: 3/4 × 8/3.",
+        "3/4 × 8/3 = 24/12."
+      ],
+      "solution": [
+        "Keep 3/4, change ÷ to ×, flip 3/8 to 8/3.",
+        "3/4 × 8/3 = 24/12 = 2."
+      ],
+      "wrong": [
+        {
+          "answer": "9/32",
+          "feedback": "Don't multiply straight across without flipping the second fraction! Divide by multiplying by the reciprocal 8/3."
+        },
+        {
+          "answer": "1/2",
+          "feedback": "Make sure you flip the second fraction (3/8 → 8/3), not the first fraction."
+        }
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "heading": "Sign rules for multiplying and dividing integers",
+      "read": [
+        "Why does a negative times a negative equal a positive? Look at the pattern: `3 × (-4) = -12`, `2 × (-4) = -8`, `1 × (-4) = -4`, `0 × (-4) = 0`. Each step adds `4`. Keep the pattern going one more step: `(-1) × (-4) = +4`!",
+        "That pattern gives us one clean rule for multiplying and dividing two nonzero numbers: **same signs give a positive**, and **different signs give a negative**.",
+        "What if you multiply three or more nonzero numbers? Count the negative signs: an **even** number of negatives gives a **positive** product, and an **odd** number of negatives gives a **negative** product. (If any factor is `0`, the product is `0`—and remember we can never divide by `0`.)"
+      ],
+      "model": {
+        "caption": "Sign rules for multiplying and dividing",
+        "rows": [
+          ["Signs of the two numbers", "Result sign", "Multiply example", "Divide example"],
+          ["Positive & Positive (same)", "Positive (+)", "6 × 5 = 30", "30 ÷ 5 = 6"],
+          ["Negative & Negative (same)", "Positive (+)", "(-6) × (-5) = 30", "(-30) ÷ (-5) = 6"],
+          ["Positive & Negative (different)", "Negative (-)", "6 × (-5) = -30", "30 ÷ (-5) = -6"],
+          ["Negative & Positive (different)", "Negative (-)", "(-6) × 5 = -30", "(-30) ÷ 5 = -6"]
+        ]
+      },
+      "example": {
+        "problem": "Find (-4) × 5 × (-3).",
+        "steps": [
+          {
+            "say": "Count the negative factors: there are 2 negative numbers (-4 and -3).",
+            "why": "An even number of negative factors produces a positive product."
+          },
+          {
+            "say": "Multiply the first two factors: (-4) × 5 = -20.",
+            "why": "Different signs give a negative result."
+          },
+          {
+            "say": "Multiply by the last factor: (-20) × (-3) = 60.",
+            "why": "Same signs (negative × negative) give a positive result."
+          }
+        ],
+        "answer": "(-4) × 5 × (-3) = 60"
+      },
+      "try_it": [
+        {
+          "question": "Find (-96) ÷ 8.",
+          "kind": "numeric",
+          "answer": "-12",
+          "hints": [
+            "Decide the sign first: negative divided by positive has different signs.",
+            "Now divide 96 ÷ 8 and keep that sign."
+          ],
+          "solution": [
+            "Different signs → negative.",
+            "96 ÷ 8 = 12, so (-96) ÷ 8 = -12."
+          ],
+          "wrong": [
+            {
+              "answer": "12",
+              "feedback": "Check the signs: -96 is negative and 8 is positive, so the quotient must be negative."
+            }
+          ]
+        },
+        {
+          "question": "Find (-4) × (-5) × (-3).",
+          "kind": "numeric",
+          "answer": "-60",
+          "hints": [
+            "Count how many negative factors there are (3 is odd).",
+            "Multiply 4 × 5 × 3 = 60, then apply the sign."
+          ],
+          "solution": [
+            "(-4) × (-5) = 20 (same signs → positive).",
+            "20 × (-3) = -60 (different signs → negative)."
+          ],
+          "wrong": [
+            {
+              "answer": "60",
+              "feedback": "There are three negative factors (an odd number), so the final product is negative."
+            },
+            {
+              "answer": "-12",
+              "feedback": "Multiply the numbers together rather than adding them."
+            }
+          ]
+        }
+      ],
+      "mentor": "Always decide the sign first, then compute the numbers. Separating those two thoughts stops most sign slips."
+    },
+    {
+      "heading": "Multiplying and dividing signed decimals",
+      "read": [
+        "When negative numbers are **decimals**, the sign rules don't change at all: **same signs → positive**, **different signs → negative**.",
+        "To **multiply** decimals: (1) pick the sign, (2) multiply the numbers without decimal points, and (3) count the total decimal places in both factors so you place the decimal point back in the right spot.",
+        "To **divide** decimals: (1) pick the sign, (2) shift the decimal point right in **both** the divisor and dividend until the divisor is a whole number, and (3) divide as usual."
+      ],
+      "model": {
+        "caption": "Signed decimal steps: sign first, then decimal math",
+        "rows": [
+          ["Problem", "1. Decide sign", "2. Compute positive values", "3. Answer"],
+          ["(-2.4) × 0.5", "Different signs → -", "24 × 5 = 120 → 2 decimal places → 1.20", "-1.2"],
+          ["(-7.2) ÷ (-0.8)", "Same signs → +", "Shift 1 place: 72 ÷ 8 = 9", "9"]
+        ]
+      },
+      "example": {
+        "problem": "Find (-3.6) ÷ (-0.45).",
+        "steps": [
+          {
+            "say": "Check the signs: both -3.6 and -0.45 are negative (same signs), so the quotient is positive.",
+            "why": "Negative divided by negative always gives a positive."
+          },
+          {
+            "say": "Shift the decimal point 2 places right in both numbers: 3.6 ÷ 0.45 becomes 360 ÷ 45.",
+            "why": "Multiplying both numbers by 100 makes the divisor a whole number without changing the quotient."
+          },
+          {
+            "say": "Divide: 360 ÷ 45 = 8, so the answer is 8.",
+            "why": "Check: 8 × (-0.45) = -3.6. ✓"
+          }
+        ],
+        "answer": "(-3.6) ÷ (-0.45) = 8"
+      },
+      "try_it": [
+        {
+          "question": "Find (-2.5) × 1.4.",
+          "kind": "numeric",
+          "answer": "-3.5",
+          "hints": [
+            "Different signs → the answer will be negative.",
+            "Multiply 25 × 14 = 350, then count 2 decimal places."
+          ],
+          "solution": [
+            "Different signs → negative.",
+            "25 × 14 = 350; 2 total decimal places gives 3.50 = 3.5.",
+            "Answer: -3.5."
+          ],
+          "wrong": [
+            {
+              "answer": "3.5",
+              "feedback": "Watch the sign: -2.5 is negative and 1.4 is positive."
+            },
+            {
+              "answer": "-35",
+              "feedback": "Count the total decimal places in 2.5 and 1.4 (1 + 1 = 2 places from the right)."
+            }
+          ]
+        },
+        {
+          "question": "Find (-5.4) ÷ (-0.6).",
+          "kind": "numeric",
+          "answer": "9",
+          "hints": [
+            "Both numbers are negative, so the answer is positive.",
+            "Shift both decimal points 1 place right: 54 ÷ 6."
+          ],
+          "solution": [
+            "Same signs → positive.",
+            "5.4 ÷ 0.6 = 54 ÷ 6 = 9."
+          ],
+          "wrong": [
+            {
+              "answer": "-9",
+              "feedback": "Both -5.4 and -0.6 are negative. Same signs give a positive quotient."
+            },
+            {
+              "answer": "0.9",
+              "feedback": "When you shift the decimal point 1 place right in 0.6 to get 6, also shift 1 place right in 5.4 to get 54."
+            }
+          ]
+        }
+      ],
+      "mentor": "Estimate first! For -2.5 × 1.4, -2.5 × 1 is -2.5, so -3.5 makes complete sense while -35 would be way off."
+    },
+    {
+      "heading": "Multiplying and dividing signed fractions",
+      "read": [
+        "Signed fractions use the **same sign rules** too. Notice that a negative fraction can be written in three equal ways: `-(3/4) = (-3)/4 = 3/(-4)`.",
+        "To **multiply** fractions: convert any mixed numbers to improper fractions, pick the sign, and multiply numerators across and denominators across (simplifying first if a top and bottom share a factor).",
+        "To **divide** fractions: keep the first fraction, change `÷` to `×`, and multiply by the **reciprocal** of the second fraction—keeping its sign! Then apply the sign rule."
+      ],
+      "model": {
+        "caption": "Signed fraction multiplication and division",
+        "rows": [
+          ["Operation", "What to do", "Example"],
+          ["Multiply", "Convert mixed numbers, pick sign, multiply across", "(-3/4) × (2/9) = -6/36 = -1/6"],
+          ["Divide", "Multiply by the reciprocal (keep the sign!)", "(-5/6) ÷ (-2/3) = (-5/6) × (-3/2) = 15/12 = 1 1/4"]
+        ]
+      },
+      "example": {
+        "problem": "Find (-2 1/4) ÷ (3/8).",
+        "steps": [
+          {
+            "say": "Pick the sign: negative divided by positive has different signs, so the answer is negative.",
+            "why": "Settling the sign first keeps you focused on the fraction math."
+          },
+          {
+            "say": "Convert the mixed number to an improper fraction: 2 1/4 = 9/4, so we have (-9/4) ÷ (3/8).",
+            "why": "Multiplying and dividing works cleanly on improper fractions."
+          },
+          {
+            "say": "Multiply by the reciprocal of 3/8, which is 8/3: -(9/4 × 8/3).",
+            "why": "Dividing by a fraction means multiplying by its reciprocal."
+          },
+          {
+            "say": "Multiply and simplify: -(72/12) = -6.",
+            "why": "Check: -6 × (3/8) = -18/8 = -9/4 = -2 1/4. ✓"
+          }
+        ],
+        "answer": "(-2 1/4) ÷ (3/8) = -6"
+      },
+      "try_it": [
+        {
+          "question": "Find (-3/5) × (-10/9).",
+          "kind": "numeric",
+          "answer": "2/3",
+          "hints": [
+            "Both fractions are negative (same signs), so the product is positive.",
+            "Multiply (3 × 10) / (5 × 9) = 30/45, then simplify."
+          ],
+          "solution": [
+            "Same signs → positive.",
+            "3/5 × 10/9 = 30/45 = 2/3."
+          ],
+          "wrong": [
+            {
+              "answer": "-2/3",
+              "feedback": "Both -3/5 and -10/9 are negative. Negative times negative is positive."
+            },
+            {
+              "answer": "27/50",
+              "feedback": "This is multiplication, not division—don't flip the second fraction!"
+            }
+          ]
+        },
+        {
+          "question": "Find (4/7) ÷ (-8/21).",
+          "kind": "numeric",
+          "answer": "-1 1/2",
+          "hints": [
+            "Different signs → the answer is negative.",
+            "Flip -8/21 to its reciprocal -21/8, then multiply: -(4/7 × 21/8)."
+          ],
+          "solution": [
+            "Different signs → negative.",
+            "4/7 × 21/8 = 84/56 = 3/2 = 1 1/2.",
+            "Answer: -3/2 (or -1 1/2)."
+          ],
+          "wrong": [
+            {
+              "answer": "1 1/2",
+              "feedback": "One fraction is positive and one is negative, so the quotient must be negative."
+            },
+            {
+              "answer": "-32/147",
+              "feedback": "To divide fractions, flip the second fraction (-8/21 → -21/8) and multiply."
+            }
+          ]
+        }
+      ],
+      "mentor": "Keep the sign when you flip a fraction to its reciprocal! The reciprocal of -8/21 is -21/8, not +21/8."
+    }
+  ],
+  "mistake": {
+    "problem": "Devon evaluated (-3/4) ÷ (-1/2).",
+    "work": [
+      "(-3/4) ÷ (-1/2)",
+      "= (-3/4) × 2/1",
+      "= -6/4 = -1 1/2"
+    ],
+    "what_went_wrong": "Devon dropped the negative sign on -1/2 when finding its reciprocal, turning a negative ÷ negative problem into a negative × positive problem.",
+    "fix": "The reciprocal of -1/2 is -2/1. So (-3/4) × (-2/1) = +6/4 = 1 1/2 (negative ÷ negative = positive)."
+  },
+  "summary": [
+    "For multiplying and dividing two nonzero rational numbers, same signs give a positive result and different signs give a negative result.",
+    "For decimals, decide the sign first, then count decimal places when multiplying or shift decimal points when dividing.",
+    "For fractions, convert mixed numbers to improper fractions, decide the sign, and divide by multiplying by the reciprocal (keeping its sign)."
+  ],
+  "faith": null,
+  "worksheet": [
+    {
+      "level": "practice",
+      "question": "Find (-15) × 6.",
+      "kind": "numeric",
+      "answer": "-90",
+      "hints": [
+        "Different signs give a negative product.",
+        "Multiply 15 × 6 and put a negative sign in front."
+      ],
+      "solution": [
+        "Different signs → negative.",
+        "15 × 6 = 90, so (-15) × 6 = -90."
+      ],
+      "wrong": [
+        {
+          "answer": "90",
+          "feedback": "One factor is negative and one is positive, so the product must be negative."
+        },
+        {
+          "answer": "-9",
+          "feedback": "Multiply 15 × 6 (10 × 6 + 5 × 6) rather than subtracting or adding."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find (-144) ÷ (-12).",
+      "kind": "numeric",
+      "answer": "12",
+      "hints": [
+        "Both numbers are negative, so the quotient is positive.",
+        "How many 12s are in 144?"
+      ],
+      "solution": [
+        "Same signs → positive.",
+        "144 ÷ 12 = 12."
+      ],
+      "wrong": [
+        {
+          "answer": "-12",
+          "feedback": "Negative divided by negative has the same sign, so the quotient is positive."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find (-1.8) × (-3.5).",
+      "kind": "numeric",
+      "answer": "6.3",
+      "hints": [
+        "Same signs (negative × negative) give a positive answer.",
+        "Multiply 18 × 35 = 630, then count 2 decimal places."
+      ],
+      "solution": [
+        "Same signs → positive.",
+        "18 × 35 = 630; 2 total decimal places gives 6.30 = 6.3."
+      ],
+      "wrong": [
+        {
+          "answer": "-6.3",
+          "feedback": "Check the signs: multiplying two negative numbers gives a positive product."
+        },
+        {
+          "answer": "63",
+          "feedback": "Count the decimal places in 1.8 and 3.5 (1 + 1 = 2 decimal places)."
+        }
+      ]
+    },
+    {
+      "level": "practice",
+      "question": "Find (-5/8) ÷ (15/16).",
+      "kind": "numeric",
+      "answer": "-2/3",
+      "hints": [
+        "Different signs → negative answer.",
+        "Multiply by the reciprocal of 15/16: -(5/8 × 16/15)."
+      ],
+      "solution": [
+        "Different signs → negative.",
+        "5/8 × 16/15 = 80/120 = 2/3.",
+        "Answer: -2/3."
+      ],
+      "wrong": [
+        {
+          "answer": "2/3",
+          "feedback": "One fraction is negative and the other is positive, so the quotient is negative."
+        },
+        {
+          "answer": "-75/128",
+          "feedback": "Remember to flip the second fraction (15/16 → 16/15) before multiplying."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "The temperature at a mountain weather station drops 2.4°F every hour for 5 hours. What integer represents the total change in temperature, in °F? (Use a negative number for a drop.)",
+      "kind": "numeric",
+      "answer": "-12",
+      "hints": [
+        "A drop of 2.4°F per hour is -2.4.",
+        "Multiply 5 × (-2.4)."
+      ],
+      "solution": [
+        "Change per hour: -2.4°F.",
+        "Total change over 5 hours: 5 × (-2.4) = -12°F."
+      ],
+      "wrong": [
+        {
+          "answer": "12",
+          "feedback": "The temperature dropped, so represent the change with a negative number."
+        },
+        {
+          "answer": "-120",
+          "feedback": "Watch the decimal point in 2.4: 5 × 2.4 has 1 decimal place."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A school store loses $4.50 on each clearance hoodie it sells and makes a $12.00 profit on each backpack. On Friday, the store sells 6 clearance hoodies and 4 backpacks. What is the store's net profit, in dollars?",
+      "kind": "numeric",
+      "answer": "21",
+      "hints": [
+        "Find the total loss on hoodies: 6 × (-4.50), and the total profit on backpacks: 4 × 12.00.",
+        "Add the two amounts together: -27 + 48."
+      ],
+      "solution": [
+        "Hoodies: 6 × (-4.50) = -27 dollars.",
+        "Backpacks: 4 × 12.00 = 48 dollars.",
+        "Net profit: -27 + 48 = 21 dollars."
+      ],
+      "wrong": [
+        {
+          "answer": "75",
+          "feedback": "The hoodies were sold at a loss (-$4.50 each), so subtract $27 instead of adding it."
+        },
+        {
+          "answer": "-21",
+          "feedback": "The backpack profit ($48) is bigger than the hoodie loss ($27), so the net profit is positive."
+        }
+      ]
+    },
+    {
+      "level": "apply",
+      "question": "A gardener has 3 3/4 pounds of wildflower seed and pours it into small packets that each hold 5/8 pound. How many full packets can the gardener fill?",
+      "kind": "numeric",
+      "answer": "6",
+      "hints": [
+        "Divide total seed by the size of one packet: 3 3/4 ÷ 5/8.",
+        "Convert 3 3/4 to 15/4, then multiply by 8/5."
+      ],
+      "solution": [
+        "3 3/4 = 15/4.",
+        "15/4 ÷ 5/8 = 15/4 × 8/5 = 120/20 = 6 packets."
+      ],
+      "wrong": [
+        {
+          "answer": "2 11/32",
+          "feedback": "We are splitting 3 3/4 pounds into 5/8-pound packets, which is division (not multiplication)."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "You multiply five nonzero numbers: three of them are negative and two are positive. What is the sign of the product?",
+      "kind": "multiple_choice",
+      "choices": [
+        "Negative, because there is an odd number (3) of negative factors.",
+        "Positive, because 2 of the negative factors cancel and the positive factors are positive.",
+        "Positive, because there are more than two factors.",
+        "It cannot be told without knowing the size of each number."
+      ],
+      "answer": "Negative, because there is an odd number (3) of negative factors.",
+      "hints": [
+        "Pair up two of the negative factors: (-) × (-) = (+).",
+        "After pairing two negatives, there is still one negative factor left over."
+      ],
+      "solution": [
+        "Two negatives multiply to a positive, leaving one unpaired negative factor.",
+        "Positive × negative = negative, so 3 negative factors give a negative product."
+      ],
+      "wrong": [
+        {
+          "answer": "Positive, because 2 of the negative factors cancel and the positive factors are positive.",
+          "feedback": "Two of the three negatives multiply to a positive, leaving one negative factor still unpaired."
+        },
+        {
+          "answer": "It cannot be told without knowing the size of each number.",
+          "feedback": "The sizes change how big the product is, not its sign—unlike addition, multiplication signs depend only on how many negative factors there are."
+        }
+      ]
+    },
+    {
+      "level": "think",
+      "question": "Which expression is NOT equal to -(3/5)?",
+      "kind": "multiple_choice",
+      "choices": [
+        "(-3)/(-5)",
+        "(-3)/5",
+        "3/(-5)",
+        "-0.6"
+      ],
+      "answer": "(-3)/(-5)",
+      "hints": [
+        "Check the sign of each choice using the division rule.",
+        "What happens when you divide a negative numerator by a negative denominator?"
+      ],
+      "solution": [
+        "(-3)/5 = -0.6 and 3/(-5) = -0.6, which both equal -(3/5).",
+        "(-3)/(-5) is negative divided by negative, which equals +3/5 (positive)."
+      ],
+      "wrong": [
+        {
+          "answer": "(-3)/5",
+          "feedback": "Negative divided by positive is negative, so (-3)/5 = -(3/5)."
+        },
+        {
+          "answer": "3/(-5)",
+          "feedback": "Positive divided by negative is negative, so 3/(-5) = -(3/5)."
+        },
+        {
+          "answer": "-0.6",
+          "feedback": "3 ÷ 5 = 0.6, so -(3/5) = -0.6."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Which list shows the integers 3, -7, 0, and -2 in order from least to greatest?",
+      "kind": "multiple_choice",
+      "choices": [
+        "-7, -2, 0, 3",
+        "-2, -7, 0, 3",
+        "3, 0, -2, -7",
+        "0, -2, 3, -7"
+      ],
+      "answer": "-7, -2, 0, 3",
+      "hints": [
+        "On a horizontal number line, numbers get larger as you move right.",
+        "Which is farther left from 0: -7 or -2?"
+      ],
+      "solution": [
+        "-7 is farthest left, then -2, then 0, then 3: -7, -2, 0, 3."
+      ],
+      "wrong": [
+        {
+          "answer": "-2, -7, 0, 3",
+          "feedback": "Watch the negative order: -7 is farther below zero than -2, so -7 is less than -2."
+        },
+        {
+          "answer": "3, 0, -2, -7",
+          "feedback": "That order goes from greatest to least instead of least to greatest."
+        }
+      ]
+    },
+    {
+      "level": "review",
+      "question": "Find 4/5 ÷ 2/15.",
+      "kind": "numeric",
+      "answer": "6",
+      "hints": [
+        "Multiply 4/5 by the reciprocal of 2/15.",
+        "4/5 × 15/2 = 60/10."
+      ],
+      "solution": [
+        "4/5 ÷ 2/15 = 4/5 × 15/2 = 60/10 = 6."
+      ],
+      "wrong": [
+        {
+          "answer": "8/75",
+          "feedback": "Flip the second fraction (2/15 → 15/2) before multiplying."
+        }
+      ]
+    },
+    {
+      "level": "challenge",
+      "question": "Find (-2 1/2) × (-0.8) ÷ (-1/3).",
+      "kind": "numeric",
+      "answer": "-6",
+      "hints": [
+        "First multiply (-2 1/2) × (-0.8). Note that 2 1/2 = 2.5 (or 5/2 and 0.8 = 4/5).",
+        "(-2.5) × (-0.8) = 2. Now divide 2 by (-1/3)."
+      ],
+      "solution": [
+        "(-2 1/2) × (-0.8) = (-5/2) × (-4/5) = 20/10 = 2.",
+        "2 ÷ (-1/3) = 2 × (-3) = -6."
+      ],
+      "wrong": [
+        {
+          "answer": "6",
+          "feedback": "There are three negative numbers in the expression, so the final answer is negative."
+        },
+        {
+          "answer": "-2/3",
+          "feedback": "To divide 2 by (-1/3), multiply 2 by the reciprocal (-3), rather than multiplying by (-1/3)."
+        }
+      ]
+    }
+  ]
+}
